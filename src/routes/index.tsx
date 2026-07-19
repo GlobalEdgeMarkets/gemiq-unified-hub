@@ -262,7 +262,7 @@ function AssessmentGrid() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2">
+        <div className="mt-14 grid items-stretch gap-6 md:grid-cols-2">
           {ASSESSMENTS.map((a) => (
             <AssessmentCard key={a.key} a={a} />
           ))}

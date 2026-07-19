@@ -118,7 +118,8 @@ creation, HubSpot property mapping on every submit, and rollup counts.
 
 Direct links (browse on GitHub):
 
-- **SDK to copy into your IQ** — [`packages/hub-sdk/sdk.ts`](./packages/hub-sdk/sdk.ts)
+- **SDK to consume from your IQ** — [`packages/hub-sdk/sdk.ts`](./packages/hub-sdk/sdk.ts) (auto-generated; source of truth: `src/lib/hub/sdk.ts`)
+- **Puller script for IQs** — [`packages/hub-sdk/pull-hub-sdk.mjs`](./packages/hub-sdk/pull-hub-sdk.mjs)
 - **Registry of all IQs** — [`src/lib/hub/assessments/index.ts`](./src/lib/hub/assessments/index.ts)
 - **Per-IQ spec examples** — [`tariffiq.ts`](./src/lib/hub/assessments/tariffiq.ts), [`readinessiq.ts`](./src/lib/hub/assessments/readinessiq.ts), [`uxiq.ts`](./src/lib/hub/assessments/uxiq.ts), [`techservicesiq.ts`](./src/lib/hub/assessments/techservicesiq.ts)
 - **Public HTTP endpoints IQs call** — [`src/routes/api/public/`](./src/routes/api/public/)

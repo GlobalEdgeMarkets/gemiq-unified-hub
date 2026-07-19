@@ -4,6 +4,8 @@
 // high/low score fields, and any missing per-dimension gem_* properties.
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@/lib/hub/http";
+import { collectAllPropertyDefs, REGISTRY } from "@/lib/hub/assessments";
+import type { PropertyDef, PropertyType } from "@/lib/hub/assessments/types";
 
 const GATEWAY = "https://connector-gateway.lovable.dev/hubspot";
 function hsHeaders() {

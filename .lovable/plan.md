@@ -1,275 +1,173 @@
-# GEM.IQ Hub — Implementation Plan
+# Unified GEM.IQ Integration Plan
 
-Central backend for all GEM.IQ assessments. Runs at `gemiq.globaledgemarkets.com`. Provides shared login, Stripe subscriptions, and a single submission pipeline to HubSpot (portal 46485313). This plan covers backend + SDK only — no assessment UIs.
-
-Stack note: TanStack Start template. Per project conventions, app-internal server logic uses `createServerFn`; public webhooks and cross-subdomain endpoints called by external assessments use server routes under `src/routes/api/public/*`. "Edge functions" below map to server routes, not Supabase Edge Functions.
+Consolidate all IQ assessments (TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ, future) behind the Hub's identity, subscription, and HubSpot pipeline. Each IQ becomes a **thin front-end** that hands raw data to the Hub; the Hub is the single writer to Stripe and HubSpot.
 
 ---
 
-## a) Supabase schema (4 tables)
+## 1. The per-IQ integration contract (what every IQ must do)
 
-All tables in `public`. RLS enabled. Explicit GRANTs. `updated_at` triggers on all.
+Every IQ subdomain (`tariffiq.`, `readinessiq.`, `uxiq.`, `techservicesiq.`, ...) does exactly four things via `@gemiq/hub-sdk`:
 
-### 1. `profiles`
-Mirrors `auth.users`, auto-created via trigger on signup.
-- `id uuid PK REFERENCES auth.users(id) ON DELETE CASCADE`
-- `email text NOT NULL`
-- `full_name text`
-- `company text`
-- `hubspot_contact_id text` (populated on first successful submission)
-- `stripe_customer_id text UNIQUE`
-- `created_at timestamptz default now()`, `updated_at timestamptz default now()`
-- RLS: users select/update own row; service_role full.
+1. **Auth** — no local login. Any "sign in" button calls `gemiq.auth.redirectToLogin({ returnTo })`. Session is read from the parent-domain cookie.
+2. **Entitlement gate** — before starting the paid assessment, call `gemiq.subscription.check()`. If not active, call `gemiq.subscription.startCheckout(lookupKey, { successUrl: <resume>, cancelUrl: <current> })`.
+3. **Submit** — on completion, call `gemiq.results.submit(payload)` with a rich, IQ-specific `detail` block (see §3). No direct HubSpot calls from the IQ.
+4. **History (optional)** — `gemiq.results.history({ assessment })` to show the user their prior scores.
 
-### 2. `subscriptions`
-System of record for entitlement, kept in sync by Stripe webhook.
-- `id uuid PK default gen_random_uuid()`
-- `user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE`
-- `stripe_customer_id text NOT NULL`
-- `stripe_subscription_id text UNIQUE NOT NULL`
-- `stripe_price_id text NOT NULL`
-- `lookup_key text NOT NULL` — `gemiq_professional_monthly` | `gemiq_professional_annual`
-- `product text NOT NULL default 'gemiq_professional'`
-- `status text NOT NULL` — Stripe status (`active`, `trialing`, `past_due`, `canceled`, ...)
-- `current_period_end timestamptz`
-- `cancel_at_period_end boolean default false`
-- `livemode boolean NOT NULL` — inferred from webhook event
-- `created_at`, `updated_at`
-- Index on `user_id`, `status`.
-- RLS: user selects own; writes via service_role only.
-
-### 3. `submissions`
-One row per assessment completion. Supports retakes + progress.
-- `id uuid PK default gen_random_uuid()`
-- `user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL` (nullable — anonymous submissions allowed)
-- `assessment text NOT NULL` — `tariffiq` | `readinessiq` | `uxiq` | `techservicesiq` | future
-- `email text NOT NULL`
-- `contact jsonb NOT NULL` — full name/company/role/phone
-- `score numeric(5,2) NOT NULL CHECK (score BETWEEN 0 AND 100)`
-- `tier text NOT NULL CHECK (tier IN ('at_risk','developing','optimized'))`
-- `dimensions jsonb NOT NULL` — array of `{name, score, tier}` (≤8)
-- `segments jsonb` — e.g. industry, company size, region
-- `utm jsonb`
-- `answers jsonb` — raw responses (for retake diffing)
-- `status text NOT NULL default 'completed'` — `in_progress` | `completed`
-- `completed_at timestamptz NOT NULL`
-- `hubspot_synced_at timestamptz`
-- `hubspot_contact_id text`
-- `created_at timestamptz default now()`
-- Indexes: `(email, assessment, completed_at DESC)`, `(user_id, completed_at DESC)`, `(status)`.
-- RLS: user selects own by `user_id` OR `email = auth.jwt()->>'email'`; inserts via service_role from submit route.
-
-### 4. `retry_queue`
-For HubSpot sync retries (429/5xx).
-- `id uuid PK default gen_random_uuid()`
-- `submission_id uuid NOT NULL REFERENCES submissions(id) ON DELETE CASCADE`
-- `operation text NOT NULL` — `upsert_contact` | `emit_event`
-- `payload jsonb NOT NULL`
-- `attempts int NOT NULL default 0`
-- `max_attempts int NOT NULL default 8`
-- `next_attempt_at timestamptz NOT NULL default now()`
-- `last_error text`
-- `last_status_code int`
-- `state text NOT NULL default 'pending'` — `pending` | `succeeded` | `dead`
-- `created_at`, `updated_at`
-- Index on `(state, next_attempt_at)`.
-- No user RLS access; service_role only.
-
-**Backoff:** `next_attempt_at = now() + min(60s * 2^attempts, 6h)` plus jitter.
-
-**Auth trigger:** `handle_new_user()` inserts into `profiles` on `auth.users` insert.
+Everything else (Stripe session, contact upsert, property mapping, workflow trigger, retry) is Hub-owned.
 
 ---
 
-## b) Server endpoints (edge functions)
+## 2. Identity migration (one-time per IQ)
 
-All under `src/routes/api/public/*` so external assessment subdomains can call them. Every endpoint validates its Supabase bearer (except webhook + checkout for anon-friendly flows) and returns JSON.
+Since Hub becomes the sole auth going forward:
 
-### `create-checkout` — POST `/api/public/billing/create-checkout`
-- Input: `{ lookup_key: 'gemiq_professional_monthly' | 'gemiq_professional_annual', success_url, cancel_url }`
-- Auth: requires Supabase user (bearer). Resolves/creates `stripe_customer_id` on profile.
-- Resolves price via `stripe.prices.list({ lookup_keys: [lookup_key], active: true, expand: ['data.product'] })`.
-- Creates `checkout.sessions.create({ mode: 'subscription', customer, line_items: [{ price, quantity: 1 }], allow_promotion_codes: true, success_url, cancel_url, subscription_data: { metadata: { user_id }}, client_reference_id: user_id })`.
-- Output: `{ url }`
-
-### `create-portal-session` — POST `/api/public/billing/create-portal-session`
-- Input: `{ return_url }`
-- Auth: user bearer required.
-- Creates `billingPortal.sessions.create({ customer, return_url })`.
-- Output: `{ url }`
-
-### `check-subscription` — GET `/api/public/billing/check-subscription`
-- Auth: user bearer required.
-- Reads `subscriptions` row for user; if missing/stale, reconciles by calling Stripe `subscriptions.list({ customer })` and upserts.
-- Output: `{ active: boolean, status, lookup_key, current_period_end, cancel_at_period_end, product }`
-
-### `payments-webhook` — POST `/api/public/billing/webhook`
-- Verifies `stripe-signature` with `STRIPE_WEBHOOK_SECRET` (raw body).
-- Handles: `checkout.session.completed`, `customer.subscription.created|updated|deleted`, `invoice.payment_succeeded|failed`.
-- Upserts `subscriptions` keyed on `stripe_subscription_id`. Records `livemode` from event.
-- Returns 200 fast; retries handled by Stripe.
-
-### `submit` — POST `/api/public/submissions/submit`
-- Input: standard submit payload (see SDK section).
-- Auth: optional user bearer. If present, sets `user_id`. Anonymous allowed.
-- Steps:
-  1. Zod-validate payload.
-  2. Insert `submissions` row (`status='completed'`).
-  3. Try HubSpot upsert synchronously (short timeout, e.g. 4s):
-     - `GET /crm/v3/objects/contacts/{email}?idProperty=email` → if 404, `POST /crm/v3/objects/contacts` else `PATCH`.
-     - Payload = unified `gem_*` property set (see HubSpot section).
-     - On success, `POST /events/v3/send` with `eventName='pe{portalId}_gem_assessment_completed'` (custom behavioral event) with `email` + rich properties.
-     - Update `submissions.hubspot_contact_id`, `hubspot_synced_at`; write `profiles.hubspot_contact_id`.
-  4. On 429/5xx/network: enqueue `retry_queue` entries and return 202 with `{ queued: true }`.
-- Output: `{ submission_id, hubspot: { synced: boolean, contact_id?: string, queued?: boolean } }`
-
-### `retry-worker` — POST `/api/public/jobs/retry-hubspot`
-- Called by `pg_cron` every minute via `pg_net` hitting the stable `project--{id}.lovable.app` URL. Header `X-Job-Secret` matched against `JOB_SECRET`.
-- Pulls up to N pending retries where `next_attempt_at <= now()`; re-runs the operation; updates state.
-- After `max_attempts` → `state='dead'` + log for manual review.
+- **Cutover script** (Hub side, admin-only server fn): given a CSV/JSON export of each IQ's user table (email, name, company, created_at), invite each user via Supabase Admin `inviteUserByEmail` — creates a Hub `profiles` row and sends a password-set email. Idempotent by email.
+- **Per-IQ codebase change**: replace the IQ's local auth screen with a redirect to `https://gemiq.globaledgemarkets.com/auth?return=<url>`. Delete local password/session code.
+- **Historical results**: keep the IQ's old submission records read-only inside the IQ if desired, OR (recommended) do a one-time backfill into Hub `submissions` using each row's email so the Hub becomes the single source of truth.
 
 ---
 
-## c) SDK contract — `@gemiq/hub-sdk`
+## 3. Submit payload — flexible per-IQ detail
 
-Small browser+node package each assessment imports. Reads config from `import.meta.env.VITE_GEMIQ_*`.
+Extend the Hub's submit contract so each IQ can send its own richly-typed detail without changing the Hub schema every time:
 
-```ts
-gemiq.init({ hubUrl, supabaseUrl, supabasePublishableKey })
-
-// Auth (Supabase client scoped to .globaledgemarkets.com cookie)
-gemiq.auth.getSession(): Promise<Session | null>
-gemiq.auth.onAuthStateChange(cb): Unsubscribe
-gemiq.auth.signIn({ email, password }): Promise<Session>
-gemiq.auth.signInWithOAuth('google'): Promise<void>
-gemiq.auth.signUp({ email, password, fullName?, company? }): Promise<Session>
-gemiq.auth.signOut(): Promise<void>
-
-// Subscription
-gemiq.subscription.check(): Promise<{ active, status, lookup_key, current_period_end }>
-gemiq.subscription.startCheckout(lookupKey: 'gemiq_professional_monthly' | 'gemiq_professional_annual', opts?: { successUrl, cancelUrl }): Promise<void>  // redirects
-gemiq.subscription.openPortal(returnUrl?): Promise<void>  // redirects
-
-// Results
-gemiq.results.submit(payload: SubmitPayload): Promise<SubmitResult>
-gemiq.results.history({ assessment? }): Promise<Submission[]>  // reads user's own submissions
-```
-
-### Standard submit payload
 ```ts
 type SubmitPayload = {
-  assessment: 'tariffiq' | 'readinessiq' | 'uxiq' | 'techservicesiq' | string
-  contact: { email: string; full_name?: string; company?: string; role?: string; phone?: string }
-  score: number            // 0..100
-  tier: 'at_risk' | 'developing' | 'optimized'
-  dimensions: Array<{ name: string; score: number; tier: SubmitPayload['tier'] }>  // ≤8
-  segments?: { industry?: string; company_size?: string; region?: string; [k: string]: unknown }
-  utm?: { source?: string; medium?: string; campaign?: string; term?: string; content?: string }
-  answers?: Record<string, unknown>
+  assessment: string                 // 'tariffiq' | 'readinessiq' | 'uxiq' | 'techservicesiq' | ...
+  contact:     { email, full_name?, company?, role?, phone? }
+  score:       number                // 0..100 normalized
+  tier:        'at_risk' | 'developing' | 'optimized'
+  dimensions:  Array<{ name, score, tier }>   // <=8, shown on rollup
+  detail:      Record<string, unknown>        // NEW: arbitrary IQ-specific payload
+  segments?:   { industry?, company_size?, region?, ... }
+  utm?:        { source?, medium?, campaign?, term?, content? }
+  answers?:    Record<string, unknown>
   completed_at: string  // ISO
 }
 ```
 
----
-
-## d) Stripe test→live switch via lookup_keys
-
-**Design:** never reference `price_...` IDs in code. Only `lookup_key` strings.
-
-- Test mode setup (Stripe dashboard, test env):
-  - Product: `GEM.IQ Professional`
-  - Price A: $99 USD/month recurring, `lookup_key = gemiq_professional_monthly`
-  - Price B: $990 USD/year recurring, `lookup_key = gemiq_professional_annual`
-- Live mode: recreate the same product + two prices with the **same lookup_keys**.
-- Runtime: `stripe.prices.list({ lookup_keys, active: true })` returns the correct env's price. Cache in memory per instance (5 min TTL) to avoid a lookup per checkout.
-- Env inference: `const isLive = process.env.STRIPE_SECRET_KEY!.startsWith('sk_live_')` — surfaced in logs and stored on `subscriptions.livemode` from webhook events (`event.livemode`).
-- **Switch procedure**: (1) rotate `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` secrets, (2) redeploy. No code change. Existing test subscriptions remain in DB with `livemode=false`; live ones write `livemode=true`.
-
-**Secrets required:** `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`.
+Stored on `submissions` as: normalized fields in columns; full `detail` and `answers` in existing `metadata`/`answers` jsonb.
 
 ---
 
-## e) HubSpot properties (portal 46485313)
+## 4. HubSpot property registry (extensible per IQ)
 
-Create three property groups on the **Contact** object. All internal names prefixed `gem_`. Types shown.
+The Hub gets a code-level **assessment registry** — one file per IQ that declares:
 
-### Group 1: `gem_rollup` — cross-IQ rollup (single set)
-- `gem_customer` (bool) — has ever submitted any IQ
-- `gem_last_assessment` (single-line) — most recent assessment key
-- `gem_last_score` (number)
-- `gem_last_tier` (dropdown: at_risk, developing, optimized)
-- `gem_last_completed_at` (datetime)
-- `gem_assessments_completed_count` (number)
-- `gem_assessments_taken` (multi-checkbox) — set of assessment keys
-- `gem_highest_score` (number)
-- `gem_lowest_score` (number)
+```ts
+// src/lib/hub/assessments/tariffiq.ts
+export const tariffiq: AssessmentSpec = {
+  key: 'tariffiq',
+  displayName: 'TariffIQ',
+  // Properties this IQ contributes to the HubSpot contact
+  contactProperties: [
+    { name: 'gem_tariff_hs_code_readiness',   type: 'number' },
+    { name: 'gem_tariff_supply_chain_score',  type: 'number' },
+    { name: 'gem_tariff_trade_lanes',         type: 'multi_checkbox', options: [...] },
+    // ...
+  ],
+  // Map a submission -> HubSpot property values
+  toContactProperties: (sub) => ({
+    gem_tariff_hs_code_readiness:  sub.detail.hsCodeReadiness,
+    gem_tariff_supply_chain_score: sub.detail.supplyChain,
+    gem_tariff_trade_lanes:        sub.detail.tradeLanes.join(';'),
+    // + shared gem_assessment_tool / gem_assessment_score / gem_score_tier / gem_assessment_date (workflow triggers)
+  }),
+}
+```
 
-### Group 2: per-assessment latest (one group per IQ; example `gem_tariffiq`)
-For each of `tariffiq`, `readinessiq`, `uxiq`, `techservicesiq`:
-- `gem_{iq}_score` (number)
-- `gem_{iq}_tier` (dropdown)
-- `gem_{iq}_completed_at` (datetime)
-- `gem_{iq}_retake_count` (number)
-- `gem_{iq}_dimensions_json` (multi-line text) — JSON string of dimensions array
-- `gem_{iq}_top_strength` (single-line) — highest dimension name
-- `gem_{iq}_top_gap` (single-line) — lowest dimension name
+Each IQ file is registered in `src/lib/hub/assessments/index.ts`. Adding a new IQ = create one file + register it. Bootstrap script (idempotent, out of band) creates any missing HubSpot properties by walking the registry.
 
-### Group 3: `gem_subscription`
-- `gem_subscription_status` (dropdown: none, active, trialing, past_due, canceled)
-- `gem_subscription_plan` (dropdown: gemiq_professional_monthly, gemiq_professional_annual)
-- `gem_subscription_current_period_end` (datetime)
-- `gem_stripe_customer_id` (single-line)
+**Rollup properties** (`gem_customer`, `gem_last_assessment`, `gem_last_score`, `gem_last_tier`, `gem_last_completed_at`, `gem_assessments_completed_count`, `gem_assessments_taken`, `gem_highest_score`, `gem_lowest_score`) are computed by the Hub on every submit by re-reading that email's `submissions` history — one PATCH combines rollup + per-IQ latest fields.
 
-**Custom behavioral event:** `gem_assessment_completed` with properties: `assessment`, `score`, `tier`, `dimensions_json`, `utm_source`, `utm_campaign`, `submission_id`.
-
-**Submit-time write:** compute rollup + per-assessment fields server-side from `submissions` history for that email, then PATCH the contact with the merged property set (single API call).
-
-**Secrets required:** `HUBSPOT_PRIVATE_APP_TOKEN` with scopes `crm.objects.contacts.read/write`, `crm.schemas.contacts.read/write`, `behavioral_events.event_definitions.read_write`.
+**Workflow trigger** stays as agreed: refresh `gem_assessment_tool` + `gem_assessment_date` on every submit, no custom events.
 
 ---
 
-## f) Cross-subdomain auth
+## 5. Checkout redirect flow
 
-Goal: one login at `gemiq.globaledgemarkets.com` valid on `tariffiq.globaledgemarkets.com`, etc.
+```text
+IQ (tariffiq.globaledgemarkets.com/paywall)
+  └── gemiq.subscription.startCheckout('gemiq_professional_monthly',
+        { successUrl: 'https://tariffiq.globaledgemarkets.com/resume?sid={CHECKOUT_SESSION_ID}',
+          cancelUrl:  'https://tariffiq.globaledgemarkets.com/paywall' })
+       └── POST hub /api/public/billing/create-checkout
+              → returns Stripe URL
+Browser → Stripe Checkout → success_url
+IQ /resume page:
+  └── gemiq.subscription.check() (blocks until active=true; webhook may lag ~1s)
+  └── on active: continue the assessment
+```
 
-- Use Supabase Auth with **cookie-based session storage** (not localStorage), cookie attributes: `Domain=.globaledgemarkets.com; Path=/; Secure; SameSite=Lax; HttpOnly` for the refresh token, and a readable access-token cookie (or JWT in a JS-readable cookie) also scoped to the parent domain.
-- Implementation: initialize `@supabase/ssr`'s `createBrowserClient` in the SDK with a custom cookie adapter that sets `domain: '.globaledgemarkets.com'` when hostname endsWith it (dev fallback: default localhost behavior).
-- Supabase Auth settings: add every subdomain to **Site URL / Additional Redirect URLs** (`https://gemiq.globaledgemarkets.com`, `https://tariffiq...`, `https://readinessiq...`, etc.).
-- Sign-in flow: all sign-in/sign-up happens on `gemiq.globaledgemarkets.com/auth` (single canonical page). Assessment subdomains that need auth redirect to it with `?redirect=<origin>/return`. On success, the browser has the parent-domain cookie and every subdomain sees the session immediately.
-- OAuth (Google): redirect URI is the hub domain only; hub then bounces back to the assessment's return URL.
-- SDK auth methods proxy to the browser Supabase client; server-side calls (submit, billing) send the access token via `Authorization: Bearer`.
-- CSRF: state-changing hub endpoints require the bearer (double-submit not needed since we don't rely on ambient cookies for API auth — cookies are only for cross-subdomain session propagation to the JS client).
-
-**Sign-out:** hub route clears the parent-domain cookies; SDK broadcasts a `BroadcastChannel('gemiq_auth')` message so open assessment tabs re-check session.
-
----
-
-## Secrets to add (Project Settings → Secrets)
-- `STRIPE_SECRET_KEY` (test: `sk_test_...`)
-- `STRIPE_WEBHOOK_SECRET` (test)
-- `HUBSPOT_PRIVATE_APP_TOKEN`
-- `HUBSPOT_PORTAL_ID` = `46485313`
-- `JOB_SECRET` (generated, for retry cron auth)
-
-Supabase (Lovable Cloud) will provision its own env.
+Only Hub's Stripe account is used. Existing webhook and `subscriptions` sync are unchanged.
 
 ---
 
-## Build order (once approved)
-1. Enable Lovable Cloud → run migrations for the 4 tables, trigger, RLS, GRANTs.
-2. Add secrets.
-3. Implement Stripe routes + webhook + `subscriptions` sync.
-4. Implement HubSpot property bootstrap script (idempotent — creates missing properties/event via API on first run).
-5. Implement `submit` route + retry queue + `pg_cron` worker.
-6. Implement cross-subdomain cookie auth in Supabase client + `/auth` page on hub.
-7. Publish SDK (`@gemiq/hub-sdk`) — versioned, TypeScript.
-8. Smoke-test end-to-end with a stub assessment.
+## 6. Hub-side work items
+
+1. **SDK**: add `auth.redirectToLogin`, `subscription.startCheckout` with returnUrls, `subscription.check` polling helper, expanded `results.submit` signature accepting `detail`.
+2. **`/auth`**: honor `?return=<url>` and bounce back after sign-in (validated against `*.globaledgemarkets.com`).
+3. **Assessment registry**: `src/lib/hub/assessments/{tariffiq,readinessiq,uxiq,techservicesiq}.ts` + index. TariffIQ + ReadinessIQ + UXIQ + TechServicesIQ specs stubbed from what we know; will need real property lists from you per IQ.
+4. **HubSpot writer refactor**: replace fixed property list with `buildContactProperties(email, allSubmissionsForEmail)` that merges rollup + latest-per-IQ from the registry.
+5. **Bootstrap-hubspot-schema** (already exists, extend): walk registry, `POST /crm/v3/properties/contacts` for any missing. Idempotent. Manual invocation only.
+6. **Admin migration server fn**: `importLegacyUsers(csv)` → `inviteUserByEmail` loop, protected by `JOB_SECRET`.
+7. **Optional**: `importLegacySubmissions(assessment, rows[])` server fn to backfill historical `submissions` rows by email.
+8. **Docs**: `INTEGRATING.md` — the single page each IQ team follows to migrate.
 
 ---
 
-**Stopping here for review.** No application code will be written until you approve or amend this plan. Please confirm:
-- 4-table schema shape (especially anonymous submissions allowed)
-- Endpoint list + paths under `/api/public/*`
-- HubSpot property names/groups exactly as listed
-- Cross-subdomain cookie approach (parent-domain cookie via `@supabase/ssr`)
-- SDK surface + payload shape
+## 7. Per-IQ work items (for each of TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ)
+
+Coordinated per IQ, not in this project:
+
+- Replace local auth UI with SDK redirect.
+- Add paywall gate before starting the paid flow.
+- Replace direct HubSpot submit with `gemiq.results.submit(...)`, mapping local answers into the standard payload + IQ-specific `detail`.
+- Remove IQ's own Stripe integration (if any).
+- Point domain cookies to `.globaledgemarkets.com` (SDK handles this once installed).
+
+---
+
+## 8. Open items I need from you before coding
+
+- For each IQ (TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ): the list of HubSpot properties they currently write (name + type), so I can turn them into proper registry entries. If you don't have this, I can start with placeholder specs and iterate.
+- Confirm we do the historical `submissions` backfill (recommended) vs leaving old data in each IQ's DB.
+- Confirm the resume-URL contract you want (`?sid=` or a signed token) — default `?sid={CHECKOUT_SESSION_ID}` is simplest.
+
+---
+
+## Technical section
+
+### Files this project will add/change
+```text
+src/lib/hub/
+├── assessments/
+│   ├── index.ts               # registry
+│   ├── types.ts               # AssessmentSpec, PropertyDef
+│   ├── tariffiq.ts
+│   ├── readinessiq.ts
+│   ├── uxiq.ts
+│   └── techservicesiq.ts
+├── hubspot.ts                 # refactor: registry-driven upsert
+├── sdk.ts                     # expand SDK surface
+└── migration.ts               # legacy import helpers
+
+src/routes/api/public/admin/
+├── bootstrap-hubspot-schema.ts    # extend to walk registry
+├── import-legacy-users.ts         # NEW, JOB_SECRET-gated
+└── import-legacy-submissions.ts   # NEW, JOB_SECRET-gated
+
+src/routes/auth.tsx                # honor ?return=, validate origin
+
+INTEGRATING.md                     # per-IQ team runbook
+```
+
+### Schema
+No table changes required. `submissions.metadata jsonb` already stores arbitrary detail; `assessment_key` already free-form.
+
+### Backward compatibility
+The Hub's existing submit endpoint keeps accepting today's payload; `detail` is optional. Existing `check-subscription`, `create-checkout`, `create-portal-session`, webhook — all unchanged.
+
+---
+
+**Stopping for review.** Confirm the four decisions above, and share what you have on per-IQ HubSpot property lists (or say "start with placeholders and I'll fill in per IQ"), and I'll build.

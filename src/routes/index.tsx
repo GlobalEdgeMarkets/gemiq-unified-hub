@@ -230,17 +230,17 @@ function Stats() {
   const stats = [
     { icon: <TargetIcon />, v: "4", l: "Assessments" },
     { icon: <BoltIcon />, v: "28+", l: "Dimensions" },
-    { icon: <SparkleIcon />, v: "AI-Powered", l: "Reports" },
-    { icon: <ClockIcon />, v: "<10 min", l: "Per assessment" },
+    { icon: <SparkleIcon />, v: "AI", l: "Powered Reports" },
+    { icon: <ClockIcon />, v: "<10m", l: "Per Assessment" },
   ];
   return (
-    <section className="border-b border-gem-navy/10 bg-white py-14">
-      <div className="mx-auto grid max-w-5xl grid-cols-2 gap-8 px-6 sm:grid-cols-4">
+    <section className="border-b border-gem-navy/10 bg-white py-12">
+      <div className="mx-auto flex max-w-3xl flex-wrap items-start justify-center gap-x-16 gap-y-8 px-6">
         {stats.map((s) => (
-          <div key={s.l} className="flex flex-col items-center text-center">
+          <div key={s.l} className="flex min-w-[110px] flex-col items-center text-center">
             <div className="text-gem-mint">{s.icon}</div>
-            <div className="mt-2 font-display text-2xl font-bold text-gem-navy">{s.v}</div>
-            <div className="text-xs uppercase tracking-wider text-gem-navy/50">{s.l}</div>
+            <div className="mt-2 font-display text-2xl font-bold leading-none text-gem-navy">{s.v}</div>
+            <div className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-gem-navy/55">{s.l}</div>
           </div>
         ))}
       </div>

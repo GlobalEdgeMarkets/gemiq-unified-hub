@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/public/submissions/history")({
         const setCookies: string[] = [];
         const supabase = createHubSupabaseSSR(request, setCookies);
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return json({ error: "not_authenticated", submissions: [] }, { status: 401 });
+        if (!user) return json({ error: "not_authenticated", submissions: [] }, { status: 401 }, request);
         const svc = createHubServiceClient();
         const { data } = await svc
           .from("submissions")
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/api/public/submissions/history")({
           .eq("user_id", user.id)
           .order("submitted_at", { ascending: false })
           .limit(100);
-        return json({ submissions: data ?? [] });
+        return json({ submissions: data ?? [] }, undefined, request);
       },
     },
   },

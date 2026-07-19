@@ -18,10 +18,10 @@ export const Route = createFileRoute("/api/public/billing/create-checkout")({
         const setCookies: string[] = [];
         const supabase = createHubSupabaseSSR(request, setCookies);
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user?.email) return json({ error: "not_authenticated" }, { status: 401 });
+        if (!user?.email) return json({ error: "not_authenticated" }, { status: 401 }, request);
 
         const parsed = Body.safeParse(await request.json().catch(() => ({})));
-        if (!parsed.success) return json({ error: "invalid_body", issues: parsed.error.issues }, { status: 400 });
+        if (!parsed.success) return json({ error: "invalid_body", issues: parsed.error.issues }, { status: 400 }, request);
 
         const price = await priceByLookupKey(parsed.data.lookup_key);
         const s = stripe();
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/api/public/billing/create-checkout")({
             metadata: { source: "gemiq_hub", supabase_user_id: user.id, lookup_key: parsed.data.lookup_key },
           },
         });
-        return json({ url: session.url, id: session.id });
+        return json({ url: session.url, id: session.id }, undefined, request);
       },
     },
   },

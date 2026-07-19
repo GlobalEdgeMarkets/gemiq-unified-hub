@@ -12,7 +12,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
       OPTIONS: async ({ request }) => new Response(null, { status: 204, headers: corsHeaders(request) }),
       POST: async ({ request }) => {
         const parsed = SubmissionPayloadSchema.safeParse(await request.json().catch(() => ({})));
-        if (!parsed.success) return json({ error: "invalid_payload", issues: parsed.error.issues }, { status: 400 });
+        if (!parsed.success) return json({ error: "invalid_payload", issues: parsed.error.issues }, { status: 400 }, request);
         const payload = parsed.data;
 
         // Optional user context (submissions are allowed anonymous)
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
-        if (dupe) return json({ id: dupe.id, deduped: true, hubspot_contact_id: dupe.hubspot_contact_id });
+        if (dupe) return json({ id: dupe.id, deduped: true, hubspot_contact_id: dupe.hubspot_contact_id }, undefined, request);
 
         // Persist. `detail` is folded into metadata alongside anything the IQ sent.
         const mergedMetadata = { ...(payload.metadata ?? {}), detail: payload.detail ?? {} };
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           })
           .select("id,submitted_at")
           .single();
-        if (insErr || !inserted) return json({ error: "db_insert_failed", detail: insErr?.message }, { status: 500 });
+        if (insErr || !inserted) return json({ error: "db_insert_failed", detail: insErr?.message }, { status: 500 }, request);
 
         // Load full history for this email so HubSpot props reflect the whole profile.
         const { data: historyRows } = await svc
@@ -102,7 +102,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             hubspot_sync_error: skipped.length ? `skipped_props:${skipped.join(",")}` : null,
           }).eq("id", inserted.id);
           if (user?.id) await svc.from("profiles").update({ hubspot_contact_id: hsId }).eq("id", user.id);
-          return json({ id: inserted.id, hubspot_contact_id: hsId, skipped_properties: skipped });
+          return json({ id: inserted.id, hubspot_contact_id: hsId, skipped_properties: skipped }, undefined, request);
         } catch (e: any) {
           await svc.from("submissions").update({ hubspot_sync_error: e.message }).eq("id", inserted.id);
           await svc.from("retry_queue").insert({
@@ -110,7 +110,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             submission_id: inserted.id,
             payload: { email, properties: props },
           });
-          return json({ id: inserted.id, queued_for_retry: true }, { status: 202 });
+          return json({ id: inserted.id, queued_for_retry: true }, { status: 202 }, request);
         }
       },
     },

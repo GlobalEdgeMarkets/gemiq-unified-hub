@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
         const setCookies: string[] = [];
         const supabase = createHubSupabaseSSR(request, setCookies);
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return json({ active: false, authenticated: false });
+        if (!user) return json({ active: false, authenticated: false }, undefined, request);
 
         const svc = createHubServiceClient();
         const { data } = await svc
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
           active,
           subscription: data ?? null,
           user: { id: user.id, email: user.email },
-        });
+        }, undefined, request);
       },
     },
   },

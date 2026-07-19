@@ -24,7 +24,7 @@ export const Route = createFileRoute("/api/public/admin/import-legacy-users")({
         if (request.headers.get("x-job-secret") !== process.env.JOB_SECRET)
           return new Response("forbidden", { status: 403 });
         const parsed = Body.safeParse(await request.json().catch(() => ({})));
-        if (!parsed.success) return json({ error: "invalid_payload", issues: parsed.error.issues }, { status: 400 });
+        if (!parsed.success) return json({ error: "invalid_payload", issues: parsed.error.issues }, { status: 400 }, request);
         const { email, full_name, company, hubspot_contact_id, send_invite } = parsed.data;
 
         const svc = createHubServiceClient();
@@ -39,13 +39,13 @@ export const Route = createFileRoute("/api/public/admin/import-legacy-users")({
             const { data, error } = await svc.auth.admin.inviteUserByEmail(email, {
               data: { full_name, company },
             });
-            if (error) return json({ error: "invite_failed", detail: error.message }, { status: 500 });
+            if (error) return json({ error: "invite_failed", detail: error.message }, { status: 500 }, request);
             user = data.user; created = true;
           } else {
             const { data, error } = await svc.auth.admin.createUser({
               email, email_confirm: false, user_metadata: { full_name, company },
             });
-            if (error) return json({ error: "create_failed", detail: error.message }, { status: 500 });
+            if (error) return json({ error: "create_failed", detail: error.message }, { status: 500 }, request);
             user = data.user; created = true;
           }
         }
@@ -60,7 +60,7 @@ export const Route = createFileRoute("/api/public/admin/import-legacy-users")({
           }, { onConflict: "id" });
         }
 
-        return json({ user_id: user?.id, email, created, invited: created && send_invite });
+        return json({ user_id: user?.id, email, created, invited: created && send_invite }, undefined, request);
       },
     },
   },

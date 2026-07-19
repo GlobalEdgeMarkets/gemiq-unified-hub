@@ -498,19 +498,21 @@ function PricingCard({
           <PricingLine featured={featured}>Dimension-level benchmarks and executive PDFs</PricingLine>
           <PricingLine featured={featured}>Priority sync into HubSpot for your team</PricingLine>
         </ul>
-        <Link
-          to="/auth"
-          search={{ mode: "signup" }}
-          className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition ${
-            featured
-              ? "bg-gem-mint text-gem-navy hover:brightness-105"
-              : "bg-gem-navy text-white hover:bg-gem-navy/90"
-          }`}
-        >
-          Start with {plan.toLowerCase()}
-          <ArrowIcon className="h-4 w-4" />
-        </Link>
-        <p className={`mt-4 text-xs ${featured ? "text-white/50" : "text-gem-navy/50"}`}>{note}</p>
+        <div className="mt-auto pt-8">
+          <Link
+            to="/auth"
+            search={{ mode: "signup" }}
+            className={`inline-flex w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition ${
+              featured
+                ? "bg-gem-mint text-gem-navy hover:brightness-105"
+                : "bg-gem-navy text-white hover:bg-gem-navy/90"
+            }`}
+          >
+            Start with {plan.toLowerCase()}
+            <ArrowIcon className="h-4 w-4" />
+          </Link>
+          <p className={`mt-4 text-xs ${featured ? "text-white/50" : "text-gem-navy/50"}`}>{note}</p>
+        </div>
       </div>
     </div>
   );

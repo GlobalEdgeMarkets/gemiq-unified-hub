@@ -187,22 +187,24 @@ function Hero() {
         </svg>
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:py-40">
+      <div className="relative mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:py-20">
         <div className="max-w-3xl">
           <span className="inline-flex items-center rounded-full border border-gem-mint/40 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-mint">
             The GEM.IQ Assessment Platform
           </span>
 
-          <h1 className="mt-8 font-display text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="mt-6 font-display text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
             Global Complexity.<br />
             <span className="text-gem-mint">Quantified Clarity.</span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/70">
-            The GEM.IQ Hub unifies every GlobalEdgeMarkets executive assessment behind one identity, one
-            subscription, and one dashboard — so your team benchmarks tariffs, market entry, digital
-            experience, and services delivery from a single view.
+            The GEM.IQ Hub unifies every GlobalEdgeMarkets executive self-services assessment behind one
+            identity, one subscription, and one dashboard — so your team benchmarks GoToMarket Strategies,
+            supply chains, digital and AI experience, and product/service delivery from a single view. For
+            any business seeking global or regional expansion.
           </p>
+
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <Link

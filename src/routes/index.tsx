@@ -308,9 +308,9 @@ function AssessmentCard({ a }: { a: Assessment }) {
   const Wrapper: any = a.live ? "a" : "div";
   const wrapperProps = a.live ? { href: a.url, target: "_blank", rel: "noreferrer" } : {};
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-gem-navy/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl">
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-gem-navy/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl">
       <div className={`h-1 w-full ${c.bar}`} />
-      <div className="p-8">
+      <div className="flex flex-1 flex-col p-8">
         <div className="flex items-start justify-between">
           <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${c.tileBg} ${c.tileFg}`}>
             <AssessmentIcon name={a.icon} className="h-6 w-6" />
@@ -322,21 +322,24 @@ function AssessmentCard({ a }: { a: Assessment }) {
           )}
         </div>
 
-        <h3 className="mt-6 font-display text-2xl font-bold text-gem-navy">
+        <h3 className="mt-6 font-display text-2xl font-bold leading-tight text-gem-navy">
           {a.name}
           {a.suffix}
         </h3>
-        <p className={`mt-1 text-sm font-medium ${c.eyebrow}`}>{a.eyebrow}</p>
+        <p className={`mt-1.5 text-sm font-medium ${c.eyebrow}`}>{a.eyebrow}</p>
         <p className="mt-4 text-[15px] leading-relaxed text-gem-navy/65">{a.body}</p>
 
         <Wrapper
           {...wrapperProps}
-          className={`mt-6 inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold transition ${
+          className={`mt-auto inline-flex w-fit items-center gap-2 rounded-md px-5 py-2.5 pt-2.5 text-sm font-semibold transition ${
             a.live ? c.button : "cursor-not-allowed bg-gem-navy/10 text-gem-navy/40"
           }`}
+          style={{ marginTop: "auto" }}
         >
-          {a.live ? "Start Assessment" : "In development"}
-          {a.live && <ArrowIcon className="h-4 w-4" />}
+          <span className="flex items-center gap-2 pt-6">
+            {a.live ? "Start Assessment" : "In development"}
+            {a.live && <ArrowIcon className="h-4 w-4" />}
+          </span>
         </Wrapper>
       </div>
     </div>

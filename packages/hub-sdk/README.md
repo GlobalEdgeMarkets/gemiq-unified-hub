@@ -3,20 +3,34 @@
 The client every GEM.IQ assessment uses to talk to the Hub
 (https://gemiq.globaledgemarkets.com).
 
-## Install
+## Install (auto-pull, recommended)
 
-There is no npm publish yet. **Copy `sdk.ts` into your IQ repo** as
-`src/lib/hub.ts`, then create one client:
+No npm publish. Each IQ project pulls this file from GitHub at build time
+so it always ships against the current Hub contract.
 
-```ts
-import { createHubClient } from "@/lib/hub";
+1. Copy [`pull-hub-sdk.mjs`](./pull-hub-sdk.mjs) into the IQ repo at
+   `scripts/pull-hub-sdk.mjs`.
+2. Add to the IQ's `package.json`:
+   ```json
+   { "scripts": { "prebuild": "node scripts/pull-hub-sdk.mjs" } }
+   ```
+3. Run once: `node scripts/pull-hub-sdk.mjs`. It writes
+   `src/lib/hub.ts` (auto-generated — do not edit).
+4. Use it:
+   ```ts
+   import { createHubClient } from "@/lib/hub";
+   export const hub = createHubClient({
+     hubOrigin: "https://gemiq.globaledgemarkets.com",
+   });
+   ```
 
-export const hub = createHubClient({
-  hubOrigin: "https://gemiq.globaledgemarkets.com",
-});
-```
+Zero runtime dependencies — just `fetch` and the DOM.
 
-The file has zero runtime dependencies — just `fetch` and the DOM.
+## Editing the SDK
+
+Only edit `src/lib/hub/sdk.ts` in the **Hub** repo. The Hub's own build
+copies it to `packages/hub-sdk/sdk.ts`, and every IQ picks it up on its
+next publish via the puller.
 
 ## What it covers
 

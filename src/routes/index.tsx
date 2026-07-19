@@ -236,7 +236,7 @@ function Stats() {
     { icon: <ClockIcon />, v: "<10m", l: "Per Assessment" },
   ];
   return (
-    <section className="border-b border-gem-navy/10 bg-white py-12">
+    <section className="border-b border-gem-navy/10 bg-white py-8">
       <div className="mx-auto flex max-w-3xl flex-wrap items-start justify-center gap-x-16 gap-y-8 px-6">
         {stats.map((s) => (
           <div key={s.l} className="flex min-w-[110px] flex-col items-center text-center">
@@ -252,7 +252,7 @@ function Stats() {
 
 function AssessmentGrid() {
   return (
-    <section id="assessments" className="bg-white py-24 sm:py-28">
+    <section id="assessments" className="bg-white py-14 sm:py-16">
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center">
           <h2 className="font-display text-4xl font-bold tracking-tight text-gem-navy sm:text-5xl">
@@ -264,7 +264,7 @@ function AssessmentGrid() {
           </p>
         </div>
 
-        <div className="mt-14 grid items-stretch gap-6 md:grid-cols-2">
+        <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2">
           {ASSESSMENTS.map((a) => (
             <AssessmentCard key={a.key} a={a} />
           ))}
@@ -349,7 +349,7 @@ function AssessmentCard({ a }: { a: Assessment }) {
 
 function HowItWorks() {
   return (
-    <section className="bg-gem-cream py-24 sm:py-28">
+    <section className="bg-gem-cream py-14 sm:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center">
           <span className="inline-flex items-center rounded-full bg-gem-mint/15 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-mint">
@@ -363,7 +363,7 @@ function HowItWorks() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-10 md:grid-cols-3">
+        <div className="mt-10 grid gap-10 md:grid-cols-3">
           {STEPS.map((s) => (
             <div key={s.n} className="relative text-center">
               <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-md ring-1 ring-gem-navy/5">
@@ -384,7 +384,7 @@ function HowItWorks() {
 
 function WhyGemIQ() {
   return (
-    <section className="bg-white py-24 sm:py-28">
+    <section className="bg-white py-14 sm:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center">
           <span className="inline-flex items-center rounded-full bg-gem-purple/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-purple">
@@ -399,7 +399,7 @@ function WhyGemIQ() {
           </p>
         </div>
 
-        <div className="mt-14 grid items-stretch gap-6 md:grid-cols-3">
+        <div className="mt-10 grid items-stretch gap-6 md:grid-cols-3">
           {WHY.map((w) => (
             <div
               key={w.title}
@@ -420,7 +420,7 @@ function WhyGemIQ() {
 
 function Pricing() {
   return (
-    <section id="pricing" className="bg-gem-cream py-24 sm:py-28">
+    <section id="pricing" className="bg-gem-cream py-14 sm:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center">
           <span className="inline-flex items-center rounded-full bg-gem-navy/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-navy/70">
@@ -435,7 +435,7 @@ function Pricing() {
           </p>
         </div>
 
-        <div className="mx-auto mt-14 grid max-w-4xl items-stretch gap-6 md:grid-cols-2">
+        <div className="mx-auto mt-10 grid max-w-4xl items-stretch gap-6 md:grid-cols-2">
           <PricingCard
             plan="Monthly"
             price="$99"
@@ -539,7 +539,7 @@ function PricingLine({ children, featured }: { children: React.ReactNode; featur
 
 function Footer() {
   return (
-    <footer className="bg-gem-navy py-14 text-white/70">
+    <footer className="bg-gem-navy py-10 text-white/70">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex flex-col items-center gap-4 border-b border-white/10 pb-10 text-center">
           <img src={gemLogoDark.url} alt="GEM" className="h-9 w-auto brightness-0 invert" />

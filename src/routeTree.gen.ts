@@ -10,16 +10,31 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicSubmissionsSubmitRouteImport } from './routes/api/public/submissions/submit'
+import { Route as ApiPublicJobsRetryHubspotRouteImport } from './routes/api/public/jobs/retry-hubspot'
 import { Route as ApiPublicBillingPaymentsWebhookRouteImport } from './routes/api/public/billing/payments-webhook'
 import { Route as ApiPublicBillingCreatePortalSessionRouteImport } from './routes/api/public/billing/create-portal-session'
 import { Route as ApiPublicBillingCreateCheckoutRouteImport } from './routes/api/public/billing/create-checkout'
 import { Route as ApiPublicBillingCheckSubscriptionRouteImport } from './routes/api/public/billing/check-subscription'
+import { Route as ApiPublicAdminBootstrapHubspotSchemaRouteImport } from './routes/api/public/admin/bootstrap-hubspot-schema'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSubmissionsSubmitRoute =
+  ApiPublicSubmissionsSubmitRouteImport.update({
+    id: '/api/public/submissions/submit',
+    path: '/api/public/submissions/submit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicJobsRetryHubspotRoute =
+  ApiPublicJobsRetryHubspotRouteImport.update({
+    id: '/api/public/jobs/retry-hubspot',
+    path: '/api/public/jobs/retry-hubspot',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicBillingPaymentsWebhookRoute =
   ApiPublicBillingPaymentsWebhookRouteImport.update({
     id: '/api/public/billing/payments-webhook',
@@ -44,59 +59,86 @@ const ApiPublicBillingCheckSubscriptionRoute =
     path: '/api/public/billing/check-subscription',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicAdminBootstrapHubspotSchemaRoute =
+  ApiPublicAdminBootstrapHubspotSchemaRouteImport.update({
+    id: '/api/public/admin/bootstrap-hubspot-schema',
+    path: '/api/public/admin/bootstrap-hubspot-schema',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
+  '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
+  '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
+  '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
+  '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
+  '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
+  '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/billing/check-subscription'
     | '/api/public/billing/create-checkout'
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
+    | '/api/public/jobs/retry-hubspot'
+    | '/api/public/submissions/submit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/billing/check-subscription'
     | '/api/public/billing/create-checkout'
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
+    | '/api/public/jobs/retry-hubspot'
+    | '/api/public/submissions/submit'
   id:
     | '__root__'
     | '/'
+    | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/billing/check-subscription'
     | '/api/public/billing/create-checkout'
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
+    | '/api/public/jobs/retry-hubspot'
+    | '/api/public/submissions/submit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiPublicAdminBootstrapHubspotSchemaRoute: typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   ApiPublicBillingCheckSubscriptionRoute: typeof ApiPublicBillingCheckSubscriptionRoute
   ApiPublicBillingCreateCheckoutRoute: typeof ApiPublicBillingCreateCheckoutRoute
   ApiPublicBillingCreatePortalSessionRoute: typeof ApiPublicBillingCreatePortalSessionRoute
   ApiPublicBillingPaymentsWebhookRoute: typeof ApiPublicBillingPaymentsWebhookRoute
+  ApiPublicJobsRetryHubspotRoute: typeof ApiPublicJobsRetryHubspotRoute
+  ApiPublicSubmissionsSubmitRoute: typeof ApiPublicSubmissionsSubmitRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -106,6 +148,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/submissions/submit': {
+      id: '/api/public/submissions/submit'
+      path: '/api/public/submissions/submit'
+      fullPath: '/api/public/submissions/submit'
+      preLoaderRoute: typeof ApiPublicSubmissionsSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/retry-hubspot': {
+      id: '/api/public/jobs/retry-hubspot'
+      path: '/api/public/jobs/retry-hubspot'
+      fullPath: '/api/public/jobs/retry-hubspot'
+      preLoaderRoute: typeof ApiPublicJobsRetryHubspotRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/billing/payments-webhook': {
@@ -136,17 +192,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBillingCheckSubscriptionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/admin/bootstrap-hubspot-schema': {
+      id: '/api/public/admin/bootstrap-hubspot-schema'
+      path: '/api/public/admin/bootstrap-hubspot-schema'
+      fullPath: '/api/public/admin/bootstrap-hubspot-schema'
+      preLoaderRoute: typeof ApiPublicAdminBootstrapHubspotSchemaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiPublicAdminBootstrapHubspotSchemaRoute:
+    ApiPublicAdminBootstrapHubspotSchemaRoute,
   ApiPublicBillingCheckSubscriptionRoute:
     ApiPublicBillingCheckSubscriptionRoute,
   ApiPublicBillingCreateCheckoutRoute: ApiPublicBillingCreateCheckoutRoute,
   ApiPublicBillingCreatePortalSessionRoute:
     ApiPublicBillingCreatePortalSessionRoute,
   ApiPublicBillingPaymentsWebhookRoute: ApiPublicBillingPaymentsWebhookRoute,
+  ApiPublicJobsRetryHubspotRoute: ApiPublicJobsRetryHubspotRoute,
+  ApiPublicSubmissionsSubmitRoute: ApiPublicSubmissionsSubmitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

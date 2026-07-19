@@ -4,17 +4,39 @@ The Hub is the single source of identity, billing, and HubSpot writes. Every
 IQ subdomain (tariffiq / readinessiq / uxiq / techservicesiq / future ones)
 delegates all three to the Hub via `@gemiq/hub-sdk`.
 
-## 1. Install the SDK
+## 1. Install the SDK (auto-pull from Hub)
 
-Copy `src/lib/hub/sdk.ts` into the IQ project (or install the shared package
-once published) and create a client once:
+The Hub repo owns the SDK. IQs pull it at build time so every IQ always
+ships against the current contract — edit once in the Hub, all IQs pick it
+up on their next build.
 
-```ts
-import { createHubClient } from "@gemiq/hub-sdk";
-export const hub = createHubClient({
-  hubOrigin: "https://gemiq.globaledgemarkets.com",
-});
-```
+In the IQ project:
+
+1. Copy [`packages/hub-sdk/pull-hub-sdk.mjs`](./packages/hub-sdk/pull-hub-sdk.mjs)
+   into the IQ repo at `scripts/pull-hub-sdk.mjs`.
+2. Add to the IQ's `package.json`:
+   ```json
+   {
+     "scripts": {
+       "pull:hub-sdk": "node scripts/pull-hub-sdk.mjs",
+       "prebuild":     "node scripts/pull-hub-sdk.mjs"
+     }
+   }
+   ```
+3. Run once locally / in Lovable: `node scripts/pull-hub-sdk.mjs`. This
+   writes `src/lib/hub.ts` (auto-generated, do not edit).
+4. Create the client:
+   ```ts
+   import { createHubClient } from "@/lib/hub";
+   export const hub = createHubClient({
+     hubOrigin: "https://gemiq.globaledgemarkets.com",
+   });
+   ```
+
+**Rule:** never edit `src/lib/hub.ts` inside an IQ project — it's overwritten
+on every build. If an IQ needs an SDK change, propose it against this Hub
+repo (PR or Lovable prompt). Once merged to `main`, every IQ picks it up on
+its next publish.
 
 ## 2. Gate the assessment on session + subscription
 
@@ -96,7 +118,8 @@ creation, HubSpot property mapping on every submit, and rollup counts.
 
 Direct links (browse on GitHub):
 
-- **SDK to copy into your IQ** — [`packages/hub-sdk/sdk.ts`](./packages/hub-sdk/sdk.ts)
+- **SDK to consume from your IQ** — [`packages/hub-sdk/sdk.ts`](./packages/hub-sdk/sdk.ts) (auto-generated; source of truth: `src/lib/hub/sdk.ts`)
+- **Puller script for IQs** — [`packages/hub-sdk/pull-hub-sdk.mjs`](./packages/hub-sdk/pull-hub-sdk.mjs)
 - **Registry of all IQs** — [`src/lib/hub/assessments/index.ts`](./src/lib/hub/assessments/index.ts)
 - **Per-IQ spec examples** — [`tariffiq.ts`](./src/lib/hub/assessments/tariffiq.ts), [`readinessiq.ts`](./src/lib/hub/assessments/readinessiq.ts), [`uxiq.ts`](./src/lib/hub/assessments/uxiq.ts), [`techservicesiq.ts`](./src/lib/hub/assessments/techservicesiq.ts)
 - **Public HTTP endpoints IQs call** — [`src/routes/api/public/`](./src/routes/api/public/)

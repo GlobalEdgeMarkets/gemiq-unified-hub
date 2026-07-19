@@ -91,3 +91,18 @@ creation, HubSpot property mapping on every submit, and rollup counts.
    `POST /api/public/admin/import-legacy-submissions` with `x-job-secret`.
    The endpoint rebuilds each contact's `gem_*` fields from the full history.
    Available but NOT invoked automatically.
+
+## 7. Where to find things in this repo
+
+Direct links (browse on GitHub):
+
+- **SDK to copy into your IQ** — [`packages/hub-sdk/sdk.ts`](./packages/hub-sdk/sdk.ts)
+- **Registry of all IQs** — [`src/lib/hub/assessments/index.ts`](./src/lib/hub/assessments/index.ts)
+- **Per-IQ spec examples** — [`tariffiq.ts`](./src/lib/hub/assessments/tariffiq.ts), [`readinessiq.ts`](./src/lib/hub/assessments/readinessiq.ts), [`uxiq.ts`](./src/lib/hub/assessments/uxiq.ts), [`techservicesiq.ts`](./src/lib/hub/assessments/techservicesiq.ts)
+- **Public HTTP endpoints IQs call** — [`src/routes/api/public/`](./src/routes/api/public/)
+  - `billing/check-subscription.ts`, `billing/create-checkout.ts`, `billing/create-portal-session.ts`
+  - `submissions/submit.ts`, `submissions/history.ts`
+  - `auth/session.ts`
+- **Admin (idempotent, `x-job-secret` gated)** — [`src/routes/api/public/admin/`](./src/routes/api/public/admin/)
+  - `bootstrap-hubspot-schema.ts`, `import-legacy-users.ts`, `import-legacy-submissions.ts`
+- **Repo overview** — [`README.md`](./README.md)

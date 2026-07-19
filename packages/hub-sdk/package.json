@@ -1,0 +1,12 @@
+{
+  "name": "@gemiq/hub-sdk",
+  "version": "0.1.0",
+  "description": "Client SDK for GEM.IQ Hub — identity, billing, and submission for every GEM.IQ assessment.",
+  "private": true,
+  "type": "module",
+  "main": "./sdk.ts",
+  "types": "./sdk.ts",
+  "files": ["sdk.ts", "README.md"],
+  "keywords": ["gemiq", "hub", "sdk"],
+  "sideEffects": false
+}

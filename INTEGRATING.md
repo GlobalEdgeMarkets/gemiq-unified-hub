@@ -4,17 +4,39 @@ The Hub is the single source of identity, billing, and HubSpot writes. Every
 IQ subdomain (tariffiq / readinessiq / uxiq / techservicesiq / future ones)
 delegates all three to the Hub via `@gemiq/hub-sdk`.
 
-## 1. Install the SDK
+## 1. Install the SDK (auto-pull from Hub)
 
-Copy `src/lib/hub/sdk.ts` into the IQ project (or install the shared package
-once published) and create a client once:
+The Hub repo owns the SDK. IQs pull it at build time so every IQ always
+ships against the current contract — edit once in the Hub, all IQs pick it
+up on their next build.
 
-```ts
-import { createHubClient } from "@gemiq/hub-sdk";
-export const hub = createHubClient({
-  hubOrigin: "https://gemiq.globaledgemarkets.com",
-});
-```
+In the IQ project:
+
+1. Copy [`packages/hub-sdk/pull-hub-sdk.mjs`](./packages/hub-sdk/pull-hub-sdk.mjs)
+   into the IQ repo at `scripts/pull-hub-sdk.mjs`.
+2. Add to the IQ's `package.json`:
+   ```json
+   {
+     "scripts": {
+       "pull:hub-sdk": "node scripts/pull-hub-sdk.mjs",
+       "prebuild":     "node scripts/pull-hub-sdk.mjs"
+     }
+   }
+   ```
+3. Run once locally / in Lovable: `node scripts/pull-hub-sdk.mjs`. This
+   writes `src/lib/hub.ts` (auto-generated, do not edit).
+4. Create the client:
+   ```ts
+   import { createHubClient } from "@/lib/hub";
+   export const hub = createHubClient({
+     hubOrigin: "https://gemiq.globaledgemarkets.com",
+   });
+   ```
+
+**Rule:** never edit `src/lib/hub.ts` inside an IQ project — it's overwritten
+on every build. If an IQ needs an SDK change, propose it against this Hub
+repo (PR or Lovable prompt). Once merged to `main`, every IQ picks it up on
+its next publish.
 
 ## 2. Gate the assessment on session + subscription
 

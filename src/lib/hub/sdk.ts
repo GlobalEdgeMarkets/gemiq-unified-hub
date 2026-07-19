@@ -22,7 +22,7 @@
  *   // ...run assessment...
  *   await hub.results.submit({
  *     email, assessment_key: "tariffiq", score, tier, dimensions,
- *     detail: { /* IQ-specific rich payload — mapped to HubSpot by the Hub */ },
+ *     detail: { /* IQ-specific rich payload — mapped to HubSpot by the Hub *\/ },
  *   });
  */
 

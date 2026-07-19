@@ -60,12 +60,14 @@ function AuthPage() {
       });
       const body = await res.json();
       if (!res.ok) { setErr(body.error ?? "Authentication failed"); return; }
-      if (search.redirect) window.location.href = search.redirect;
-      else window.location.href = "/";
+      const safeReturn = isAllowedReturnUrl(search.redirect);
+      window.location.href = safeReturn ?? "/";
     } catch (e: any) {
       setErr(e.message);
     } finally { setBusy(false); }
   }
+
+  const safeReturnDisplay = isAllowedReturnUrl(search.redirect);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">

@@ -34,11 +34,15 @@ export const Route = createFileRoute("/api/public/billing/create-checkout")({
         const session = await s.checkout.sessions.create({
           mode: "subscription",
           customer: customerId,
+          client_reference_id: user.id,
           line_items: [{ price: price.id, quantity: 1 }],
           success_url: parsed.data.success_url,
           cancel_url: parsed.data.cancel_url,
           allow_promotion_codes: true,
-          metadata: { supabase_user_id: user.id, lookup_key: parsed.data.lookup_key },
+          metadata: { source: "gemiq_hub", supabase_user_id: user.id, lookup_key: parsed.data.lookup_key },
+          subscription_data: {
+            metadata: { source: "gemiq_hub", supabase_user_id: user.id, lookup_key: parsed.data.lookup_key },
+          },
         });
         return json({ url: session.url, id: session.id });
       },

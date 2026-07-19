@@ -30,18 +30,40 @@ const PROPS: PropDef[] = [
   { name: "gem_subscription_plan", label: "GEM Subscription Plan", groupName: GROUP, type: "string", fieldType: "text" },
   { name: "gem_subscription_renews_at", label: "GEM Subscription Renews At", groupName: GROUP, type: "date", fieldType: "date" },
   // Assessments taken (multi-checkbox)
+  // Assessments taken (multi-checkbox) — auto-derived from registry
   { name: "gem_assessments_taken", label: "GEM Assessments Taken", groupName: GROUP, type: "enumeration", fieldType: "checkbox",
-    options: [
-      { label: "TariffIQ", value: "tariffiq" },
-      { label: "ReadinessIQ", value: "readinessiq" },
-      { label: "UXIQ", value: "uxiq" },
-      { label: "TechServicesIQ", value: "techservicesiq" },
-    ] },
+    options: REGISTRY.map(s => ({ label: s.displayName, value: s.key })) },
   { name: "gem_assessments_count", label: "GEM Assessments Count", groupName: GROUP, type: "number", fieldType: "number" },
   { name: "gem_high_score", label: "GEM Highest Score", groupName: GROUP, type: "number", fieldType: "number" },
   { name: "gem_low_score", label: "GEM Lowest Score", groupName: GROUP, type: "number", fieldType: "number" },
   { name: "gem_high_score_tool", label: "GEM Highest Score Tool", groupName: GROUP, type: "string", fieldType: "text" },
+  { name: "gem_customer", label: "GEM Customer", groupName: GROUP, type: "bool", fieldType: "booleancheckbox",
+    options: [{ label: "Yes", value: "true" }, { label: "No", value: "false" }] },
+  { name: "gem_last_assessment", label: "GEM Last Assessment", groupName: GROUP, type: "string", fieldType: "text" },
+  { name: "gem_last_score", label: "GEM Last Score", groupName: GROUP, type: "number", fieldType: "number" },
+  { name: "gem_last_tier", label: "GEM Last Tier", groupName: GROUP, type: "string", fieldType: "text" },
+  { name: "gem_last_completed_at", label: "GEM Last Completed At", groupName: GROUP, type: "date", fieldType: "date" },
 ];
+
+/** Map registry PropertyDef → HubSpot property create payload. */
+function toHsPropDef(p: PropertyDef): PropDef {
+  const map: Record<PropertyType, { type: string; fieldType: string }> = {
+    string:     { type: "string",      fieldType: "text" },
+    number:     { type: "number",      fieldType: "number" },
+    date:       { type: "date",        fieldType: "date" },
+    datetime:   { type: "datetime",    fieldType: "date" },
+    bool:       { type: "bool",        fieldType: "booleancheckbox" },
+    enum:       { type: "enumeration", fieldType: "select" },
+    multi_enum: { type: "enumeration", fieldType: "checkbox" },
+  };
+  const t = map[p.type];
+  return {
+    name: p.name, label: p.label, groupName: GROUP,
+    type: t.type, fieldType: t.fieldType,
+    description: p.description,
+    options: p.options,
+  };
+}
 
 async function ensureGroup() {
   const res = await fetch(`${GATEWAY}/crm/v3/properties/contacts/groups`, {

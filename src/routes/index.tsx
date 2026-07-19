@@ -94,7 +94,7 @@ function Index() {
       <AssessmentGrid />
       <HowItWorks />
       <Pricing />
-      <TrustBar />
+      
       <Footer />
     </div>
   );
@@ -488,25 +488,6 @@ function PricingLine({ children, featured }: { children: React.ReactNode; featur
   );
 }
 
-function TrustBar() {
-  const logos = ["MAERSK", "FLEXPORT", "CH ROBINSON", "WCO", "KPMG"];
-  return (
-    <section className="border-y border-gem-navy/10 bg-gem-cream py-14">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center text-xs font-semibold tracking-[0.25em] text-gem-navy/50 uppercase">
-          Industry-leading organizations shaping global markets
-        </div>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-60">
-          {logos.map((l) => (
-            <div key={l} className="font-display text-xl tracking-widest text-gem-navy">
-              {l}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Footer() {
   return (

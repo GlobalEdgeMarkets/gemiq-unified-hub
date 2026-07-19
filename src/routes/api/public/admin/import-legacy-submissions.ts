@@ -21,12 +21,12 @@ const Body = z.object({
 export const Route = createFileRoute("/api/public/admin/import-legacy-submissions")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders() }),
+      OPTIONS: async ({ request }) => new Response(null, { status: 204, headers: corsHeaders(request) }),
       POST: async ({ request }) => {
         if (request.headers.get("x-job-secret") !== process.env.JOB_SECRET)
           return new Response("forbidden", { status: 403 });
         const parsed = Body.safeParse(await request.json().catch(() => ({})));
-        if (!parsed.success) return json({ error: "invalid_payload", issues: parsed.error.issues }, { status: 400 });
+        if (!parsed.success) return json({ error: "invalid_payload", issues: parsed.error.issues }, { status: 400 }, request);
 
         const svc = createHubServiceClient();
         const results: Array<{ email: string; assessment_key: string; status: string; detail?: string }> = [];
@@ -58,7 +58,7 @@ export const Route = createFileRoute("/api/public/admin/import-legacy-submission
           results.push({ email, assessment_key: s.assessment_key, status: "inserted" });
         }
 
-        if (parsed.data.skip_hubspot) return json({ processed: results.length, hubspot: "skipped", results });
+        if (parsed.data.skip_hubspot) return json({ processed: results.length, hubspot: "skipped", results }, undefined, request);
 
         // Rebuild HubSpot contact once per touched email using full history.
         const hs: Array<{ email: string; status: string; detail?: string; skipped?: string[] }> = [];
@@ -90,7 +90,7 @@ export const Route = createFileRoute("/api/public/admin/import-legacy-submission
             hs.push({ email, status: "error", detail: e.message });
           }
         }
-        return json({ processed: results.length, results, hubspot: hs });
+        return json({ processed: results.length, results, hubspot: hs }, undefined, request);
       },
     },
   },

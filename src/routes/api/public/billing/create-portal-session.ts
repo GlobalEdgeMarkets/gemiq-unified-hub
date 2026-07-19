@@ -9,25 +9,25 @@ const Body = z.object({ return_url: z.string().url() });
 export const Route = createFileRoute("/api/public/billing/create-portal-session")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders() }),
+      OPTIONS: async ({ request }) => new Response(null, { status: 204, headers: corsHeaders(request) }),
       POST: async ({ request }) => {
         const setCookies: string[] = [];
         const supabase = createHubSupabaseSSR(request, setCookies);
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user?.email) return json({ error: "not_authenticated" }, { status: 401 });
+        if (!user?.email) return json({ error: "not_authenticated" }, { status: 401 }, request);
 
         const parsed = Body.safeParse(await request.json().catch(() => ({})));
-        if (!parsed.success) return json({ error: "invalid_body" }, { status: 400 });
+        if (!parsed.success) return json({ error: "invalid_body" }, { status: 400 }, request);
 
         const s = stripe();
         const customers = await s.customers.list({ email: user.email, limit: 1 });
-        if (!customers.data[0]) return json({ error: "no_customer" }, { status: 404 });
+        if (!customers.data[0]) return json({ error: "no_customer" }, { status: 404 }, request);
 
         const portal = await s.billingPortal.sessions.create({
           customer: customers.data[0].id,
           return_url: parsed.data.return_url,
         });
-        return json({ url: portal.url });
+        return json({ url: portal.url }, undefined, request);
       },
     },
   },

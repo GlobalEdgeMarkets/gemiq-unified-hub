@@ -5,12 +5,12 @@ import { json, corsHeaders } from "@/lib/hub/http";
 export const Route = createFileRoute("/api/public/billing/check-subscription")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders() }),
+      OPTIONS: async ({ request }) => new Response(null, { status: 204, headers: corsHeaders(request) }),
       GET: async ({ request }) => {
         const setCookies: string[] = [];
         const supabase = createHubSupabaseSSR(request, setCookies);
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return json({ active: false, authenticated: false });
+        if (!user) return json({ active: false, authenticated: false }, undefined, request);
 
         const svc = createHubServiceClient();
         const { data } = await svc
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
           active,
           subscription: data ?? null,
           user: { id: user.id, email: user.email },
-        });
+        }, undefined, request);
       },
     },
   },

@@ -97,7 +97,7 @@ export const Route = createFileRoute("/api/public/admin/bootstrap-hubspot-schema
         for (const p of PROPS) results.push(await ensureProperty(p));
         // Also create every per-IQ property declared in the registry.
         for (const p of collectAllPropertyDefs()) results.push(await ensureProperty(toHsPropDef(p)));
-        return json({ group: GROUP, results });
+        return json({ group: GROUP, results }, undefined, request);
       },
     },
   },

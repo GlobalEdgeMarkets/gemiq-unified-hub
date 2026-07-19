@@ -1,0 +1,21 @@
+name: check-hub-sdk-sync
+on:
+  push:
+    paths:
+      - "src/lib/hub/sdk.ts"
+      - "packages/hub-sdk/sdk.ts"
+      - "scripts/sync-hub-sdk.mjs"
+  pull_request:
+    paths:
+      - "src/lib/hub/sdk.ts"
+      - "packages/hub-sdk/sdk.ts"
+      - "scripts/sync-hub-sdk.mjs"
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node scripts/sync-hub-sdk.mjs --check

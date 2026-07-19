@@ -472,14 +472,14 @@ function PricingCard({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-2xl ${
+      className={`flex h-full flex-col overflow-hidden rounded-2xl ${
         featured
           ? "bg-gem-navy text-white shadow-xl"
           : "border border-gem-navy/10 bg-white text-gem-navy shadow-sm"
       }`}
     >
       {featured && <div className="h-1 w-full bg-gem-mint" />}
-      <div className="p-8">
+      <div className="flex flex-1 flex-col p-8">
         <div className="flex items-center justify-between">
           <div className={`font-display text-xl font-bold ${featured ? "text-white" : "text-gem-navy"}`}>{plan}</div>
           {featured && (

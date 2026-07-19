@@ -100,8 +100,8 @@ function AuthPage() {
           className="w-full text-center text-xs text-muted-foreground hover:text-foreground">
           {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
         </button>
-        {search.redirect && (
-          <p className="text-center text-[11px] text-muted-foreground">You'll return to {new URL(search.redirect).host}</p>
+        {safeReturnDisplay && (
+          <p className="text-center text-[11px] text-muted-foreground">You'll return to {new URL(safeReturnDisplay).host}</p>
         )}
       </form>
     </div>

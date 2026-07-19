@@ -397,11 +397,11 @@ function WhyGemIQ() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
+        <div className="mt-14 grid items-stretch gap-6 md:grid-cols-3">
           {WHY.map((w) => (
             <div
               key={w.title}
-              className="rounded-2xl border border-gem-navy/10 bg-gem-cream/50 p-8 transition hover:border-gem-mint/40 hover:bg-white hover:shadow-md"
+              className="flex h-full flex-col rounded-2xl border border-gem-navy/10 bg-gem-cream/50 p-8 transition hover:border-gem-mint/40 hover:bg-white hover:shadow-md"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gem-mint/15 text-gem-mint">
                 <WhyIcon name={w.icon} className="h-6 w-6" />

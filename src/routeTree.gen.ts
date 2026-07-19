@@ -10,33 +10,93 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicBillingPaymentsWebhookRouteImport } from './routes/api/public/billing/payments-webhook'
+import { Route as ApiPublicBillingCreatePortalSessionRouteImport } from './routes/api/public/billing/create-portal-session'
+import { Route as ApiPublicBillingCreateCheckoutRouteImport } from './routes/api/public/billing/create-checkout'
+import { Route as ApiPublicBillingCheckSubscriptionRouteImport } from './routes/api/public/billing/check-subscription'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBillingPaymentsWebhookRoute =
+  ApiPublicBillingPaymentsWebhookRouteImport.update({
+    id: '/api/public/billing/payments-webhook',
+    path: '/api/public/billing/payments-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicBillingCreatePortalSessionRoute =
+  ApiPublicBillingCreatePortalSessionRouteImport.update({
+    id: '/api/public/billing/create-portal-session',
+    path: '/api/public/billing/create-portal-session',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicBillingCreateCheckoutRoute =
+  ApiPublicBillingCreateCheckoutRouteImport.update({
+    id: '/api/public/billing/create-checkout',
+    path: '/api/public/billing/create-checkout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicBillingCheckSubscriptionRoute =
+  ApiPublicBillingCheckSubscriptionRouteImport.update({
+    id: '/api/public/billing/check-subscription',
+    path: '/api/public/billing/check-subscription',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
+  '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
+  '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
+  '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
+  '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
+  '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
+  '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
+  '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
+  '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
+  '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/api/public/billing/check-subscription'
+    | '/api/public/billing/create-checkout'
+    | '/api/public/billing/create-portal-session'
+    | '/api/public/billing/payments-webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/api/public/billing/check-subscription'
+    | '/api/public/billing/create-checkout'
+    | '/api/public/billing/create-portal-session'
+    | '/api/public/billing/payments-webhook'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/public/billing/check-subscription'
+    | '/api/public/billing/create-checkout'
+    | '/api/public/billing/create-portal-session'
+    | '/api/public/billing/payments-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiPublicBillingCheckSubscriptionRoute: typeof ApiPublicBillingCheckSubscriptionRoute
+  ApiPublicBillingCreateCheckoutRoute: typeof ApiPublicBillingCreateCheckoutRoute
+  ApiPublicBillingCreatePortalSessionRoute: typeof ApiPublicBillingCreatePortalSessionRoute
+  ApiPublicBillingPaymentsWebhookRoute: typeof ApiPublicBillingPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +108,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/billing/payments-webhook': {
+      id: '/api/public/billing/payments-webhook'
+      path: '/api/public/billing/payments-webhook'
+      fullPath: '/api/public/billing/payments-webhook'
+      preLoaderRoute: typeof ApiPublicBillingPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/billing/create-portal-session': {
+      id: '/api/public/billing/create-portal-session'
+      path: '/api/public/billing/create-portal-session'
+      fullPath: '/api/public/billing/create-portal-session'
+      preLoaderRoute: typeof ApiPublicBillingCreatePortalSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/billing/create-checkout': {
+      id: '/api/public/billing/create-checkout'
+      path: '/api/public/billing/create-checkout'
+      fullPath: '/api/public/billing/create-checkout'
+      preLoaderRoute: typeof ApiPublicBillingCreateCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/billing/check-subscription': {
+      id: '/api/public/billing/check-subscription'
+      path: '/api/public/billing/check-subscription'
+      fullPath: '/api/public/billing/check-subscription'
+      preLoaderRoute: typeof ApiPublicBillingCheckSubscriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiPublicBillingCheckSubscriptionRoute:
+    ApiPublicBillingCheckSubscriptionRoute,
+  ApiPublicBillingCreateCheckoutRoute: ApiPublicBillingCreateCheckoutRoute,
+  ApiPublicBillingCreatePortalSessionRoute:
+    ApiPublicBillingCreatePortalSessionRoute,
+  ApiPublicBillingPaymentsWebhookRoute: ApiPublicBillingPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

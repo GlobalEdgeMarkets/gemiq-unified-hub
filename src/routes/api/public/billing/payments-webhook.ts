@@ -15,7 +15,7 @@ async function syncSubscription(sub: Stripe.Subscription) {
     stripe_price_id: price?.id ?? null,
     lookup_key: price?.lookup_key ?? null,
     status: sub.status,
-    current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+    current_period_end: new Date(((sub as any).current_period_end ?? 0) * 1000).toISOString(),
     cancel_at_period_end: sub.cancel_at_period_end,
   }, { onConflict: "stripe_subscription_id" });
 }
@@ -69,9 +69,9 @@ export const Route = createFileRoute("/api/public/billing/payments-webhook")({
               break;
             case "invoice.payment_succeeded":
             case "invoice.payment_failed": {
-              const inv = event.data.object as Stripe.Invoice;
+              const inv = event.data.object as Stripe.Invoice & { subscription?: string | null };
               if (inv.subscription) {
-                const sub = await stripe().subscriptions.retrieve(inv.subscription as string);
+                const sub = await stripe().subscriptions.retrieve(inv.subscription);
                 await syncSubscription(sub);
               }
               break;

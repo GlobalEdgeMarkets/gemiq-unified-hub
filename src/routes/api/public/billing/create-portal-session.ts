@@ -9,7 +9,7 @@ const Body = z.object({ return_url: z.string().url() });
 export const Route = createFileRoute("/api/public/billing/create-portal-session")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders() }),
+      OPTIONS: async ({ request }) => new Response(null, { status: 204, headers: corsHeaders(request) }),
       POST: async ({ request }) => {
         const setCookies: string[] = [];
         const supabase = createHubSupabaseSSR(request, setCookies);

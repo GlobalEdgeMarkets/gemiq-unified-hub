@@ -21,7 +21,7 @@ const Body = z.object({
 export const Route = createFileRoute("/api/public/admin/import-legacy-submissions")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders() }),
+      OPTIONS: async ({ request }) => new Response(null, { status: 204, headers: corsHeaders(request) }),
       POST: async ({ request }) => {
         if (request.headers.get("x-job-secret") !== process.env.JOB_SECRET)
           return new Response("forbidden", { status: 403 });

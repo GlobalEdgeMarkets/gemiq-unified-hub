@@ -13,7 +13,7 @@ const Body = z.object({
 export const Route = createFileRoute("/api/public/auth/session")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders() }),
+      OPTIONS: async ({ request }) => new Response(null, { status: 204, headers: corsHeaders(request) }),
       POST: async ({ request }) => {
         const parsed = Body.safeParse(await request.json().catch(() => ({})));
         if (!parsed.success) return json({ error: "invalid_body" }, { status: 400 });
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/api/public/auth/session")({
         }
 
         const { data: { user } } = await supabase.auth.getUser();
-        const headers = new Headers({ "Content-Type": "application/json", ...corsHeaders() });
+        const headers = new Headers({ "Content-Type": "application/json", ...corsHeaders(request) });
         for (const c of setCookies) headers.append("Set-Cookie", c);
         return new Response(JSON.stringify({ ok: true, user }), { headers });
       },

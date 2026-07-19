@@ -5,7 +5,7 @@ import { json, corsHeaders } from "@/lib/hub/http";
 export const Route = createFileRoute("/api/public/submissions/history")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders() }),
+      OPTIONS: async ({ request }) => new Response(null, { status: 204, headers: corsHeaders(request) }),
       GET: async ({ request }) => {
         const setCookies: string[] = [];
         const supabase = createHubSupabaseSSR(request, setCookies);

@@ -9,7 +9,7 @@ import { json, corsHeaders } from "@/lib/hub/http";
 export const Route = createFileRoute("/api/public/submissions/submit")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders() }),
+      OPTIONS: async ({ request }) => new Response(null, { status: 204, headers: corsHeaders(request) }),
       POST: async ({ request }) => {
         const parsed = SubmissionPayloadSchema.safeParse(await request.json().catch(() => ({})));
         if (!parsed.success) return json({ error: "invalid_payload", issues: parsed.error.issues }, { status: 400 });

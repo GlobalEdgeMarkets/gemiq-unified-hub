@@ -230,17 +230,17 @@ function Stats() {
   const stats = [
     { icon: <TargetIcon />, v: "4", l: "Assessments" },
     { icon: <BoltIcon />, v: "28+", l: "Dimensions" },
-    { icon: <SparkleIcon />, v: "AI-Powered", l: "Reports" },
-    { icon: <ClockIcon />, v: "<10 min", l: "Per assessment" },
+    { icon: <SparkleIcon />, v: "AI", l: "Powered Reports" },
+    { icon: <ClockIcon />, v: "<10m", l: "Per Assessment" },
   ];
   return (
-    <section className="border-b border-gem-navy/10 bg-white py-14">
-      <div className="mx-auto grid max-w-5xl grid-cols-2 gap-8 px-6 sm:grid-cols-4">
+    <section className="border-b border-gem-navy/10 bg-white py-12">
+      <div className="mx-auto flex max-w-3xl flex-wrap items-start justify-center gap-x-16 gap-y-8 px-6">
         {stats.map((s) => (
-          <div key={s.l} className="flex flex-col items-center text-center">
+          <div key={s.l} className="flex min-w-[110px] flex-col items-center text-center">
             <div className="text-gem-mint">{s.icon}</div>
-            <div className="mt-2 font-display text-2xl font-bold text-gem-navy">{s.v}</div>
-            <div className="text-xs uppercase tracking-wider text-gem-navy/50">{s.l}</div>
+            <div className="mt-2 font-display text-2xl font-bold leading-none text-gem-navy">{s.v}</div>
+            <div className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-gem-navy/55">{s.l}</div>
           </div>
         ))}
       </div>
@@ -262,7 +262,7 @@ function AssessmentGrid() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2">
+        <div className="mt-14 grid items-stretch gap-6 md:grid-cols-2">
           {ASSESSMENTS.map((a) => (
             <AssessmentCard key={a.key} a={a} />
           ))}
@@ -308,9 +308,9 @@ function AssessmentCard({ a }: { a: Assessment }) {
   const Wrapper: any = a.live ? "a" : "div";
   const wrapperProps = a.live ? { href: a.url, target: "_blank", rel: "noreferrer" } : {};
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-gem-navy/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl">
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-gem-navy/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl">
       <div className={`h-1 w-full ${c.bar}`} />
-      <div className="p-8">
+      <div className="flex flex-1 flex-col p-8">
         <div className="flex items-start justify-between">
           <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${c.tileBg} ${c.tileFg}`}>
             <AssessmentIcon name={a.icon} className="h-6 w-6" />
@@ -322,22 +322,24 @@ function AssessmentCard({ a }: { a: Assessment }) {
           )}
         </div>
 
-        <h3 className="mt-6 font-display text-2xl font-bold text-gem-navy">
+        <h3 className="mt-6 font-display text-2xl font-bold leading-tight text-gem-navy">
           {a.name}
           {a.suffix}
         </h3>
-        <p className={`mt-1 text-sm font-medium ${c.eyebrow}`}>{a.eyebrow}</p>
+        <p className={`mt-1.5 text-sm font-medium ${c.eyebrow}`}>{a.eyebrow}</p>
         <p className="mt-4 text-[15px] leading-relaxed text-gem-navy/65">{a.body}</p>
 
-        <Wrapper
-          {...wrapperProps}
-          className={`mt-6 inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold transition ${
-            a.live ? c.button : "cursor-not-allowed bg-gem-navy/10 text-gem-navy/40"
-          }`}
-        >
-          {a.live ? "Start Assessment" : "In development"}
-          {a.live && <ArrowIcon className="h-4 w-4" />}
-        </Wrapper>
+        <div className="mt-auto pt-8">
+          <Wrapper
+            {...wrapperProps}
+            className={`inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold transition ${
+              a.live ? c.button : "cursor-not-allowed bg-gem-navy/10 text-gem-navy/40"
+            }`}
+          >
+            {a.live ? "Start Assessment" : "In development"}
+            {a.live && <ArrowIcon className="h-4 w-4" />}
+          </Wrapper>
+        </div>
       </div>
     </div>
   );
@@ -395,11 +397,11 @@ function WhyGemIQ() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
+        <div className="mt-14 grid items-stretch gap-6 md:grid-cols-3">
           {WHY.map((w) => (
             <div
               key={w.title}
-              className="rounded-2xl border border-gem-navy/10 bg-gem-cream/50 p-8 transition hover:border-gem-mint/40 hover:bg-white hover:shadow-md"
+              className="flex h-full flex-col rounded-2xl border border-gem-navy/10 bg-gem-cream/50 p-8 transition hover:border-gem-mint/40 hover:bg-white hover:shadow-md"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gem-mint/15 text-gem-mint">
                 <WhyIcon name={w.icon} className="h-6 w-6" />
@@ -431,7 +433,7 @@ function Pricing() {
           </p>
         </div>
 
-        <div className="mx-auto mt-14 grid max-w-4xl gap-6 md:grid-cols-2">
+        <div className="mx-auto mt-14 grid max-w-4xl items-stretch gap-6 md:grid-cols-2">
           <PricingCard
             plan="Monthly"
             price="$99"
@@ -470,14 +472,14 @@ function PricingCard({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-2xl ${
+      className={`flex h-full flex-col overflow-hidden rounded-2xl ${
         featured
           ? "bg-gem-navy text-white shadow-xl"
           : "border border-gem-navy/10 bg-white text-gem-navy shadow-sm"
       }`}
     >
       {featured && <div className="h-1 w-full bg-gem-mint" />}
-      <div className="p-8">
+      <div className="flex flex-1 flex-col p-8">
         <div className="flex items-center justify-between">
           <div className={`font-display text-xl font-bold ${featured ? "text-white" : "text-gem-navy"}`}>{plan}</div>
           {featured && (
@@ -496,19 +498,21 @@ function PricingCard({
           <PricingLine featured={featured}>Dimension-level benchmarks and executive PDFs</PricingLine>
           <PricingLine featured={featured}>Priority sync into HubSpot for your team</PricingLine>
         </ul>
-        <Link
-          to="/auth"
-          search={{ mode: "signup" }}
-          className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition ${
-            featured
-              ? "bg-gem-mint text-gem-navy hover:brightness-105"
-              : "bg-gem-navy text-white hover:bg-gem-navy/90"
-          }`}
-        >
-          Start with {plan.toLowerCase()}
-          <ArrowIcon className="h-4 w-4" />
-        </Link>
-        <p className={`mt-4 text-xs ${featured ? "text-white/50" : "text-gem-navy/50"}`}>{note}</p>
+        <div className="mt-auto pt-8">
+          <Link
+            to="/auth"
+            search={{ mode: "signup" }}
+            className={`inline-flex w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition ${
+              featured
+                ? "bg-gem-mint text-gem-navy hover:brightness-105"
+                : "bg-gem-navy text-white hover:bg-gem-navy/90"
+            }`}
+          >
+            Start with {plan.toLowerCase()}
+            <ArrowIcon className="h-4 w-4" />
+          </Link>
+          <p className={`mt-4 text-xs ${featured ? "text-white/50" : "text-gem-navy/50"}`}>{note}</p>
+        </div>
       </div>
     </div>
   );

@@ -433,7 +433,7 @@ function Pricing() {
           </p>
         </div>
 
-        <div className="mx-auto mt-14 grid max-w-4xl gap-6 md:grid-cols-2">
+        <div className="mx-auto mt-14 grid max-w-4xl items-stretch gap-6 md:grid-cols-2">
           <PricingCard
             plan="Monthly"
             price="$99"

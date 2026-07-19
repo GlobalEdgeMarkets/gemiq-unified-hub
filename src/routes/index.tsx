@@ -1,4 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import gemLogoLight from "@/assets/gem-logo-light.png.asset.json";
+import gemLogoDark from "@/assets/gem-logo-dark.png.asset.json";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -98,13 +101,17 @@ function Index() {
 }
 
 function Wordmark({ variant = "light" }: { variant?: "light" | "dark" }) {
-  const base = variant === "light" ? "text-white" : "text-gem-navy";
+  const src = variant === "light" ? gemLogoLight.url : gemLogoDark.url;
   return (
-    <span className={`font-display text-2xl font-semibold tracking-tight ${base}`}>
-      GEM<span className="text-gem-mint">.IQ</span>
+    <span className="inline-flex items-baseline gap-2">
+      <img src={src} alt="GEM" className="h-7 w-auto sm:h-8" />
+      <span className={`font-display text-2xl font-bold tracking-tight ${variant === "light" ? "text-white" : "text-gem-navy"}`}>
+        .IQ
+      </span>
     </span>
   );
 }
+
 
 function TopBar() {
   return (
@@ -158,10 +165,11 @@ function Hero() {
               <span className="h-px w-8 bg-gem-mint" />
               The GlobalEdgeMarkets assessment platform
             </div>
-            <h1 className="mt-6 font-display text-5xl leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+            <h1 className="mt-6 font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
               Global complexity,<br />
-              <span className="italic text-gem-mint">quantified.</span>
+              <span className="text-gem-mint">quantified.</span>
             </h1>
+
             <p className="mt-6 max-w-xl text-lg text-white/70">
               GEM.IQ is a family of executive assessments that benchmark your organization across tariffs,
               market entry, digital experience, and services delivery — with instant scoring, dimension-level
@@ -340,9 +348,10 @@ function HowItWorks() {
         <div className="grid gap-12 lg:grid-cols-[1fr_2fr] lg:items-start lg:gap-16">
           <div>
             <div className="text-xs font-semibold tracking-[0.2em] text-gem-mint uppercase">How it works</div>
-            <h2 className="mt-4 font-display text-4xl tracking-tight sm:text-5xl">
-              One account. Every assessment. <span className="italic text-gem-mint">Zero friction.</span>
+            <h2 className="mt-4 font-display text-4xl font-bold uppercase tracking-tight sm:text-5xl">
+              One account. Every assessment. <span className="text-gem-mint">Zero friction.</span>
             </h2>
+
             <p className="mt-6 text-white/60">
               GEM.IQ Hub is the connective tissue between every assessment — a single identity, one subscription,
               and a shared results feed.

@@ -2,8 +2,21 @@ import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 
+/** Only allow return-to URLs on the GEM.IQ Hub itself or *.globaledgemarkets.com. */
+function isAllowedReturnUrl(raw: string | undefined): string | null {
+  if (!raw) return null;
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+    const host = u.hostname.toLowerCase();
+    if (host === "localhost" || host.endsWith(".lovable.app")) return u.toString();
+    if (host === "globaledgemarkets.com" || host.endsWith(".globaledgemarkets.com")) return u.toString();
+    return null;
+  } catch { return null; }
+}
+
 const searchSchema = z.object({
-  redirect: z.string().url().optional(),
+  redirect: z.string().optional(),
   mode: z.enum(["signin", "signup"]).optional(),
 });
 

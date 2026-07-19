@@ -1,0 +1,93 @@
+# Integrating an IQ assessment with GEM.IQ Hub
+
+The Hub is the single source of identity, billing, and HubSpot writes. Every
+IQ subdomain (tariffiq / readinessiq / uxiq / techservicesiq / future ones)
+delegates all three to the Hub via `@gemiq/hub-sdk`.
+
+## 1. Install the SDK
+
+Copy `src/lib/hub/sdk.ts` into the IQ project (or install the shared package
+once published) and create a client once:
+
+```ts
+import { createHubClient } from "@gemiq/hub-sdk";
+export const hub = createHubClient({
+  hubOrigin: "https://gemiq.globaledgemarkets.com",
+});
+```
+
+## 2. Gate the assessment on session + subscription
+
+At the start of the assessment (or on any page that must be behind the
+paywall):
+
+```ts
+const status = await hub.subscription.check();
+if (!status.authenticated) return hub.redirectToLogin(window.location.href);
+if (!status.active) {
+  await hub.subscription.startCheckout("gemiq_professional_monthly", {
+    successUrl: window.location.origin + "/resume?sid={CHECKOUT_SESSION_ID}",
+    cancelUrl:  window.location.href,
+  });
+  return; // browser navigates to Stripe
+}
+```
+
+Because the Hub sets its auth cookie on `.globaledgemarkets.com`, every IQ
+subdomain sees the same session automatically — no token passing.
+
+## 3. Resume page (`/resume`)
+
+After Stripe redirects back to `?sid={CHECKOUT_SESSION_ID}`:
+
+```ts
+const status = await hub.subscription.waitUntilActive({ timeoutMs: 15000 });
+if (status.active) router.replace("/start");
+else showRetryButton();
+```
+
+`waitUntilActive` polls `check()` because the webhook may lag Stripe's
+redirect by 1–3 seconds.
+
+## 4. Submit results
+
+At the end of the assessment:
+
+```ts
+await hub.results.submit({
+  email: user.email,
+  assessment_key: "tariffiq", // or readinessiq / uxiq / techservicesiq
+  score, tier, dimensions,
+  detail: {
+    // Anything IQ-specific — recommendations, sub-scores, verbatims, etc.
+    // Stored verbatim on the submission and mapped to gem_* HubSpot props
+    // by the Hub's registry entry for this IQ.
+  },
+  metadata: { first_name, last_name, company },
+});
+```
+
+The Hub handles: dedupe (10-minute window), DB insert, HubSpot upsert using
+the full email history (rollups + latest-per-IQ), retry queue on failure.
+
+## 5. Adding a new IQ
+
+1. Create `src/lib/hub/assessments/<newiq>.ts` following the pattern in
+   `tariffiq.ts`. Prefix every HubSpot property with `gem_<short>_`.
+2. Add it to `REGISTRY` in `src/lib/hub/assessments/index.ts`.
+3. POST `/api/public/admin/bootstrap-hubspot-schema` with `x-job-secret` to
+   create the new properties in HubSpot. Idempotent.
+
+That single registry entry drives: submission validation, HubSpot property
+creation, HubSpot property mapping on every submit, and rollup counts.
+
+## 6. Migrating an existing IQ
+
+1. Turn off the IQ's direct HubSpot writes and its own payment/auth flows.
+2. Point sign-in and checkout at the Hub via the SDK.
+3. Invite existing IQ users into Hub Auth (bulk):
+   `POST /api/public/admin/import-legacy-users` with `x-job-secret`.
+4. Backfill historical submissions:
+   `POST /api/public/admin/import-legacy-submissions` with `x-job-secret`.
+   The endpoint rebuilds each contact's `gem_*` fields from the full history.
+   Available but NOT invoked automatically.

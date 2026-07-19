@@ -2,8 +2,21 @@ import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 
+/** Only allow return-to URLs on the GEM.IQ Hub itself or *.globaledgemarkets.com. */
+function isAllowedReturnUrl(raw: string | undefined): string | null {
+  if (!raw) return null;
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+    const host = u.hostname.toLowerCase();
+    if (host === "localhost" || host.endsWith(".lovable.app")) return u.toString();
+    if (host === "globaledgemarkets.com" || host.endsWith(".globaledgemarkets.com")) return u.toString();
+    return null;
+  } catch { return null; }
+}
+
 const searchSchema = z.object({
-  redirect: z.string().url().optional(),
+  redirect: z.string().optional(),
   mode: z.enum(["signin", "signup"]).optional(),
 });
 
@@ -47,12 +60,14 @@ function AuthPage() {
       });
       const body = await res.json();
       if (!res.ok) { setErr(body.error ?? "Authentication failed"); return; }
-      if (search.redirect) window.location.href = search.redirect;
-      else window.location.href = "/";
+      const safeReturn = isAllowedReturnUrl(search.redirect);
+      window.location.href = safeReturn ?? "/";
     } catch (e: any) {
       setErr(e.message);
     } finally { setBusy(false); }
   }
+
+  const safeReturnDisplay = isAllowedReturnUrl(search.redirect);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -85,8 +100,8 @@ function AuthPage() {
           className="w-full text-center text-xs text-muted-foreground hover:text-foreground">
           {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
         </button>
-        {search.redirect && (
-          <p className="text-center text-[11px] text-muted-foreground">You'll return to {new URL(search.redirect).host}</p>
+        {safeReturnDisplay && (
+          <p className="text-center text-[11px] text-muted-foreground">You'll return to {new URL(safeReturnDisplay).host}</p>
         )}
       </form>
     </div>

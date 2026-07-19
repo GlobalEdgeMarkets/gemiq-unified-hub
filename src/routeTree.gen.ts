@@ -19,6 +19,8 @@ import { Route as ApiPublicBillingCreatePortalSessionRouteImport } from './route
 import { Route as ApiPublicBillingCreateCheckoutRouteImport } from './routes/api/public/billing/create-checkout'
 import { Route as ApiPublicBillingCheckSubscriptionRouteImport } from './routes/api/public/billing/check-subscription'
 import { Route as ApiPublicAuthSessionRouteImport } from './routes/api/public/auth/session'
+import { Route as ApiPublicAdminImportLegacyUsersRouteImport } from './routes/api/public/admin/import-legacy-users'
+import { Route as ApiPublicAdminImportLegacySubmissionsRouteImport } from './routes/api/public/admin/import-legacy-submissions'
 import { Route as ApiPublicAdminBootstrapHubspotSchemaRouteImport } from './routes/api/public/admin/bootstrap-hubspot-schema'
 
 const AuthRoute = AuthRouteImport.update({
@@ -78,6 +80,18 @@ const ApiPublicAuthSessionRoute = ApiPublicAuthSessionRouteImport.update({
   path: '/api/public/auth/session',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAdminImportLegacyUsersRoute =
+  ApiPublicAdminImportLegacyUsersRouteImport.update({
+    id: '/api/public/admin/import-legacy-users',
+    path: '/api/public/admin/import-legacy-users',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicAdminImportLegacySubmissionsRoute =
+  ApiPublicAdminImportLegacySubmissionsRouteImport.update({
+    id: '/api/public/admin/import-legacy-submissions',
+    path: '/api/public/admin/import-legacy-submissions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicAdminBootstrapHubspotSchemaRoute =
   ApiPublicAdminBootstrapHubspotSchemaRouteImport.update({
     id: '/api/public/admin/bootstrap-hubspot-schema',
@@ -89,6 +103,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
+  '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
+  '/api/public/admin/import-legacy-users': typeof ApiPublicAdminImportLegacyUsersRoute
   '/api/public/auth/session': typeof ApiPublicAuthSessionRoute
   '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
@@ -102,6 +118,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
+  '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
+  '/api/public/admin/import-legacy-users': typeof ApiPublicAdminImportLegacyUsersRoute
   '/api/public/auth/session': typeof ApiPublicAuthSessionRoute
   '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
@@ -116,6 +134,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
+  '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
+  '/api/public/admin/import-legacy-users': typeof ApiPublicAdminImportLegacyUsersRoute
   '/api/public/auth/session': typeof ApiPublicAuthSessionRoute
   '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
@@ -131,6 +151,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/api/public/admin/bootstrap-hubspot-schema'
+    | '/api/public/admin/import-legacy-submissions'
+    | '/api/public/admin/import-legacy-users'
     | '/api/public/auth/session'
     | '/api/public/billing/check-subscription'
     | '/api/public/billing/create-checkout'
@@ -144,6 +166,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/api/public/admin/bootstrap-hubspot-schema'
+    | '/api/public/admin/import-legacy-submissions'
+    | '/api/public/admin/import-legacy-users'
     | '/api/public/auth/session'
     | '/api/public/billing/check-subscription'
     | '/api/public/billing/create-checkout'
@@ -157,6 +181,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/api/public/admin/bootstrap-hubspot-schema'
+    | '/api/public/admin/import-legacy-submissions'
+    | '/api/public/admin/import-legacy-users'
     | '/api/public/auth/session'
     | '/api/public/billing/check-subscription'
     | '/api/public/billing/create-checkout'
@@ -171,6 +197,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ApiPublicAdminBootstrapHubspotSchemaRoute: typeof ApiPublicAdminBootstrapHubspotSchemaRoute
+  ApiPublicAdminImportLegacySubmissionsRoute: typeof ApiPublicAdminImportLegacySubmissionsRoute
+  ApiPublicAdminImportLegacyUsersRoute: typeof ApiPublicAdminImportLegacyUsersRoute
   ApiPublicAuthSessionRoute: typeof ApiPublicAuthSessionRoute
   ApiPublicBillingCheckSubscriptionRoute: typeof ApiPublicBillingCheckSubscriptionRoute
   ApiPublicBillingCreateCheckoutRoute: typeof ApiPublicBillingCreateCheckoutRoute
@@ -253,6 +281,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAuthSessionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/admin/import-legacy-users': {
+      id: '/api/public/admin/import-legacy-users'
+      path: '/api/public/admin/import-legacy-users'
+      fullPath: '/api/public/admin/import-legacy-users'
+      preLoaderRoute: typeof ApiPublicAdminImportLegacyUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/admin/import-legacy-submissions': {
+      id: '/api/public/admin/import-legacy-submissions'
+      path: '/api/public/admin/import-legacy-submissions'
+      fullPath: '/api/public/admin/import-legacy-submissions'
+      preLoaderRoute: typeof ApiPublicAdminImportLegacySubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/admin/bootstrap-hubspot-schema': {
       id: '/api/public/admin/bootstrap-hubspot-schema'
       path: '/api/public/admin/bootstrap-hubspot-schema'
@@ -268,6 +310,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ApiPublicAdminBootstrapHubspotSchemaRoute:
     ApiPublicAdminBootstrapHubspotSchemaRoute,
+  ApiPublicAdminImportLegacySubmissionsRoute:
+    ApiPublicAdminImportLegacySubmissionsRoute,
+  ApiPublicAdminImportLegacyUsersRoute: ApiPublicAdminImportLegacyUsersRoute,
   ApiPublicAuthSessionRoute: ApiPublicAuthSessionRoute,
   ApiPublicBillingCheckSubscriptionRoute:
     ApiPublicBillingCheckSubscriptionRoute,

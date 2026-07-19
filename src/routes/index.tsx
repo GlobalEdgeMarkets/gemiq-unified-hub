@@ -10,13 +10,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "The GEM.IQ platform by GlobalEdgeMarkets — a family of executive assessments across tariffs, market readiness, digital experience, and tech services delivery.",
+          "The GEM.IQ platform by GlobalEdgeMarkets — a family of self-service assessments across GoToMarket Readiness, Digital/AI Experience, and Product/Service delivery",
       },
-      { property: "og:title", content: "GEM.IQ — The GlobalEdgeMarkets assessment platform" },
+      { property: "og:title", content: "GEM.IQ — Assessments that turn global complexity into clarity" },
       {
         property: "og:description",
         content:
-          "One login. One subscription. Four executive assessments benchmarking tariff, market, UX, and tech-services readiness.",
+          "The GEM.IQ platform by GlobalEdgeMarkets — a family of self-service assessments across GoToMarket Readiness, Digital/AI Experience, and Product/Service delivery",
       },
       { property: "og:type", content: "website" },
     ],

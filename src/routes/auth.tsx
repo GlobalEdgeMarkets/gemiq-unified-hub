@@ -1,6 +1,7 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
+import { iqContextFromReturnUrl } from "@/lib/hub/iq-context";
 
 /** Only allow return-to URLs on the GEM.IQ Hub itself or *.globaledgemarkets.com. */
 function isAllowedReturnUrl(raw: string | undefined): string | null {
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — GEM.IQ Hub" },
-      { name: "description", content: "Sign in to the GEM.IQ platform. Shared identity across all GEM.IQ assessments." },
+      { name: "description", content: "One account across every GEM.IQ assessment — TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ." },
       { property: "og:title", content: "GEM.IQ Hub — Sign in" },
       { property: "og:description", content: "One identity across all GEM.IQ assessments." },
       { property: "og:type", content: "website" },
@@ -36,7 +37,12 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const search = useSearch({ from: "/auth" });
-  const [mode, setMode] = useState<"signin" | "signup">(search.mode ?? "signin");
+  const safeReturn = isAllowedReturnUrl(search.redirect);
+  const iq = iqContextFromReturnUrl(safeReturn);
+  // Default new visitors coming from an IQ subdomain to signup; existing
+  // users can flip to sign-in with one click.
+  const defaultMode = search.mode ?? (iq ? "signup" : "signin");
+  const [mode, setMode] = useState<"signin" | "signup">(defaultMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -60,24 +66,45 @@ function AuthPage() {
       });
       const body = await res.json();
       if (!res.ok) { setErr(body.error ?? "Authentication failed"); return; }
-      const safeReturn = isAllowedReturnUrl(search.redirect);
       window.location.href = safeReturn ?? "/";
     } catch (e: any) {
       setErr(e.message);
     } finally { setBusy(false); }
   }
 
-  const safeReturnDisplay = isAllowedReturnUrl(search.redirect);
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <form onSubmit={submit} className="w-full max-w-sm space-y-4 rounded-lg border bg-card p-6 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">GEM.IQ Hub</h1>
-          <p className="text-sm text-muted-foreground">
-            {mode === "signin" ? "Sign in to continue" : "Create your account"}
-          </p>
+        <div className="space-y-1">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">GEM.IQ Hub</p>
+          {iq ? (
+            <>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                {mode === "signup" ? `Create your account to start ${iq.name}` : `Sign in to continue to ${iq.name}`}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                One GEM.IQ account works across every assessment — sign in once, use them all.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                {mode === "signin" ? "Sign in to continue" : "Create your account"}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                One identity across every GEM.IQ assessment.
+              </p>
+            </>
+          )}
         </div>
+
+        {iq && mode === "signup" && (
+          <div className="rounded-md border border-border/60 bg-muted/40 p-3 text-xs text-muted-foreground">
+            <p className="font-medium text-foreground">{iq.priceLine}</p>
+            <p className="mt-1">After creating your account, you'll be taken to secure checkout to activate {iq.name}.</p>
+          </div>
+        )}
+
         {mode === "signup" && (
           <>
             <input required placeholder="Full name" className="w-full rounded-md border px-3 py-2 text-sm"
@@ -100,8 +127,8 @@ function AuthPage() {
           className="w-full text-center text-xs text-muted-foreground hover:text-foreground">
           {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
         </button>
-        {safeReturnDisplay && (
-          <p className="text-center text-[11px] text-muted-foreground">You'll return to {new URL(safeReturnDisplay).host}</p>
+        {safeReturn && (
+          <p className="text-center text-[11px] text-muted-foreground">You'll return to {new URL(safeReturn).host}</p>
         )}
       </form>
     </div>

@@ -29,7 +29,7 @@ async function sendSubmissionNotification(args: {
   const portalId = process.env.HUBSPOT_PORTAL_ID;
   const hubspotContactUrl = hsContactId && portalId ? `https://app.hubspot.com/contacts/${portalId}/contact/${hsContactId}` : null;
   const hubspotLeadUrl = hsLeadId && portalId ? `https://app.hubspot.com/contacts/${portalId}/record/0-136/${hsLeadId}` : null;
-  const reportUrl = (payload.metadata?.report_url as string | undefined) ?? (payload.metadata?.pdf_url as string | undefined) ?? null;
+  const reportUrl = (payload.report_url as string | undefined) ?? (payload.metadata?.report_url as string | undefined) ?? (payload.metadata?.pdf_url as string | undefined) ?? null;
 
   const templateData = {
     assessmentLabel,

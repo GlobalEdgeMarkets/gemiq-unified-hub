@@ -19,6 +19,8 @@ export const SubmissionPayloadSchema = z.object({
   detail: z.record(z.string(), z.any()).optional(),
   answers: z.record(z.string(), z.any()).optional(),
   metadata: z.record(z.string(), z.any()).optional(),
+  /** Public URL to a rendered PDF/HTML report for this submission. Included in the internal notification email. */
+  report_url: z.string().url().optional(),
   submitted_at: z.string().datetime().optional(),
 });
 export type SubmissionPayload = z.infer<typeof SubmissionPayloadSchema>;

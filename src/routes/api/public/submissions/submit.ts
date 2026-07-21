@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHubSupabaseSSR, createHubServiceClient } from "@/lib/hub/supabase-server";
 import { SubmissionPayloadSchema } from "@/lib/hub/schemas";
-import { upsertContactByEmail } from "@/lib/hub/hubspot";
-import { buildContactProperties } from "@/lib/hub/assessments";
+import { upsertContactByEmail, createLeadForContact, classifyLead } from "@/lib/hub/hubspot";
+import { buildContactProperties, REGISTRY_BY_KEY } from "@/lib/hub/assessments";
 import type { SubmissionForMapping } from "@/lib/hub/assessments/types";
 import { json, corsHeaders } from "@/lib/hub/http";
 

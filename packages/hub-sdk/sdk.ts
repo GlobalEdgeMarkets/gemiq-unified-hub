@@ -57,6 +57,20 @@ export interface CheckStatus {
   subscription: HubSubscription | null;
 }
 
+export interface HubProfile {
+  id: string;
+  email: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  full_name: string | null;
+  company: string | null;
+  title: string | null;
+  role: string | null;
+  industry: string | null;
+}
+export type HubProfilePatch = Partial<Omit<HubProfile, "id" | "email" | "full_name">>;
+
+
 export interface HubClientOptions {
   /** Origin of the GEM.IQ Hub, e.g. "https://gemiq.globaledgemarkets.com". */
   hubOrigin: string;
@@ -151,6 +165,14 @@ export function createHubClient(opts: HubClientOptions) {
         return { url };
       },
     },
+    profile: {
+      /** Fetch the signed-in user's Hub profile (prefill IQ forms with this). */
+      get: (): Promise<{ profile: HubProfile | null; error?: string }> =>
+        req("/api/public/profile", { method: "GET" }).catch(() => ({ profile: null })),
+      /** Persist edits to the Hub profile (call this after an IQ collects new fields). */
+      update: (patch: HubProfilePatch): Promise<{ profile: HubProfile }> =>
+        req("/api/public/profile", { method: "PATCH", body: JSON.stringify(patch) }),
+    },
     results: {
       submit: (payload: SubmissionPayload) =>
         req("/api/public/submissions/submit", { method: "POST", body: JSON.stringify(payload) }),
@@ -160,5 +182,6 @@ export function createHubClient(opts: HubClientOptions) {
         return r;
       },
     },
+
   };
 }

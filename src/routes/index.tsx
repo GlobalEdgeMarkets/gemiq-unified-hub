@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import gemLogoDark from "@/assets/gem-logo-dark.png.asset.json";
+import { HubHeader } from "@/components/HubHeader";
 
 export const Route = createFileRoute("/")({
   head: () => ({

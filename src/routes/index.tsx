@@ -143,7 +143,7 @@ function TopBar() {
             GEM.IQ Hub
           </span>
         </Link>
-        <nav className="flex items-center gap-2 text-sm sm:gap-6">
+        <nav className="flex items-center gap-1 text-sm sm:gap-4">
           <a href="#assessments" className="hidden text-gem-navy/70 hover:text-gem-navy sm:inline">
             Assessments
           </a>
@@ -155,8 +155,14 @@ function TopBar() {
             search={{ mode: "signin" }}
             className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gem-navy hover:bg-gem-navy/5"
           >
-            <ChartIcon className="h-4 w-4" />
-            My Dashboard
+            Sign in
+          </Link>
+          <Link
+            to="/auth"
+            search={{ mode: "signup" }}
+            className="inline-flex items-center gap-2 rounded-md bg-gem-navy px-3 py-2 text-sm font-semibold text-white hover:brightness-110"
+          >
+            Create account
           </Link>
         </nav>
       </div>

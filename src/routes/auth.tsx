@@ -2,6 +2,7 @@ import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { iqContextFromReturnUrl } from "@/lib/hub/iq-context";
+import gemLogoDark from "@/assets/gem-logo-dark.png.asset.json";
 
 /** Only allow return-to URLs on the GEM.IQ Hub itself or *.globaledgemarkets.com. */
 function isAllowedReturnUrl(raw: string | undefined): string | null {
@@ -36,10 +37,10 @@ export const Route = createFileRoute("/auth")({
 });
 
 const IQ_LIST: { key: string; name: string; blurb: string; accent: string }[] = [
-  { key: "tariffiq",       name: "TariffIQ",       blurb: "Tariff exposure & savings",   accent: "#05CFAB" },
-  { key: "readinessiq",    name: "ReadinessIQ",    blurb: "Operational readiness",       accent: "#2D1594" },
-  { key: "uxiq",           name: "UXIQ",           blurb: "Digital experience maturity", accent: "#2C365B" },
-  { key: "techservicesiq", name: "TechServicesIQ", blurb: "Technology services capability", accent: "#0EA5A0" },
+  { key: "tariffiq",       name: "TariffIQ",       blurb: "Tariff exposure & savings",       accent: "#05CFAB" },
+  { key: "readinessiq",    name: "ReadinessIQ",    blurb: "Operational readiness",           accent: "#2D1594" },
+  { key: "uxiq",           name: "UXIQ",           blurb: "Digital experience maturity",     accent: "#5aa9c9" },
+  { key: "techservicesiq", name: "TechServicesIQ", blurb: "Technology services capability",  accent: "#e8b64a" },
 ];
 
 function AuthPage() {
@@ -70,7 +71,6 @@ function AuthPage() {
           metadata: mode === "signup" ? {
             first_name: firstName,
             last_name: lastName,
-            // Keep a combined form too for legacy consumers.
             full_name: `${firstName} ${lastName}`.trim(),
             company,
           } : undefined,
@@ -85,57 +85,43 @@ function AuthPage() {
   }
 
   const inputCls =
-    "w-full rounded-lg border border-white/15 bg-white/5 px-3.5 py-2.5 text-sm text-white placeholder:text-white/50 shadow-inner shadow-black/10 outline-none transition focus:border-gem-mint/60 focus:bg-white/10 focus:ring-2 focus:ring-gem-mint/30";
+    "w-full rounded-md border border-gem-navy/15 bg-white px-3.5 py-2.5 text-sm text-gem-navy placeholder:text-gem-navy/40 outline-none transition focus:border-gem-mint focus:ring-2 focus:ring-gem-mint/25";
 
   return (
-    <div className="relative min-h-screen overflow-hidden text-white">
-      {/* Brand background */}
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10"
-        style={{
-          background:
-            "radial-gradient(1200px 600px at 8% -10%, #2D1594 0%, transparent 55%), radial-gradient(900px 500px at 100% 0%, #05CFAB33 0%, transparent 60%), radial-gradient(700px 700px at 90% 110%, #2D159466 0%, transparent 60%), linear-gradient(160deg, #172864 0%, #2C365B 55%, #0f1a3d 100%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 opacity-[0.15]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
+    <div className="min-h-screen bg-white font-sans text-gem-ink antialiased">
+      {/* Header — matches landing */}
+      <header className="border-b border-gem-navy/10 bg-white">
+        <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-6">
+          <img src={gemLogoDark.url} alt="GEM.IQ" className="h-8 w-auto" />
+          <span className="hidden h-6 w-px bg-gem-navy/20 sm:block" />
+          <span className="hidden font-display text-lg font-bold tracking-tight text-gem-navy sm:inline">
+            GEM.IQ Hub
+          </span>
+          <a
+            href="/"
+            className="ml-auto text-sm font-medium text-gem-navy/70 hover:text-gem-navy"
+          >
+            ← Back to home
+          </a>
+        </div>
+      </header>
 
-      <div className="mx-auto grid min-h-screen w-full max-w-6xl items-center gap-10 px-6 py-12 md:grid-cols-[1.05fr_1fr]">
+      <div className="mx-auto grid w-full max-w-6xl items-start gap-12 px-6 py-12 md:grid-cols-[1.05fr_1fr] md:py-16">
         {/* Brand / product panel */}
         <aside className="space-y-8">
-          <div className="flex items-center gap-3">
-            <span
-              aria-hidden
-              className="grid h-10 w-10 place-items-center rounded-xl text-sm font-black tracking-tight text-gem-navy-deep shadow-lg shadow-gem-mint/20"
-              style={{ background: "linear-gradient(135deg, #05CFAB, #7fe6d0)" }}
-            >
-              IQ
-            </span>
-            <div className="leading-tight">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gem-mint">GEM.IQ Hub</p>
-              <p className="text-[11px] text-white/60">by GlobalEdgeMarkets</p>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h2 className="text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-mint">
+              GEM.IQ Hub
+            </p>
+            <h2 className="mt-3 font-display text-4xl font-bold leading-[1.05] tracking-tight text-gem-navy sm:text-5xl">
               One account.
               <br />
-              <span className="bg-gradient-to-r from-gem-mint via-gem-mint-soft to-white bg-clip-text text-transparent">
-                Four assessments.
-              </span>
+              <span className="text-gem-mint">Four assessments.</span>
             </h2>
-            <p className="max-w-md text-sm leading-relaxed text-white/75">
-              <strong className="text-white">GEM.IQ</strong> — GlobalEdgeMarkets Intelligence Quotients — is a
-              suite of diagnostic assessments. Create one identity here and it works across every IQ.
+            <p className="mt-4 max-w-md text-base leading-relaxed text-gem-navy/70">
+              <strong className="text-gem-navy">GEM.IQ</strong> — GlobalEdgeMarkets
+              Intelligence Quotients — is a suite of diagnostic assessments. Create one
+              identity here and it works across every IQ.
             </p>
           </div>
 
@@ -145,10 +131,10 @@ function AuthPage() {
               return (
                 <li
                   key={item.key}
-                  className={`group relative overflow-hidden rounded-xl border p-4 backdrop-blur-sm transition ${
+                  className={`relative overflow-hidden rounded-lg border bg-white p-4 transition ${
                     active
-                      ? "border-gem-mint/60 bg-white/10 shadow-lg shadow-gem-mint/10"
-                      : "border-white/10 bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.07]"
+                      ? "border-gem-mint shadow-sm"
+                      : "border-gem-navy/10 hover:border-gem-navy/25"
                   }`}
                 >
                   <span
@@ -159,19 +145,19 @@ function AuthPage() {
                   <div className="flex items-start gap-3">
                     <span
                       aria-hidden
-                      className="mt-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full ring-4"
-                      style={{ backgroundColor: item.accent, boxShadow: `0 0 0 4px ${item.accent}22` }}
+                      className="mt-1 inline-block h-2 w-2 shrink-0 rounded-full"
+                      style={{ backgroundColor: item.accent }}
                     />
                     <div className="min-w-0">
-                      <p className="flex items-center gap-2 text-sm font-semibold leading-tight text-white">
+                      <p className="flex items-center gap-2 font-display text-sm font-bold leading-tight text-gem-navy">
                         {item.name}
                         {active && (
-                          <span className="rounded-full bg-gem-mint/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-gem-mint">
+                          <span className="rounded-full bg-gem-mint/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-gem-mint">
                             You're here
                           </span>
                         )}
                       </p>
-                      <p className="mt-0.5 text-xs text-white/60">{item.blurb}</p>
+                      <p className="mt-0.5 text-xs text-gem-navy/60">{item.blurb}</p>
                     </div>
                   </div>
                 </li>
@@ -179,7 +165,7 @@ function AuthPage() {
             })}
           </ul>
 
-          <p className="text-xs text-white/50">
+          <p className="text-xs text-gem-navy/50">
             Sign in once, then move between assessments without another login.
           </p>
         </aside>
@@ -187,25 +173,27 @@ function AuthPage() {
         {/* Auth form */}
         <form
           onSubmit={submit}
-          className="w-full space-y-4 rounded-2xl border border-white/15 bg-white/[0.06] p-7 shadow-2xl shadow-black/30 backdrop-blur-xl"
+          className="w-full space-y-4 rounded-xl border border-gem-navy/10 bg-white p-7 shadow-sm"
         >
           <div className="space-y-1.5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gem-mint">GEM.IQ Hub</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-mint">
+              GEM.IQ Hub
+            </p>
             {iq ? (
               <>
-                <h1 className="text-2xl font-bold tracking-tight text-white">
+                <h1 className="font-display text-2xl font-bold tracking-tight text-gem-navy">
                   {mode === "signup" ? `Create your account to start ${iq.name}` : `Sign in to continue to ${iq.name}`}
                 </h1>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-gem-navy/65">
                   One GEM.IQ account works across every assessment — sign in once, use them all.
                 </p>
               </>
             ) : (
               <>
-                <h1 className="text-2xl font-bold tracking-tight text-white">
+                <h1 className="font-display text-2xl font-bold tracking-tight text-gem-navy">
                   {mode === "signin" ? "Sign in to continue" : "Create your account"}
                 </h1>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-gem-navy/65">
                   One identity across every GEM.IQ assessment.
                 </p>
               </>
@@ -213,9 +201,9 @@ function AuthPage() {
           </div>
 
           {iq && mode === "signup" && (
-            <div className="rounded-lg border border-gem-mint/30 bg-gem-mint/10 p-3.5 text-xs text-white/80">
-              <p className="font-semibold text-white">{iq.priceLine}</p>
-              <p className="mt-1 text-white/70">
+            <div className="rounded-md border border-gem-mint/40 bg-gem-mint/5 p-3.5 text-xs text-gem-navy/80">
+              <p className="font-semibold text-gem-navy">{iq.priceLine}</p>
+              <p className="mt-1 text-gem-navy/65">
                 After creating your account, you'll be taken to secure checkout to activate {iq.name}.
               </p>
             </div>
@@ -239,24 +227,23 @@ function AuthPage() {
             autoComplete={mode === "signin" ? "current-password" : "new-password"} className={inputCls}
             value={password} onChange={e => setPassword(e.target.value)} />
           {err && (
-            <p className="rounded-md border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">{err}</p>
+            <p className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>
           )}
           <button
             disabled={busy}
-            className="group relative w-full overflow-hidden rounded-lg px-4 py-2.5 text-sm font-semibold text-gem-navy-deep shadow-lg shadow-gem-mint/20 transition hover:shadow-gem-mint/40 disabled:opacity-60"
-            style={{ background: "linear-gradient(135deg, #05CFAB 0%, #7fe6d0 100%)" }}
+            className="w-full rounded-md bg-gem-mint px-4 py-3 text-sm font-semibold text-gem-navy shadow-sm shadow-gem-mint/20 transition hover:brightness-105 disabled:opacity-60"
           >
             {busy ? "…" : mode === "signin" ? "Sign in" : "Create account"}
           </button>
           <button
             type="button"
             onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-            className="w-full text-center text-xs text-white/60 transition hover:text-gem-mint"
+            className="w-full text-center text-xs text-gem-navy/60 transition hover:text-gem-navy"
           >
             {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
           </button>
           {safeReturn && (
-            <p className="text-center text-[11px] text-white/40">
+            <p className="text-center text-[11px] text-gem-navy/45">
               You'll return to {new URL(safeReturn).host}
             </p>
           )}

@@ -78,6 +78,11 @@ function AuthPage() {
       });
       const body = await res.json();
       if (!res.ok) { setErr(body.error ?? "Authentication failed"); return; }
+      if (!body.user) {
+        setErr("Account created but no session — please check your email to confirm, then sign in.");
+        setMode("signin");
+        return;
+      }
       window.location.href = safeReturn ?? "/";
     } catch (e: any) {
       setErr(e.message);

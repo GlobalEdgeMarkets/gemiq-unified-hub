@@ -133,42 +133,9 @@ function Index() {
 }
 
 function TopBar() {
-  return (
-    <header className="sticky top-0 z-30 border-b border-gem-navy/10 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link to="/" className="flex items-center gap-3">
-          <img src={gemLogoDark.url} alt="GEM" className="h-8 w-auto" />
-          <span className="hidden h-6 w-px bg-gem-navy/20 sm:block" />
-          <span className="hidden font-display text-lg font-bold tracking-tight text-gem-navy sm:inline">
-            GEM.IQ Hub
-          </span>
-        </Link>
-        <nav className="flex items-center gap-1 text-sm sm:gap-4">
-          <a href="#assessments" className="hidden text-gem-navy/70 hover:text-gem-navy sm:inline">
-            Assessments
-          </a>
-          <a href="#pricing" className="hidden text-gem-navy/70 hover:text-gem-navy sm:inline">
-            Pricing
-          </a>
-          <Link
-            to="/auth"
-            search={{ mode: "signin" }}
-            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gem-navy hover:bg-gem-navy/5"
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/auth"
-            search={{ mode: "signup" }}
-            className="inline-flex items-center gap-2 rounded-md bg-gem-navy px-3 py-2 text-sm font-semibold text-white hover:brightness-110"
-          >
-            Create account
-          </Link>
-        </nav>
-      </div>
-    </header>
-  );
+  return <HubHeader variant="landing" />;
 }
+
 
 function Hero() {
   return (

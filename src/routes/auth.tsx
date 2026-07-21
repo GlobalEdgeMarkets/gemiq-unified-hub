@@ -77,7 +77,22 @@ function AuthPage() {
         }),
       });
       const body = await res.json();
-      if (!res.ok) { setErr(body.error ?? "Authentication failed"); return; }
+      if (!res.ok) {
+        const msg: string = body.error ?? "Authentication failed";
+        // If they tried to sign up with an existing email, flip to sign-in automatically.
+        if (mode === "signup" && /already|registered|exists/i.test(msg)) {
+          setMode("signin");
+          setErr("You already have a GEM.IQ account with this email — enter your password to sign in.");
+          return;
+        }
+        // If they tried to sign in with wrong credentials, hint at reset.
+        if (mode === "signin" && /invalid|credentials|password/i.test(msg)) {
+          setErr("Email or password doesn't match. Try again, or create an account if you're new.");
+          return;
+        }
+        setErr(msg);
+        return;
+      }
       if (!body.user) {
         setErr("Account created but no session — please check your email to confirm, then sign in.");
         setMode("signin");
@@ -180,6 +195,28 @@ function AuthPage() {
           onSubmit={submit}
           className="w-full space-y-4 rounded-xl border border-gem-navy/10 bg-white p-7 shadow-sm"
         >
+          {/* Prominent tab toggle */}
+          <div className="grid grid-cols-2 gap-1 rounded-lg bg-gem-navy/5 p-1">
+            <button
+              type="button"
+              onClick={() => { setMode("signin"); setErr(null); }}
+              className={`rounded-md px-3 py-2 text-sm font-semibold transition ${
+                mode === "signin" ? "bg-white text-gem-navy shadow-sm" : "text-gem-navy/60 hover:text-gem-navy"
+              }`}
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              onClick={() => { setMode("signup"); setErr(null); }}
+              className={`rounded-md px-3 py-2 text-sm font-semibold transition ${
+                mode === "signup" ? "bg-white text-gem-navy shadow-sm" : "text-gem-navy/60 hover:text-gem-navy"
+              }`}
+            >
+              Create account
+            </button>
+          </div>
+
           <div className="space-y-1.5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-mint">
               GEM.IQ Hub
@@ -196,7 +233,7 @@ function AuthPage() {
             ) : (
               <>
                 <h1 className="font-display text-2xl font-bold tracking-tight text-gem-navy">
-                  {mode === "signin" ? "Sign in to continue" : "Create your account"}
+                  {mode === "signin" ? "Welcome back" : "Create your account"}
                 </h1>
                 <p className="text-sm text-gem-navy/65">
                   One identity across every GEM.IQ assessment.

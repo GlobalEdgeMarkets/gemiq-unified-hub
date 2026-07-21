@@ -1,0 +1,1 @@
+UPDATE public.retry_queue SET next_attempt_at = now(), attempts = 0 WHERE status = 'pending' AND job_type = 'hubspot_upsert';

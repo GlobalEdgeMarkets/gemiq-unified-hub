@@ -77,7 +77,22 @@ function AuthPage() {
         }),
       });
       const body = await res.json();
-      if (!res.ok) { setErr(body.error ?? "Authentication failed"); return; }
+      if (!res.ok) {
+        const msg: string = body.error ?? "Authentication failed";
+        // If they tried to sign up with an existing email, flip to sign-in automatically.
+        if (mode === "signup" && /already|registered|exists/i.test(msg)) {
+          setMode("signin");
+          setErr("You already have a GEM.IQ account with this email — enter your password to sign in.");
+          return;
+        }
+        // If they tried to sign in with wrong credentials, hint at reset.
+        if (mode === "signin" && /invalid|credentials|password/i.test(msg)) {
+          setErr("Email or password doesn't match. Try again, or create an account if you're new.");
+          return;
+        }
+        setErr(msg);
+        return;
+      }
       if (!body.user) {
         setErr("Account created but no session — please check your email to confirm, then sign in.");
         setMode("signin");

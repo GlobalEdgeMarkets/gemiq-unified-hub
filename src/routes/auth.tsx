@@ -1,4 +1,4 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { iqContextFromReturnUrl } from "@/lib/hub/iq-context";

@@ -19,27 +19,42 @@ export type Database = {
           company: string | null
           created_at: string
           email: string | null
+          first_name: string | null
           full_name: string | null
           hubspot_contact_id: string | null
           id: string
+          industry: string | null
+          last_name: string | null
+          role: string | null
+          title: string | null
           updated_at: string
         }
         Insert: {
           company?: string | null
           created_at?: string
           email?: string | null
+          first_name?: string | null
           full_name?: string | null
           hubspot_contact_id?: string | null
           id: string
+          industry?: string | null
+          last_name?: string | null
+          role?: string | null
+          title?: string | null
           updated_at?: string
         }
         Update: {
           company?: string | null
           created_at?: string
           email?: string | null
+          first_name?: string | null
           full_name?: string | null
           hubspot_contact_id?: string | null
           id?: string
+          industry?: string | null
+          last_name?: string | null
+          role?: string | null
+          title?: string | null
           updated_at?: string
         }
         Relationships: []

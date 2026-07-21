@@ -62,7 +62,7 @@ export function buildContactProperties(args: {
     gem_assessment_tool: args.current.assessment_key,
     gem_assessment_date: args.current.submitted_at.slice(0, 10),
     gem_assessment_score: args.current.score,
-    gem_score_tier: args.current.tier,
+    gem_score_tier: args.current.tier?.toLowerCase(),
   };
 
   if (args.contact?.first_name) props.firstname = args.contact.first_name;
@@ -97,7 +97,7 @@ export function buildContactProperties(args: {
   props.gem_customer = true;
   props.gem_last_assessment = newest.assessment_key;
   props.gem_last_score = newest.score;
-  props.gem_last_tier = newest.tier;
+  props.gem_last_tier = newest.tier?.toLowerCase();
   props.gem_last_completed_at = newest.submitted_at.slice(0, 10);
   props.gem_assessments_count = distinctKeys.length;
   // HubSpot multi-checkbox wants semicolon-delimited option values

@@ -161,6 +161,14 @@ export function createHubClient(opts: HubClientOptions) {
         return { url };
       },
     },
+    profile: {
+      /** Fetch the signed-in user's Hub profile (prefill IQ forms with this). */
+      get: (): Promise<{ profile: HubProfile | null; error?: string }> =>
+        req("/api/public/profile", { method: "GET" }).catch(() => ({ profile: null })),
+      /** Persist edits to the Hub profile (call this after an IQ collects new fields). */
+      update: (patch: HubProfilePatch): Promise<{ profile: HubProfile }> =>
+        req("/api/public/profile", { method: "PATCH", body: JSON.stringify(patch) }),
+    },
     results: {
       submit: (payload: SubmissionPayload) =>
         req("/api/public/submissions/submit", { method: "POST", body: JSON.stringify(payload) }),
@@ -170,5 +178,6 @@ export function createHubClient(opts: HubClientOptions) {
         return r;
       },
     },
+
   };
 }

@@ -1,46 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { stripe } from "@/lib/hub/stripe";
-import { createHubServiceClient } from "@/lib/hub/supabase-server";
+import { isHubSubscription, syncSubscription } from "@/lib/hub/subscription-sync.server";
 import type Stripe from "stripe";
-
-const HUB_LOOKUP_KEYS = new Set(["gemiq_professional_monthly", "gemiq_professional_annual"]);
-
-/** True iff this subscription was created by the GEM.IQ hub. */
-function isHubSubscription(sub: Stripe.Subscription): boolean {
-  if (sub.metadata?.source === "gemiq_hub") return true;
-  const lk = sub.items?.data?.[0]?.price?.lookup_key;
-  if (lk && HUB_LOOKUP_KEYS.has(lk)) return true;
-  return false;
-}
-
-async function syncSubscription(sub: Stripe.Subscription) {
-  const svc = createHubServiceClient();
-  const price = sub.items.data[0]?.price;
-  const userId = (sub.metadata?.supabase_user_id as string | undefined) ?? await resolveUserIdFromCustomer(sub.customer as string);
-  if (!userId) return;
-  await svc.from("subscriptions").upsert({
-    user_id: userId,
-    stripe_customer_id: sub.customer as string,
-    stripe_subscription_id: sub.id,
-    stripe_price_id: price?.id ?? null,
-    lookup_key: price?.lookup_key ?? null,
-    status: sub.status,
-    current_period_end: new Date(((sub as any).current_period_end ?? 0) * 1000).toISOString(),
-    cancel_at_period_end: sub.cancel_at_period_end,
-  }, { onConflict: "stripe_subscription_id" });
-}
-
-async function resolveUserIdFromCustomer(customerId: string): Promise<string | null> {
-  const c = await stripe().customers.retrieve(customerId);
-  if (c.deleted) return null;
-  const meta = (c as Stripe.Customer).metadata?.supabase_user_id;
-  if (meta) return meta;
-  const email = (c as Stripe.Customer).email;
-  if (!email) return null;
-  const svc = createHubServiceClient();
-  const { data } = await svc.from("profiles").select("id").eq("email", email).maybeSingle();
-  return data?.id ?? null;
-}
 
 export const Route = createFileRoute("/api/public/billing/payments-webhook")({
   server: {

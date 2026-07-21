@@ -14,11 +14,11 @@ import type { AssessmentSpec, SubmissionForMapping } from "./types";
 const prefix = "gem_tariff";
 
 const TIER_OPTIONS = [
-  { label: "Reactive",   value: "Reactive" },
-  { label: "Developing", value: "Developing" },
-  { label: "Defined",    value: "Defined" },
-  { label: "Advanced",   value: "Advanced" },
-  { label: "Optimized",  value: "Optimized" },
+  { label: "Reactive",   value: "reactive" },
+  { label: "Developing", value: "developing" },
+  { label: "Defined",    value: "defined" },
+  { label: "Advanced",   value: "advanced" },
+  { label: "Optimized",  value: "optimized" },
 ];
 
 const ROLE_OPTIONS = [
@@ -88,7 +88,7 @@ export const tariffiq: AssessmentSpec = {
 
     const out: Record<string, string | number | null | undefined> = {
       [`${prefix}_score`]:        s.score,
-      [`${prefix}_tier`]:         s.tier,
+      [`${prefix}_tier`]:         s.tier?.toLowerCase(),
       [`${prefix}_completed_at`]: s.submitted_at.slice(0, 10),
 
       [`${prefix}_role`]:            asString(d.role),

@@ -43,6 +43,9 @@ const PROPS: PropDef[] = [
   { name: "gem_last_score", label: "GEM Last Score", groupName: GROUP, type: "number", fieldType: "number" },
   { name: "gem_last_tier", label: "GEM Last Tier", groupName: GROUP, type: "string", fieldType: "text" },
   { name: "gem_last_completed_at", label: "GEM Last Completed At", groupName: GROUP, type: "date", fieldType: "date" },
+  // Shared score tier (5 tiers, lowercase values)
+  { name: "gem_score_tier", label: "GEM Score Tier", groupName: GROUP, type: "enumeration", fieldType: "select",
+    options: ["reactive","developing","defined","advanced","optimized"].map(v => ({ label: v[0].toUpperCase()+v.slice(1), value: v })) },
 ];
 
 /** Map registry PropertyDef → HubSpot property create payload. */
@@ -80,10 +83,21 @@ async function ensureProperty(p: PropDef) {
     method: "POST", headers: hsHeaders(),
     body: JSON.stringify(p),
   });
-  if (res.ok || res.status === 409) return { name: p.name, status: "ok" };
+  if (res.ok) return { name: p.name, status: "created" };
   const t = await res.text();
-  if (/already exists/i.test(t)) return { name: p.name, status: "exists" };
-  return { name: p.name, status: "error", error: t };
+  const alreadyExists = res.status === 409 || /already exists/i.test(t);
+  if (!alreadyExists) return { name: p.name, status: "error", error: t };
+
+  // For enum properties, PATCH to sync options (label/options may have drifted).
+  if (p.type === "enumeration" && p.options?.length) {
+    const patch = await fetch(`${GATEWAY}/crm/v3/properties/contacts/${p.name}`, {
+      method: "PATCH", headers: hsHeaders(),
+      body: JSON.stringify({ label: p.label, options: p.options }),
+    });
+    if (patch.ok) return { name: p.name, status: "updated" };
+    return { name: p.name, status: "update_error", error: await patch.text() };
+  }
+  return { name: p.name, status: "exists" };
 }
 
 export const Route = createFileRoute("/api/public/admin/bootstrap-hubspot-schema")({

@@ -109,24 +109,8 @@ function AuthPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-gem-ink antialiased">
-      {/* Header — matches landing */}
-      <header className="border-b border-gem-navy/10 bg-white">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-6">
-          <Link to="/" className="flex items-center gap-3 rounded-md hover:opacity-80">
-            <img src={gemLogoDark.url} alt="GEM.IQ" className="h-8 w-auto" />
-            <span className="hidden h-6 w-px bg-gem-navy/20 sm:block" />
-            <span className="hidden font-display text-lg font-bold tracking-tight text-gem-navy sm:inline">
-              GEM.IQ Hub
-            </span>
-          </Link>
-          <Link
-            to="/"
-            className="ml-auto text-sm font-medium text-gem-navy/70 hover:text-gem-navy"
-          >
-            ← Back to home
-          </Link>
-        </div>
-      </header>
+      <HubHeader variant="auth" />
+
 
       <div className="mx-auto grid w-full max-w-6xl items-start gap-12 px-6 py-12 md:grid-cols-[1.05fr_1fr] md:py-16">
         {/* Brand / product panel */}

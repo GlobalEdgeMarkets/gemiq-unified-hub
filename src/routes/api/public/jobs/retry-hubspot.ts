@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHubServiceClient } from "@/lib/hub/supabase-server";
-import { upsertContactByEmail } from "@/lib/hub/hubspot";
+import { upsertContactByEmail, createLeadForContact, classifyLead } from "@/lib/hub/hubspot";
+import { REGISTRY_BY_KEY } from "@/lib/hub/assessments";
 import { json } from "@/lib/hub/http";
 
 function authorized(req: Request) {

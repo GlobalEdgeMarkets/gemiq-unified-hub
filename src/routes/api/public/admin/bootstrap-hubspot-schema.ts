@@ -100,6 +100,42 @@ async function ensureProperty(p: PropDef) {
   return { name: p.name, status: "exists" };
 }
 
+const LEAD_PROPS: PropDef[] = [
+  { name: "gem_lead_temperature", label: "GEM Lead Temperature", groupName: GROUP, type: "enumeration", fieldType: "select",
+    options: [{ label: "Warm", value: "warm" }, { label: "Hot", value: "hot" }] },
+  { name: "gem_lead_source_assessment", label: "GEM Lead Source Assessment", groupName: GROUP, type: "string", fieldType: "text" },
+];
+
+async function ensureLeadGroup() {
+  const res = await fetch(`${GATEWAY}/crm/v3/properties/leads/groups`, {
+    method: "POST", headers: hsHeaders(),
+    body: JSON.stringify({ name: GROUP, label: "GEM.IQ", displayOrder: -1 }),
+  });
+  if (res.status === 409 || res.ok) return;
+  const t = await res.text();
+  if (!/already exists/i.test(t)) console.error(`lead group create failed [${res.status}]: ${t}`);
+}
+
+async function ensureLeadProperty(p: PropDef) {
+  const res = await fetch(`${GATEWAY}/crm/v3/properties/leads`, {
+    method: "POST", headers: hsHeaders(),
+    body: JSON.stringify(p),
+  });
+  if (res.ok) return { name: p.name, status: "created", object: "lead" };
+  const t = await res.text();
+  const alreadyExists = res.status === 409 || /already exists/i.test(t);
+  if (!alreadyExists) return { name: p.name, status: "error", object: "lead", error: t };
+  if (p.type === "enumeration" && p.options?.length) {
+    const patch = await fetch(`${GATEWAY}/crm/v3/properties/leads/${p.name}`, {
+      method: "PATCH", headers: hsHeaders(),
+      body: JSON.stringify({ label: p.label, options: p.options }),
+    });
+    if (patch.ok) return { name: p.name, status: "updated", object: "lead" };
+    return { name: p.name, status: "update_error", object: "lead", error: await patch.text() };
+  }
+  return { name: p.name, status: "exists", object: "lead" };
+}
+
 export const Route = createFileRoute("/api/public/admin/bootstrap-hubspot-schema")({
   server: {
     handlers: {
@@ -107,10 +143,11 @@ export const Route = createFileRoute("/api/public/admin/bootstrap-hubspot-schema
         const secret = request.headers.get("x-job-secret");
         if (!secret || secret !== process.env.JOB_SECRET) return new Response("forbidden", { status: 403 });
         await ensureGroup();
+        await ensureLeadGroup();
         const results = [];
         for (const p of PROPS) results.push(await ensureProperty(p));
-        // Also create every per-IQ property declared in the registry.
         for (const p of collectAllPropertyDefs()) results.push(await ensureProperty(toHsPropDef(p)));
+        for (const p of LEAD_PROPS) results.push(await ensureLeadProperty(p));
         return json({ group: GROUP, results }, undefined, request);
       },
     },

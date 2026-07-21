@@ -66,3 +66,65 @@ function extractUnknownProps(errText: string): string[] {
   }
   return [...found];
 }
+
+/**
+ * Classify a submission as a Warm or Hot lead.
+ * Rule (per product decision): every completion = Warm; Hot when score >= 80.
+ */
+export function classifyLead(score: number | null | undefined): "warm" | "hot" {
+  return typeof score === "number" && score >= 80 ? "hot" : "warm";
+}
+
+/**
+ * Create a HubSpot Lead associated to the given contact. Best-effort:
+ * failures are logged and swallowed so the submission still succeeds.
+ * Contact→Lead default association type id = 578 (HUBSPOT_DEFINED).
+ */
+export async function createLeadForContact(args: {
+  contactId: string;
+  contactName: string;
+  assessmentLabel: string;
+  score: number | null | undefined;
+  temperature: "warm" | "hot";
+}): Promise<{ id: string } | null> {
+  const tempLabel = args.temperature === "hot" ? "Hot" : "Warm";
+  const scoreStr = typeof args.score === "number" ? ` — Score ${args.score}` : "";
+  const leadName = `${args.contactName} — ${args.assessmentLabel} (${tempLabel})${scoreStr}`;
+
+  const body = {
+    properties: {
+      hs_lead_name: leadName,
+      hs_lead_type: "NEW_BUSINESS",
+      gem_lead_temperature: args.temperature,
+      gem_lead_source_assessment: args.assessmentLabel,
+    },
+    associations: [
+      {
+        to: { id: args.contactId },
+        types: [{ associationCategory: "HUBSPOT_DEFINED", associationTypeId: 578 }],
+      },
+    ],
+  };
+
+  // Retry once with unknown props stripped (in case bootstrap hasn't run for gem_lead_* yet).
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await fetch(`${GATEWAY}/crm/v3/objects/leads`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return { id: data.id };
+    }
+    const text = await res.text();
+    const unknown = extractUnknownProps(text);
+    if (unknown.length && attempt === 0) {
+      for (const k of unknown) delete (body.properties as any)[k];
+      continue;
+    }
+    console.error(`[hubspot] createLead failed [${res.status}]: ${text}`);
+    return null;
+  }
+  return null;
+}

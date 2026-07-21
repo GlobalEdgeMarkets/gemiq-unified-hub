@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHubServiceClient } from "@/lib/hub/supabase-server";
-import { upsertContactByEmail } from "@/lib/hub/hubspot";
+import { upsertContactByEmail, createLeadForContact, classifyLead } from "@/lib/hub/hubspot";
+import { REGISTRY_BY_KEY } from "@/lib/hub/assessments";
 import { json } from "@/lib/hub/http";
 
 function authorized(req: Request) {
@@ -38,6 +39,16 @@ export const Route = createFileRoute("/api/public/jobs/retry-hubspot")({
                 hubspot_sync_error: null,
               }).eq("id", j.submission_id);
             }
+            // Best-effort lead creation on retry success too.
+            const p = payload.properties;
+            const assessmentKey = (p.gem_last_assessment as string) ?? (p.gem_assessment_tool as string) ?? "";
+            const score = typeof p.gem_last_score === "number" ? p.gem_last_score : (typeof p.gem_assessment_score === "number" ? p.gem_assessment_score : null);
+            const contactName = `${p.firstname ?? ""} ${p.lastname ?? ""}`.trim() || payload.email;
+            const assessmentLabel = REGISTRY_BY_KEY[assessmentKey]?.displayName ?? assessmentKey ?? "GEM.IQ";
+            await createLeadForContact({
+              contactId: hsId, contactName, assessmentLabel, score,
+              temperature: classifyLead(score),
+            }).catch(e => console.error("[retry] createLead error", e));
             ok++;
           } catch (e: any) {
             const attempts = j.attempts + 1;

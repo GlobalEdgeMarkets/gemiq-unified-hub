@@ -1,4 +1,4 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { iqContextFromReturnUrl } from "@/lib/hub/iq-context";
@@ -112,17 +112,19 @@ function AuthPage() {
       {/* Header — matches landing */}
       <header className="border-b border-gem-navy/10 bg-white">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-6">
-          <img src={gemLogoDark.url} alt="GEM.IQ" className="h-8 w-auto" />
-          <span className="hidden h-6 w-px bg-gem-navy/20 sm:block" />
-          <span className="hidden font-display text-lg font-bold tracking-tight text-gem-navy sm:inline">
-            GEM.IQ Hub
-          </span>
-          <a
-            href="/"
+          <Link to="/" className="flex items-center gap-3 rounded-md hover:opacity-80">
+            <img src={gemLogoDark.url} alt="GEM.IQ" className="h-8 w-auto" />
+            <span className="hidden h-6 w-px bg-gem-navy/20 sm:block" />
+            <span className="hidden font-display text-lg font-bold tracking-tight text-gem-navy sm:inline">
+              GEM.IQ Hub
+            </span>
+          </Link>
+          <Link
+            to="/"
             className="ml-auto text-sm font-medium text-gem-navy/70 hover:text-gem-navy"
           >
             ← Back to home
-          </a>
+          </Link>
         </div>
       </header>
 

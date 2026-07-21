@@ -53,6 +53,20 @@ export interface CheckStatus {
   subscription: HubSubscription | null;
 }
 
+export interface HubProfile {
+  id: string;
+  email: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  full_name: string | null;
+  company: string | null;
+  title: string | null;
+  role: string | null;
+  industry: string | null;
+}
+export type HubProfilePatch = Partial<Omit<HubProfile, "id" | "email" | "full_name">>;
+
+
 export interface HubClientOptions {
   /** Origin of the GEM.IQ Hub, e.g. "https://gemiq.globaledgemarkets.com". */
   hubOrigin: string;

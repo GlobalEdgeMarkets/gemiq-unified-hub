@@ -102,7 +102,22 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             hubspot_sync_error: skipped.length ? `skipped_props:${skipped.join(",")}` : null,
           }).eq("id", inserted.id);
           if (user?.id) await svc.from("profiles").update({ hubspot_contact_id: hsId }).eq("id", user.id);
-          return json({ id: inserted.id, hubspot_contact_id: hsId, skipped_properties: skipped }, undefined, request);
+
+          // Best-effort: create a HubSpot Lead (Warm/Hot) associated to the contact.
+          const temperature = classifyLead(payload.score);
+          const fname = (payload.metadata?.first_name as string | undefined) ?? "";
+          const lname = (payload.metadata?.last_name as string | undefined) ?? "";
+          const contactName = `${fname} ${lname}`.trim() || email;
+          const assessmentLabel = REGISTRY_BY_KEY[payload.assessment_key]?.displayName ?? payload.assessment_key;
+          const lead = await createLeadForContact({
+            contactId: hsId, contactName, assessmentLabel,
+            score: payload.score ?? null, temperature,
+          }).catch(e => { console.error("[submit] createLead error", e); return null; });
+
+          return json({
+            id: inserted.id, hubspot_contact_id: hsId, skipped_properties: skipped,
+            hubspot_lead_id: lead?.id ?? null, lead_temperature: temperature,
+          }, undefined, request);
         } catch (e: any) {
           await svc.from("submissions").update({ hubspot_sync_error: e.message }).eq("id", inserted.id);
           await svc.from("retry_queue").insert({

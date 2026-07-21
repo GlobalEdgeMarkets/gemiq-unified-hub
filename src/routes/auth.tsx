@@ -1,8 +1,8 @@
-import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { iqContextFromReturnUrl } from "@/lib/hub/iq-context";
-import gemLogoDark from "@/assets/gem-logo-dark.png.asset.json";
+import { HubHeader } from "@/components/HubHeader";
 
 /** Only allow return-to URLs on the GEM.IQ Hub itself or *.globaledgemarkets.com. */
 function isAllowedReturnUrl(raw: string | undefined): string | null {

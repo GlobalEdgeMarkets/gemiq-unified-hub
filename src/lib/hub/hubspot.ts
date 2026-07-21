@@ -29,12 +29,11 @@ export async function upsertContactByEmail(
   let props = { ...properties };
   while (attempt < 4) {
     attempt++;
-    const res = await fetch(`${GATEWAY}/crm/v3/objects/contacts/upsert`, {
+    const res = await fetch(`${GATEWAY}/crm/v3/objects/contacts/batch/upsert`, {
       method: "POST",
       headers: headers(),
       body: JSON.stringify({
-        idProperty: "email",
-        inputs: [{ id: email, properties: props }],
+        inputs: [{ idProperty: "email", id: email, properties: props }],
       }),
     });
     if (res.ok) {

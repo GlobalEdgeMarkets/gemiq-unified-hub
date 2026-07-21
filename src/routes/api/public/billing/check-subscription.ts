@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHubSupabaseSSR, createHubServiceClient } from "@/lib/hub/supabase-server";
 import { json, corsHeaders } from "@/lib/hub/http";
+import { reconcileSubscriptionForUser } from "@/lib/hub/subscription-sync.server";
 
 export const Route = createFileRoute("/api/public/billing/check-subscription")({
   server: {
@@ -13,13 +14,33 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
         if (!user) return json({ active: false, authenticated: false }, undefined, request);
 
         const svc = createHubServiceClient();
-        const { data } = await svc
+        let { data, error } = await svc
           .from("subscriptions")
           .select("status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id")
           .eq("user_id", user.id)
           .order("updated_at", { ascending: false })
           .limit(1)
           .maybeSingle();
+        if (error) return json({ error: "subscription_lookup_failed" }, { status: 500 }, request);
+
+        // Stripe remains the source of truth. This self-heals checkout returns
+        // when a webhook is delayed or its delivery configuration is stale.
+        if (!data || !["active", "trialing"].includes(data.status)) {
+          try {
+            await reconcileSubscriptionForUser(user.id, user.email ?? "");
+            const refreshed = await svc
+              .from("subscriptions")
+              .select("status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id")
+              .eq("user_id", user.id)
+              .order("updated_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (refreshed.error) throw refreshed.error;
+            data = refreshed.data;
+          } catch (reconcileError) {
+            console.error("[subscription reconciliation]", reconcileError);
+          }
+        }
 
         const active = !!data && ["active", "trialing"].includes(data.status);
         return json({

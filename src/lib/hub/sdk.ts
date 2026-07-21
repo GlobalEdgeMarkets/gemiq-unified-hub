@@ -44,6 +44,8 @@ export interface SubmissionPayload {
   detail?: Record<string, unknown>;
   answers?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
+  /** Public URL to a rendered PDF/HTML report. Shown in the internal notification email. */
+  report_url?: string;
   submitted_at?: string;
 }
 export interface CheckStatus {

@@ -144,8 +144,17 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           },
         });
 
+        const temperature = classifyLead(payload.score);
+        const assessmentLabel = REGISTRY_BY_KEY[payload.assessment_key]?.displayName ?? payload.assessment_key;
+        let hsContactId: string | null = null;
+        let hsLeadId: string | null = null;
+        let skippedProps: string[] = [];
+        let queuedForRetry = false;
+
         try {
           const { id: hsId, skipped } = await upsertContactByEmail(email, props);
+          hsContactId = hsId;
+          skippedProps = skipped;
           await svc.from("submissions").update({
             hubspot_contact_id: hsId,
             hubspot_synced_at: new Date().toISOString(),
@@ -153,41 +162,46 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           }).eq("id", inserted.id);
           if (user?.id) await svc.from("profiles").update({ hubspot_contact_id: hsId }).eq("id", user.id);
 
-          // Best-effort: create a HubSpot Lead (Warm/Hot) associated to the contact.
-          const temperature = classifyLead(payload.score);
           const fname = (payload.metadata?.first_name as string | undefined) ?? "";
           const lname = (payload.metadata?.last_name as string | undefined) ?? "";
           const contactName = `${fname} ${lname}`.trim() || email;
-          const assessmentLabel = REGISTRY_BY_KEY[payload.assessment_key]?.displayName ?? payload.assessment_key;
           const lead = await createLeadForContact({
             contactId: hsId, contactName, assessmentLabel,
             score: payload.score ?? null, temperature,
           }).catch(e => { console.error("[submit] createLead error", e); return null; });
-
-          await sendSubmissionNotification({
-            submissionId: inserted.id,
-            email,
-            payload,
-            hsContactId: hsId,
-            hsLeadId: lead?.id ?? null,
-            temperature,
-            assessmentLabel,
-            submittedAt: inserted.submitted_at,
-          });
-
-          return json({
-            id: inserted.id, hubspot_contact_id: hsId, skipped_properties: skipped,
-            hubspot_lead_id: lead?.id ?? null, lead_temperature: temperature,
-          }, undefined, request);
+          hsLeadId = lead?.id ?? null;
         } catch (e: any) {
+          console.error("[submit] hubspot upsert failed", e);
           await svc.from("submissions").update({ hubspot_sync_error: e.message }).eq("id", inserted.id);
           await svc.from("retry_queue").insert({
             job_type: "hubspot_upsert",
             submission_id: inserted.id,
             payload: { email, properties: props },
           });
-          return json({ id: inserted.id, queued_for_retry: true }, { status: 202 }, request);
+          queuedForRetry = true;
         }
+
+        // Always send the internal notification, regardless of HubSpot outcome.
+        await sendSubmissionNotification({
+          submissionId: inserted.id,
+          email,
+          payload,
+          hsContactId,
+          hsLeadId,
+          temperature,
+          assessmentLabel,
+          submittedAt: inserted.submitted_at,
+        }).catch(e => console.error("[submit] notification wrapper failed", e));
+
+        return json({
+          id: inserted.id,
+          hubspot_contact_id: hsContactId,
+          hubspot_lead_id: hsLeadId,
+          lead_temperature: temperature,
+          skipped_properties: skippedProps,
+          queued_for_retry: queuedForRetry,
+        }, queuedForRetry ? { status: 202 } : undefined, request);
+
       },
     },
   },

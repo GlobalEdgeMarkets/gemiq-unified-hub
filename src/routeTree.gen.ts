@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicProfileRouteImport } from './routes/api/public/profile'
 import { Route as ApiPublicSubmissionsSubmitRouteImport } from './routes/api/public/submissions/submit'
 import { Route as ApiPublicSubmissionsHistoryRouteImport } from './routes/api/public/submissions/history'
 import { Route as ApiPublicJobsRetryHubspotRouteImport } from './routes/api/public/jobs/retry-hubspot'
@@ -31,6 +32,11 @@ const AuthRoute = AuthRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicProfileRoute = ApiPublicProfileRouteImport.update({
+  id: '/api/public/profile',
+  path: '/api/public/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicSubmissionsSubmitRoute =
@@ -102,6 +108,7 @@ const ApiPublicAdminBootstrapHubspotSchemaRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
   '/api/public/admin/import-legacy-users': typeof ApiPublicAdminImportLegacyUsersRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
   '/api/public/admin/import-legacy-users': typeof ApiPublicAdminImportLegacyUsersRoute
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
   '/api/public/admin/import-legacy-users': typeof ApiPublicAdminImportLegacyUsersRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
     | '/api/public/admin/import-legacy-users'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
     | '/api/public/admin/import-legacy-users'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
     | '/api/public/admin/import-legacy-users'
@@ -196,6 +208,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  ApiPublicProfileRoute: typeof ApiPublicProfileRoute
   ApiPublicAdminBootstrapHubspotSchemaRoute: typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   ApiPublicAdminImportLegacySubmissionsRoute: typeof ApiPublicAdminImportLegacySubmissionsRoute
   ApiPublicAdminImportLegacyUsersRoute: typeof ApiPublicAdminImportLegacyUsersRoute
@@ -223,6 +236,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/profile': {
+      id: '/api/public/profile'
+      path: '/api/public/profile'
+      fullPath: '/api/public/profile'
+      preLoaderRoute: typeof ApiPublicProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/submissions/submit': {
@@ -308,6 +328,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  ApiPublicProfileRoute: ApiPublicProfileRoute,
   ApiPublicAdminBootstrapHubspotSchemaRoute:
     ApiPublicAdminBootstrapHubspotSchemaRoute,
   ApiPublicAdminImportLegacySubmissionsRoute:

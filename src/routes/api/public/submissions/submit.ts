@@ -5,6 +5,56 @@ import { upsertContactByEmail, createLeadForContact, classifyLead } from "@/lib/
 import { buildContactProperties, REGISTRY_BY_KEY } from "@/lib/hub/assessments";
 import type { SubmissionForMapping } from "@/lib/hub/assessments/types";
 import { json, corsHeaders } from "@/lib/hub/http";
+import { sendTemplateEmail } from "@/lib/email-templates/send-email";
+
+const NOTIFY_RECIPIENTS = ["info@globaledgemarkets.com", "alexr@globaledgemarkets.com"];
+
+async function sendSubmissionNotification(args: {
+  submissionId: string;
+  email: string;
+  payload: any;
+  hsContactId: string | null;
+  hsLeadId: string | null;
+  temperature: string | null;
+  assessmentLabel: string;
+  submittedAt: string;
+}) {
+  const { submissionId, email, payload, hsContactId, hsLeadId, temperature, assessmentLabel, submittedAt } = args;
+  const fname = (payload.metadata?.first_name as string | undefined) ?? "";
+  const lname = (payload.metadata?.last_name as string | undefined) ?? "";
+  const contactName = `${fname} ${lname}`.trim() || email;
+  const dims = payload.dimensions && typeof payload.dimensions === "object"
+    ? Object.entries(payload.dimensions).map(([name, score]) => ({ name, score: score as any }))
+    : [];
+  const portalId = process.env.HUBSPOT_PORTAL_ID;
+  const hubspotContactUrl = hsContactId && portalId ? `https://app.hubspot.com/contacts/${portalId}/contact/${hsContactId}` : null;
+  const hubspotLeadUrl = hsLeadId && portalId ? `https://app.hubspot.com/contacts/${portalId}/record/0-136/${hsLeadId}` : null;
+  const reportUrl = (payload.metadata?.report_url as string | undefined) ?? (payload.metadata?.pdf_url as string | undefined) ?? null;
+
+  const templateData = {
+    assessmentLabel,
+    assessmentKey: payload.assessment_key,
+    contactName,
+    email,
+    company: payload.metadata?.company as string | undefined,
+    phone: payload.metadata?.phone as string | undefined,
+    score: payload.score ?? null,
+    tier: payload.tier ?? null,
+    temperature,
+    dimensions: dims,
+    reportUrl,
+    submittedAt,
+    hubspotContactUrl,
+    hubspotLeadUrl,
+  };
+
+  await Promise.all(NOTIFY_RECIPIENTS.map((to) =>
+    sendTemplateEmail("submission-notification", to, {
+      templateData,
+      idempotencyKey: `submission-notify-${submissionId}-${to}`,
+    }).catch((e) => { console.error("[submit] notification email failed", to, e); return null; })
+  ));
+}
 
 export const Route = createFileRoute("/api/public/submissions/submit")({
   server: {
@@ -113,6 +163,17 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             contactId: hsId, contactName, assessmentLabel,
             score: payload.score ?? null, temperature,
           }).catch(e => { console.error("[submit] createLead error", e); return null; });
+
+          await sendSubmissionNotification({
+            submissionId: inserted.id,
+            email,
+            payload,
+            hsContactId: hsId,
+            hsLeadId: lead?.id ?? null,
+            temperature,
+            assessmentLabel,
+            submittedAt: inserted.submitted_at,
+          });
 
           return json({
             id: inserted.id, hubspot_contact_id: hsId, skipped_properties: skipped,

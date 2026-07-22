@@ -147,8 +147,23 @@
     border-color: var(--color-border);
   }
 
+  /* GEM Brand Guidelines 2023 — typography
+   * Primary (headings/UI):  League Spartan  → --font-display
+   * Secondary (body copy):  Didact Gothic   → --font-sans
+   */
+  html, body {
+    font-family: var(--font-sans);
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4, h5, h6,
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
   }
 }

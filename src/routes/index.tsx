@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import gemLogoDark from "@/assets/gem-logo-dark.png.asset.json";
-import { HubHeader } from "@/components/HubHeader";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,411 +23,452 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+type Accent = "mint" | "violet" | "cyan" | "amber";
+
 type Assessment = {
   key: string;
   name: string;
-  suffix: string;
   url: string;
-  eyebrow: string;
+  tagline: string;
   body: string;
   live: boolean;
-  accent: "mint" | "navy" | "gold" | "purple";
-  icon: "globe" | "briefcase" | "sparkles" | "cog";
+  accent: Accent;
+  domain: string;
 };
 
 const ASSESSMENTS: Assessment[] = [
   {
     key: "tariffiq",
-    name: "Tariff",
-    suffix: "IQ",
+    name: "TariffIQ",
     url: "https://tariffiq.globaledgemarkets.com",
-    eyebrow: "Quantify duty exposure and savings opportunity",
-    body: "Eight dimensions of tariff engineering maturity — from HTS classification to first-sale and FTZ readiness. Get an annualized savings estimate in under 10 minutes.",
+    tagline: "Duty exposure & savings",
+    body: "Eight dimensions of tariff engineering maturity — HTS classification, first-sale, FTZ readiness. Annualized savings estimate in under 10 minutes.",
     live: true,
     accent: "mint",
-    icon: "globe",
+    domain: "Global Trade & Supply Chain",
   },
   {
     key: "readinessiq",
-    name: "Readiness",
-    suffix: "IQ",
+    name: "ReadinessIQ",
     url: "https://readinessiq.globaledgemarkets.com",
-    eyebrow: "Measure market, sales, product, and AI readiness",
-    body: "Four executive assessments across market entry, enterprise sales, productization, and AI transformation — CMMI/TRL-weighted scoring tailored to your growth stage.",
+    tagline: "Go-to-market maturity",
+    body: "Four executive assessments across market entry, enterprise sales, productization, and AI transformation — CMMI/TRL-weighted scoring for your growth stage.",
     live: true,
-    accent: "navy",
-    icon: "briefcase",
+    accent: "violet",
+    domain: "GoToMarket Strategy",
   },
   {
     key: "uxiq",
-    name: "UX",
-    suffix: "IQ",
+    name: "UXIQ",
     url: "https://uxreadiness.globaledgemarkets.com",
-    eyebrow: "Benchmark digital experience maturity",
-    body: "Score research, design system, accessibility, and conversion craft against best-in-class peers — with dimension-level tiering and prioritized recommendations.",
+    tagline: "Digital & AI experience",
+    body: "Benchmark research, design system, accessibility, and conversion craft against best-in-class peers — dimension-level tiering with prioritized recommendations.",
     live: true,
-    accent: "purple",
-    icon: "sparkles",
+    accent: "cyan",
+    domain: "Digital & AI Experience",
   },
   {
     key: "techservicesiq",
-    name: "TechServices",
-    suffix: "IQ",
+    name: "TechServicesIQ",
     url: "https://techservicesiq.globaledgemarkets.com",
-    eyebrow: "Assess professional services delivery health",
+    tagline: "Services delivery health",
     body: "Engagement, delivery, staffing, and margin performance across your services organization — surface leaks in utilization, scoping, and repeatability.",
     live: false,
-    accent: "gold",
-    icon: "cog",
+    accent: "amber",
+    domain: "Product & Service Delivery",
   },
 ];
 
-const STEPS = [
-  {
-    n: 1,
-    title: "Sign in once",
-    body: "One GEM.IQ account works across every assessment on globaledgemarkets.com — no separate logins.",
-  },
-  {
-    n: 2,
-    title: "Pick an assessment",
-    body: "Choose the IQ that matches the decision in front of you — take it in under 10 minutes.",
-  },
-  {
-    n: 3,
-    title: "Get instant results",
-    body: "Scores, dimension tiering, and benchmarks stream into your unified GEM.IQ dashboard.",
-  },
-];
-
-const WHY = [
-  {
-    title: "One identity, every assessment",
-    body: "A single GEM.IQ account carries your profile, results, and subscription across every assessment domain.",
-    icon: "id",
-  },
-  {
-    title: "Executive-grade methodologies",
-    body: "Each IQ is built on a peer-reviewed framework — CMMI, TRL/MRL, WCAG, or tariff engineering doctrine.",
-    icon: "shield",
-  },
-  {
-    title: "Unified benchmarking",
-    body: "Compare your organization across assessments, retakes, and industry peers from one dashboard.",
-    icon: "chart",
-  },
-];
+const ACCENT: Record<Accent, { text: string; ring: string; dot: string; glow: string; chip: string }> = {
+  mint:   { text: "text-[#4ade80]", ring: "hover:border-[#4ade80]/50", dot: "bg-[#4ade80]",   glow: "shadow-[0_0_40px_-8px_rgba(74,222,128,0.6)]",  chip: "bg-[#4ade80]/10 text-[#4ade80]" },
+  violet: { text: "text-[#a78bfa]", ring: "hover:border-[#a78bfa]/50", dot: "bg-[#a78bfa]",   glow: "shadow-[0_0_40px_-8px_rgba(167,139,250,0.6)]", chip: "bg-[#a78bfa]/10 text-[#a78bfa]" },
+  cyan:   { text: "text-[#67e8f9]", ring: "hover:border-[#67e8f9]/50", dot: "bg-[#67e8f9]",   glow: "shadow-[0_0_40px_-8px_rgba(103,232,249,0.6)]", chip: "bg-[#67e8f9]/10 text-[#67e8f9]" },
+  amber:  { text: "text-[#fbbf24]", ring: "hover:border-[#fbbf24]/50", dot: "bg-[#fbbf24]",   glow: "shadow-[0_0_40px_-8px_rgba(251,191,36,0.5)]",  chip: "bg-[#fbbf24]/10 text-[#fbbf24]" },
+};
 
 function Index() {
   return (
-    <div className="min-h-screen bg-white font-sans text-gem-ink antialiased">
-      <TopBar />
-      <Hero />
-      <Stats />
-      <AssessmentGrid />
-      <HowItWorks />
-      <WhyGemIQ />
-      <Pricing />
-      <Footer />
+    <div className="min-h-screen w-full bg-[#0a0a16] font-sans text-white antialiased relative overflow-hidden">
+      {/* Global aurora background */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
+        <div className="absolute top-[-15%] left-[-10%] h-[55%] w-[55%] rounded-full bg-[#4ade80]/10 blur-[140px] animate-aurora-slow" />
+        <div className="absolute bottom-[-15%] right-[-10%] h-[55%] w-[55%] rounded-full bg-[#a78bfa]/12 blur-[140px] animate-aurora-slow-alt" />
+        <div className="absolute top-[35%] left-[40%] h-[35%] w-[35%] rounded-full bg-[#67e8f9]/8 blur-[120px] animate-aurora-drift" />
+      </div>
+
+      <div className="relative z-10">
+        <TopNav />
+        <main className="mx-auto max-w-7xl px-6 pb-24 pt-4 md:px-10 md:pb-32">
+          <HeroBento />
+          <TrustMarquee />
+          <Pricing />
+          <FinalCTA />
+        </main>
+        <Footer />
+      </div>
+
+      <style>{`
+        @keyframes aurora-slow { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(4%, 6%) scale(1.1); } }
+        @keyframes aurora-slow-alt { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-4%, -3%) scale(1.08); } }
+        @keyframes aurora-drift { 0%,100% { transform: translate(-10%, 0) scale(1); } 50% { transform: translate(10%, -8%) scale(1.15); } }
+        .animate-aurora-slow { animation: aurora-slow 22s ease-in-out infinite; }
+        .animate-aurora-slow-alt { animation: aurora-slow-alt 26s ease-in-out infinite; }
+        .animate-aurora-drift { animation: aurora-drift 30s ease-in-out infinite; }
+      `}</style>
     </div>
   );
 }
 
-function TopBar() {
-  return <HubHeader variant="landing" />;
-}
-
-
-function Hero() {
+function TopNav() {
   return (
-    <section className="relative isolate overflow-hidden bg-[#0a1226] text-white">
-      {/* Atmospheric background */}
-      <div aria-hidden className="absolute inset-0">
-        <div
-          className="absolute inset-0 opacity-70"
-          style={{
-            backgroundImage:
-              "radial-gradient(120% 80% at 80% 30%, rgba(5,207,171,0.18), transparent 60%), radial-gradient(80% 60% at 10% 80%, rgba(45,21,148,0.35), transparent 65%)",
-          }}
-        />
-        {/* Subtle network dots */}
-        <svg className="absolute inset-0 h-full w-full opacity-[0.08]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="dot" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-              <circle cx="1" cy="1" r="1" fill="white" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#dot)" />
-        </svg>
-      </div>
-
-      <div className="relative mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:py-20">
-        <div className="max-w-3xl">
-          <span className="inline-flex items-center rounded-full border border-gem-mint/40 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-mint">
-            The GEM.IQ Assessment Platform
+    <nav className="sticky top-0 z-30 backdrop-blur-xl bg-[#0a0a16]/70 border-b border-white/5">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="relative h-9 w-9 rounded-xl bg-gradient-to-tr from-[#4ade80] to-[#a78bfa] shadow-[0_0_20px_-2px_rgba(74,222,128,0.5)] group-hover:shadow-[0_0_28px_-2px_rgba(167,139,250,0.7)] transition-shadow" />
+          <span className="font-display text-2xl font-bold tracking-tight">
+            GEM.IQ <span className="text-[#4ade80]">Hub</span>
           </span>
-
-          <h1 className="mt-6 font-display text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
-            Global Complexity.<br />
-            <span className="text-gem-mint">Quantified Clarity.</span>
-          </h1>
-
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/70">
-            The GEM.IQ Hub unifies every GlobalEdgeMarkets executive self-services assessment behind one
-            identity, one subscription, and one dashboard — so your team benchmarks GoToMarket Strategies,
-            supply chains, digital and AI experience, and product/service delivery from a single view. For
-            any business seeking global or regional expansion.
-          </p>
-
-
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Link
-              to="/auth"
-              search={{ mode: "signup" }}
-              className="inline-flex items-center gap-2 rounded-md bg-gem-mint px-6 py-3.5 text-sm font-semibold text-gem-navy shadow-lg shadow-gem-mint/20 transition hover:brightness-105"
-            >
-              Create your GEM.IQ account
-              <ArrowIcon className="h-4 w-4" />
-            </Link>
-            <a
-              href="#assessments"
-              className="inline-flex items-center gap-2 rounded-md border border-white/20 px-6 py-3.5 text-sm font-medium text-white transition hover:bg-white/5"
-            >
-              Explore assessments
-            </a>
-          </div>
+        </Link>
+        <div className="flex items-center gap-2 md:gap-3">
+          <a href="#assessments" className="hidden md:inline px-3 py-2 text-sm text-white/60 hover:text-white transition-colors">
+            Assessments
+          </a>
+          <a href="#pricing" className="hidden md:inline px-3 py-2 text-sm text-white/60 hover:text-white transition-colors">
+            Pricing
+          </a>
+          <Link
+            to="/auth"
+            search={{ mode: "signin" }}
+            className="px-4 py-2 text-sm font-semibold tracking-wide text-white/80 hover:text-white transition-colors"
+            style={{ fontFamily: "'League Spartan', sans-serif" }}
+          >
+            Sign in
+          </Link>
+          <Link
+            to="/auth"
+            search={{ mode: "signup" }}
+            className="px-5 py-2 text-sm font-bold tracking-wide bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-all backdrop-blur-md"
+            style={{ fontFamily: "'League Spartan', sans-serif" }}
+          >
+            Create account
+          </Link>
         </div>
       </div>
-    </section>
+    </nav>
   );
 }
 
-function Stats() {
-  const stats = [
-    { icon: <TargetIcon />, v: "4", l: "Assessments" },
-    { icon: <BoltIcon />, v: "28+", l: "Dimensions" },
-    { icon: <SparkleIcon />, v: "AI", l: "Powered Reports" },
-    { icon: <ClockIcon />, v: "<10m", l: "Per Assessment" },
-  ];
+function HeroBento() {
   return (
-    <section className="border-b border-gem-navy/10 bg-white py-8">
-      <div className="mx-auto flex max-w-3xl flex-wrap items-start justify-center gap-x-16 gap-y-8 px-6">
-        {stats.map((s) => (
-          <div key={s.l} className="flex min-w-[110px] flex-col items-center text-center">
-            <div className="text-gem-mint">{s.icon}</div>
-            <div className="mt-2 font-display text-2xl font-bold leading-none text-gem-navy">{s.v}</div>
-            <div className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-gem-navy/55">{s.l}</div>
-          </div>
+    <section id="assessments" className="pt-10 md:pt-14">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:auto-rows-[minmax(180px,auto)]">
+        {/* Large hero */}
+        <HeroTile />
+
+        {/* Two small feature tiles beside hero (col-span 1 each, 2 rows) */}
+        <FeatureTile
+          badge="Unified"
+          title="One identity"
+          body="One GEM.IQ account across every assessment — with SSO on globaledgemarkets.com."
+          accent="mint"
+        />
+        <FeatureTile
+          badge="Instant"
+          title="Under 10 min"
+          body="Take any IQ, get dimension-level scoring and benchmarks streamed to your dashboard."
+          accent="violet"
+        />
+
+        {/* 4 assessment tiles */}
+        {ASSESSMENTS.map((a) => (
+          <AssessmentTile key={a.key} a={a} />
         ))}
+
+        {/* Methodology strip */}
+        <MethodologyTile />
+        <BenchmarkTile />
       </div>
     </section>
   );
 }
 
-function AssessmentGrid() {
-  return (
-    <section id="assessments" className="bg-white py-14 sm:py-16">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center">
-          <h2 className="font-display text-4xl font-bold tracking-tight text-gem-navy sm:text-5xl">
-            Choose Your Assessment
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gem-navy/60">
-            Evaluate your maturity across critical dimensions. Identify risks, uncover gaps, and build confidence
-            for growth.
-          </p>
-        </div>
+function HeroTile() {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setI((p) => (p + 1) % ASSESSMENTS.length), 3200);
+    return () => clearInterval(t);
+  }, []);
+  const current = ASSESSMENTS[i];
+  const accent = ACCENT[current.accent];
 
-        <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2">
-          {ASSESSMENTS.map((a) => (
-            <AssessmentCard key={a.key} a={a} />
+  return (
+    <div className="md:col-span-3 md:row-span-2 relative overflow-hidden rounded-3xl border border-white/10 bg-[#16213e]/40 backdrop-blur-2xl p-8 md:p-12 flex flex-col justify-between min-h-[420px] md:min-h-[440px]">
+      {/* Ambient glow */}
+      <div aria-hidden className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-gradient-to-br from-[#4ade80]/20 to-[#a78bfa]/20 blur-3xl" />
+      <div aria-hidden className="absolute -bottom-32 -left-10 h-64 w-64 rounded-full bg-[#a78bfa]/10 blur-3xl" />
+
+      <div className="relative z-10 flex items-start justify-between">
+        <span
+          className="text-[#4ade80] text-xs font-bold uppercase tracking-[0.25em]"
+          style={{ fontFamily: "'League Spartan', sans-serif" }}
+        >
+          Intelligence Suite · 4 Assessments
+        </span>
+        <div className="hidden md:flex items-center gap-2">
+          {ASSESSMENTS.map((a, idx) => (
+            <button
+              key={a.key}
+              onClick={() => setI(idx)}
+              aria-label={`Show ${a.name}`}
+              className={`h-1.5 rounded-full transition-all ${
+                idx === i ? "w-8 bg-white" : "w-4 bg-white/25 hover:bg-white/50"
+              }`}
+            />
           ))}
         </div>
       </div>
-    </section>
+
+      <div className="relative z-10 max-w-2xl">
+        <h1
+          className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight"
+          style={{ fontFamily: "'League Spartan', sans-serif" }}
+        >
+          The unified standard for{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">
+            global readiness.
+          </span>
+        </h1>
+        <p className="mt-5 text-base md:text-lg text-white/60 max-w-xl leading-relaxed">
+          GEM.IQ Hub centralizes identity, billing, and results across every executive assessment — so
+          your team benchmarks trade, market entry, digital, and delivery from a single view.
+        </p>
+
+        {/* Rotating showcase */}
+        <div key={current.key} className="mt-8 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className={`h-10 w-10 shrink-0 rounded-xl border border-white/10 flex items-center justify-center ${accent.chip}`}>
+            <span className={`h-2 w-2 rounded-full ${accent.dot} shadow-[0_0_12px_currentColor]`} />
+          </div>
+          <div className="min-w-0">
+            <div className="text-xs uppercase tracking-[0.2em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              Now featuring
+            </div>
+            <div className="mt-0.5 flex items-baseline gap-2 flex-wrap">
+              <span className={`font-display text-xl font-bold ${accent.text}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                {current.name}
+              </span>
+              <span className="text-sm text-white/60">— {current.domain}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <Link
+            to="/auth"
+            search={{ mode: "signup" }}
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
+            style={{ fontFamily: "'League Spartan', sans-serif" }}
+          >
+            Create your GEM.IQ account
+            <ArrowIcon className="h-4 w-4" />
+          </Link>
+          <a
+            href="#pricing"
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+            style={{ fontFamily: "'League Spartan', sans-serif" }}
+          >
+            See pricing
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }
 
-const ACCENTS: Record<Assessment["accent"], { bar: string; tileBg: string; tileFg: string; eyebrow: string; button: string }> = {
-  mint: {
-    bar: "bg-gem-mint",
-    tileBg: "bg-gem-mint/15",
-    tileFg: "text-gem-mint",
-    eyebrow: "text-gem-mint",
-    button: "bg-gem-mint text-gem-navy hover:brightness-105",
-  },
-  navy: {
-    bar: "bg-[#5aa9c9]",
-    tileBg: "bg-[#5aa9c9]/15",
-    tileFg: "text-[#3785a4]",
-    eyebrow: "text-[#3785a4]",
-    button: "bg-gem-navy text-white hover:bg-gem-navy/90",
-  },
-  gold: {
-    bar: "bg-[#e8b64a]",
-    tileBg: "bg-[#e8b64a]/15",
-    tileFg: "text-[#b58722]",
-    eyebrow: "text-[#b58722]",
-    button: "bg-[#e8b64a] text-gem-navy hover:brightness-105",
-  },
-  purple: {
-    bar: "bg-gem-purple",
-    tileBg: "bg-gem-purple/12",
-    tileFg: "text-gem-purple",
-    eyebrow: "text-gem-purple",
-    button: "bg-gem-purple text-white hover:brightness-110",
-  },
-};
+function FeatureTile({
+  badge,
+  title,
+  body,
+  accent,
+}: {
+  badge: string;
+  title: string;
+  body: string;
+  accent: Accent;
+}) {
+  const c = ACCENT[accent];
+  return (
+    <div className="md:col-span-1 md:row-span-1 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 flex flex-col justify-between hover:bg-white/[0.08] transition-colors">
+      <div className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${c.chip}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
+        <span className={`h-1.5 w-1.5 rounded-full ${c.dot}`} />
+        {badge}
+      </div>
+      <div>
+        <h3 className="mt-4 font-display text-xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          {title}
+        </h3>
+        <p className="mt-2 text-sm text-white/55 leading-relaxed">{body}</p>
+      </div>
+    </div>
+  );
+}
 
-function AssessmentCard({ a }: { a: Assessment }) {
-  const c = ACCENTS[a.accent];
+function AssessmentTile({ a }: { a: Assessment }) {
+  const c = ACCENT[a.accent];
   const Wrapper: any = a.live ? "a" : "div";
   const wrapperProps = a.live ? { href: a.url, target: "_blank", rel: "noreferrer" } : {};
   return (
-    <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-gem-navy/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl">
-      <div className={`h-1 w-full ${c.bar}`} />
-      <div className="flex flex-1 flex-col p-8">
-        <div className="flex items-start justify-between">
-          <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${c.tileBg} ${c.tileFg}`}>
-            <AssessmentIcon name={a.icon} className="h-6 w-6" />
-          </div>
-          {!a.live && (
-            <span className="rounded-full border border-gem-navy/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-gem-navy/50">
-              Coming soon
-            </span>
-          )}
+    <Wrapper
+      {...wrapperProps}
+      className={`md:col-span-1 group relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 flex flex-col justify-between overflow-hidden transition-all ${c.ring} ${
+        a.live ? "cursor-pointer hover:-translate-y-0.5" : "opacity-90"
+      }`}
+    >
+      {/* Corner glow on hover */}
+      <div aria-hidden className={`pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full ${c.dot} opacity-0 blur-3xl group-hover:opacity-20 transition-opacity`} />
+
+      <div className="relative z-10 flex items-start justify-between">
+        <div className={`h-11 w-11 rounded-2xl border border-white/10 flex items-center justify-center ${c.chip}`}>
+          <AssessmentGlyph accent={a.accent} />
         </div>
+        {!a.live ? (
+          <span className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/50">
+            Soon
+          </span>
+        ) : (
+          <ArrowIcon className={`h-5 w-5 text-white/30 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all`} />
+        )}
+      </div>
 
-        <h3 className="mt-6 font-display text-2xl font-bold leading-tight text-gem-navy">
+      <div className="relative z-10 mt-6">
+        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          {a.domain}
+        </div>
+        <h3
+          className={`mt-1 font-display text-2xl font-bold tracking-tight group-hover:${c.text.replace("text-", "text-")} transition-colors`}
+          style={{ fontFamily: "'League Spartan', sans-serif" }}
+        >
           {a.name}
-          {a.suffix}
         </h3>
-        <p className={`mt-1.5 text-sm font-medium ${c.eyebrow}`}>{a.eyebrow}</p>
-        <p className="mt-4 text-[15px] leading-relaxed text-gem-navy/65">{a.body}</p>
+        <p className={`mt-1 text-sm font-medium ${c.text}`}>{a.tagline}</p>
+        <p className="mt-3 text-sm text-white/55 leading-relaxed line-clamp-3">{a.body}</p>
+      </div>
+    </Wrapper>
+  );
+}
 
-        <div className="mt-auto pt-8">
-          <Wrapper
-            {...wrapperProps}
-            className={`inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold transition ${
-              a.live ? c.button : "cursor-not-allowed bg-gem-navy/10 text-gem-navy/40"
-            }`}
-          >
-            {a.live ? "Start Assessment" : "In development"}
-            {a.live && <ArrowIcon className="h-4 w-4" />}
-          </Wrapper>
+function AssessmentGlyph({ accent }: { accent: Accent }) {
+  const c = ACCENT[accent];
+  const stroke = accent === "mint" ? "#4ade80" : accent === "violet" ? "#a78bfa" : accent === "cyan" ? "#67e8f9" : "#fbbf24";
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke={stroke} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18" />
+    </svg>
+  );
+}
+
+function MethodologyTile() {
+  return (
+    <div className="md:col-span-2 md:row-span-1 rounded-3xl border border-white/10 bg-gradient-to-br from-[#16213e]/60 to-[#0a0a16]/40 backdrop-blur-xl p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+      <div className="shrink-0 h-14 w-14 rounded-2xl border border-white/10 bg-white/5 flex items-center justify-center">
+        <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#4ade80]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM9 12l2 2 4-4" />
+        </svg>
+      </div>
+      <div>
+        <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          Executive-grade methodologies
+        </div>
+        <h3 className="mt-1 font-display text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          CMMI · TRL/MRL · WCAG · Tariff engineering doctrine
+        </h3>
+        <p className="mt-2 text-sm text-white/55 leading-relaxed max-w-2xl">
+          Every IQ is built on a peer-reviewed framework — so scores map to language your board already speaks.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function BenchmarkTile() {
+  return (
+    <div className="md:col-span-2 md:row-span-1 rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-8 relative overflow-hidden">
+      <div aria-hidden className="absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-[#a78bfa]/15 blur-3xl" />
+      <div className="relative z-10 flex items-start justify-between gap-6">
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#a78bfa]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            Unified benchmarking
+          </div>
+          <h3 className="mt-1 font-display text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            One dashboard. Every dimension.
+          </h3>
+          <p className="mt-2 text-sm text-white/55 leading-relaxed max-w-md">
+            Compare your organization across assessments, retakes, and industry peers — all from one view.
+          </p>
+        </div>
+        {/* Mini spark bars */}
+        <div className="hidden sm:flex items-end gap-1.5 h-16">
+          {[38, 62, 51, 78, 44, 82, 66, 90].map((h, idx) => (
+            <div
+              key={idx}
+              className="w-2 rounded-t bg-gradient-to-t from-[#4ade80]/40 to-[#a78bfa]"
+              style={{ height: `${h}%` }}
+            />
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-function HowItWorks() {
+function TrustMarquee() {
+  const items = [
+    "GoToMarket Strategy",
+    "Tariff Engineering",
+    "AI Experience",
+    "Enterprise Sales",
+    "Digital Accessibility",
+    "Services Delivery",
+    "Market Entry",
+    "Product Maturity",
+  ];
   return (
-    <section className="bg-gem-cream py-14 sm:py-16">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="text-center">
-          <span className="inline-flex items-center rounded-full bg-gem-mint/15 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-mint">
-            How It Works
+    <section className="mt-16 border-y border-white/5 py-6 overflow-hidden">
+      <div className="flex animate-marquee whitespace-nowrap gap-12">
+        {[...items, ...items].map((it, i) => (
+          <span key={i} className="text-sm uppercase tracking-[0.25em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            <span className="mr-3 inline-block h-1.5 w-1.5 rounded-full bg-[#4ade80] align-middle" />
+            {it}
           </span>
-          <h2 className="mt-6 font-display text-4xl font-bold tracking-tight text-gem-navy sm:text-5xl">
-            Three Steps to Clarity
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-gem-navy/60">
-            From registration to actionable insights across every GEM.IQ assessment — in under 15 minutes.
-          </p>
-        </div>
-
-        <div className="mt-10 grid gap-10 md:grid-cols-3">
-          {STEPS.map((s) => (
-            <div key={s.n} className="relative text-center">
-              <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-md ring-1 ring-gem-navy/5">
-                <StepIcon n={s.n} className="h-8 w-8 text-gem-mint" />
-                <span className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-gem-mint text-xs font-bold text-gem-navy">
-                  {s.n}
-                </span>
-              </div>
-              <h3 className="mt-6 font-display text-xl font-bold text-gem-navy">{s.title}</h3>
-              <p className="mx-auto mt-2 max-w-xs text-sm text-gem-navy/60">{s.body}</p>
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
-    </section>
-  );
-}
-
-function WhyGemIQ() {
-  return (
-    <section className="bg-white py-14 sm:py-16">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="text-center">
-          <span className="inline-flex items-center rounded-full bg-gem-purple/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-purple">
-            Why GEM.IQ
-          </span>
-          <h2 className="mt-6 font-display text-4xl font-bold tracking-tight text-gem-navy sm:text-5xl">
-            Built for growth-stage companies
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-gem-navy/60">
-            Stop guessing. Start scaling with data-driven readiness intelligence unified across every dimension of
-            your business.
-          </p>
-        </div>
-
-        <div className="mt-10 grid items-stretch gap-6 md:grid-cols-3">
-          {WHY.map((w) => (
-            <div
-              key={w.title}
-              className="flex h-full flex-col rounded-2xl border border-gem-navy/10 bg-gem-cream/50 p-8 transition hover:border-gem-mint/40 hover:bg-white hover:shadow-md"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gem-mint/15 text-gem-mint">
-                <WhyIcon name={w.icon} className="h-6 w-6" />
-              </div>
-              <h3 className="mt-6 font-display text-lg font-bold text-gem-navy">{w.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-gem-navy/65">{w.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      <style>{`
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .animate-marquee { animation: marquee 40s linear infinite; }
+      `}</style>
     </section>
   );
 }
 
 function Pricing() {
   return (
-    <section id="pricing" className="bg-gem-cream py-14 sm:py-16">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="text-center">
-          <span className="inline-flex items-center rounded-full bg-gem-navy/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gem-navy/70">
-            Pricing
-          </span>
-          <h2 className="mt-6 font-display text-4xl font-bold tracking-tight text-gem-navy sm:text-5xl">
-            One subscription. Every assessment.
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-gem-navy/60">
-            GEM.IQ Professional gives your team unlimited access to every assessment, retake history, and
-            executive-ready benchmarking exports.
-          </p>
+    <section id="pricing" className="mt-20 md:mt-28">
+      <div className="text-center max-w-2xl mx-auto">
+        <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 backdrop-blur px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-white/60" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          <span className="h-1.5 w-1.5 rounded-full bg-[#4ade80]" />
+          Pricing
         </div>
-
-        <div className="mx-auto mt-10 grid max-w-4xl items-stretch gap-6 md:grid-cols-2">
-          <PricingCard
-            plan="Monthly"
-            price="$99"
-            unit="/ month"
-            note="Cancel any time from the billing portal."
-          />
-          <PricingCard
-            plan="Annual"
-            price="$990"
-            unit="/ year"
-            note="Two months on us — best for teams committed to quarterly benchmarking."
-            featured
-          />
-        </div>
-
-        <p className="mt-10 text-center text-sm text-gem-navy/50">
-          Every assessment includes a free first take. Subscribe when you're ready to unlock retakes, history, and benchmarks.
+        <h2 className="mt-6 font-display text-4xl md:text-5xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          One subscription. <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">Every assessment.</span>
+        </h2>
+        <p className="mt-4 text-white/55">
+          GEM.IQ Professional unlocks unlimited access, retake history, and executive-ready benchmarking across every IQ.
         </p>
+      </div>
+
+      <div className="mt-10 grid gap-4 md:grid-cols-2 max-w-4xl mx-auto">
+        <PricingCard plan="Monthly" price="$99" unit="/ month" note="Cancel anytime from the billing portal." />
+        <PricingCard plan="Annual" price="$990" unit="/ year" note="Two months on us — best for quarterly benchmarking teams." featured />
       </div>
     </section>
   );
@@ -448,91 +489,119 @@ function PricingCard({
 }) {
   return (
     <div
-      className={`flex h-full flex-col overflow-hidden rounded-2xl ${
+      className={`relative overflow-hidden rounded-3xl border p-8 backdrop-blur-xl flex flex-col ${
         featured
-          ? "bg-gem-navy text-white shadow-xl"
-          : "border border-gem-navy/10 bg-white text-gem-navy shadow-sm"
+          ? "border-[#4ade80]/40 bg-gradient-to-br from-[#16213e]/80 to-[#0a0a16]/60 shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)]"
+          : "border-white/10 bg-white/5"
       }`}
     >
-      {featured && <div className="h-1 w-full bg-gem-mint" />}
-      <div className="flex flex-1 flex-col p-8">
-        <div className="flex items-center justify-between">
-          <div className={`font-display text-xl font-bold ${featured ? "text-white" : "text-gem-navy"}`}>{plan}</div>
-          {featured && (
-            <span className="rounded-full bg-gem-mint px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-gem-navy">
-              Best value
-            </span>
-          )}
+      {featured && (
+        <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#4ade80]/20 blur-3xl" />
+      )}
+      <div className="relative z-10 flex items-center justify-between">
+        <div className="font-display text-xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          {plan}
         </div>
-        <div className="mt-6 flex items-baseline gap-2">
-          <div className={`font-display text-5xl font-bold ${featured ? "text-white" : "text-gem-navy"}`}>{price}</div>
-          <div className={featured ? "text-white/60" : "text-gem-navy/50"}>{unit}</div>
+        {featured && (
+          <span className="rounded-full bg-[#4ade80] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            Best value
+          </span>
+        )}
+      </div>
+      <div className="relative z-10 mt-6 flex items-baseline gap-2">
+        <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          {price}
         </div>
-        <ul className={`mt-6 space-y-3 text-sm ${featured ? "text-white/80" : "text-gem-navy/70"}`}>
-          <PricingLine featured={featured}>Unlimited access to every GEM.IQ assessment</PricingLine>
-          <PricingLine featured={featured}>Full retake history and score-over-time tracking</PricingLine>
-          <PricingLine featured={featured}>Dimension-level benchmarks and executive PDFs</PricingLine>
-          <PricingLine featured={featured}>Priority sync into HubSpot for your team</PricingLine>
-        </ul>
-        <div className="mt-auto pt-8">
-          <Link
-            to="/auth"
-            search={{ mode: "signup" }}
-            className={`inline-flex w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition ${
-              featured
-                ? "bg-gem-mint text-gem-navy hover:brightness-105"
-                : "bg-gem-navy text-white hover:bg-gem-navy/90"
-            }`}
-          >
-            Start with {plan.toLowerCase()}
-            <ArrowIcon className="h-4 w-4" />
-          </Link>
-          <p className={`mt-4 text-xs ${featured ? "text-white/50" : "text-gem-navy/50"}`}>{note}</p>
-        </div>
+        <div className="text-white/50">{unit}</div>
+      </div>
+      <ul className="relative z-10 mt-6 space-y-3 text-sm text-white/70">
+        {[
+          "Unlimited access to every GEM.IQ assessment",
+          "Full retake history and score-over-time tracking",
+          "Dimension-level benchmarks and executive PDFs",
+          "Priority HubSpot sync for your team",
+        ].map((line) => (
+          <li key={line} className="flex items-start gap-3">
+            <svg className="mt-0.5 h-4 w-4 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 10l4 4 8-8" />
+            </svg>
+            <span>{line}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="relative z-10 mt-auto pt-8">
+        <Link
+          to="/auth"
+          search={{ mode: "signup" }}
+          className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-all ${
+            featured
+              ? "bg-gradient-to-r from-[#4ade80] to-[#a78bfa] text-[#0a0a16] hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]"
+              : "border border-white/20 bg-white/10 hover:bg-white/20"
+          }`}
+          style={{ fontFamily: "'League Spartan', sans-serif" }}
+        >
+          Start with {plan.toLowerCase()}
+          <ArrowIcon className="h-4 w-4" />
+        </Link>
+        <p className="mt-4 text-xs text-white/40">{note}</p>
       </div>
     </div>
   );
 }
 
-function PricingLine({ children, featured }: { children: React.ReactNode; featured?: boolean }) {
+function FinalCTA() {
   return (
-    <li className="flex items-start gap-3">
-      <svg
-        className={`mt-0.5 h-4 w-4 shrink-0 ${featured ? "text-gem-mint" : "text-gem-mint"}`}
-        viewBox="0 0 20 20"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4 10l4 4 8-8" />
-      </svg>
-      <span>{children}</span>
-    </li>
+    <section className="mt-20 md:mt-28">
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#16213e]/80 via-[#0a0a16] to-[#16213e]/80 p-10 md:p-16 text-center">
+        <div aria-hidden className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[#4ade80]/20 blur-3xl" />
+        <div aria-hidden className="absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-[#a78bfa]/20 blur-3xl" />
+        <div className="relative z-10 max-w-2xl mx-auto">
+          <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            Ready to quantify your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">global readiness?</span>
+          </h2>
+          <p className="mt-4 text-white/60">
+            Sign up once. Take any assessment in under 10 minutes. Get executive-ready benchmarks in your inbox.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              to="/auth"
+              search={{ mode: "signup" }}
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-7 py-3.5 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)]"
+              style={{ fontFamily: "'League Spartan', sans-serif" }}
+            >
+              Create your account
+              <ArrowIcon className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/auth"
+              search={{ mode: "signin" }}
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-7 py-3.5 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+              style={{ fontFamily: "'League Spartan', sans-serif" }}
+            >
+              I already have an account
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
 function Footer() {
   return (
-    <footer className="bg-gem-navy py-10 text-white/70">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="flex flex-col items-center gap-4 border-b border-white/10 pb-10 text-center">
-          <img src={gemLogoDark.url} alt="GEM" className="h-9 w-auto brightness-0 invert" />
-          <p className="max-w-md text-sm text-white/60">
-            Powered by GlobalEdgeMarkets. The GEM.IQ and GEM Methodology are trademarks of GlobalEdgeMarkets.
-          </p>
-        </div>
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 text-xs text-white/50 sm:flex-row">
-          <div>© {new Date().getFullYear()} GlobalEdgeMarkets. All rights reserved.</div>
-          <div className="flex gap-6">
-            <a href="mailto:hello@globaledgemarkets.com" className="hover:text-white">
-              hello@globaledgemarkets.com
-            </a>
-            <a href="#" className="hover:text-white">
-              Privacy Policy
-            </a>
-            <a href="#" className="hover:text-white">
-              Disclaimer
-            </a>
+    <footer className="relative z-10 border-t border-white/5 mt-8 py-10 text-white/60">
+      <div className="mx-auto max-w-7xl px-6 md:px-10">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <img src={gemLogoDark.url} alt="GEM" className="h-8 w-auto brightness-0 invert opacity-80" />
+            <span className="font-display text-lg font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              GEM.IQ Hub
+            </span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6 text-xs text-white/40">
+            <a href="mailto:hello@globaledgemarkets.com" className="hover:text-white">hello@globaledgemarkets.com</a>
+            <a href="https://globaledgemarkets.com" target="_blank" rel="noreferrer" className="hover:text-white">globaledgemarkets.com</a>
+            <span>© {new Date().getFullYear()} GlobalEdgeMarkets</span>
           </div>
         </div>
       </div>
@@ -540,131 +609,10 @@ function Footer() {
   );
 }
 
-/* ---------- Icons ---------- */
-
 function ArrowIcon({ className = "" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
       <path strokeLinecap="round" strokeLinejoin="round" d="M4 10h12m0 0l-5-5m5 5l-5 5" />
-    </svg>
-  );
-}
-
-function ChartIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 17V9m5 8V5m5 12v-6m5 6V3" />
-    </svg>
-  );
-}
-
-function TargetIcon() {
-  return (
-    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <circle cx="12" cy="12" r="9" />
-      <circle cx="12" cy="12" r="5" />
-      <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-    </svg>
-  );
-}
-
-function BoltIcon() {
-  return (
-    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
-    </svg>
-  );
-}
-
-function SparkleIcon() {
-  return (
-    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l1.8 4.8L18.5 9.5 13.8 11.2 12 16l-1.8-4.8L5.5 9.5l4.7-1.7L12 3zM19 15l.9 2.4 2.4.9-2.4.9L19 21.6l-.9-2.4-2.4-.9 2.4-.9L19 15z" />
-    </svg>
-  );
-}
-
-function ClockIcon() {
-  return (
-    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <circle cx="12" cy="12" r="9" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 7v5l3 2" />
-    </svg>
-  );
-}
-
-function AssessmentIcon({ name, className = "" }: { name: Assessment["icon"]; className?: string }) {
-  switch (name) {
-    case "globe":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <circle cx="12" cy="12" r="9" />
-          <path strokeLinecap="round" d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18" />
-        </svg>
-      );
-    case "briefcase":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <rect x="3" y="7" width="18" height="13" rx="2" />
-          <path strokeLinecap="round" d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18" />
-        </svg>
-      );
-    case "sparkles":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5zM19 14l1 2.5 2.5 1-2.5 1L19 21l-1-2.5-2.5-1 2.5-1L19 14z" />
-        </svg>
-      );
-    case "cog":
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <circle cx="12" cy="12" r="3" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19.4 15a1.7 1.7 0 00.4 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.4 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1A1.7 1.7 0 009 19.4a1.7 1.7 0 00-1.9.4l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.4-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.4-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.4H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.4l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.4 1.9V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z" />
-        </svg>
-      );
-  }
-}
-
-function StepIcon({ n, className = "" }: { n: number; className?: string }) {
-  if (n === 1)
-    return (
-      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <rect x="5" y="4" width="14" height="17" rx="2" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 4h6v3H9zM9 12l2 2 4-4" />
-      </svg>
-    );
-  if (n === 2)
-    return (
-      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h10M4 18h16" />
-        <circle cx="19" cy="12" r="2" fill="currentColor" stroke="none" />
-      </svg>
-    );
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 17V9m5 8V5m5 12v-6m5 6V3" />
-    </svg>
-  );
-}
-
-function WhyIcon({ name, className = "" }: { name: string; className?: string }) {
-  if (name === "id")
-    return (
-      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <circle cx="9" cy="12" r="2.5" />
-        <path strokeLinecap="round" d="M14 10h4M14 14h3" />
-      </svg>
-    );
-  if (name === "shield")
-    return (
-      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM9 12l2 2 4-4" />
-      </svg>
-    );
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v18h18M7 15l4-4 3 3 5-6" />
     </svg>
   );
 }

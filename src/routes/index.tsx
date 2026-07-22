@@ -1,6 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
+import heroVideo from "@/assets/hero-ai-network.mp4.asset.json";
+import themeTariff from "@/assets/theme-tariff.jpg";
+import themeReadiness from "@/assets/theme-readiness.jpg";
+import themeUx from "@/assets/theme-ux.jpg";
+import themeServices from "@/assets/theme-services.jpg";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -34,6 +40,7 @@ type Assessment = {
   live: boolean;
   accent: Accent;
   domain: string;
+  image: string;
 };
 
 const ASSESSMENTS: Assessment[] = [
@@ -46,6 +53,7 @@ const ASSESSMENTS: Assessment[] = [
     live: true,
     accent: "mint",
     domain: "Global Trade & Supply Chain",
+    image: themeTariff,
   },
   {
     key: "readinessiq",
@@ -56,6 +64,7 @@ const ASSESSMENTS: Assessment[] = [
     live: true,
     accent: "violet",
     domain: "GoToMarket Strategy",
+    image: themeReadiness,
   },
   {
     key: "uxiq",
@@ -66,6 +75,7 @@ const ASSESSMENTS: Assessment[] = [
     live: true,
     accent: "cyan",
     domain: "Digital & AI Experience",
+    image: themeUx,
   },
   {
     key: "techservicesiq",
@@ -76,8 +86,10 @@ const ASSESSMENTS: Assessment[] = [
     live: false,
     accent: "amber",
     domain: "Product & Service Delivery",
+    image: themeServices,
   },
 ];
+
 
 const ACCENT: Record<Accent, { text: string; ring: string; dot: string; glow: string; chip: string }> = {
   mint:   { text: "text-[#4ade80]", ring: "hover:border-[#4ade80]/50", dot: "bg-[#4ade80]",   glow: "shadow-[0_0_40px_-8px_rgba(74,222,128,0.6)]",  chip: "bg-[#4ade80]/10 text-[#4ade80]" },
@@ -101,10 +113,12 @@ function Index() {
         <TopNav />
         <main className="mx-auto max-w-7xl px-6 pb-24 pt-4 md:px-10 md:pb-32">
           <HeroBento />
+          <IntelligenceStrip />
           <TrustMarquee />
           <Pricing />
           <FinalCTA />
         </main>
+
         <Footer />
       </div>
 
@@ -234,9 +248,32 @@ function HeroTile() {
 
   return (
     <div className="md:col-span-3 md:row-span-2 relative overflow-hidden rounded-3xl border border-white/10 bg-[#16213e]/40 backdrop-blur-2xl p-8 md:p-12 flex flex-col justify-between min-h-[420px] md:min-h-[440px]">
+      {/* Background futuristic AI video */}
+      <video
+        aria-hidden
+        autoPlay
+        loop
+        muted
+        playsInline
+        poster={themeTariff}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-screen"
+      >
+        <source src={heroVideo.url} type="video/mp4" />
+      </video>
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-[#0a0a16]/85 via-[#0a0a16]/60 to-[#16213e]/70" />
+      {/* Rotating theme image — visual thumbnail, top-right, desktop only */}
+      <div
+        aria-hidden
+        key={`img-${current.key}`}
+        className="pointer-events-none absolute top-6 right-6 hidden lg:block h-32 w-52 overflow-hidden rounded-2xl border border-white/10 shadow-2xl animate-in fade-in zoom-in-95 duration-700"
+      >
+        <img src={current.image} alt="" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a16]/60 to-transparent" />
+      </div>
       {/* Ambient glow */}
       <div aria-hidden className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-gradient-to-br from-[#4ade80]/20 to-[#a78bfa]/20 blur-3xl" />
       <div aria-hidden className="absolute -bottom-32 -left-10 h-64 w-64 rounded-full bg-[#a78bfa]/10 blur-3xl" />
+
 
       <div className="relative z-10 flex items-start justify-between">
         <span
@@ -336,6 +373,179 @@ function HeroTile() {
     </div>
   );
 }
+
+function useCountUp(target: number, durationMs = 1600, start = false) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / durationMs);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setValue(target * eased);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, durationMs, start]);
+  return value;
+}
+
+function IntelligenceStrip() {
+  const [visible, setVisible] = useState(false);
+  const [imgIdx, setImgIdx] = useState(0);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const io = new IntersectionObserver(
+      ([e]) => e.isIntersecting && setVisible(true),
+      { threshold: 0.25 },
+    );
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setImgIdx((p) => (p + 1) % ASSESSMENTS.length), 3800);
+    return () => clearInterval(t);
+  }, []);
+
+  const stats = [
+    { label: "Assessment dimensions", target: 42, suffix: "+", accent: "text-[#4ade80]" },
+    { label: "Global markets analyzed", target: 180, suffix: "", accent: "text-[#a78bfa]" },
+    { label: "Executive benchmarks", target: 2600, suffix: "+", accent: "text-[#67e8f9]" },
+    { label: "Median time to insight", target: 9, suffix: " min", accent: "text-[#4ade80]" },
+  ];
+
+  return (
+    <section ref={ref} className="mt-20 md:mt-28">
+      <div className="grid gap-6 lg:grid-cols-5">
+        {/* Rotating photo banner */}
+        <div className="lg:col-span-3 relative overflow-hidden rounded-3xl border border-white/10 bg-[#16213e]/40 min-h-[360px] md:min-h-[440px]">
+          {ASSESSMENTS.map((a, idx) => (
+            <img
+              key={a.key}
+              src={a.image}
+              alt={`${a.name} — ${a.domain}`}
+              loading="lazy"
+              width={1280}
+              height={800}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+                idx === imgIdx ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          ))}
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0a0a16] via-[#0a0a16]/50 to-transparent" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-[#0a0a16]/70 to-transparent" />
+
+          <div className="relative z-10 flex h-full flex-col justify-between p-6 md:p-10">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/80" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#4ade80] animate-pulse" />
+                Live intelligence
+              </span>
+            </div>
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                {ASSESSMENTS[imgIdx].domain}
+              </div>
+              <h3 className="mt-2 font-display text-3xl md:text-5xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                {ASSESSMENTS[imgIdx].name}
+              </h3>
+              <p className="mt-2 text-sm md:text-base text-white/70 max-w-md">
+                {ASSESSMENTS[imgIdx].tagline}
+              </p>
+              <div className="mt-5 flex items-center gap-2">
+                {ASSESSMENTS.map((a, idx) => (
+                  <button
+                    key={a.key}
+                    onClick={() => setImgIdx(idx)}
+                    aria-label={`Show ${a.name}`}
+                    className={`h-1.5 rounded-full transition-all ${
+                      idx === imgIdx ? "w-10 bg-white" : "w-4 bg-white/30 hover:bg-white/60"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats + rotating globe */}
+        <div className="lg:col-span-2 grid gap-6">
+          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 md:p-8">
+            <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#4ade80]/15 blur-3xl" />
+            <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              GEM.IQ · By the numbers
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-5">
+              {stats.map((s) => (
+                <StatCounter key={s.label} target={s.target} suffix={s.suffix} label={s.label} accent={s.accent} start={visible} />
+              ))}
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0a0a16] to-[#16213e]/60 p-6 md:p-8 min-h-[180px] flex items-center gap-6">
+            <div className="relative shrink-0 h-28 w-28">
+              <div aria-hidden className="absolute inset-0 rounded-full border border-[#4ade80]/40 animate-[spin_18s_linear_infinite]" />
+              <div aria-hidden className="absolute inset-2 rounded-full border border-[#a78bfa]/40 animate-[spin_24s_linear_infinite_reverse]" />
+              <div aria-hidden className="absolute inset-4 rounded-full border border-[#67e8f9]/30 animate-[spin_30s_linear_infinite]" />
+              <div className="absolute inset-6 rounded-full bg-gradient-to-br from-[#4ade80]/30 via-[#a78bfa]/30 to-[#67e8f9]/30 blur-md" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="h-9 w-9 text-white/90" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="12" cy="12" r="9" />
+                  <ellipse cx="12" cy="12" rx="9" ry="4" />
+                  <path d="M3 12h18M12 3v18" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#4ade80]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                One planet, one platform
+              </div>
+              <h4 className="mt-1 font-display text-xl md:text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                Benchmark against global peers.
+              </h4>
+              <p className="mt-1 text-sm text-white/60">
+                Country, industry, and stage-weighted percentiles — updated continuously.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StatCounter({
+  target,
+  suffix,
+  label,
+  accent,
+  start,
+}: {
+  target: number;
+  suffix: string;
+  label: string;
+  accent: string;
+  start: boolean;
+}) {
+  const v = useCountUp(target, 1800, start);
+  const display = target >= 100 ? Math.round(v).toLocaleString() : v.toFixed(target < 20 ? 0 : 0);
+  return (
+    <div>
+      <div className={`font-display text-3xl md:text-4xl font-bold tracking-tight ${accent}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
+        {display}
+        <span className="text-white/70">{suffix}</span>
+      </div>
+      <div className="mt-1 text-xs text-white/55 leading-snug">{label}</div>
+    </div>
+  );
+}
+
+
 
 function FeatureTile({
   badge,

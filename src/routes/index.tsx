@@ -291,16 +291,8 @@ function HeroTile() {
           </div>
         </div>
 
-        {/* Trial ribbon */}
-        <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-[#4ade80]/30 bg-[#4ade80]/5 backdrop-blur px-4 py-2">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4ade80] opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4ade80]" />
-          </span>
-          <span className="text-xs md:text-sm font-semibold text-white/85" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            New — Start a <span className="text-[#4ade80]">7-day trial</span> with <span className="text-[#4ade80]">1 free assessment</span>
-          </span>
-        </div>
+
+
 
         {/* Trial offer card — primary CTA */}
         <div className="mt-8 rounded-2xl border border-[#4ade80]/40 bg-gradient-to-br from-[#4ade80]/12 via-[#0a0a16]/40 to-[#a78bfa]/10 backdrop-blur-xl p-5 md:p-6 shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)]">

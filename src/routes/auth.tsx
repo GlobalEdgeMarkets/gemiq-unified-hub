@@ -111,7 +111,7 @@ function AuthPage() {
             credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              lookup_key: "gemiq_professional_monthly",
+              lookup_key: search.plan === "annual" ? "gemiq_professional_annual" : "gemiq_professional_monthly",
               success_url: `${window.location.origin}/?welcome=1`,
               cancel_url: window.location.href,
               trial: true,

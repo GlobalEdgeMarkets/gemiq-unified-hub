@@ -97,6 +97,7 @@ function Index() {
       </div>
 
       <div className="relative z-10">
+        <TrialBanner />
         <TopNav />
         <main className="mx-auto max-w-7xl px-6 pb-24 pt-4 md:px-10 md:pb-32">
           <HeroBento />
@@ -115,6 +116,35 @@ function Index() {
         .animate-aurora-slow-alt { animation: aurora-slow-alt 26s ease-in-out infinite; }
         .animate-aurora-drift { animation: aurora-drift 30s ease-in-out infinite; }
       `}</style>
+    </div>
+  );
+}
+
+function TrialBanner() {
+  return (
+    <div className="relative z-40 border-b border-[#4ade80]/25 bg-gradient-to-r from-[#4ade80]/15 via-[#a78bfa]/15 to-[#4ade80]/15 backdrop-blur-xl">
+      <Link
+        to="/auth"
+        search={{ mode: "signup", trial: "1" }}
+        className="group mx-auto flex max-w-7xl items-center justify-center gap-3 px-6 py-2.5 md:gap-4 md:py-3 text-center"
+        style={{ fontFamily: "'League Spartan', sans-serif" }}
+      >
+        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#4ade80] px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.15em] text-[#0a0a16]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#0a0a16] animate-pulse" />
+          New
+        </span>
+        <span className="text-xs md:text-sm font-semibold text-white/95">
+          <span className="text-[#4ade80] font-bold">7-day free trial</span>
+          <span className="mx-2 text-white/40">·</span>
+          <span>1 free assessment across any GEM.IQ</span>
+          <span className="mx-2 text-white/40">·</span>
+          <span className="text-white/70">Cancel anytime</span>
+        </span>
+        <span className="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-bold text-white group-hover:bg-white group-hover:text-[#0a0a16] transition-colors">
+          Start free
+          <ArrowIcon className="h-3 w-3" />
+        </span>
+      </Link>
     </div>
   );
 }
@@ -261,39 +291,46 @@ function HeroTile() {
           </div>
         </div>
 
-        {/* Trial ribbon */}
-        <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-[#4ade80]/30 bg-[#4ade80]/5 backdrop-blur px-4 py-2">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4ade80] opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4ade80]" />
-          </span>
-          <span className="text-xs md:text-sm font-semibold text-white/85" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            New — Start a <span className="text-[#4ade80]">7-day trial</span> with <span className="text-[#4ade80]">1 free assessment</span>
-          </span>
-        </div>
 
-        <div className="mt-5 flex flex-wrap items-center gap-3">
-          <Link
-            to="/auth"
-            search={{ mode: "signup", trial: "1" }}
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
-            style={{ fontFamily: "'League Spartan', sans-serif" }}
-          >
-            Start 7-day free trial
-            <ArrowIcon className="h-4 w-4" />
-          </Link>
-          <Link
-            to="/auth"
-            search={{ mode: "signup" }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
-            style={{ fontFamily: "'League Spartan', sans-serif" }}
-          >
-            Or subscribe directly
-          </Link>
+
+
+        {/* Trial offer card — primary CTA */}
+        <div className="mt-8 rounded-2xl border border-[#4ade80]/40 bg-gradient-to-br from-[#4ade80]/12 via-[#0a0a16]/40 to-[#a78bfa]/10 backdrop-blur-xl p-5 md:p-6 shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)]">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#4ade80] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#0a0a16] animate-pulse" />
+              Limited launch offer
+            </span>
+          </div>
+          <div className="mt-3 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            Try any GEM.IQ <span className="text-[#4ade80]">free for 7 days.</span>
+          </div>
+          <p className="mt-1.5 text-sm text-white/70">
+            Includes <strong className="text-white">1 complete assessment</strong> across any discipline — TariffIQ, ReadinessIQ, UXIQ, or TechServicesIQ. Full dimension-level report yours to keep, forever.
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Link
+              to="/auth"
+              search={{ mode: "signup", trial: "1" }}
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
+              style={{ fontFamily: "'League Spartan', sans-serif" }}
+            >
+              Start 7-day free trial
+              <ArrowIcon className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/auth"
+              search={{ mode: "signup" }}
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+              style={{ fontFamily: "'League Spartan', sans-serif" }}
+            >
+              Or subscribe directly
+            </Link>
+            <span className="text-[11px] text-white/50">
+              Card required · Auto-converts on day 7 · Cancel anytime
+            </span>
+          </div>
         </div>
-        <p className="mt-3 text-xs text-white/40">
-          Card required. Auto-converts to paid on day 7. Cancel anytime.
-        </p>
       </div>
     </div>
   );
@@ -529,6 +566,14 @@ function PricingCard({
         </div>
         <div className="text-white/50">{unit}</div>
       </div>
+      {featured && (
+        <div className="relative z-10 mt-4 flex items-center gap-2 rounded-lg border border-[#4ade80]/40 bg-[#4ade80]/10 px-3 py-2">
+          <svg className="h-4 w-4 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm3.7 6.3a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z"/></svg>
+          <span className="text-xs font-semibold text-white/90" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            <span className="text-[#4ade80]">7-day free trial</span> with 1 free assessment
+          </span>
+        </div>
+      )}
       <ul className="relative z-10 mt-6 space-y-3 text-sm text-white/70">
         {[
           "Unlimited access to every GEM.IQ assessment",
@@ -544,18 +589,29 @@ function PricingCard({
           </li>
         ))}
       </ul>
-      <div className="relative z-10 mt-auto pt-8">
+      <div className="relative z-10 mt-auto pt-8 space-y-2">
+        {featured && (
+          <Link
+            to="/auth"
+            search={{ mode: "signup", trial: "1" }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-5 py-3 text-sm font-bold text-[#0a0a16] hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)] transition-all"
+            style={{ fontFamily: "'League Spartan', sans-serif" }}
+          >
+            Start 7-day free trial
+            <ArrowIcon className="h-4 w-4" />
+          </Link>
+        )}
         <Link
           to="/auth"
           search={{ mode: "signup" }}
           className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-all ${
             featured
-              ? "bg-gradient-to-r from-[#4ade80] to-[#a78bfa] text-[#0a0a16] hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]"
+              ? "border border-white/15 bg-white/5 hover:bg-white/10 text-white"
               : "border border-white/20 bg-white/10 hover:bg-white/20"
           }`}
           style={{ fontFamily: "'League Spartan', sans-serif" }}
         >
-          Start with {plan.toLowerCase()}
+          {featured ? "Or subscribe directly" : `Start with ${plan.toLowerCase()}`}
           <ArrowIcon className="h-4 w-4" />
         </Link>
         <p className="mt-4 text-xs text-white/40">{note}</p>

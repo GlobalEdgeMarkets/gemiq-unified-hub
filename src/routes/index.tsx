@@ -261,24 +261,39 @@ function HeroTile() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center gap-3">
+        {/* Trial ribbon */}
+        <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-[#4ade80]/30 bg-[#4ade80]/5 backdrop-blur px-4 py-2">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4ade80] opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4ade80]" />
+          </span>
+          <span className="text-xs md:text-sm font-semibold text-white/85" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            New — Start a <span className="text-[#4ade80]">7-day trial</span> with <span className="text-[#4ade80]">1 free assessment</span>
+          </span>
+        </div>
+
+        <div className="mt-5 flex flex-wrap items-center gap-3">
           <Link
             to="/auth"
-            search={{ mode: "signup" }}
+            search={{ mode: "signup", trial: "1" }}
             className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
-            Create your GEM.IQ account
+            Start 7-day free trial
             <ArrowIcon className="h-4 w-4" />
           </Link>
-          <a
-            href="#pricing"
+          <Link
+            to="/auth"
+            search={{ mode: "signup" }}
             className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
-            See pricing
-          </a>
+            Or subscribe directly
+          </Link>
         </div>
+        <p className="mt-3 text-xs text-white/40">
+          Card required. Auto-converts to paid on day 7. Cancel anytime.
+        </p>
       </div>
     </div>
   );

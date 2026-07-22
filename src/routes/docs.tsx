@@ -84,6 +84,7 @@ function DocsPage() {
               ["submit", "6. Submit results"],
               ["limits", "7. Trial limits"],
               ["deeplink", "8. Deep links"],
+              ["manifest", "9. Central manifest"],
               ["reference", "Reference"],
             ].map(([id, label]) => (
               <a
@@ -271,6 +272,91 @@ https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual`}</Code
           </p>
         </Section>
 
+        <Section id="manifest" title="9. Central manifest — brand, pricing, deep links">
+          <p>
+            The Hub publishes a single manifest at{" "}
+            <code>/api/public/manifest</code> that every IQ should treat as the source of
+            truth for brand tokens, pricing, deep links, and the assessment registry.
+            The manifest is also committed to GitHub at{" "}
+            <code>packages/hub-sdk/manifest.json</code> so IQ builds can pin it.
+          </p>
+
+          <h3 className="mt-6 font-display text-lg font-semibold text-white">
+            Build-time pull (recommended)
+          </h3>
+          <p>
+            The updated <code>pull-hub-sdk.mjs</code> now pulls both the SDK and the
+            manifest on every build, and fails the build if your IQ's local manifest is
+            ahead of the Hub's:
+          </p>
+          <Code>{`↓ SDK      https://raw.githubusercontent.com/.../sdk.ts
+↓ manifest https://raw.githubusercontent.com/.../manifest.json
+✓ wrote src/lib/hub.ts
+✓ wrote src/lib/hub-manifest.json (v1.0.0)`}</Code>
+          <p>Use it in your IQ:</p>
+          <Code>{`import manifest from "@/lib/hub-manifest.json";
+
+// Brand tokens straight from the Hub
+document.documentElement.style.setProperty("--gem-mint", manifest.brand.colors.mint);
+document.documentElement.style.setProperty("--gem-navy", manifest.brand.colors.navy);
+
+// Pricing — never hard-code
+const monthly = manifest.pricing.plans.find(p => p.interval === "month");`}</Code>
+
+          <h3 className="mt-6 font-display text-lg font-semibold text-white">
+            Runtime polling — live updates without a redeploy
+          </h3>
+          <p>
+            Subscribe to changes so brand, pricing, and deep-link updates propagate to
+            already-loaded IQ sessions:
+          </p>
+          <Code>{`import { createHubClient } from "@/lib/hub";
+import initial from "@/lib/hub-manifest.json";
+
+const hub = createHubClient({ hubOrigin: initial.hub.origin });
+
+const stop = hub.manifest.watch(
+  { intervalMs: 5 * 60_000 },  // 5 min; server sends 304 when unchanged
+  (next, previous) => {
+    console.log("Hub manifest changed", previous?.version, "→", next.version);
+    applyBrandTokens(next.brand);
+    refreshPricingUI(next.pricing);
+  },
+);
+
+// stop() on unmount if needed`}</Code>
+          <p className="text-sm text-slate-400">
+            The endpoint sets a strong <code>ETag</code> and{" "}
+            <code>Cache-Control: max-age=60, stale-while-revalidate=600</code>, and
+            responds with <code>304</code> when the client's{" "}
+            <code>If-None-Match</code> matches — polling is effectively free.
+          </p>
+
+          <h3 className="mt-6 font-display text-lg font-semibold text-white">Manifest shape</h3>
+          <Code>{`{
+  version: "1.0.0",
+  etag: "\\"1.0.0-<hash>\\"",
+  hub:   { origin, docs_url, sdk_source, manifest_source, repo },
+  brand: { name, fonts, colors, logos, usage_rules },
+  pricing: {
+    currency, trial: { days, assessments_included, card_required },
+    plans: [{ id, name, amount, interval, lookup_key }]
+  },
+  assessments: [{ key, name, url }],
+  deep_links: { signup_trial_monthly, signup_trial_annual, login, portal }
+}`}</Code>
+
+          <h3 className="mt-6 font-display text-lg font-semibold text-white">
+            GitHub sources of truth
+          </h3>
+          <ul className="list-disc space-y-1 pl-5">
+            <li>SDK — <code>packages/hub-sdk/sdk.ts</code></li>
+            <li>Manifest — <code>packages/hub-sdk/manifest.json</code> (semver — bump on every change)</li>
+            <li>Puller — <code>packages/hub-sdk/pull-hub-sdk.mjs</code> (copy into each IQ)</li>
+            <li>Repo — <code>GlobalEdgeMarkets/gemiq-unified-hub</code></li>
+          </ul>
+        </Section>
+
         <Section id="reference" title="Reference">
           <h3 className="font-display text-lg font-semibold text-white">SDK surface</h3>
           <ul className="list-disc space-y-1 pl-5">
@@ -283,6 +369,8 @@ https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual`}</Code
             <li><code>hub.results.submit(payload)</code></li>
             <li><code>hub.results.history()</code></li>
             <li><code>hub.profile.get()</code> / <code>hub.profile.update(patch)</code></li>
+            <li><code>hub.manifest.get({`{ etag? }`})</code> — one-shot fetch with 304 support</li>
+            <li><code>hub.manifest.watch({`{ intervalMs? }`}, onChange)</code> — live polling</li>
             <li><code>hub.redirectToLogin(returnTo, mode?)</code></li>
           </ul>
 

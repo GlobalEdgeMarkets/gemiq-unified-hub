@@ -1,0 +1,88 @@
+{
+  "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
+  "version": "1.0.0",
+  "updated_at": "2026-07-22",
+  "hub": {
+    "origin": "https://gemiq.globaledgemarkets.com",
+    "docs_url": "https://gemiq.globaledgemarkets.com/docs",
+    "sdk_source": "https://raw.githubusercontent.com/GlobalEdgeMarkets/gemiq-unified-hub/main/packages/hub-sdk/sdk.ts",
+    "manifest_source": "https://raw.githubusercontent.com/GlobalEdgeMarkets/gemiq-unified-hub/main/packages/hub-sdk/manifest.json",
+    "repo": "GlobalEdgeMarkets/gemiq-unified-hub"
+  },
+  "brand": {
+    "name": "GEM.IQ",
+    "fonts": {
+      "heading": "League Spartan",
+      "body": "Didact Gothic"
+    },
+    "colors": {
+      "mint": "#05CFAB",
+      "navy": "#2C365B",
+      "deep_navy": "#172864",
+      "purple": "#2D1594"
+    },
+    "logos": {
+      "standard": "https://gemiq.globaledgemarkets.com/brand/gem-logo-standard.png",
+      "dark": "https://gemiq.globaledgemarkets.com/brand/gem-logo-dark.png",
+      "light": "https://gemiq.globaledgemarkets.com/brand/gem-logo-light.png",
+      "light_white_mint": "https://gemiq.globaledgemarkets.com/brand/gem-logo-light-white-mint.png"
+    },
+    "usage_rules": [
+      "Use navy+mint standard logo on light surfaces.",
+      "Use white+mint (light) logo on dark surfaces.",
+      "Never invert, tint, or wrap the logo in a white pill."
+    ]
+  },
+  "pricing": {
+    "currency": "USD",
+    "trial": {
+      "days": 7,
+      "assessments_included": 1,
+      "card_required": true
+    },
+    "plans": [
+      {
+        "id": "gemiq_professional_monthly",
+        "name": "GEM.IQ Professional — Monthly",
+        "amount": 99,
+        "interval": "month",
+        "lookup_key": "gemiq_professional_monthly"
+      },
+      {
+        "id": "gemiq_professional_annual",
+        "name": "GEM.IQ Professional — Annual",
+        "amount": 990,
+        "interval": "year",
+        "lookup_key": "gemiq_professional_annual"
+      }
+    ]
+  },
+  "assessments": [
+    {
+      "key": "tariffiq",
+      "name": "TariffIQ",
+      "url": "https://tariffiq.globaledgemarkets.com"
+    },
+    {
+      "key": "readinessiq",
+      "name": "ReadinessIQ",
+      "url": "https://readinessiq.globaledgemarkets.com"
+    },
+    {
+      "key": "uxiq",
+      "name": "UXIQ",
+      "url": "https://uxiq.globaledgemarkets.com"
+    },
+    {
+      "key": "techservicesiq",
+      "name": "TechServicesIQ",
+      "url": "https://techservicesiq.globaledgemarkets.com"
+    }
+  ],
+  "deep_links": {
+    "signup_trial_monthly": "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=monthly",
+    "signup_trial_annual": "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual",
+    "login": "https://gemiq.globaledgemarkets.com/auth",
+    "portal": "https://gemiq.globaledgemarkets.com/account"
+  }
+}

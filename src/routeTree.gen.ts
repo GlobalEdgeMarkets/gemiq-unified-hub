@@ -13,6 +13,7 @@ import { Route as DocsRouteImport } from './routes/docs'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicProfileRouteImport } from './routes/api/public/profile'
+import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as ApiPublicSubmissionsSubmitRouteImport } from './routes/api/public/submissions/submit'
 import { Route as ApiPublicSubmissionsHistoryRouteImport } from './routes/api/public/submissions/history'
@@ -44,6 +45,11 @@ const IndexRoute = IndexRouteImport.update({
 const ApiPublicProfileRoute = ApiPublicProfileRouteImport.update({
   id: '/api/public/profile',
   path: '/api/public/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
+  id: '/api/public/manifest',
+  path: '/api/public/manifest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailTransactionalPreviewRoute =
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/docs': typeof DocsRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
   '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/docs': typeof DocsRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
   '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/docs': typeof DocsRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
   '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/docs'
+    | '/api/public/manifest'
     | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/docs'
+    | '/api/public/manifest'
     | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/docs'
+    | '/api/public/manifest'
     | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
@@ -234,6 +246,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DocsRoute: typeof DocsRoute
+  ApiPublicManifestRoute: typeof ApiPublicManifestRoute
   ApiPublicProfileRoute: typeof ApiPublicProfileRoute
   ApiPublicAdminBootstrapHubspotSchemaRoute: typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   ApiPublicAdminImportLegacySubmissionsRoute: typeof ApiPublicAdminImportLegacySubmissionsRoute
@@ -277,6 +290,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/profile'
       fullPath: '/api/public/profile'
       preLoaderRoute: typeof ApiPublicProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/manifest': {
+      id: '/api/public/manifest'
+      path: '/api/public/manifest'
+      fullPath: '/api/public/manifest'
+      preLoaderRoute: typeof ApiPublicManifestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/transactional/preview': {
@@ -370,6 +390,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DocsRoute: DocsRoute,
+  ApiPublicManifestRoute: ApiPublicManifestRoute,
   ApiPublicProfileRoute: ApiPublicProfileRoute,
   ApiPublicAdminBootstrapHubspotSchemaRoute:
     ApiPublicAdminBootstrapHubspotSchemaRoute,

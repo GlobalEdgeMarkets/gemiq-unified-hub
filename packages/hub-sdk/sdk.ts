@@ -37,6 +37,9 @@ export interface HubSubscription {
   status: string; lookup_key: string | null;
   current_period_end: string | null; cancel_at_period_end: boolean | null;
   stripe_subscription_id: string | null;
+  trial_ends_at?: string | null;
+  trial_assessments_used?: number | null;
+  trial_assessment_limit?: number | null;
 }
 export interface SubmissionPayload {
   email: string;
@@ -48,11 +51,17 @@ export interface SubmissionPayload {
   detail?: Record<string, unknown>;
   answers?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
+  /** Public URL to a rendered PDF/HTML report. Shown in the internal notification email. */
+  report_url?: string;
   submitted_at?: string;
 }
 export interface CheckStatus {
   authenticated: boolean;
   active: boolean;
+  /** True when Stripe reports `trialing` — still counts as `active`. */
+  trialing?: boolean;
+  /** True when the trial's free-assessment quota has been consumed. */
+  trial_exhausted?: boolean;
   user?: HubUser;
   subscription: HubSubscription | null;
 }
@@ -137,14 +146,22 @@ export function createHubClient(opts: HubClientOptions) {
        * Create a Stripe checkout session and REDIRECT the browser to it.
        * `successUrl` / `cancelUrl` may include Stripe's `{CHECKOUT_SESSION_ID}`
        * placeholder for the IQ's /resume page.
+       *
+       * Pass `trial: true` to start a 7-day trial (card required, 1 free
+       * assessment across any IQ, auto-converts to paid on day 7).
        */
       startCheckout: async function (
         lookup_key: string,
-        opts: { successUrl: string; cancelUrl: string },
+        opts: { successUrl: string; cancelUrl: string; trial?: boolean },
       ) {
         const { url } = await req("/api/public/billing/create-checkout", {
           method: "POST",
-          body: JSON.stringify({ lookup_key, success_url: opts.successUrl, cancel_url: opts.cancelUrl }),
+          body: JSON.stringify({
+            lookup_key,
+            success_url: opts.successUrl,
+            cancel_url: opts.cancelUrl,
+            ...(opts.trial ? { trial: true } : {}),
+          }),
         });
         if (typeof window === "undefined") return { url };
         window.location.href = url;

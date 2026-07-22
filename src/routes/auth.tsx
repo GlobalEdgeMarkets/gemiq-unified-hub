@@ -22,6 +22,8 @@ const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional(),
   /** "1" when arriving from the "Start 7-day trial" CTA. Kicks off trial checkout after signup. */
   trial: z.string().optional(),
+  /** Which plan the trial should convert to. Defaults to monthly. */
+  plan: z.enum(["monthly", "annual"]).optional(),
 });
 
 export const Route = createFileRoute("/auth")({
@@ -109,7 +111,7 @@ function AuthPage() {
             credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              lookup_key: "gemiq_professional_monthly",
+              lookup_key: search.plan === "annual" ? "gemiq_professional_annual" : "gemiq_professional_monthly",
               success_url: `${window.location.origin}/?welcome=1`,
               cancel_url: window.location.href,
               trial: true,

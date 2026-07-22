@@ -20,6 +20,8 @@ function isAllowedReturnUrl(raw: string | undefined): string | null {
 const searchSchema = z.object({
   redirect: z.string().optional(),
   mode: z.enum(["signin", "signup"]).optional(),
+  /** "1" when arriving from the "Start 7-day trial" CTA. Kicks off trial checkout after signup. */
+  trial: z.string().optional(),
 });
 
 export const Route = createFileRoute("/auth")({

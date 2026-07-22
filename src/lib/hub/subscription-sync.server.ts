@@ -37,6 +37,7 @@ export async function syncSubscription(sub: Stripe.Subscription, knownUserId?: s
 
   const price = sub.items.data[0]?.price;
   const periodEnd = (sub as Stripe.Subscription & { current_period_end?: number }).current_period_end;
+  const trialEnd = (sub as Stripe.Subscription & { trial_end?: number | null }).trial_end;
   const service = createHubServiceClient();
   const { error } = await service.from("subscriptions").upsert({
     user_id: userId,
@@ -46,6 +47,7 @@ export async function syncSubscription(sub: Stripe.Subscription, knownUserId?: s
     lookup_key: price?.lookup_key ?? null,
     status: sub.status,
     current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+    trial_ends_at: trialEnd ? new Date(trialEnd * 1000).toISOString() : null,
     cancel_at_period_end: sub.cancel_at_period_end,
   }, { onConflict: "stripe_subscription_id" });
   if (error) throw error;

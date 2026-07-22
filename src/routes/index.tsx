@@ -1,6 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
+import heroVideo from "@/assets/hero-ai-network.mp4.asset.json";
+import themeTariff from "@/assets/theme-tariff.jpg";
+import themeReadiness from "@/assets/theme-readiness.jpg";
+import themeUx from "@/assets/theme-ux.jpg";
+import themeServices from "@/assets/theme-services.jpg";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({

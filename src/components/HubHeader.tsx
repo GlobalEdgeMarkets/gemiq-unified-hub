@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import gemLogoDark from "@/assets/gem-logo-dark.png.asset.json";
+import gemLogo from "@/assets/gem-logo-standard.png.asset.json";
 
 type Props = {
   /** Which auth CTA to emphasize (used on the auth page to hint the other mode). */
@@ -23,7 +23,7 @@ export function HubHeader({ variant = "landing", right }: Props) {
           aria-label="GEM.IQ Hub — home"
           className="flex items-center gap-3 rounded-md outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-gem-mint"
         >
-          <img src={gemLogoDark.url} alt="GEM" className="h-8 w-auto" />
+          <img src={gemLogo.url} alt="GEM" className="h-8 w-auto" />
           <span className="hidden h-6 w-px bg-gem-navy/20 sm:block" />
           <span className="hidden font-display text-lg font-bold tracking-tight text-gem-navy sm:inline">
             GEM.IQ Hub

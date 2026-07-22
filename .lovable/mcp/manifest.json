@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://bhyutvarlodqjlwiacbz.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "gemiq-hub-mcp",
+      "version": "0.1.0",
+      "title": "GEM.IQ Hub"
+    },
+    "tools": [
+      {
+        "name": "get_profile",
+        "title": "Get my GEM.IQ profile",
+        "description": "Returns the signed-in user's GEM.IQ Hub profile (name, company, title, role, industry, email).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_submissions",
+        "title": "List my assessment submissions",
+        "description": "Lists the signed-in user's assessment submissions across all GEM.IQ tools (TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ), most recent first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "tool": {
+              "description": "Filter to a single IQ tool. Omit to list all tools.",
+              "type": "string",
+              "enum": [
+                "tariffiq",
+                "readinessiq",
+                "uxiq",
+                "techservicesiq"
+              ]
+            },
+            "limit": {
+              "description": "Max rows to return (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_subscription",
+        "title": "Get my subscription status",
+        "description": "Returns the signed-in user's current GEM.IQ subscription: status (trialing/active/etc.), trial end date, and trial assessment usage.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

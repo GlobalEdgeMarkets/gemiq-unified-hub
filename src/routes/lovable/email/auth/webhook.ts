@@ -9,7 +9,7 @@ import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 // Configuration
-const SITE_NAME = "gemiq-unified-hub"
+const SITE_NAME = "GEM.IQ"
 const SENDER_DOMAIN = "notify.gemiq.globaledgemarkets.com"
 const ROOT_DOMAIN = "gemiq.globaledgemarkets.com"
 const FROM_DOMAIN = "gemiq.globaledgemarkets.com"

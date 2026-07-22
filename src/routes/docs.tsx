@@ -84,6 +84,7 @@ function DocsPage() {
               ["submit", "6. Submit results"],
               ["limits", "7. Trial limits"],
               ["deeplink", "8. Deep links"],
+              ["manifest", "9. Central manifest"],
               ["reference", "Reference"],
             ].map(([id, label]) => (
               <a

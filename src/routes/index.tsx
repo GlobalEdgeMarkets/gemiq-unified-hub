@@ -519,8 +519,8 @@ function Pricing() {
       </div>
 
       <div className="mt-10 grid gap-4 md:grid-cols-2 max-w-4xl mx-auto">
-        <PricingCard plan="Monthly" price="$99" unit="/ month" note="Cancel anytime from the billing portal." />
-        <PricingCard plan="Annual" price="$990" unit="/ year" note="Two months on us — best for quarterly benchmarking teams." featured />
+        <PricingCard plan="Monthly" price="$99" unit="/ month" planKey="monthly" note="Cancel anytime from the billing portal." />
+        <PricingCard plan="Annual" price="$990" unit="/ year" planKey="annual" note="Two months on us — best for quarterly benchmarking teams." featured />
       </div>
     </section>
   );

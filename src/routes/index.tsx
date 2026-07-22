@@ -40,6 +40,7 @@ type Assessment = {
   live: boolean;
   accent: Accent;
   domain: string;
+  image: string;
 };
 
 const ASSESSMENTS: Assessment[] = [
@@ -52,6 +53,7 @@ const ASSESSMENTS: Assessment[] = [
     live: true,
     accent: "mint",
     domain: "Global Trade & Supply Chain",
+    image: themeTariff,
   },
   {
     key: "readinessiq",
@@ -62,6 +64,7 @@ const ASSESSMENTS: Assessment[] = [
     live: true,
     accent: "violet",
     domain: "GoToMarket Strategy",
+    image: themeReadiness,
   },
   {
     key: "uxiq",
@@ -72,6 +75,7 @@ const ASSESSMENTS: Assessment[] = [
     live: true,
     accent: "cyan",
     domain: "Digital & AI Experience",
+    image: themeUx,
   },
   {
     key: "techservicesiq",
@@ -82,8 +86,10 @@ const ASSESSMENTS: Assessment[] = [
     live: false,
     accent: "amber",
     domain: "Product & Service Delivery",
+    image: themeServices,
   },
 ];
+
 
 const ACCENT: Record<Accent, { text: string; ring: string; dot: string; glow: string; chip: string }> = {
   mint:   { text: "text-[#4ade80]", ring: "hover:border-[#4ade80]/50", dot: "bg-[#4ade80]",   glow: "shadow-[0_0_40px_-8px_rgba(74,222,128,0.6)]",  chip: "bg-[#4ade80]/10 text-[#4ade80]" },

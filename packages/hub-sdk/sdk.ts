@@ -79,11 +79,50 @@ export interface HubProfile {
 }
 export type HubProfilePatch = Partial<Omit<HubProfile, "id" | "email" | "full_name">>;
 
+/**
+ * Canonical manifest published by the Hub at `/api/public/manifest`.
+ * Every IQ should treat this as the source of truth for brand, pricing,
+ * assessment routing, and deep links — no hard-coded copies.
+ */
+export interface HubManifest {
+  version: string;
+  etag?: string;
+  served_at?: string;
+  hub: {
+    origin: string;
+    docs_url: string;
+    sdk_source: string;
+    manifest_source: string;
+    repo: string;
+  };
+  brand: {
+    name: string;
+    fonts: { heading: string; body: string };
+    colors: Record<string, string>;
+    logos: Record<string, string>;
+    usage_rules: string[];
+  };
+  pricing: {
+    currency: string;
+    trial: { days: number; assessments_included: number; card_required: boolean };
+    plans: Array<{
+      id: string;
+      name: string;
+      amount: number;
+      interval: "month" | "year";
+      lookup_key: string;
+    }>;
+  };
+  assessments: Array<{ key: AssessmentKey; name: string; url: string }>;
+  deep_links: Record<string, string>;
+}
+
 
 export interface HubClientOptions {
   /** Origin of the GEM.IQ Hub, e.g. "https://gemiq.globaledgemarkets.com". */
   hubOrigin: string;
 }
+
 
 export function createHubClient(opts: HubClientOptions) {
   const base = opts.hubOrigin.replace(/\/$/, "");
@@ -243,6 +282,66 @@ export function createHubClient(opts: HubClientOptions) {
           if (typeof window !== "undefined") window.location.href = url;
           return { upgraded: true };
         }
+      },
+    },
+
+    /**
+     * Centralized manifest: brand tokens, pricing, deep links, assessment
+     * registry, and SDK version. IQs should poll this on boot and on a
+     * schedule (default 5 min) to stay in sync — never hard-code brand or
+     * pricing values locally.
+     */
+    manifest: {
+      /** Fetch the current manifest. Uses `If-None-Match` when `etag` is supplied. */
+      get: async (opts: { etag?: string } = {}): Promise<{ manifest: HubManifest | null; etag: string | null; notModified: boolean }> => {
+        const res = await fetch(base + "/api/public/manifest", {
+          method: "GET",
+          headers: opts.etag ? { "if-none-match": opts.etag } : {},
+        });
+        if (res.status === 304) return { manifest: null, etag: opts.etag ?? null, notModified: true };
+        if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status });
+        const manifest = (await res.json()) as HubManifest;
+        return { manifest, etag: res.headers.get("etag"), notModified: false };
+      },
+
+      /**
+       * Poll the manifest on an interval. Calls `onChange` only when the
+       * `etag` (or `version`) changes. Returns a stop() function.
+       *
+       *   const stop = hub.manifest.watch(
+       *     { intervalMs: 5 * 60_000 },
+       *     (next, prev) => applyBrandTokens(next),
+       *   );
+       */
+      watch: function (
+        opts: { intervalMs?: number; immediate?: boolean } = {},
+        onChange: (next: HubManifest, previous: HubManifest | null) => void | Promise<void>,
+      ): () => void {
+        const interval = Math.max(30_000, opts.intervalMs ?? 5 * 60_000);
+        let etag: string | undefined;
+        let previous: HubManifest | null = null;
+        let stopped = false;
+
+        const tick = async () => {
+          if (stopped) return;
+          try {
+            const { manifest, etag: nextEtag, notModified } = await this.get({ etag });
+            if (!notModified && manifest) {
+              const changed = !previous || previous.version !== manifest.version || etag !== (nextEtag ?? undefined);
+              etag = nextEtag ?? undefined;
+              if (changed) {
+                await onChange(manifest, previous);
+                previous = manifest;
+              }
+            }
+          } catch {
+            /* swallow poll errors — try again next interval */
+          }
+        };
+
+        if (opts.immediate !== false) void tick();
+        const handle = typeof window !== "undefined" ? window.setInterval(tick, interval) : setInterval(tick, interval);
+        return () => { stopped = true; clearInterval(handle as ReturnType<typeof setInterval>); };
       },
     },
 

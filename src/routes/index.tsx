@@ -551,20 +551,53 @@ function FeatureTile({
 }) {
   const c = ACCENT[accent];
   return (
-    <div className="md:col-span-1 md:row-span-1 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 flex flex-col justify-between hover:bg-white/[0.08] transition-colors">
-      <div className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${c.chip}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
-        <span className={`h-1.5 w-1.5 rounded-full ${c.dot}`} />
-        {badge}
+    <div className="md:col-span-1 md:row-span-1 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 flex flex-col justify-between hover:bg-white/[0.08] transition-colors">
+      <div aria-hidden className={`pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full ${c.dot} opacity-20 blur-3xl`} />
+
+      <div className="relative z-10 flex items-start justify-between gap-3">
+        <div className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${c.chip}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          <span className={`h-1.5 w-1.5 rounded-full ${c.dot}`} />
+          {badge}
+        </div>
+        <FeatureDiagram accent={accent} kind={title.toLowerCase().includes("identity") ? "identity" : "speed"} />
       </div>
-      <div>
-        <h3 className="mt-4 font-display text-xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+
+      <div className="relative z-10">
+        <h3 className="font-display text-3xl md:text-4xl font-bold leading-[0.95] tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
           {title}
         </h3>
-        <p className="mt-2 text-sm text-white/55 leading-relaxed">{body}</p>
+        <p className="mt-3 text-[15px] text-white/65 leading-relaxed">{body}</p>
       </div>
     </div>
   );
 }
+
+function FeatureDiagram({ accent, kind }: { accent: Accent; kind: "identity" | "speed" }) {
+  const stroke =
+    accent === "mint" ? "#4ade80" : accent === "violet" ? "#a78bfa" : accent === "cyan" ? "#67e8f9" : "#fca5a5";
+  if (kind === "identity") {
+    return (
+      <svg viewBox="0 0 80 60" className="h-14 w-20 opacity-80" fill="none" stroke={stroke} strokeWidth="1.25">
+        <circle cx="40" cy="30" r="7" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="68" cy="12" r="4" />
+        <circle cx="12" cy="48" r="4" />
+        <circle cx="68" cy="48" r="4" />
+        <path d="M16 14L34 27M64 14L46 27M16 46L34 33M64 46L46 33" opacity="0.6" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 80 60" className="h-14 w-20 opacity-80" fill="none" stroke={stroke} strokeWidth="1.25">
+      <circle cx="40" cy="30" r="22" opacity="0.35" />
+      <path d="M40 12 A18 18 0 0 1 58 30" strokeWidth="2" />
+      <path d="M40 30 L40 18" strokeWidth="2" strokeLinecap="round" />
+      <path d="M40 30 L50 34" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="40" cy="30" r="1.8" fill={stroke} />
+    </svg>
+  );
+}
+
 
 function AssessmentTile({ a }: { a: Assessment }) {
   const c = ACCENT[a.accent];

@@ -100,6 +100,25 @@ function AuthPage() {
         setMode("signin");
         return;
       }
+      // Trial intent from landing: start Stripe checkout with a 7-day trial.
+      // Only when there's no IQ redirect — an IQ handles its own checkout.
+      if (search.trial === "1" && !safeReturn) {
+        try {
+          const co = await fetch("/api/public/billing/create-checkout", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              lookup_key: "gemiq_professional_monthly",
+              success_url: `${window.location.origin}/?welcome=1`,
+              cancel_url: window.location.href,
+              trial: true,
+            }),
+          });
+          const cob = await co.json();
+          if (co.ok && cob.url) { window.location.href = cob.url; return; }
+        } catch (e) { /* fall through to home */ }
+      }
       window.location.href = safeReturn ?? "/";
     } catch (e: any) {
       setErr(e.message);

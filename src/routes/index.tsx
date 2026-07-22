@@ -120,6 +120,35 @@ function Index() {
   );
 }
 
+function TrialBanner() {
+  return (
+    <div className="relative z-40 border-b border-[#4ade80]/25 bg-gradient-to-r from-[#4ade80]/15 via-[#a78bfa]/15 to-[#4ade80]/15 backdrop-blur-xl">
+      <Link
+        to="/auth"
+        search={{ mode: "signup", trial: "1" }}
+        className="group mx-auto flex max-w-7xl items-center justify-center gap-3 px-6 py-2.5 md:gap-4 md:py-3 text-center"
+        style={{ fontFamily: "'League Spartan', sans-serif" }}
+      >
+        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#4ade80] px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.15em] text-[#0a0a16]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#0a0a16] animate-pulse" />
+          New
+        </span>
+        <span className="text-xs md:text-sm font-semibold text-white/95">
+          <span className="text-[#4ade80] font-bold">7-day free trial</span>
+          <span className="mx-2 text-white/40">·</span>
+          <span>1 free assessment across any GEM.IQ</span>
+          <span className="mx-2 text-white/40">·</span>
+          <span className="text-white/70">Cancel anytime</span>
+        </span>
+        <span className="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-bold text-white group-hover:bg-white group-hover:text-[#0a0a16] transition-colors">
+          Start free
+          <ArrowIcon className="h-3 w-3" />
+        </span>
+      </Link>
+    </div>
+  );
+}
+
 function TopNav() {
   return (
     <nav className="sticky top-0 z-30 backdrop-blur-xl bg-[#0a0a16]/70 border-b border-white/5">

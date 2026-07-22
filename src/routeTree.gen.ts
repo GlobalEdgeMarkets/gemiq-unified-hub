@@ -9,11 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ApiPublicProfileRouteImport } from './routes/api/public/profile'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -29,6 +34,11 @@ import { Route as ApiPublicAdminImportLegacyUsersRouteImport } from './routes/ap
 import { Route as ApiPublicAdminImportLegacySubmissionsRouteImport } from './routes/api/public/admin/import-legacy-submissions'
 import { Route as ApiPublicAdminBootstrapHubspotSchemaRouteImport } from './routes/api/public/admin/bootstrap-hubspot-schema'
 
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DocsRoute = DocsRouteImport.update({
   id: '/docs',
   path: '/docs',
@@ -44,6 +54,18 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicProfileRoute = ApiPublicProfileRouteImport.update({
   id: '/api/public/profile',
   path: '/api/public/profile',
@@ -52,6 +74,17 @@ const ApiPublicProfileRoute = ApiPublicProfileRouteImport.update({
 const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
   id: '/api/public/manifest',
   path: '/api/public/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailTransactionalPreviewRoute =
@@ -140,6 +173,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/docs': typeof DocsRoute
+  '/mcp': typeof McpRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
@@ -161,6 +199,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/docs': typeof DocsRoute
+  '/mcp': typeof McpRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
@@ -183,6 +226,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/docs': typeof DocsRoute
+  '/mcp': typeof McpRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
@@ -206,6 +254,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/docs'
+    | '/mcp'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
     | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
@@ -227,6 +280,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/docs'
+    | '/mcp'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
     | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
@@ -248,6 +306,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/docs'
+    | '/mcp'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
     | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
@@ -270,6 +333,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DocsRoute: typeof DocsRoute
+  McpRoute: typeof McpRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
   ApiPublicProfileRoute: typeof ApiPublicProfileRoute
   ApiPublicAdminBootstrapHubspotSchemaRoute: typeof ApiPublicAdminBootstrapHubspotSchemaRoute
@@ -290,6 +358,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/docs': {
       id: '/docs'
       path: '/docs'
@@ -311,6 +386,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/profile': {
       id: '/api/public/profile'
       path: '/api/public/profile'
@@ -323,6 +412,20 @@ declare module '@tanstack/react-router' {
       path: '/api/public/manifest'
       fullPath: '/api/public/manifest'
       preLoaderRoute: typeof ApiPublicManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/transactional/preview': {
@@ -430,6 +533,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DocsRoute: DocsRoute,
+  McpRoute: McpRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,
   ApiPublicProfileRoute: ApiPublicProfileRoute,
   ApiPublicAdminBootstrapHubspotSchemaRoute:

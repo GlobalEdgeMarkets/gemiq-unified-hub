@@ -142,14 +142,22 @@ export function createHubClient(opts: HubClientOptions) {
        * Create a Stripe checkout session and REDIRECT the browser to it.
        * `successUrl` / `cancelUrl` may include Stripe's `{CHECKOUT_SESSION_ID}`
        * placeholder for the IQ's /resume page.
+       *
+       * Pass `trial: true` to start a 7-day trial (card required, 1 free
+       * assessment across any IQ, auto-converts to paid on day 7).
        */
       startCheckout: async function (
         lookup_key: string,
-        opts: { successUrl: string; cancelUrl: string },
+        opts: { successUrl: string; cancelUrl: string; trial?: boolean },
       ) {
         const { url } = await req("/api/public/billing/create-checkout", {
           method: "POST",
-          body: JSON.stringify({ lookup_key, success_url: opts.successUrl, cancel_url: opts.cancelUrl }),
+          body: JSON.stringify({
+            lookup_key,
+            success_url: opts.successUrl,
+            cancel_url: opts.cancelUrl,
+            ...(opts.trial ? { trial: true } : {}),
+          }),
         });
         if (typeof window === "undefined") return { url };
         window.location.href = url;

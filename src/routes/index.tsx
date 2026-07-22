@@ -97,6 +97,7 @@ function Index() {
       </div>
 
       <div className="relative z-10">
+        <TrialBanner />
         <TopNav />
         <main className="mx-auto max-w-7xl px-6 pb-24 pt-4 md:px-10 md:pb-32">
           <HeroBento />

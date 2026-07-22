@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { corsHeaders } from "@/lib/hub/http";
-import manifest from "../../../../packages/hub-sdk/manifest.json";
+import manifest from "@/lib/hub/manifest.json";
 
 /**
  * GET /api/public/manifest

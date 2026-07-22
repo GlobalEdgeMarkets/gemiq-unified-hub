@@ -8,6 +8,8 @@ const Body = z.object({
   lookup_key: z.string().min(1),
   success_url: z.string().url(),
   cancel_url: z.string().url(),
+  /** Enable a 7-day trial with 1 free assessment across any IQ. Card is still required. */
+  trial: z.boolean().optional(),
 });
 
 export const Route = createFileRoute("/api/public/billing/create-checkout")({
@@ -39,9 +41,22 @@ export const Route = createFileRoute("/api/public/billing/create-checkout")({
           success_url: parsed.data.success_url,
           cancel_url: parsed.data.cancel_url,
           allow_promotion_codes: true,
-          metadata: { source: "gemiq_hub", supabase_user_id: user.id, lookup_key: parsed.data.lookup_key },
+          // Trial requires a card up-front so it auto-converts on day 7.
+          payment_method_collection: "always",
+          metadata: {
+            source: "gemiq_hub",
+            supabase_user_id: user.id,
+            lookup_key: parsed.data.lookup_key,
+            trial: parsed.data.trial ? "true" : "false",
+          },
           subscription_data: {
-            metadata: { source: "gemiq_hub", supabase_user_id: user.id, lookup_key: parsed.data.lookup_key },
+            ...(parsed.data.trial ? { trial_period_days: 7 } : {}),
+            metadata: {
+              source: "gemiq_hub",
+              supabase_user_id: user.id,
+              lookup_key: parsed.data.lookup_key,
+              trial: parsed.data.trial ? "true" : "false",
+            },
           },
         });
         return json({ url: session.url, id: session.id }, undefined, request);

@@ -1,0 +1,5 @@
+
+ALTER TABLE public.subscriptions
+  ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMP WITH TIME ZONE,
+  ADD COLUMN IF NOT EXISTS trial_assessments_used INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS trial_assessment_limit INTEGER NOT NULL DEFAULT 1;

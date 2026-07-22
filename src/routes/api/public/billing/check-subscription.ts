@@ -16,7 +16,7 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
         const svc = createHubServiceClient();
         let { data, error } = await svc
           .from("subscriptions")
-          .select("status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id")
+          .select("status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id,trial_ends_at,trial_assessments_used,trial_assessment_limit")
           .eq("user_id", user.id)
           .order("updated_at", { ascending: false })
           .limit(1)
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
             await reconcileSubscriptionForUser(user.id, user.email ?? "");
             const refreshed = await svc
               .from("subscriptions")
-              .select("status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id")
+              .select("status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id,trial_ends_at,trial_assessments_used,trial_assessment_limit")
               .eq("user_id", user.id)
               .order("updated_at", { ascending: false })
               .limit(1)
@@ -43,9 +43,14 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
         }
 
         const active = !!data && ["active", "trialing"].includes(data.status);
+        const trialing = data?.status === "trialing";
+        const trialExhausted = trialing
+          && (data?.trial_assessments_used ?? 0) >= (data?.trial_assessment_limit ?? 1);
         return json({
           authenticated: true,
           active,
+          trialing,
+          trial_exhausted: trialExhausted,
           subscription: data ?? null,
           user: { id: user.id, email: user.email },
         }, undefined, request);

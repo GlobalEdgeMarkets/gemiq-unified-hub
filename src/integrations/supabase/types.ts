@@ -174,6 +174,9 @@ export type Database = {
           stripe_customer_id: string | null
           stripe_price_id: string | null
           stripe_subscription_id: string | null
+          trial_assessment_limit: number
+          trial_assessments_used: number
+          trial_ends_at: string | null
           updated_at: string
           user_id: string
         }
@@ -187,6 +190,9 @@ export type Database = {
           stripe_customer_id?: string | null
           stripe_price_id?: string | null
           stripe_subscription_id?: string | null
+          trial_assessment_limit?: number
+          trial_assessments_used?: number
+          trial_ends_at?: string | null
           updated_at?: string
           user_id: string
         }
@@ -200,6 +206,9 @@ export type Database = {
           stripe_customer_id?: string | null
           stripe_price_id?: string | null
           stripe_subscription_id?: string | null
+          trial_assessment_limit?: number
+          trial_assessments_used?: number
+          trial_ends_at?: string | null
           updated_at?: string
           user_id?: string
         }

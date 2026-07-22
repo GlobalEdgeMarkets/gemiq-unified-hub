@@ -73,6 +73,36 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
         const svc = createHubServiceClient();
         const email = payload.email.toLowerCase();
 
+        // Trial enforcement: signed-in users on a `trialing` subscription get
+        // `trial_assessment_limit` free submissions (default 1) across any IQ.
+        // Once exhausted, block with 402 so the IQ can prompt to upgrade.
+        // Anonymous submissions and non-trial subscriptions are unaffected here.
+        let trialSubId: string | null = null;
+        let trialUsedBefore = 0;
+        if (user?.id) {
+          const { data: sub } = await svc
+            .from("subscriptions")
+            .select("id,status,trial_assessments_used,trial_assessment_limit")
+            .eq("user_id", user.id)
+            .order("updated_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (sub && sub.status === "trialing") {
+            const used = sub.trial_assessments_used ?? 0;
+            const limit = sub.trial_assessment_limit ?? 1;
+            if (used >= limit) {
+              return json({
+                error: "trial_limit_reached",
+                trial_assessments_used: used,
+                trial_assessment_limit: limit,
+                message: "Your 7-day trial includes 1 free assessment. Upgrade to continue.",
+              }, { status: 402 }, request);
+            }
+            trialSubId = sub.id;
+            trialUsedBefore = used;
+          }
+        }
+
         // Dedupe: within last 10 minutes, same email+assessment → return existing
         const tenMinAgo = new Date(Date.now() - 10 * 60_000).toISOString();
         const { data: dupe } = await svc
@@ -104,6 +134,14 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           .select("id,submitted_at")
           .single();
         if (insErr || !inserted) return json({ error: "db_insert_failed", detail: insErr?.message }, { status: 500 }, request);
+
+        // Increment trial usage after a successful insert. Best-effort; a rare race
+        // could allow a second concurrent submission — acceptable for a $99 trial.
+        if (trialSubId) {
+          await svc.from("subscriptions")
+            .update({ trial_assessments_used: trialUsedBefore + 1 })
+            .eq("id", trialSubId);
+        }
 
         // Load full history for this email so HubSpot props reflect the whole profile.
         const { data: historyRows } = await svc

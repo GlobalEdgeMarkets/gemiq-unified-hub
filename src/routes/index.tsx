@@ -566,6 +566,14 @@ function PricingCard({
         </div>
         <div className="text-white/50">{unit}</div>
       </div>
+      {featured && (
+        <div className="relative z-10 mt-4 flex items-center gap-2 rounded-lg border border-[#4ade80]/40 bg-[#4ade80]/10 px-3 py-2">
+          <svg className="h-4 w-4 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm3.7 6.3a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z"/></svg>
+          <span className="text-xs font-semibold text-white/90" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            <span className="text-[#4ade80]">7-day free trial</span> with 1 free assessment
+          </span>
+        </div>
+      )}
       <ul className="relative z-10 mt-6 space-y-3 text-sm text-white/70">
         {[
           "Unlimited access to every GEM.IQ assessment",
@@ -581,18 +589,29 @@ function PricingCard({
           </li>
         ))}
       </ul>
-      <div className="relative z-10 mt-auto pt-8">
+      <div className="relative z-10 mt-auto pt-8 space-y-2">
+        {featured && (
+          <Link
+            to="/auth"
+            search={{ mode: "signup", trial: "1" }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-5 py-3 text-sm font-bold text-[#0a0a16] hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)] transition-all"
+            style={{ fontFamily: "'League Spartan', sans-serif" }}
+          >
+            Start 7-day free trial
+            <ArrowIcon className="h-4 w-4" />
+          </Link>
+        )}
         <Link
           to="/auth"
           search={{ mode: "signup" }}
           className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-all ${
             featured
-              ? "bg-gradient-to-r from-[#4ade80] to-[#a78bfa] text-[#0a0a16] hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]"
+              ? "border border-white/15 bg-white/5 hover:bg-white/10 text-white"
               : "border border-white/20 bg-white/10 hover:bg-white/20"
           }`}
           style={{ fontFamily: "'League Spartan', sans-serif" }}
         >
-          Start with {plan.toLowerCase()}
+          {featured ? "Or subscribe directly" : `Start with ${plan.toLowerCase()}`}
           <ArrowIcon className="h-4 w-4" />
         </Link>
         <p className="mt-4 text-xs text-white/40">{note}</p>

@@ -8,6 +8,8 @@ const Body = z.object({
   lookup_key: z.string().min(1),
   success_url: z.string().url(),
   cancel_url: z.string().url(),
+  /** Enable a 7-day trial with 1 free assessment across any IQ. Card is still required. */
+  trial: z.boolean().optional(),
 });
 
 export const Route = createFileRoute("/api/public/billing/create-checkout")({

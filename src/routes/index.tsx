@@ -907,7 +907,7 @@ function Footer() {
             </span>
           </div>
           <div className="flex flex-wrap justify-center gap-6 text-xs text-white/40">
-            <a href="mailto:hello@globaledgemarkets.com" className="hover:text-white">hello@globaledgemarkets.com</a>
+            <a href="mailto:info@globaledgemarkets.com" className="hover:text-white">info@globaledgemarkets.com</a>
             <a href="https://globaledgemarkets.com" target="_blank" rel="noreferrer" className="hover:text-white">globaledgemarkets.com</a>
             <span>© {new Date().getFullYear()} GlobalEdgeMarkets</span>
           </div>

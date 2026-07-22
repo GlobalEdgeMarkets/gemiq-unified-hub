@@ -15,6 +15,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicProfileRouteImport } from './routes/api/public/profile'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicSubmissionsSubmitRouteImport } from './routes/api/public/submissions/submit'
 import { Route as ApiPublicSubmissionsHistoryRouteImport } from './routes/api/public/submissions/history'
 import { Route as ApiPublicJobsRetryHubspotRouteImport } from './routes/api/public/jobs/retry-hubspot'
@@ -58,6 +60,16 @@ const LovableEmailTransactionalPreviewRoute =
     path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicSubmissionsSubmitRoute =
   ApiPublicSubmissionsSubmitRouteImport.update({
     id: '/api/public/submissions/submit',
@@ -141,6 +153,8 @@ export interface FileRoutesByFullPath {
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
@@ -160,6 +174,8 @@ export interface FileRoutesByTo {
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
@@ -180,6 +196,8 @@ export interface FileRoutesById {
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
@@ -201,6 +219,8 @@ export interface FileRouteTypes {
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -220,6 +240,8 @@ export interface FileRouteTypes {
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
@@ -239,6 +261,8 @@ export interface FileRouteTypes {
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
@@ -259,6 +283,8 @@ export interface RootRouteChildren {
   ApiPublicJobsRetryHubspotRoute: typeof ApiPublicJobsRetryHubspotRoute
   ApiPublicSubmissionsHistoryRoute: typeof ApiPublicSubmissionsHistoryRoute
   ApiPublicSubmissionsSubmitRoute: typeof ApiPublicSubmissionsSubmitRoute
+  LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
+  LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
@@ -304,6 +330,20 @@ declare module '@tanstack/react-router' {
       path: '/lovable/email/transactional/preview'
       fullPath: '/lovable/email/transactional/preview'
       preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/submissions/submit': {
@@ -407,6 +447,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicJobsRetryHubspotRoute: ApiPublicJobsRetryHubspotRoute,
   ApiPublicSubmissionsHistoryRoute: ApiPublicSubmissionsHistoryRoute,
   ApiPublicSubmissionsSubmitRoute: ApiPublicSubmissionsSubmitRoute,
+  LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
+  LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport

@@ -33,6 +33,9 @@ export interface HubSubscription {
   status: string; lookup_key: string | null;
   current_period_end: string | null; cancel_at_period_end: boolean | null;
   stripe_subscription_id: string | null;
+  trial_ends_at?: string | null;
+  trial_assessments_used?: number | null;
+  trial_assessment_limit?: number | null;
 }
 export interface SubmissionPayload {
   email: string;
@@ -51,6 +54,10 @@ export interface SubmissionPayload {
 export interface CheckStatus {
   authenticated: boolean;
   active: boolean;
+  /** True when Stripe reports `trialing` — still counts as `active`. */
+  trialing?: boolean;
+  /** True when the trial's free-assessment quota has been consumed. */
+  trial_exhausted?: boolean;
   user?: HubUser;
   subscription: HubSubscription | null;
 }

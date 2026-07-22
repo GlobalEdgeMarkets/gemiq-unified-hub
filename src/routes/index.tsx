@@ -248,9 +248,32 @@ function HeroTile() {
 
   return (
     <div className="md:col-span-3 md:row-span-2 relative overflow-hidden rounded-3xl border border-white/10 bg-[#16213e]/40 backdrop-blur-2xl p-8 md:p-12 flex flex-col justify-between min-h-[420px] md:min-h-[440px]">
+      {/* Background futuristic AI video */}
+      <video
+        aria-hidden
+        autoPlay
+        loop
+        muted
+        playsInline
+        poster={themeTariff}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-screen"
+      >
+        <source src={heroVideo.url} type="video/mp4" />
+      </video>
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-[#0a0a16]/85 via-[#0a0a16]/60 to-[#16213e]/70" />
+      {/* Rotating theme image — visual thumbnail, top-right, desktop only */}
+      <div
+        aria-hidden
+        key={`img-${current.key}`}
+        className="pointer-events-none absolute top-6 right-6 hidden lg:block h-32 w-52 overflow-hidden rounded-2xl border border-white/10 shadow-2xl animate-in fade-in zoom-in-95 duration-700"
+      >
+        <img src={current.image} alt="" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a16]/60 to-transparent" />
+      </div>
       {/* Ambient glow */}
       <div aria-hidden className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-gradient-to-br from-[#4ade80]/20 to-[#a78bfa]/20 blur-3xl" />
       <div aria-hidden className="absolute -bottom-32 -left-10 h-64 w-64 rounded-full bg-[#a78bfa]/10 blur-3xl" />
+
 
       <div className="relative z-10 flex items-start justify-between">
         <span

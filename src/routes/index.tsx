@@ -247,7 +247,7 @@ function HeroTile() {
   const accent = ACCENT[current.accent];
 
   return (
-    <div className="md:col-span-3 md:row-span-2 relative overflow-hidden rounded-3xl border border-white/10 bg-[#16213e]/40 backdrop-blur-2xl p-8 md:p-12 flex flex-col justify-between min-h-[420px] md:min-h-[440px]">
+    <div className="md:col-span-3 md:row-span-2 relative overflow-hidden rounded-3xl bg-[#16213e]/30 ring-1 ring-inset ring-white/[0.06] backdrop-blur-2xl p-8 md:p-12 flex flex-col justify-between min-h-[420px] md:min-h-[440px]">
       {/* Background futuristic AI video */}
       <video
         aria-hidden
@@ -414,7 +414,7 @@ function IntelligenceStrip() {
     <section ref={ref} className="mt-20 md:mt-28">
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Rotating photo banner */}
-        <div className="lg:col-span-3 relative overflow-hidden rounded-3xl border border-white/10 bg-[#16213e]/40 min-h-[360px] md:min-h-[440px]">
+        <div className="lg:col-span-3 relative overflow-hidden rounded-3xl bg-[#16213e]/30 ring-1 ring-inset ring-white/[0.06] min-h-[360px] md:min-h-[440px]">
           {ASSESSMENTS.map((a, idx) => (
             <img
               key={a.key}
@@ -466,7 +466,7 @@ function IntelligenceStrip() {
 
         {/* Stats + rotating globe */}
         <div className="lg:col-span-2 grid gap-6">
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 md:p-8">
+          <div className="relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-6 md:p-8">
             <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#4ade80]/15 blur-3xl" />
             <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50" style={{ fontFamily: "'League Spartan', sans-serif" }}>
               GEM.IQ · By the numbers
@@ -478,7 +478,7 @@ function IntelligenceStrip() {
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0a0a16] to-[#16213e]/60 p-6 md:p-8 min-h-[180px] flex items-center gap-6">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0a0a16] to-[#16213e]/60 ring-1 ring-inset ring-white/[0.06] p-6 md:p-8 min-h-[180px] flex items-center gap-6">
             <div className="relative shrink-0 h-28 w-28">
               <div aria-hidden className="absolute inset-0 rounded-full border border-[#4ade80]/40 animate-[spin_18s_linear_infinite]" />
               <div aria-hidden className="absolute inset-2 rounded-full border border-[#a78bfa]/40 animate-[spin_24s_linear_infinite_reverse]" />
@@ -551,7 +551,7 @@ function FeatureTile({
 }) {
   const c = ACCENT[accent];
   return (
-    <div className="md:col-span-1 md:row-span-1 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 flex flex-col justify-between hover:bg-white/[0.08] transition-colors">
+    <div className="md:col-span-1 md:row-span-1 relative overflow-hidden rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-6 flex flex-col justify-between hover:bg-white/[0.08] transition-colors">
       <div aria-hidden className={`pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full ${c.dot} opacity-20 blur-3xl`} />
 
       <div className="relative z-10 flex items-start justify-between gap-3">
@@ -606,7 +606,7 @@ function AssessmentTile({ a }: { a: Assessment }) {
   return (
     <Wrapper
       {...wrapperProps}
-      className={`md:col-span-1 group relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 flex flex-col justify-between overflow-hidden transition-all ${c.ring} ${
+      className={`md:col-span-1 group relative rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-6 flex flex-col justify-between overflow-hidden transition-all ${c.ring} ${
         a.live ? "cursor-pointer hover:-translate-y-0.5" : "opacity-90"
       }`}
     >
@@ -656,7 +656,7 @@ function AssessmentGlyph({ accent }: { accent: Accent }) {
 
 function MethodologyTile() {
   return (
-    <div className="md:col-span-2 md:row-span-1 rounded-3xl border border-white/10 bg-gradient-to-br from-[#16213e]/60 to-[#0a0a16]/40 backdrop-blur-xl p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+    <div className="md:col-span-2 md:row-span-1 rounded-3xl bg-gradient-to-br from-[#16213e]/60 to-[#0a0a16]/40 backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
       <div className="shrink-0 h-14 w-14 rounded-2xl border border-white/10 bg-white/5 flex items-center justify-center">
         <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#4ade80]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM9 12l2 2 4-4" />
@@ -679,7 +679,7 @@ function MethodologyTile() {
 
 function BenchmarkTile() {
   return (
-    <div className="md:col-span-2 md:row-span-1 rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-8 relative overflow-hidden">
+    <div className="md:col-span-2 md:row-span-1 rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-8 relative overflow-hidden">
       <div aria-hidden className="absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-[#a78bfa]/15 blur-3xl" />
       <div className="relative z-10 flex items-start justify-between gap-6">
         <div>
@@ -860,7 +860,7 @@ function PricingCard({
 function FinalCTA() {
   return (
     <section className="mt-20 md:mt-28">
-      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#16213e]/80 via-[#0a0a16] to-[#16213e]/80 p-10 md:p-16 text-center">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#16213e]/80 via-[#0a0a16] to-[#16213e]/80 ring-1 ring-inset ring-white/[0.06] p-10 md:p-16 text-center">
         <div aria-hidden className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[#4ade80]/20 blur-3xl" />
         <div aria-hidden className="absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-[#a78bfa]/20 blur-3xl" />
         <div className="relative z-10 max-w-2xl mx-auto">

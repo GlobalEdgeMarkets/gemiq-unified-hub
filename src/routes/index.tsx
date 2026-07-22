@@ -302,28 +302,43 @@ function HeroTile() {
           </span>
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center gap-3">
-          <Link
-            to="/auth"
-            search={{ mode: "signup", trial: "1" }}
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
-            style={{ fontFamily: "'League Spartan', sans-serif" }}
-          >
-            Start 7-day free trial
-            <ArrowIcon className="h-4 w-4" />
-          </Link>
-          <Link
-            to="/auth"
-            search={{ mode: "signup" }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
-            style={{ fontFamily: "'League Spartan', sans-serif" }}
-          >
-            Or subscribe directly
-          </Link>
+        {/* Trial offer card — primary CTA */}
+        <div className="mt-8 rounded-2xl border border-[#4ade80]/40 bg-gradient-to-br from-[#4ade80]/12 via-[#0a0a16]/40 to-[#a78bfa]/10 backdrop-blur-xl p-5 md:p-6 shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)]">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#4ade80] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#0a0a16] animate-pulse" />
+              Limited launch offer
+            </span>
+          </div>
+          <div className="mt-3 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            Try any GEM.IQ <span className="text-[#4ade80]">free for 7 days.</span>
+          </div>
+          <p className="mt-1.5 text-sm text-white/70">
+            Includes <strong className="text-white">1 complete assessment</strong> across any discipline — TariffIQ, ReadinessIQ, UXIQ, or TechServicesIQ. Full dimension-level report yours to keep, forever.
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Link
+              to="/auth"
+              search={{ mode: "signup", trial: "1" }}
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
+              style={{ fontFamily: "'League Spartan', sans-serif" }}
+            >
+              Start 7-day free trial
+              <ArrowIcon className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/auth"
+              search={{ mode: "signup" }}
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+              style={{ fontFamily: "'League Spartan', sans-serif" }}
+            >
+              Or subscribe directly
+            </Link>
+            <span className="text-[11px] text-white/50">
+              Card required · Auto-converts on day 7 · Cancel anytime
+            </span>
+          </div>
         </div>
-        <p className="mt-3 text-xs text-white/40">
-          Card required. Auto-converts to paid on day 7. Cancel anytime.
-        </p>
       </div>
     </div>
   );

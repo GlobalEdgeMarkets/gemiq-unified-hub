@@ -194,7 +194,65 @@ export function createHubClient(opts: HubClientOptions) {
         const r = await req("/api/public/submissions/history", { method: "GET" }).catch(() => ({ submissions: [] }));
         return r;
       },
+      /**
+       * Submit results and, if the trial's free-assessment quota is exhausted,
+       * automatically redirect the user into Stripe checkout to upgrade —
+       * no custom try/catch required in the IQ app.
+       *
+       * Returns the Hub's submission response on success, or `{ upgraded: true }`
+       * if the browser was redirected to Stripe. Any other error rethrows.
+       *
+       * Example:
+       *   const r = await hub.results.submitOrUpgrade(payload, {
+       *     upgradeLookupKey: "gemiq_professional_monthly",
+       *     successUrl: window.location.origin + "/resume?sid={CHECKOUT_SESSION_ID}",
+       *     cancelUrl:  window.location.href,
+       *   });
+       *   if ("upgraded" in r) return; // browser is navigating away
+       */
+      submitOrUpgrade: async function (
+        payload: SubmissionPayload,
+        opts: {
+          upgradeLookupKey?: string;
+          successUrl: string;
+          cancelUrl: string;
+          /** Called just before redirecting so the IQ can show a toast/modal. */
+          onTrialExhausted?: () => void | Promise<void>;
+        },
+      ): Promise<{ upgraded: true } | Awaited<ReturnType<typeof req>>> {
+        try {
+          return await req("/api/public/submissions/submit", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+        } catch (e) {
+          if (!isTrialLimitError(e)) throw e;
+          if (opts.onTrialExhausted) await opts.onTrialExhausted();
+          const { url } = await req("/api/public/billing/create-checkout", {
+            method: "POST",
+            body: JSON.stringify({
+              lookup_key: opts.upgradeLookupKey ?? "gemiq_professional_monthly",
+              success_url: opts.successUrl,
+              cancel_url: opts.cancelUrl,
+            }),
+          });
+          if (typeof window !== "undefined") window.location.href = url;
+          return { upgraded: true };
+        }
+      },
     },
 
   };
+}
+
+/**
+ * Type guard for the 402 `trial_limit_reached` error thrown by `results.submit`.
+ * Use directly, or call `results.submitOrUpgrade` to handle the upgrade automatically.
+ */
+export function isTrialLimitError(e: unknown): e is Error & {
+  status: 402;
+  body: { error: "trial_limit_reached"; [k: string]: unknown };
+} {
+  const err = e as { status?: number; body?: { error?: string } } | null | undefined;
+  return !!err && err.status === 402 && err.body?.error === "trial_limit_reached";
 }

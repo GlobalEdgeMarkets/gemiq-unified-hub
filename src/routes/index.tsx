@@ -153,10 +153,15 @@ function TopNav() {
   return (
     <nav className="sticky top-0 z-30 backdrop-blur-xl bg-[#0a0a16]/70 border-b border-white/5">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="relative h-9 w-9 rounded-xl bg-gradient-to-tr from-[#4ade80] to-[#a78bfa] shadow-[0_0_20px_-2px_rgba(74,222,128,0.5)] group-hover:shadow-[0_0_28px_-2px_rgba(167,139,250,0.7)] transition-shadow" />
+        <Link to="/" className="flex items-center gap-3 group" aria-label="GEM.IQ Hub — home">
+          <img
+            src={gemLogoDark.url}
+            alt="GEM"
+            className="h-9 w-auto brightness-0 invert transition-opacity group-hover:opacity-80"
+          />
+          <span className="hidden h-6 w-px bg-white/15 sm:block" />
           <span className="font-display text-2xl font-bold tracking-tight">
-            GEM.IQ <span className="text-[#4ade80]">Hub</span>
+            GEM.IQ <span className="text-[#05CFAB]">Hub</span>
           </span>
         </Link>
         <div className="flex items-center gap-2 md:gap-3">

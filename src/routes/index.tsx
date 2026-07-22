@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import gemLogo from "@/assets/gem-logo-standard.png.asset.json";
+import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -154,9 +154,7 @@ function TopNav() {
     <nav className="sticky top-0 z-30 backdrop-blur-xl bg-[#0a0a16]/70 border-b border-white/5">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
         <Link to="/" className="flex items-center gap-3 group" aria-label="GEM.IQ Hub — home">
-          <span className="inline-flex items-center justify-center rounded-md bg-white px-2 py-1 shadow-sm transition-opacity group-hover:opacity-90">
-            <img src={gemLogo.url} alt="GEM" className="h-7 w-auto" />
-          </span>
+          <img src={gemLogo.url} alt="GEM" className="h-9 w-auto transition-opacity group-hover:opacity-80" />
           <span className="hidden h-6 w-px bg-white/15 sm:block" />
           <span className="font-display text-2xl font-bold tracking-tight">
             GEM.IQ <span className="text-[#05CFAB]">Hub</span>
@@ -669,7 +667,7 @@ function Footer() {
       <div className="mx-auto max-w-7xl px-6 md:px-10">
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center justify-center rounded-md bg-white px-2 py-1"><img src={gemLogo.url} alt="GEM" className="h-6 w-auto" /></span>
+            <img src={gemLogo.url} alt="GEM" className="h-8 w-auto opacity-90" />
             <span className="font-display text-lg font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
               GEM.IQ Hub
             </span>

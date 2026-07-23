@@ -281,7 +281,7 @@ https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual`}</Code
             <code>packages/hub-sdk/manifest.json</code> so IQ builds can pin it.
           </p>
 
-          <h3 className="mt-6 font-display text-lg font-semibold text-white">
+          <h3 className="mt-6 font-display text-lg font-semibold text-[#172864]">
             Build-time pull (recommended)
           </h3>
           <p>
@@ -303,7 +303,7 @@ document.documentElement.style.setProperty("--gem-navy", manifest.brand.colors.n
 // Pricing — never hard-code
 const monthly = manifest.pricing.plans.find(p => p.interval === "month");`}</Code>
 
-          <h3 className="mt-6 font-display text-lg font-semibold text-white">
+          <h3 className="mt-6 font-display text-lg font-semibold text-[#172864]">
             Runtime polling — live updates without a redeploy
           </h3>
           <p>
@@ -325,14 +325,14 @@ const stop = hub.manifest.watch(
 );
 
 // stop() on unmount if needed`}</Code>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[#2C365B]/60">
             The endpoint sets a strong <code>ETag</code> and{" "}
             <code>Cache-Control: max-age=60, stale-while-revalidate=600</code>, and
             responds with <code>304</code> when the client's{" "}
             <code>If-None-Match</code> matches — polling is effectively free.
           </p>
 
-          <h3 className="mt-6 font-display text-lg font-semibold text-white">Manifest shape</h3>
+          <h3 className="mt-6 font-display text-lg font-semibold text-[#172864]">Manifest shape</h3>
           <Code>{`{
   version: "1.0.0",
   etag: "\\"1.0.0-<hash>\\"",
@@ -346,7 +346,7 @@ const stop = hub.manifest.watch(
   deep_links: { signup_trial_monthly, signup_trial_annual, login, portal }
 }`}</Code>
 
-          <h3 className="mt-6 font-display text-lg font-semibold text-white">
+          <h3 className="mt-6 font-display text-lg font-semibold text-[#172864]">
             GitHub sources of truth
           </h3>
           <ul className="list-disc space-y-1 pl-5">
@@ -358,7 +358,7 @@ const stop = hub.manifest.watch(
         </Section>
 
         <Section id="reference" title="Reference">
-          <h3 className="font-display text-lg font-semibold text-white">SDK surface</h3>
+          <h3 className="font-display text-lg font-semibold text-[#172864]">SDK surface</h3>
           <ul className="list-disc space-y-1 pl-5">
             <li><code>hub.subscription.check()</code> → <code>CheckStatus</code></li>
             <li>
@@ -374,13 +374,13 @@ const stop = hub.manifest.watch(
             <li><code>hub.redirectToLogin(returnTo, mode?)</code></li>
           </ul>
 
-          <h3 className="mt-6 font-display text-lg font-semibold text-white">Stripe lookup keys</h3>
+          <h3 className="mt-6 font-display text-lg font-semibold text-[#172864]">Stripe lookup keys</h3>
           <ul className="list-disc space-y-1 pl-5">
             <li><code>gemiq_professional_monthly</code> — $99/mo</li>
             <li><code>gemiq_professional_annual</code> — $990/yr</li>
           </ul>
 
-          <h3 className="mt-6 font-display text-lg font-semibold text-white">CheckStatus shape</h3>
+          <h3 className="mt-6 font-display text-lg font-semibold text-[#172864]">CheckStatus shape</h3>
           <Code>{`{
   authenticated: boolean;
   active: boolean;          // true for "active" OR "trialing"
@@ -394,7 +394,7 @@ const stop = hub.manifest.watch(
   } | null;
 }`}</Code>
 
-          <p className="mt-6 text-sm text-slate-400">
+          <p className="mt-6 text-sm text-[#2C365B]/60">
             Full integration guide including HubSpot property registration and legacy user
             import lives in <code>INTEGRATING.md</code> in the Hub repo.
           </p>

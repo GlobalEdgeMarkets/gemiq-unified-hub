@@ -11,7 +11,7 @@ import themeServices from "@/assets/theme-services.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GEM.IQ Hub — Executive assessments across tariffs, market entry, UX, and services" },
+      { title: "GEM.IQ Hub — Executive assessments for global readiness" },
       {
         name: "description",
         content:
@@ -24,6 +24,30 @@ export const Route = createFileRoute("/")({
           "One identity, one subscription, and a unified dashboard across every GEM.IQ executive assessment.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://gemiq.globaledgemarkets.com/" },
+    ],
+    links: [{ rel: "canonical", href: "https://gemiq.globaledgemarkets.com/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "GEM.IQ",
+          url: "https://gemiq.globaledgemarkets.com",
+          logo: "https://gemiq.globaledgemarkets.com/brand/gem-logo-standard.png",
+          parentOrganization: { "@type": "Organization", name: "GlobalEdgeMarkets" },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "GEM.IQ Hub",
+          url: "https://gemiq.globaledgemarkets.com",
+        }),
+      },
     ],
   }),
   component: Index,

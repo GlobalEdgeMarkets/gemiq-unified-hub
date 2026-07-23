@@ -135,6 +135,7 @@ function Index() {
       <div className="relative z-10">
         <TrialBanner />
         <TopNav />
+        <HeroTile />
         <main className="mx-auto max-w-7xl px-6 pb-24 pt-4 md:px-10 md:pb-32">
           <HeroBento />
           <IntelligenceStrip />
@@ -145,6 +146,7 @@ function Index() {
 
         <Footer />
       </div>
+
 
       <style>{`
         @keyframes aurora-slow { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(4%, 6%) scale(1.1); } }

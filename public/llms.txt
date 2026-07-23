@@ -1,0 +1,21 @@
+# GEM.IQ
+
+> The GEM.IQ Hub by GlobalEdgeMarkets — one identity, one subscription, and a unified dashboard across every GEM.IQ executive assessment (TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ).
+
+GEM.IQ is a family of self-service executive assessments covering global trade, go-to-market readiness, digital/AI experience, and product/service delivery. Each assessment produces dimension-level scoring, benchmarks, and prioritized recommendations in under 10 minutes.
+
+## Pages
+
+- [GEM.IQ Hub — home](/): Overview of the GEM.IQ platform, the four assessments, pricing, and the 7-day free trial.
+- [Sign in / Create account](/auth): Unified authentication for the GEM.IQ Hub with 7-day free trial signup.
+
+## Docs
+
+- [Developer docs](/docs): SDK integration guide for IQ apps — trial initiation, 402 upgrade handling, and result submission via `@gemiq/hub-sdk`.
+
+## Assessments
+
+- [TariffIQ](https://tariffiq.globaledgemarkets.com): Duty exposure and tariff-engineering maturity across HTS classification, first-sale, and FTZ readiness.
+- [ReadinessIQ](https://readinessiq.globaledgemarkets.com): Go-to-market maturity across market entry, enterprise sales, productization, and AI transformation with CMMI/TRL-weighted scoring.
+- [UXIQ](https://uxreadiness.globaledgemarkets.com): Digital and AI experience benchmarks across research, design systems, accessibility, and conversion craft.
+- [TechServicesIQ](https://techservicesiq.globaledgemarkets.com): Services delivery health across engagement, delivery, staffing, and margin performance.

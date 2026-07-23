@@ -11,7 +11,7 @@ import themeServices from "@/assets/theme-services.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GEM.IQ Hub — Executive assessments across tariffs, market entry, UX, and services" },
+      { title: "GEM.IQ Hub — Executive assessments for global readiness" },
       {
         name: "description",
         content:
@@ -24,6 +24,30 @@ export const Route = createFileRoute("/")({
           "One identity, one subscription, and a unified dashboard across every GEM.IQ executive assessment.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://gemiq.globaledgemarkets.com/" },
+    ],
+    links: [{ rel: "canonical", href: "https://gemiq.globaledgemarkets.com/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "GEM.IQ",
+          url: "https://gemiq.globaledgemarkets.com",
+          logo: "https://gemiq.globaledgemarkets.com/brand/gem-logo-standard.png",
+          parentOrganization: { "@type": "Organization", name: "GlobalEdgeMarkets" },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "GEM.IQ Hub",
+          url: "https://gemiq.globaledgemarkets.com",
+        }),
+      },
     ],
   }),
   component: Index,
@@ -155,7 +179,7 @@ function TrialBanner() {
           <span className="text-white/70">Cancel anytime</span>
         </span>
         <span className="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-bold text-white group-hover:bg-white group-hover:text-[#0a0a16] transition-colors">
-          Start free
+          Start 7-day free trial
           <ArrowIcon className="h-3 w-3" />
         </span>
       </Link>
@@ -292,7 +316,7 @@ function HeroTile() {
           className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight"
           style={{ fontFamily: "'League Spartan', sans-serif" }}
         >
-          The unified standard for{" "}
+          GEM.IQ Hub — Unified executive assessments for{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">
             global readiness.
           </span>

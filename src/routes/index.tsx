@@ -316,7 +316,7 @@ function HeroTile() {
           className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight"
           style={{ fontFamily: "'League Spartan', sans-serif" }}
         >
-          The unified standard for{" "}
+          GEM.IQ Hub — Unified executive assessments for{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">
             global readiness.
           </span>

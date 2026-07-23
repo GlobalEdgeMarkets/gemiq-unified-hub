@@ -231,27 +231,14 @@ function HeroBento() {
   return (
     <section id="assessments" className="pt-10 md:pt-14">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:auto-rows-[minmax(180px,auto)]">
-        {/* Large hero */}
+        {/* Full-width hero */}
         <HeroTile />
-
-        {/* Two small feature tiles beside hero (col-span 1 each, 2 rows) */}
-        <FeatureTile
-          badge="Unified"
-          title="One identity"
-          body="One GEM.IQ account across every assessment — with SSO on globaledgemarkets.com."
-          accent="mint"
-        />
-        <FeatureTile
-          badge="Instant"
-          title="Under 10 min"
-          body="Take any IQ, get dimension-level scoring and benchmarks streamed to your dashboard."
-          accent="violet"
-        />
 
         {/* 4 assessment tiles */}
         {ASSESSMENTS.map((a) => (
           <AssessmentTile key={a.key} a={a} />
         ))}
+
 
         {/* Methodology strip */}
         <MethodologyTile />

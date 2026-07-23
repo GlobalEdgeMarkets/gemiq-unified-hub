@@ -276,102 +276,102 @@ function HeroTile() {
       <div aria-hidden className="absolute -bottom-32 -left-10 h-64 w-64 rounded-full bg-[#a78bfa]/10 blur-3xl" />
 
 
-      <div className="relative z-10 flex items-start justify-between">
-        <span
-          className="text-[#4ade80] text-xs font-bold uppercase tracking-[0.25em]"
-          style={{ fontFamily: "'League Spartan', sans-serif" }}
-        >
-          Intelligence Suite · 4 Assessments
-        </span>
-        <div className="hidden md:flex items-center gap-2">
-          {ASSESSMENTS.map((a, idx) => (
-            <button
-              key={a.key}
-              onClick={() => setI(idx)}
-              aria-label={`Show ${a.name}`}
-              className={`h-1.5 rounded-full transition-all ${
-                idx === i ? "w-8 bg-white" : "w-4 bg-white/25 hover:bg-white/50"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="relative z-10 max-w-2xl">
-        <h1
-          className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight"
-          style={{ fontFamily: "'League Spartan', sans-serif" }}
-        >
-          GEM.IQ Hub — Unified executive assessments for{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">
-            global readiness.
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-12 md:px-10 md:py-16 flex flex-col justify-between">
+        <div className="flex items-start justify-between">
+          <span
+            className="text-[#4ade80] text-xs font-bold uppercase tracking-[0.25em]"
+            style={{ fontFamily: "'League Spartan', sans-serif" }}
+          >
+            Intelligence Suite · 4 Assessments
           </span>
-        </h1>
-        <p className="mt-5 text-base md:text-lg text-white/60 max-w-xl leading-relaxed">
-          GEM.IQ Hub centralizes identity, billing, and results across every executive assessment — so
-          your team benchmarks trade, market entry, digital, and delivery from a single view.
-        </p>
-
-        {/* Rotating showcase */}
-        <div key={current.key} className="mt-8 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-          <div className={`h-10 w-10 shrink-0 rounded-xl border border-white/10 flex items-center justify-center ${accent.chip}`}>
-            <span className={`h-2 w-2 rounded-full ${accent.dot} shadow-[0_0_12px_currentColor]`} />
-          </div>
-          <div className="min-w-0">
-            <div className="text-xs uppercase tracking-[0.2em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              Now featuring
-            </div>
-            <div className="mt-0.5 flex items-baseline gap-2 flex-wrap">
-              <span className={`font-display text-xl font-bold ${accent.text}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                {current.name}
-              </span>
-              <span className="text-sm text-white/60">— {current.domain}</span>
-            </div>
+          <div className="hidden md:flex items-center gap-2">
+            {ASSESSMENTS.map((a, idx) => (
+              <button
+                key={a.key}
+                onClick={() => setI(idx)}
+                aria-label={`Show ${a.name}`}
+                className={`h-1.5 rounded-full transition-all ${
+                  idx === i ? "w-8 bg-white" : "w-4 bg-white/25 hover:bg-white/50"
+                }`}
+              />
+            ))}
           </div>
         </div>
 
-
-
-
-        {/* Trial offer card — primary CTA */}
-        <div className="mt-8 rounded-2xl border border-[#4ade80]/40 bg-gradient-to-br from-[#4ade80]/12 via-[#0a0a16]/40 to-[#a78bfa]/10 backdrop-blur-xl p-5 md:p-6 shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)]">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#4ade80] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              <span className="h-1.5 w-1.5 rounded-full bg-[#0a0a16] animate-pulse" />
-              Limited launch offer
+        <div className="mt-10 max-w-2xl">
+          <h1
+            className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight"
+            style={{ fontFamily: "'League Spartan', sans-serif" }}
+          >
+            GEM.IQ Hub — Unified executive assessments for{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">
+              global readiness.
             </span>
-          </div>
-          <div className="mt-3 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            Try any GEM.IQ <span className="text-[#4ade80]">free for 7 days.</span>
-          </div>
-          <p className="mt-1.5 text-sm text-white/70">
-            Includes <strong className="text-white">1 complete assessment</strong> across any discipline — TariffIQ, ReadinessIQ, UXIQ, or TechServicesIQ. Full dimension-level report yours to keep, forever.
+          </h1>
+          <p className="mt-5 text-base md:text-lg text-white/60 max-w-xl leading-relaxed">
+            GEM.IQ Hub centralizes identity, billing, and results across every executive assessment — so
+            your team benchmarks trade, market entry, digital, and delivery from a single view.
           </p>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <Link
-              to="/auth"
-              search={{ mode: "signup", trial: "1" }}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
-              style={{ fontFamily: "'League Spartan', sans-serif" }}
-            >
-              Start 7-day free trial
-              <ArrowIcon className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/auth"
-              search={{ mode: "signup" }}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
-              style={{ fontFamily: "'League Spartan', sans-serif" }}
-            >
-              Or subscribe directly
-            </Link>
-            <span className="text-[11px] text-white/50">
-              Card required · Auto-converts on day 7 · Cancel anytime
-            </span>
+
+          {/* Rotating showcase */}
+          <div key={current.key} className="mt-8 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <div className={`h-10 w-10 shrink-0 rounded-xl border border-white/10 flex items-center justify-center ${accent.chip}`}>
+              <span className={`h-2 w-2 rounded-full ${accent.dot} shadow-[0_0_12px_currentColor]`} />
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs uppercase tracking-[0.2em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                Now featuring
+              </div>
+              <div className="mt-0.5 flex items-baseline gap-2 flex-wrap">
+                <span className={`font-display text-xl font-bold ${accent.text}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                  {current.name}
+                </span>
+                <span className="text-sm text-white/60">— {current.domain}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Trial offer card — primary CTA */}
+          <div className="mt-8 rounded-2xl border border-[#4ade80]/40 bg-gradient-to-br from-[#4ade80]/12 via-[#0a0a16]/40 to-[#a78bfa]/10 backdrop-blur-xl p-5 md:p-6 shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)]">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#4ade80] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#0a0a16] animate-pulse" />
+                Limited launch offer
+              </span>
+            </div>
+            <div className="mt-3 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              Try any GEM.IQ <span className="text-[#4ade80]">free for 7 days.</span>
+            </div>
+            <p className="mt-1.5 text-sm text-white/70">
+              Includes <strong className="text-white">1 complete assessment</strong> across any discipline — TariffIQ, ReadinessIQ, UXIQ, or TechServicesIQ. Full dimension-level report yours to keep, forever.
+            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <Link
+                to="/auth"
+                search={{ mode: "signup", trial: "1" }}
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
+                style={{ fontFamily: "'League Spartan', sans-serif" }}
+              >
+                Start 7-day free trial
+                <ArrowIcon className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/auth"
+                search={{ mode: "signup" }}
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                style={{ fontFamily: "'League Spartan', sans-serif" }}
+              >
+                Or subscribe directly
+              </Link>
+              <span className="text-[11px] text-white/50">
+                Card required · Auto-converts on day 7 · Cancel anytime
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
+
   );
 }
 

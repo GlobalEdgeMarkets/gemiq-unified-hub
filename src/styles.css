@@ -167,3 +167,68 @@
     letter-spacing: -0.01em;
   }
 }
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * DARK MODE OVERRIDES for the light-themed Hub landing / docs / auth pages.
+ *
+ * The pages use hard-coded hex utilities (bg-[#F4F7FB], text-[#172864], etc.)
+ * so they render consistently in light mode. When <html> has the `dark` class
+ * (toggled by ThemeToggle), these rules remap the exact class strings to
+ * dark equivalents. Escaping: `[` → `\[`, `#` → `\#`, `]` → `\]`, `/` → `\/`.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.dark {
+  color-scheme: dark;
+}
+
+/* Page surfaces */
+.dark .bg-\[\#F4F7FB\]     { background-color: #0a0a16 !important; }
+.dark .bg-white            { background-color: #12172a !important; }
+.dark .bg-white\/60        { background-color: rgb(18 23 42 / 0.6) !important; }
+.dark .bg-white\/70        { background-color: rgb(18 23 42 / 0.7) !important; }
+.dark .bg-white\/80        { background-color: rgb(18 23 42 / 0.8) !important; }
+.dark .bg-white\/85        { background-color: rgb(18 23 42 / 0.85) !important; }
+.dark .bg-\[\#DCE7F2\]     { background-color: #1a2140 !important; }
+
+/* Hero light veils → dark scrim */
+.dark .from-\[\#F4F7FB\]   { --tw-gradient-from: #05070f !important; }
+.dark .via-white           { --tw-gradient-via: #0a0a16 !important; }
+.dark .to-\[\#DCE7F2\]     { --tw-gradient-to: #1a2140 !important; }
+.dark .from-white\/85      { --tw-gradient-from: rgb(10 10 22 / 0.85) !important; }
+.dark .via-white\/70       { --tw-gradient-via: rgb(10 10 22 / 0.65) !important; }
+.dark .to-\[\#DCE7F2\]\/80 { --tw-gradient-to: rgb(26 33 64 / 0.6) !important; }
+.dark .from-white          { --tw-gradient-from: #12172a !important; }
+
+/* Text (deep navy → light) */
+.dark .text-\[\#172864\]        { color: #e8ecf7 !important; }
+.dark .text-\[\#172864\]\/60    { color: rgb(232 236 247 / 0.6) !important; }
+.dark .text-\[\#172864\]\/50    { color: rgb(232 236 247 / 0.5) !important; }
+.dark .text-\[\#172864\]\/40    { color: rgb(232 236 247 / 0.4) !important; }
+.dark .text-\[\#172864\]\/30    { color: rgb(232 236 247 / 0.3) !important; }
+.dark .text-\[\#2C365B\]        { color: #c9cee0 !important; }
+.dark .text-\[\#2C365B\]\/85    { color: rgb(201 206 224 / 0.85) !important; }
+.dark .text-\[\#2C365B\]\/80    { color: rgb(201 206 224 / 0.8) !important; }
+.dark .text-\[\#2C365B\]\/75    { color: rgb(201 206 224 / 0.75) !important; }
+.dark .text-\[\#2C365B\]\/70    { color: rgb(201 206 224 / 0.7) !important; }
+.dark .text-\[\#2C365B\]\/60    { color: rgb(201 206 224 / 0.6) !important; }
+
+/* Borders / rings */
+.dark .border-\[\#172864\]\/10   { border-color: rgb(255 255 255 / 0.08) !important; }
+.dark .border-\[\#172864\]\/15   { border-color: rgb(255 255 255 / 0.12) !important; }
+.dark .border-\[\#172864\]\/20   { border-color: rgb(255 255 255 / 0.16) !important; }
+.dark .ring-\[\#172864\]\/10     { --tw-ring-color: rgb(255 255 255 / 0.08) !important; }
+
+/* Navy CTA button → mint on dark for stronger contrast */
+.dark .bg-\[\#172864\]     { background-color: #05CFAB !important; color: #0a0a16 !important; }
+.dark .border-\[\#172864\] { border-color: #05CFAB !important; }
+
+/* Aurora tint blocks read heavier on dark — soften */
+.dark .bg-\[\#05CFAB\]\/15 { background-color: rgb(5 207 171 / 0.20) !important; }
+.dark .bg-\[\#2D1594\]\/10 { background-color: rgb(167 139 250 / 0.18) !important; }
+.dark .bg-\[\#2D1594\]\/12 { background-color: rgb(167 139 250 / 0.20) !important; }
+
+/* Purple secondary text — brighten so it survives on dark */
+.dark .text-\[\#2D1594\]  { color: #a78bfa !important; }
+.dark .text-\[\#0e7490\]  { color: #67e8f9 !important; }
+.dark .text-\[\#b45309\]  { color: #fbbf24 !important; }
+

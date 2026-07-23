@@ -6,6 +6,26 @@ import themeTariff from "@/assets/theme-tariff.jpg";
 import themeReadiness from "@/assets/theme-readiness.jpg";
 import themeUx from "@/assets/theme-ux.jpg";
 import themeServices from "@/assets/theme-services.jpg";
+import themeInvestments from "@/assets/theme-investments.jpg";
+import themeStartups from "@/assets/theme-startups.jpg";
+import themeQuantum from "@/assets/theme-quantum.jpg";
+import themeGlobal from "@/assets/theme-global.jpg";
+import themeAi from "@/assets/theme-ai.jpg";
+import themeManagement from "@/assets/theme-management.jpg";
+
+const HERO_ROTATION: { src: string; label: string }[] = [
+  { src: themeGlobal, label: "Global business & connectivity" },
+  { src: themeTariff, label: "Trade & tariff engineering" },
+  { src: themeInvestments, label: "Markets & investments" },
+  { src: themeStartups, label: "Startups & scale-ups" },
+  { src: themeManagement, label: "Executive management" },
+  { src: themeAi, label: "AI & innovation" },
+  { src: themeQuantum, label: "Quantum & frontier tech" },
+  { src: themeServices, label: "Services delivery" },
+  { src: themeReadiness, label: "Boardroom readiness" },
+  { src: themeUx, label: "Digital experience" },
+];
+
 
 
 export const Route = createFileRoute("/")({
@@ -155,6 +175,8 @@ function Index() {
         .animate-aurora-slow { animation: aurora-slow 22s ease-in-out infinite; }
         .animate-aurora-slow-alt { animation: aurora-slow-alt 26s ease-in-out infinite; }
         .animate-aurora-drift { animation: aurora-drift 30s ease-in-out infinite; }
+        @keyframes hero-kenburns { 0% { transform: scale(1.05) translate(0,0); } 100% { transform: scale(1.18) translate(-2%, -1.5%); } }
+        .animate-hero-kenburns { animation: hero-kenburns 7s ease-out forwards; }
       `}</style>
     </div>
   );
@@ -256,6 +278,13 @@ function HeroTile() {
   const current = ASSESSMENTS[i];
   const accent = ACCENT[current.accent];
 
+  // Rotating thematic imagery layer (cross-fade with slow ken burns)
+  const [heroImgIdx, setHeroImgIdx] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setHeroImgIdx((p) => (p + 1) % HERO_ROTATION.length), 5000);
+    return () => clearInterval(t);
+  }, []);
+
   return (
     <section className="relative w-full overflow-hidden min-h-[560px] md:min-h-[640px] flex items-stretch">
       {/* Background futuristic AI video */}
@@ -266,10 +295,26 @@ function HeroTile() {
         muted
         playsInline
         poster={themeTariff}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-screen"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 mix-blend-screen"
       >
         <source src={heroVideo.url} type="video/mp4" />
       </video>
+
+      {/* Rotating thematic imagery */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        {HERO_ROTATION.map((img, idx) => (
+          <img
+            key={img.src}
+            src={img.src}
+            alt=""
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1600ms] ease-in-out ${
+              idx === heroImgIdx ? "opacity-40 animate-hero-kenburns" : "opacity-0"
+            }`}
+          />
+        ))}
+      </div>
+
+
       <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-[#0a0a16]/85 via-[#0a0a16]/60 to-[#16213e]/70" />
       {/* Ambient glow */}
       <div aria-hidden className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-gradient-to-br from-[#4ade80]/20 to-[#a78bfa]/20 blur-3xl" />

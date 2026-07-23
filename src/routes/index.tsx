@@ -179,7 +179,7 @@ function TrialBanner() {
           <span className="text-white/70">Cancel anytime</span>
         </span>
         <span className="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-bold text-white group-hover:bg-white group-hover:text-[#0a0a16] transition-colors">
-          Start free
+          Start 7-day free trial
           <ArrowIcon className="h-3 w-3" />
         </span>
       </Link>

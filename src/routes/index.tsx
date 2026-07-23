@@ -278,10 +278,17 @@ function HeroTile() {
   const current = ASSESSMENTS[i];
   const accent = ACCENT[current.accent];
 
-  // Rotating thematic imagery layer (cross-fade with slow ken burns)
+  // Rotating thematic imagery layer (smooth cross-fade)
   const [heroImgIdx, setHeroImgIdx] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setHeroImgIdx((p) => (p + 1) % HERO_ROTATION.length), 5000);
+    // Preload + decode all rotation images so the first cycle isn't jerky
+    HERO_ROTATION.forEach(({ src }) => {
+      const im = new Image();
+      im.src = src;
+      // @ts-expect-error decode is widely supported
+      if (im.decode) im.decode().catch(() => {});
+    });
+    const t = setInterval(() => setHeroImgIdx((p) => (p + 1) % HERO_ROTATION.length), 7000);
     return () => clearInterval(t);
   }, []);
 
@@ -307,12 +314,15 @@ function HeroTile() {
             key={img.src}
             src={img.src}
             alt=""
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1600ms] ease-in-out ${
-              idx === heroImgIdx ? "opacity-40 animate-hero-kenburns" : "opacity-0"
+            decoding="async"
+            style={{ willChange: "opacity" }}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[2400ms] ease-linear ${
+              idx === heroImgIdx ? "opacity-40" : "opacity-0"
             }`}
           />
         ))}
       </div>
+
 
 
       <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-[#0a0a16]/85 via-[#0a0a16]/60 to-[#16213e]/70" />

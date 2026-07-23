@@ -533,32 +533,18 @@ function IntelligenceStrip() {
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0a0a16] to-[#16213e]/60 ring-1 ring-inset ring-white/[0.06] p-6 md:p-8 min-h-[180px] flex items-center gap-6">
-            <div className="relative shrink-0 h-28 w-28">
-              <div aria-hidden className="absolute inset-0 rounded-full border border-[#4ade80]/40 animate-[spin_18s_linear_infinite]" />
-              <div aria-hidden className="absolute inset-2 rounded-full border border-[#a78bfa]/40 animate-[spin_24s_linear_infinite_reverse]" />
-              <div aria-hidden className="absolute inset-4 rounded-full border border-[#67e8f9]/30 animate-[spin_30s_linear_infinite]" />
-              <div className="absolute inset-6 rounded-full bg-gradient-to-br from-[#4ade80]/30 via-[#a78bfa]/30 to-[#67e8f9]/30 blur-md" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="h-9 w-9 text-white/90" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <circle cx="12" cy="12" r="9" />
-                  <ellipse cx="12" cy="12" rx="9" ry="4" />
-                  <path d="M3 12h18M12 3v18" />
-                </svg>
-              </div>
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0a0a16] to-[#16213e]/60 ring-1 ring-inset ring-white/[0.06] p-6 md:p-8 min-h-[180px]">
+            <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#4ade80]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              One planet, one platform
             </div>
-            <div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#4ade80]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                One planet, one platform
-              </div>
-              <h4 className="mt-1 font-display text-xl md:text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                Benchmark against global peers.
-              </h4>
-              <p className="mt-1 text-sm text-white/60">
-                Country, industry, and stage-weighted percentiles — updated continuously.
-              </p>
-            </div>
+            <h4 className="mt-1 font-display text-xl md:text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              Benchmark against global peers.
+            </h4>
+            <p className="mt-2 text-sm text-white/60">
+              Country, industry, and stage-weighted percentiles — updated continuously.
+            </p>
           </div>
+
         </div>
       </div>
     </section>

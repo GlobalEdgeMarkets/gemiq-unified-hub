@@ -6,6 +6,26 @@ import themeTariff from "@/assets/theme-tariff.jpg";
 import themeReadiness from "@/assets/theme-readiness.jpg";
 import themeUx from "@/assets/theme-ux.jpg";
 import themeServices from "@/assets/theme-services.jpg";
+import themeInvestments from "@/assets/theme-investments.jpg";
+import themeStartups from "@/assets/theme-startups.jpg";
+import themeQuantum from "@/assets/theme-quantum.jpg";
+import themeGlobal from "@/assets/theme-global.jpg";
+import themeAi from "@/assets/theme-ai.jpg";
+import themeManagement from "@/assets/theme-management.jpg";
+
+const HERO_ROTATION: { src: string; label: string }[] = [
+  { src: themeGlobal, label: "Global business & connectivity" },
+  { src: themeTariff, label: "Trade & tariff engineering" },
+  { src: themeInvestments, label: "Markets & investments" },
+  { src: themeStartups, label: "Startups & scale-ups" },
+  { src: themeManagement, label: "Executive management" },
+  { src: themeAi, label: "AI & innovation" },
+  { src: themeQuantum, label: "Quantum & frontier tech" },
+  { src: themeServices, label: "Services delivery" },
+  { src: themeReadiness, label: "Boardroom readiness" },
+  { src: themeUx, label: "Digital experience" },
+];
+
 
 
 export const Route = createFileRoute("/")({

@@ -258,7 +258,7 @@ function HeroTile() {
   const accent = ACCENT[current.accent];
 
   return (
-    <div className="md:col-span-3 md:row-span-2 relative overflow-hidden rounded-3xl bg-[#16213e]/30 ring-1 ring-inset ring-white/[0.06] backdrop-blur-2xl p-8 md:p-12 flex flex-col justify-between min-h-[420px] md:min-h-[440px]">
+    <div className="md:col-span-4 relative overflow-hidden rounded-3xl bg-[#16213e]/30 ring-1 ring-inset ring-white/[0.06] backdrop-blur-2xl p-8 md:p-12 flex flex-col justify-between min-h-[420px] md:min-h-[440px]">
       {/* Background futuristic AI video */}
       <video
         aria-hidden

@@ -257,7 +257,7 @@ function HeroTile() {
   const accent = ACCENT[current.accent];
 
   return (
-    <div className="md:col-span-4 relative overflow-hidden py-8 md:py-12 flex flex-col justify-between min-h-[420px] md:min-h-[440px]">
+    <section className="relative w-full overflow-hidden min-h-[560px] md:min-h-[640px] flex items-stretch">
       {/* Background futuristic AI video */}
       <video
         aria-hidden

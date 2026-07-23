@@ -312,16 +312,7 @@ function HeroTile() {
         ))}
       </div>
 
-        aria-hidden
-        autoPlay
-        loop
-        muted
-        playsInline
-        poster={themeTariff}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-screen"
-      >
-        <source src={heroVideo.url} type="video/mp4" />
-      </video>
+
       <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-[#0a0a16]/85 via-[#0a0a16]/60 to-[#16213e]/70" />
       {/* Ambient glow */}
       <div aria-hidden className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-gradient-to-br from-[#4ade80]/20 to-[#a78bfa]/20 blur-3xl" />

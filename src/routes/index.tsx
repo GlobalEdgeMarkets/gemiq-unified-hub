@@ -8,10 +8,9 @@ import themeUx from "@/assets/theme-ux.jpg";
 import themeServices from "@/assets/theme-services.jpg";
 import themeInvestments from "@/assets/theme-investments.jpg";
 import themeStartups from "@/assets/theme-startups.jpg";
-import themeQuantum from "@/assets/theme-quantum.jpg";
-import themeGlobal from "@/assets/theme-global.jpg";
 import themeAi from "@/assets/theme-ai.jpg";
 import themeManagement from "@/assets/theme-management.jpg";
+
 
 const HERO_ROTATION: { src: string; label: string }[] = [
   { src: themeTariff, label: "Trade & tariff engineering" },

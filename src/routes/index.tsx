@@ -233,14 +233,10 @@ function HeroBento() {
   return (
     <section id="assessments" className="pt-10 md:pt-14">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:auto-rows-[minmax(180px,auto)]">
-        {/* Full-width hero */}
-        <HeroTile />
-
         {/* 4 assessment tiles */}
         {ASSESSMENTS.map((a) => (
           <AssessmentTile key={a.key} a={a} />
         ))}
-
 
         {/* Methodology strip */}
         <MethodologyTile />
@@ -249,6 +245,7 @@ function HeroBento() {
     </section>
   );
 }
+
 
 function HeroTile() {
   const [i, setI] = useState(0);

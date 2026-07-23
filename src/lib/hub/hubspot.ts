@@ -23,10 +23,20 @@ export type HubSpotProps = Record<string, string | number | boolean | null | und
 export async function upsertContactByEmail(
   email: string,
   properties: HubSpotProps,
+  source?: { label?: string; detail?: string },
 ): Promise<{ id: string; skipped: string[] }> {
   const skipped: string[] = [];
   let attempt = 0;
-  let props = { ...properties };
+  // Attribute new contacts to GEM.IQ (not the underlying integration platform).
+  // HubSpot honors these only on CREATE; on existing contacts they're ignored
+  // by HubSpot and stripped by the retry-on-unknown logic if rejected.
+  const sourceProps: HubSpotProps = {
+    hs_analytics_source: "OFFLINE",
+    hs_analytics_source_data_1: source?.label ?? "GEM.IQ",
+    hs_analytics_source_data_2: source?.detail ?? "GEM.IQ Hub",
+  };
+  let props = { ...sourceProps, ...properties };
+
   while (attempt < 4) {
     attempt++;
     const res = await fetch(`${GATEWAY}/crm/v3/objects/contacts/batch/upsert`, {
@@ -95,9 +105,13 @@ export async function createLeadForContact(args: {
     properties: {
       hs_lead_name: leadName,
       hs_lead_type: "NEW_BUSINESS",
+      hs_analytics_source: "OFFLINE",
+      hs_analytics_source_data_1: "GEM.IQ",
+      hs_analytics_source_data_2: args.assessmentLabel,
       gem_lead_temperature: args.temperature,
       gem_lead_source_assessment: args.assessmentLabel,
     },
+
     associations: [
       {
         to: { id: args.contactId },

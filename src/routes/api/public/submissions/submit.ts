@@ -190,7 +190,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
         let queuedForRetry = false;
 
         try {
-          const { id: hsId, skipped } = await upsertContactByEmail(email, props);
+          const { id: hsId, skipped } = await upsertContactByEmail(email, props, { label: "GEM.IQ", detail: assessmentLabel });
           hsContactId = hsId;
           skippedProps = skipped;
           await svc.from("submissions").update({

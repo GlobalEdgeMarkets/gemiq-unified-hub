@@ -175,6 +175,8 @@ function Index() {
         .animate-aurora-slow { animation: aurora-slow 22s ease-in-out infinite; }
         .animate-aurora-slow-alt { animation: aurora-slow-alt 26s ease-in-out infinite; }
         .animate-aurora-drift { animation: aurora-drift 30s ease-in-out infinite; }
+        @keyframes hero-kenburns { 0% { transform: scale(1.05) translate(0,0); } 100% { transform: scale(1.18) translate(-2%, -1.5%); } }
+        .animate-hero-kenburns { animation: hero-kenburns 7s ease-out forwards; }
       `}</style>
     </div>
   );

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import gemLogo from "@/assets/gem-logo-standard.png.asset.json";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 type Props = {
   /** Which auth CTA to emphasize (used on the auth page to hint the other mode). */
@@ -32,6 +33,7 @@ export function HubHeader({ variant = "landing", right }: Props) {
 
         <nav className="flex items-center gap-1 text-sm sm:gap-3">
           {right}
+          <ThemeToggle compact />
           {variant === "landing" ? (
             <>
               <a

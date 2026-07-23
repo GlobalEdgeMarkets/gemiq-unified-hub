@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import gemLogo from "@/assets/gem-logo-standard.png.asset.json";
 import heroVideo from "@/assets/hero-ai-network.mp4.asset.json";
 import themeTariff from "@/assets/theme-tariff.jpg";
@@ -251,6 +252,7 @@ function TopNav() {
           >
             Sign in
           </Link>
+          <ThemeToggle compact />
           <Link
             to="/auth"
             search={{ mode: "signup" }}

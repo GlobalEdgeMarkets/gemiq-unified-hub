@@ -105,9 +105,13 @@ export async function createLeadForContact(args: {
     properties: {
       hs_lead_name: leadName,
       hs_lead_type: "NEW_BUSINESS",
+      hs_analytics_source: "OFFLINE",
+      hs_analytics_source_data_1: "GEM.IQ",
+      hs_analytics_source_data_2: args.assessmentLabel,
       gem_lead_temperature: args.temperature,
       gem_lead_source_assessment: args.assessmentLabel,
     },
+
     associations: [
       {
         to: { id: args.contactId },

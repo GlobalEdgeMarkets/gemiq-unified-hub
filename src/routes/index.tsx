@@ -276,10 +276,42 @@ function HeroTile() {
   const current = ASSESSMENTS[i];
   const accent = ACCENT[current.accent];
 
+  // Rotating thematic imagery layer (cross-fade with slow ken burns)
+  const [heroImgIdx, setHeroImgIdx] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setHeroImgIdx((p) => (p + 1) % HERO_ROTATION.length), 5000);
+    return () => clearInterval(t);
+  }, []);
+
   return (
     <section className="relative w-full overflow-hidden min-h-[560px] md:min-h-[640px] flex items-stretch">
       {/* Background futuristic AI video */}
       <video
+        aria-hidden
+        autoPlay
+        loop
+        muted
+        playsInline
+        poster={themeTariff}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 mix-blend-screen"
+      >
+        <source src={heroVideo.url} type="video/mp4" />
+      </video>
+
+      {/* Rotating thematic imagery */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        {HERO_ROTATION.map((img, idx) => (
+          <img
+            key={img.src}
+            src={img.src}
+            alt=""
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1600ms] ease-in-out ${
+              idx === heroImgIdx ? "opacity-40 animate-hero-kenburns" : "opacity-0"
+            }`}
+          />
+        ))}
+      </div>
+
         aria-hidden
         autoPlay
         loop

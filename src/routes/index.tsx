@@ -285,8 +285,9 @@ function HeroTile() {
     HERO_ROTATION.forEach(({ src }) => {
       const im = new Image();
       im.src = src;
-      // @ts-expect-error decode is widely supported
-      if (im.decode) im.decode().catch(() => {});
+      const anyIm = im as HTMLImageElement & { decode?: () => Promise<void> };
+      if (anyIm.decode) anyIm.decode().catch(() => {});
+
     });
     const t = setInterval(() => setHeroImgIdx((p) => (p + 1) % HERO_ROTATION.length), 7000);
     return () => clearInterval(t);

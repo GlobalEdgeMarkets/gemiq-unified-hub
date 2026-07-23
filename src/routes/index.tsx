@@ -14,17 +14,16 @@ import themeAi from "@/assets/theme-ai.jpg";
 import themeManagement from "@/assets/theme-management.jpg";
 
 const HERO_ROTATION: { src: string; label: string }[] = [
-  { src: themeGlobal, label: "Global business & connectivity" },
   { src: themeTariff, label: "Trade & tariff engineering" },
   { src: themeInvestments, label: "Markets & investments" },
   { src: themeStartups, label: "Startups & scale-ups" },
   { src: themeManagement, label: "Executive management" },
   { src: themeAi, label: "AI & innovation" },
-  { src: themeQuantum, label: "Quantum & frontier tech" },
   { src: themeServices, label: "Services delivery" },
   { src: themeReadiness, label: "Boardroom readiness" },
   { src: themeUx, label: "Digital experience" },
 ];
+
 
 
 

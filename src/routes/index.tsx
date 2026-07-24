@@ -303,7 +303,7 @@ function HeroTile() {
   }, []);
 
   return (
-    <section className="relative w-full overflow-hidden min-h-[560px] md:min-h-[640px] flex items-stretch bg-gradient-to-br from-[#F4F7FB] via-white to-[#DCE7F2]">
+    <section className="dark relative w-full overflow-hidden min-h-[560px] md:min-h-[640px] flex items-stretch bg-gradient-to-br from-[#F4F7FB] via-white to-[#DCE7F2]">
       {/* Background AI video — dialed way down so light overlays win */}
       <video
         aria-hidden

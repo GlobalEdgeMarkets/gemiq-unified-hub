@@ -3,6 +3,10 @@ import { tariffiq } from "./tariffiq";
 import { readinessiq } from "./readinessiq";
 import { uxiq } from "./uxiq";
 import { techservicesiq } from "./techservicesiq";
+import { gtmiq } from "./gtmiq";
+import { salesiq } from "./salesiq";
+import { productiq } from "./productiq";
+import { aitransformiq } from "./aitransformiq";
 
 /**
  * Central registry of every GEM.IQ assessment.
@@ -17,6 +21,10 @@ export const REGISTRY: AssessmentSpec[] = [
   readinessiq,
   uxiq,
   techservicesiq,
+  gtmiq,
+  salesiq,
+  productiq,
+  aitransformiq,
 ];
 
 export const REGISTRY_BY_KEY: Record<string, AssessmentSpec> =

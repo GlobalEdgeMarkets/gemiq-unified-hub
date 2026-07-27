@@ -9,6 +9,7 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
+    "test": "vitest run",
     "format": "prettier --write .",
     "sync:hub-sdk": "node scripts/sync-hub-sdk.mjs",
     "check:hub-sdk": "node scripts/sync-hub-sdk.mjs --check",

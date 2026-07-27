@@ -8,6 +8,8 @@ import {
   adminRegistryStatus,
   adminPreflight,
   adminListSubmissions,
+  adminCalibrateReadinessScores,
+  adminMigrateReadinessIQ,
 } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,6 +83,9 @@ function AdminConsole() {
   const registryStatus = useServerFn(adminRegistryStatus);
   const preflight = useServerFn(adminPreflight);
   const listSubs = useServerFn(adminListSubmissions);
+  const calibrate = useServerFn(adminCalibrateReadinessScores);
+  const migrate = useServerFn(adminMigrateReadinessIQ);
+  const [calibrated, setCalibrated] = useState(false);
 
   const [gate, setGate] = useState<{ state: "loading" | "anon" | "denied" | "ok"; email?: string | null }>({
     state: "loading",
@@ -133,7 +138,8 @@ function AdminConsole() {
       <div className="grid gap-6">
         <BootstrapCard run={bootstrap} />
         <ImportUsersCard run={importUser} />
-        <MigrateCard run={preflight} />
+        <CalibrationCard run={calibrate} calibrated={calibrated} setCalibrated={setCalibrated} />
+        <MigrateCard run={migrate} preflight={preflight} calibrated={calibrated} />
         <RegistryCard run={registryStatus} />
         <SubmissionsCard run={listSubs} />
       </div>

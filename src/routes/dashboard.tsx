@@ -157,8 +157,12 @@ function DashboardPage() {
     let alive = true;
     (async () => {
       try {
-        const d = (await load()) as DashboardData;
+        const d = (await load()) as DashboardData | null;
         if (!alive) return;
+        if (!d) {
+          setState("unauth");
+          return;
+        }
         setData(d);
         setState("ready");
       } catch (e) {

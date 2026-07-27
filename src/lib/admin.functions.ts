@@ -3,28 +3,26 @@
 // JOB_SECRET is never involved here: these call the shared handler bodies
 // in-process after verifying the caller is an allowlisted admin.
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireHubAdmin } from "@/lib/hub/admin/middleware";
 import { z } from "zod";
 
 export const adminWhoami = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHubAdmin])
   .handler(async ({ context }) => {
-    const { isAdminEmail } = await import("@/lib/hub/admin/guard.server");
-    const email = typeof context.claims?.email === "string" ? context.claims.email : null;
-    return { email, is_admin: isAdminEmail(email) };
+    return { email: context.hubAdmin.email, is_admin: context.hubAdmin.isAdmin };
   });
 
 export const adminBootstrapHubspot = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHubAdmin])
   .handler(async ({ context }) => {
     const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
-    assertAdmin(context.claims as Record<string, unknown>);
+    assertAdmin({ email: context.hubAdmin.email });
     const { runBootstrapHubspotSchema } = await import("@/lib/hub/admin/hubspot-bootstrap.server");
     return await runBootstrapHubspotSchema();
   });
 
 export const adminImportLegacyUser = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHubAdmin])
   .inputValidator((input: unknown) =>
     z.object({
       email: z.string().email(),
@@ -36,31 +34,31 @@ export const adminImportLegacyUser = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
-    assertAdmin(context.claims as Record<string, unknown>);
+    assertAdmin({ email: context.hubAdmin.email });
     const { runImportLegacyUser } = await import("@/lib/hub/admin/legacy-users.server");
     return await runImportLegacyUser(data);
   });
 
 export const adminRegistryStatus = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHubAdmin])
   .handler(async ({ context }) => {
     const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
-    assertAdmin(context.claims as Record<string, unknown>);
+    assertAdmin({ email: context.hubAdmin.email });
     const { getRegistryStatus } = await import("@/lib/hub/admin/status.server");
     return getRegistryStatus();
   });
 
 export const adminPreflight = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHubAdmin])
   .handler(async ({ context }) => {
     const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
-    assertAdmin(context.claims as Record<string, unknown>);
+    assertAdmin({ email: context.hubAdmin.email });
     const { runPreflight } = await import("@/lib/hub/admin/status.server");
     return await runPreflight();
   });
 
 export const adminListSubmissions = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireHubAdmin])
   .inputValidator((input: unknown) =>
     z.object({
       email: z.string().optional(),
@@ -70,7 +68,7 @@ export const adminListSubmissions = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
-    assertAdmin(context.claims as Record<string, unknown>);
+    assertAdmin({ email: context.hubAdmin.email });
     const { listSubmissions } = await import("@/lib/hub/admin/status.server");
     return await listSubmissions(data);
   });

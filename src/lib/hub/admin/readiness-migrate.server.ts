@@ -6,10 +6,10 @@
 // secret, so the service role key and PII boundary stay inside that project.
 //
 //   POST  $READINESS_READ_URL
-//   headers: { "x-gemiq-key": $GEMIQ_API_KEY, "content-type": "application/json" }
-//   body:    { "limit": number, "email"?: string }
-//   200:     { "rows": Array<assessment row> }   (also accepts a bare array,
-//                                                 or { data: [...] })
+//   headers: { "x-api-key": $GEMIQ_API_KEY, "content-type": "application/json" }
+//   body:    { "action": "list", "limit": number } | { "action": "byEmail", "email": string }
+//   200:     { "rows": Array<assessment row> }   (also accepts a bare array, or
+//                                                 { data | assessments | results: [...] })
 import { tierFromScore } from "@/lib/hub/assessments/tiers";
 import type { SubmissionPayload } from "@/lib/hub/schemas";
 import type { ImportRowResult, ImportHubspotResult } from "@/lib/hub/admin/legacy-submissions.server";

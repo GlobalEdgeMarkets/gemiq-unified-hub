@@ -1,3 +1,4 @@
+import { normalizeTier, tierFromScore } from "./tiers";
 import type { AssessmentSpec, SubmissionForMapping, HubSpotPropertyValues, PropertyDef } from "./types";
 import { tariffiq } from "./tariffiq";
 import { readinessiq } from "./readinessiq";
@@ -70,7 +71,7 @@ export function buildContactProperties(args: {
     gem_assessment_tool: args.current.assessment_key,
     gem_assessment_date: args.current.submitted_at.slice(0, 10),
     gem_assessment_score: args.current.score,
-    gem_score_tier: args.current.tier?.toLowerCase(),
+    gem_score_tier: normalizeTier(args.current.tier) ?? tierFromScore(args.current.score),
   };
 
   if (args.contact?.first_name) props.firstname = args.contact.first_name;

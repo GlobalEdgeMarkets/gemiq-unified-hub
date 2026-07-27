@@ -135,11 +135,15 @@ async function ensureLeadProperty(p: PropDef) {
   return { name: p.name, status: "exists", object: "lead" };
 }
 
+export type BootstrapResult = {
+  name: string; status: string; error?: string; object?: string;
+};
+
 /** Idempotent bootstrap of every GEM.IQ HubSpot property. */
 export async function runBootstrapHubspotSchema() {
   await ensureGroup();
   await ensureLeadGroup();
-  const results: Array<Record<string, unknown>> = [];
+  const results: BootstrapResult[] = [];
   for (const p of PROPS) results.push(await ensureProperty(p));
   for (const p of collectAllPropertyDefs()) results.push(await ensureProperty(toHsPropDef(p)));
   for (const p of LEAD_PROPS) results.push(await ensureLeadProperty(p));

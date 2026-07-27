@@ -84,15 +84,19 @@ function pickReportUrl(row: { metadata: unknown; detail?: unknown }): string | n
   return null;
 }
 
-/** Loads everything the /dashboard route renders for the signed-in user. */
-export async function loadDashboard(): Promise<DashboardData> {
+/**
+ * Loads everything the /dashboard route renders for the signed-in user.
+ * Returns null (instead of throwing) when there is no session, so the route
+ * can render its sign-in state rather than surfacing a runtime error.
+ */
+export async function loadDashboard(): Promise<DashboardData | null> {
   const request = getRequest();
-  if (!request?.headers) throw Object.assign(new Error("Unauthorized"), { statusCode: 401 });
+  if (!request?.headers) return null;
 
   const supabase = createHubSupabaseSSR(request, []);
   const { data: userData, error: userErr } = await supabase.auth.getUser();
   const user = userData?.user;
-  if (userErr || !user?.email) throw Object.assign(new Error("Unauthorized"), { statusCode: 401 });
+  if (userErr || !user?.email) return null;
 
   const email = user.email.toLowerCase();
 

@@ -59,6 +59,7 @@ if (existsSync(specPath)) {
 
 // 1. Spec file
 const spec = `import type { AssessmentSpec, SubmissionForMapping } from "./types";
+import { CANONICAL_TIER_OPTIONS, normalizeTier } from "./tiers";
 
 /** ${displayName} spec — PLACEHOLDER. Replace fields with the real ones,
  *  then POST /api/public/admin/bootstrap-hubspot-schema to create the
@@ -71,16 +72,12 @@ export const ${key}: AssessmentSpec = {
   contactProperties: [
     { name: \`\${prefix}_score\`, label: "GEM ${displayName} Score", type: "number" },
     { name: \`\${prefix}_tier\`,  label: "GEM ${displayName} Tier",  type: "enum",
-      options: [
-        { label: "At risk",    value: "at_risk" },
-        { label: "Developing", value: "developing" },
-        { label: "Optimized",  value: "optimized" },
-      ] },
+      options: CANONICAL_TIER_OPTIONS },
     { name: \`\${prefix}_completed_at\`, label: "GEM ${displayName} Completed At", type: "date" },
   ],
   toContactProperties: (s: SubmissionForMapping) => ({
     [\`\${prefix}_score\`]: s.score,
-    [\`\${prefix}_tier\`]: s.tier?.toLowerCase() ?? null,
+    [\`\${prefix}_tier\`]: normalizeTier(s.tier),
     [\`\${prefix}_completed_at\`]: s.submitted_at.slice(0, 10),
     ...flattenDimensions(prefix, s.dimensions),
   }),

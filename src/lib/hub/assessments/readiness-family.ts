@@ -40,6 +40,27 @@ export function makeReadinessFamilySpec(args: {
   const { key, displayName, prefix, dimensions } = args;
   const dimensionKeys = Object.keys(dimensions);
 
+  // canonKey() is a LOOKUP key, never a generator of property names. Two declared
+  // dimensions that differ only by separator/case would fold to the same bucket
+  // and silently share (or drop) a score, so fail loudly at spec-build time.
+  const canonSeen = new Map<string, string>();
+  for (const k of dimensionKeys) {
+    const c = canonKey(k);
+    const prev = canonSeen.get(c);
+    if (prev) {
+      throw new Error(
+        `[${key}] dimension keys "${prev}" and "${k}" collide under canonKey() ("${c}") — rename one.`,
+      );
+    }
+    canonSeen.set(c, k);
+  }
+  // Property names are derived from the DECLARED key, not the folded one.
+  const propNameByCanon = new Map(dimensionKeys.map((k) => [canonKey(k), dimensionPropName(prefix, k)]));
+  if (propNameByCanon.size !== dimensionKeys.length) {
+    throw new Error(`[${key}] dimension property names are not unique`);
+  }
+
+
   return {
     key,
     displayName,

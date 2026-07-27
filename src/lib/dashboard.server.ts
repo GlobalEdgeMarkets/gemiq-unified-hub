@@ -85,18 +85,41 @@ function pickReportUrl(row: { metadata: unknown; detail?: unknown }): string | n
 }
 
 /**
- * Loads everything the /dashboard route renders for the signed-in user.
- * Returns null (instead of throwing) when there is no session, so the route
- * can render its sign-in state rather than surfacing a runtime error.
+ * Strict auth guard: never throws. Any missing/invalid session — or any
+ * unexpected failure while resolving it — resolves to `null` so the route
+ * renders its sign-in flow instead of surfacing an "Unauthorized" runtime error.
  */
 export async function loadDashboard(): Promise<DashboardData | null> {
+  try {
+    return await loadDashboardForSession();
+  } catch {
+    return null;
+  }
+}
+
+async function loadDashboardForSession(): Promise<DashboardData | null> {
   const request = getRequest();
   if (!request?.headers) return null;
 
   const supabase = createHubSupabaseSSR(request, []);
-  const { data: userData, error: userErr } = await supabase.auth.getUser();
-  const user = userData?.user;
-  if (userErr || !user?.email) return null;
+
+  // Cookie session first (cross-subdomain SSO), then bearer token fallback.
+  let user: { id: string; email?: string | null } | null = null;
+  const cookieUser = await supabase.auth.getUser().catch(() => null);
+  user = cookieUser?.data?.user ?? null;
+
+  if (!user) {
+    const auth = request.headers.get("authorization") ?? "";
+    const token = auth.toLowerCase().startsWith("bearer ") ? auth.slice(7).trim() : "";
+    if (token) {
+      const bearerUser = await supabase.auth.getUser(token).catch(() => null);
+      user = bearerUser?.data?.user ?? null;
+    }
+  }
+
+  if (!user?.email) return null;
+
+
 
   const email = user.email.toLowerCase();
 

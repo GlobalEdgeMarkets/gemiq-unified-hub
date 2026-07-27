@@ -4,11 +4,11 @@
  *
  * Run inside a NEW IQ project to wire it into the Hub in one step:
  *
- *   curl -sSL https://raw.githubusercontent.com/GlobalEdgeMarkets/gemiq-unified-hub/main/scripts/hub-init.mjs | node
+ *   curl -sSL https://raw.githubusercontent.com/GlobalEdgeMarkets/gemiq-unified-hub/main/scripts/hub-init.mjs -o hub-init.mjs && node hub-init.mjs --key <assessment_key>
  *
  * or, if the file is already local:
  *
- *   node hub-init.mjs
+ *   node hub-init.mjs --key <assessment_key>
  *
  * What it does (all edits scoped to the CURRENT working directory):
  *   1. Copies scripts/pull-hub-sdk.mjs from the Hub repo.
@@ -29,6 +29,24 @@ const REPO = process.env.HUB_SDK_REPO || "GlobalEdgeMarkets/gemiq-unified-hub";
 const REF  = process.env.HUB_SDK_REF  || "main";
 const HUB_ORIGIN = process.env.HUB_ORIGIN || "https://gemiq.globaledgemarkets.com";
 const cwd = process.cwd();
+
+// --key <assessment_key> is REQUIRED: the assessment_key must match a registered
+// IQ in the Hub registry. It is never guessed from package.json — a wrong key
+// silently drops every submission.
+const argv = process.argv.slice(2);
+const keyArg = (() => {
+  const i = argv.findIndex(a => a === "--key" || a.startsWith("--key="));
+  if (i === -1) return null;
+  const v = argv[i].includes("=") ? argv[i].split("=").slice(1).join("=") : argv[i + 1];
+  return v && !v.startsWith("--") ? v.trim() : null;
+})();
+if (!keyArg || !/^[a-z0-9]+$/.test(keyArg)) {
+  console.error(`\u2717 --key <assessment_key> is required (lowercase alphanumeric).
+  Example: node hub-init.mjs --key gtmiq
+  It must exactly match the key registered in the Hub assessment registry.`);
+  process.exit(1);
+}
+const ASSESSMENT_KEY = keyArg;
 
 const raw = (path) => `https://raw.githubusercontent.com/${REPO}/${REF}/${path}`;
 
@@ -118,7 +136,6 @@ Every IQ MUST do these five things. Nothing else.
    const status = await hub.subscription.check();
    if (!status.authenticated) return hub.redirectToLogin(window.location.href);
    if (!status.active) return hub.subscription.startCheckout("gemiq_professional_monthly", {
-     trial: true,
      successUrl: window.location.origin + "/resume?sid={CHECKOUT_SESSION_ID}",
      cancelUrl:  window.location.href,
    });
@@ -133,7 +150,7 @@ Every IQ MUST do these five things. Nothing else.
 3. **Submit results** via the upgrade-aware helper (handles 402 automatically):
    \`\`\`ts
    await hub.results.submitOrUpgrade({
-     email, assessment_key: "${(readJson("package.json")?.name ?? "yourid").replace(/[^a-z0-9]/g, "")}",
+     email, assessment_key: "${ASSESSMENT_KEY}",
      score, tier, dimensions, detail: { /* IQ-specific */ }, metadata: { first_name, last_name, company },
    });
    \`\`\`
@@ -149,7 +166,7 @@ Full docs: ${HUB_ORIGIN}/docs
 `);
 
 console.log(`
-✓ IQ wired into Hub at ${HUB_ORIGIN}
+✓ IQ wired into Hub at ${HUB_ORIGIN} (assessment_key: ${ASSESSMENT_KEY})
   - Edit ${clientPath} if you need to customize the client.
   - Read HUB_INTEGRATION.md for the 5-step contract.
   - src/lib/hub.ts + src/lib/hub-manifest.json refresh on every build.

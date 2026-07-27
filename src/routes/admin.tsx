@@ -8,6 +8,8 @@ import {
   adminRegistryStatus,
   adminPreflight,
   adminListSubmissions,
+  adminCalibrateReadinessScores,
+  adminMigrateReadinessIQ,
 } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,6 +83,9 @@ function AdminConsole() {
   const registryStatus = useServerFn(adminRegistryStatus);
   const preflight = useServerFn(adminPreflight);
   const listSubs = useServerFn(adminListSubmissions);
+  const calibrate = useServerFn(adminCalibrateReadinessScores);
+  const migrate = useServerFn(adminMigrateReadinessIQ);
+  const [calibrated, setCalibrated] = useState(false);
 
   const [gate, setGate] = useState<{ state: "loading" | "anon" | "denied" | "ok"; email?: string | null }>({
     state: "loading",
@@ -133,7 +138,8 @@ function AdminConsole() {
       <div className="grid gap-6">
         <BootstrapCard run={bootstrap} />
         <ImportUsersCard run={importUser} />
-        <MigrateCard run={preflight} />
+        <CalibrationCard run={calibrate} calibrated={calibrated} setCalibrated={setCalibrated} />
+        <MigrateCard run={migrate} preflight={preflight} calibrated={calibrated} />
         <RegistryCard run={registryStatus} />
         <SubmissionsCard run={listSubs} />
       </div>
@@ -238,13 +244,148 @@ function ImportUsersCard({ run }: { run: (a: { data: unknown }) => Promise<unkno
   );
 }
 
-function MigrateCard({ run }: { run: () => Promise<unknown> }) {
+type CalibrationRow = {
+  legacy_id: string | null;
+  email: string | null;
+  product_type: string | null;
+  created_at: string | null;
+  dimension_count: number;
+  mean_0_9: number | null;
+  derived_score_100: number | null;
+  derived_tier: string | null;
+  stored_total: number | null;
+  legacy_tier_label: string | null;
+  report_url: string | null;
+};
+
+function CalibrationCard({
+  run,
+  calibrated,
+  setCalibrated,
+}: {
+  run: (a: { data: unknown }) => Promise<unknown>;
+  calibrated: boolean;
+  setCalibrated: (v: boolean) => void;
+}) {
   const a = useAction(run as never);
-  const checks = (a.result as { checks?: { id: string; label: string; pass: boolean; detail: string }[]; all_pass?: boolean } | undefined);
+  const [limit, setLimit] = useState("25");
+  const [email, setEmail] = useState("");
+  const res = a.result as
+    | {
+        read?: number;
+        by_product_type?: Record<string, number>;
+        tier_distribution?: Record<string, number>;
+        stored_total_found?: number;
+        disagreements?: number;
+        problem_rows?: number;
+        formula?: string;
+        rows?: CalibrationRow[];
+        error?: string;
+      }
+    | undefined;
+
+  return (
+    <Card
+      title="Calibrate ReadinessIQ scores"
+      description="Read-only. Derives a 0–100 score from the legacy 0–9 dimension scores so you can compare it against real ReadinessIQ reports before importing anything."
+    >
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div>
+          <Label htmlFor="cal-limit">Rows (newest first)</Label>
+          <Input id="cal-limit" value={limit} onChange={e => setLimit(e.target.value)} inputMode="numeric" />
+        </div>
+        <div className="sm:col-span-2">
+          <Label htmlFor="cal-email">Email filter (optional)</Label>
+          <Input id="cal-email" value={email} onChange={e => setEmail(e.target.value)} placeholder="person@company.com" />
+        </div>
+      </div>
+      <Button
+        className="mt-4"
+        disabled={a.loading}
+        onClick={() => a.run({ data: { limit: Math.min(Math.max(Number(limit) || 25, 1), 200), email: email.trim() || undefined } })}
+      >
+        {a.loading ? "Reading…" : "Run calibration"}
+      </Button>
+
+      {res?.rows?.length ? (
+        <div className="mt-5 space-y-3">
+          <p className="text-xs text-muted-foreground">
+            {res.read} rows · formula <code className="rounded bg-muted px-1">{res.formula}</code> · stored totals found:{" "}
+            {res.stored_total_found} · disagreements: {res.disagreements} · problem rows: {res.problem_rows}
+          </p>
+          <div className="max-h-96 overflow-auto rounded-lg border border-border/60">
+            <table className="w-full text-left text-xs">
+              <thead className="sticky top-0 bg-muted/80 text-foreground">
+                <tr>
+                  {["Email", "Product", "Dims", "Mean 0–9", "Derived", "Tier", "Stored", "Legacy label", "Report"].map(h => (
+                    <th key={h} className="px-2 py-2 font-heading font-normal">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {res.rows.map((r, i) => (
+                  <tr key={r.legacy_id ?? i} className="border-t border-border/40">
+                    <td className="px-2 py-1.5">{r.email}</td>
+                    <td className="px-2 py-1.5">{r.product_type ?? "—"}</td>
+                    <td className="px-2 py-1.5">{r.dimension_count}</td>
+                    <td className="px-2 py-1.5">{r.mean_0_9 ?? "—"}</td>
+                    <td className="px-2 py-1.5 text-foreground">{r.derived_score_100 ?? "—"}</td>
+                    <td className="px-2 py-1.5">{r.derived_tier ?? "—"}</td>
+                    <td className="px-2 py-1.5">{r.stored_total ?? "—"}</td>
+                    <td className="px-2 py-1.5">{r.legacy_tier_label ?? "—"}</td>
+                    <td className="px-2 py-1.5">
+                      {r.report_url ? (
+                        <a className="underline" href={r.report_url} target="_blank" rel="noreferrer">open</a>
+                      ) : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Tier distribution: {Object.entries(res.tier_distribution ?? {}).map(([k, v]) => `${k} ${v}`).join(" · ")}
+          </p>
+        </div>
+      ) : (
+        <Panel data={a.result} />
+      )}
+
+      <label className="mt-5 flex items-start gap-2 text-sm text-foreground">
+        <input type="checkbox" className="mt-1" checked={calibrated} onChange={e => setCalibrated(e.target.checked)} />
+        I compared derived scores against real ReadinessIQ reports and they match.
+      </label>
+    </Card>
+  );
+}
+
+function MigrateCard({ run, preflight, calibrated }: {
+  run: (a: { data: unknown }) => Promise<unknown>;
+  preflight: () => Promise<unknown>;
+  calibrated: boolean;
+}) {
+  const a = useAction(run as never);
+  const pf = useAction(preflight as never);
+  const [email, setEmail] = useState("");
+  const [limit, setLimit] = useState("1000");
+  const [createUsers, setCreateUsers] = useState(false);
+  const [dryRunDone, setDryRunDone] = useState(false);
+  const checks = pf.result as { checks?: { id: string; label: string; pass: boolean; detail: string }[]; all_pass?: boolean } | undefined;
+
+  const args = (dry: boolean) => ({
+    data: {
+      dry_run: dry,
+      email: email.trim() || undefined,
+      limit: Math.min(Math.max(Number(limit) || 1000, 1), 5000),
+      create_users: createUsers,
+      confirm_calibrated: dry ? undefined : calibrated,
+    },
+  });
+
   return (
     <Card
       title="Migrate ReadinessIQ → four IQ keys"
-      description="Disabled until the prerequisites land: the four IQ specs and the canonical tier helpers are not in this project yet."
+      description="Remaps market→gtmiq, enterprise→salesiq, productization→productiq, ai→aitransformiq (anything else → readinessiq) and imports through the same path as live traffic."
     >
       <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-200">
         <strong className="font-heading">Standing warning.</strong> Idempotency is
@@ -252,17 +393,46 @@ function MigrateCard({ run }: { run: () => Promise<unknown> }) {
         different key creates a duplicate rather than correcting it — get the mapping right the first time.
       </div>
 
-      <div className="mt-4 flex gap-3">
-        <Button disabled title="Prerequisites not met">Dry run</Button>
-        <Button disabled variant="secondary" title="Prerequisites not met">Run import</Button>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="mg-email">Email filter (optional)</Label>
+          <Input id="mg-email" value={email} onChange={e => setEmail(e.target.value)} placeholder="person@company.com" />
+        </div>
+        <div>
+          <Label htmlFor="mg-limit">Row limit</Label>
+          <Input id="mg-limit" value={limit} onChange={e => setLimit(e.target.value)} inputMode="numeric" />
+        </div>
+      </div>
+      <label className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+        <input type="checkbox" checked={createUsers} onChange={e => setCreateUsers(e.target.checked)} />
+        Also create Hub accounts (no invite email — the Hub has no SMTP)
+      </label>
+
+      <div className="mt-4 flex flex-wrap gap-3">
+        <Button
+          disabled={a.loading}
+          onClick={async () => { await a.run(args(true)); setDryRunDone(true); }}
+        >
+          {a.loading ? "Working…" : "Dry run"}
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={a.loading || !dryRunDone || !calibrated}
+          title={!calibrated ? "Tick the calibration box first" : !dryRunDone ? "Run a dry run first" : undefined}
+          onClick={() => a.run(args(false))}
+        >
+          Run import
+        </Button>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        The migration route is not built yet. Run the pre-flight below to see when the prerequisites have landed.
+        {calibrated ? "Calibration confirmed." : "Import stays locked until calibration is confirmed above."}
+        {dryRunDone ? " Dry run completed." : " No dry run yet this session."}
       </p>
+      <Panel data={a.result} />
 
       <div className="mt-6">
-        <Button variant="outline" onClick={() => a.run()} disabled={a.loading}>
-          {a.loading ? "Checking…" : "Run pre-flight checks"}
+        <Button variant="outline" onClick={() => pf.run()} disabled={pf.loading}>
+          {pf.loading ? "Checking…" : "Run pre-flight checks"}
         </Button>
         {checks?.checks ? (
           <ul className="mt-4 space-y-2">
@@ -279,7 +449,7 @@ function MigrateCard({ run }: { run: () => Promise<unknown> }) {
             ))}
           </ul>
         ) : (
-          <Panel data={a.result} />
+          <Panel data={pf.result} />
         )}
       </div>
     </Card>

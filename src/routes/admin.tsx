@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
 import {
   adminWhoami,
   adminBootstrapHubspot,
@@ -90,17 +89,12 @@ function AdminConsole() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
-        if (!cancelled) setGate({ state: "anon" });
-        return;
-      }
       try {
         const who = await whoami();
         if (cancelled) return;
         setGate({ state: who.is_admin ? "ok" : "denied", email: who.email });
       } catch {
-        if (!cancelled) setGate({ state: "denied" });
+        if (!cancelled) setGate({ state: "anon" });
       }
     })();
     return () => {
@@ -117,7 +111,9 @@ function AdminConsole() {
         <p className="text-muted-foreground">
           You need to be signed in to the Hub to use the admin console.
         </p>
-        <Button asChild className="mt-4"><a href="/auth?redirect=/admin">Sign in</a></Button>
+        <Button asChild className="mt-4">
+          <a href={`/auth?redirect=${encodeURIComponent(window.location.href)}`}>Sign in</a>
+        </Button>
       </Shell>
     );
   }

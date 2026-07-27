@@ -189,7 +189,10 @@ function DashboardPage() {
               Your GEM.IQ dashboard collects every assessment you have completed across all IQs.
             </p>
             <Button asChild className="mt-6">
-              <Link to="/auth" search={{ return_url: typeof window !== "undefined" ? `${window.location.origin}/dashboard` : undefined } as never}>
+              <Link
+                to="/auth"
+                search={{ redirect: typeof window !== "undefined" ? `${window.location.origin}/dashboard` : undefined }}
+              >
                 Sign in
               </Link>
             </Button>

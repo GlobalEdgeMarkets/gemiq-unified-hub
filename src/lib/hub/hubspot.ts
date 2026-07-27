@@ -15,10 +15,33 @@ function headers() {
 export type HubSpotProps = Record<string, string | number | boolean | null | undefined>;
 
 /**
- * Upsert a contact by email. If HubSpot rejects individual gem_* properties
- * as unknown (e.g. bootstrap hasn't been run yet for a newly-added IQ field),
- * they are stripped from the payload and the call is retried — the contact
- * still lands, just missing those columns. Bootstrap fixes this permanently.
+ * Does a contact already exist for this email?
+ * Used to decide whether attribution props (create-only in HubSpot) may be sent.
+ */
+async function contactExists(email: string): Promise<boolean> {
+  const res = await fetch(
+    `${GATEWAY}/crm/v3/objects/contacts/${encodeURIComponent(email)}?idProperty=email&properties=email`,
+    { method: "GET", headers: headers() },
+  );
+  if (res.ok) return true;
+  if (res.status === 404) return false;
+  // Unknown state — assume it exists so we never send create-only props on an update.
+  console.warn(`[hubspot] contactExists probe [${res.status}] for ${email}; assuming existing`);
+  return true;
+}
+
+/**
+ * Upsert a contact by email.
+ *
+ * Attribution properties (hs_analytics_source*) are accepted by HubSpot on
+ * CREATE only; sending them on an update 400s the whole batch. They are
+ * therefore included only when the contact does not yet exist. The
+ * strip-and-retry logic below stays as a safety net, not the mechanism.
+ *
+ * If HubSpot rejects individual gem_* properties as unknown (e.g. bootstrap
+ * hasn't been run yet for a newly-added IQ field), they are stripped from the
+ * payload and the call is retried — the contact still lands, just missing
+ * those columns. Bootstrap fixes this permanently.
  */
 export async function upsertContactByEmail(
   email: string,
@@ -27,14 +50,15 @@ export async function upsertContactByEmail(
 ): Promise<{ id: string; skipped: string[] }> {
   const skipped: string[] = [];
   let attempt = 0;
-  // Attribute new contacts to GEM.IQ (not the underlying integration platform).
-  // HubSpot honors these only on CREATE; on existing contacts they're ignored
-  // by HubSpot and stripped by the retry-on-unknown logic if rejected.
-  const sourceProps: HubSpotProps = {
-    hs_analytics_source: "OFFLINE",
-    hs_analytics_source_data_1: source?.label ?? "GEM.IQ",
-    hs_analytics_source_data_2: source?.detail ?? "GEM.IQ Hub",
-  };
+
+  const isNew = !(await contactExists(email));
+  const sourceProps: HubSpotProps = isNew
+    ? {
+        hs_analytics_source: "OFFLINE",
+        hs_analytics_source_data_1: source?.label ?? "GEM.IQ",
+        hs_analytics_source_data_2: source?.detail ?? "GEM.IQ Hub",
+      }
+    : {};
   let props = { ...sourceProps, ...properties };
 
   while (attempt < 4) {
@@ -65,6 +89,7 @@ export async function upsertContactByEmail(
   }
   throw new Error("HubSpot upsert: exhausted retries");
 }
+
 
 /**
  * Property names HubSpot refused that are safe to drop and retry without:

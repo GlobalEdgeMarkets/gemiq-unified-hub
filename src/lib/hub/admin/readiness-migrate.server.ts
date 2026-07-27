@@ -1,7 +1,15 @@
 // ReadinessIQ → four-IQ migration: read-only calibration + the migration itself.
-// Server-only. Reads the legacy `market-readiness-pilot` project with its service
-// role key (public.assessments denies SELECT to anon/authenticated).
-import { createClient } from "@supabase/supabase-js";
+// Server-only.
+//
+// The Hub does NOT hold ReadinessIQ credentials. It reads legacy assessments
+// through ReadinessIQ's own `gemiq-read` endpoint, authenticated with a shared
+// secret, so the service role key and PII boundary stay inside that project.
+//
+//   POST  $READINESS_READ_URL
+//   headers: { "x-gemiq-key": $GEMIQ_API_KEY, "content-type": "application/json" }
+//   body:    { "limit": number, "email"?: string }
+//   200:     { "rows": Array<assessment row> }   (also accepts a bare array,
+//                                                 or { data: [...] })
 import { tierFromScore } from "@/lib/hub/assessments/tiers";
 import type { SubmissionPayload } from "@/lib/hub/schemas";
 import type { ImportRowResult, ImportHubspotResult } from "@/lib/hub/admin/legacy-submissions.server";
@@ -10,16 +18,6 @@ const STORED_TOTAL_KEYS = ["total", "composite", "overall", "score", "score100",
 
 export type LegacyRow = Record<string, unknown>;
 
-function legacyClient() {
-  const url = process.env.READINESS_SUPABASE_URL;
-  const key = process.env.READINESS_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error(
-      "READINESS_SUPABASE_URL and READINESS_SERVICE_ROLE_KEY must be configured in the Hub environment.",
-    );
-  }
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-}
 
 function str(row: LegacyRow, ...keys: string[]): string | null {
   for (const k of keys) {
@@ -68,14 +66,31 @@ export function keyForProductType(productType: string | null): string {
   return PRODUCT_TYPE_TO_KEY[(productType ?? "").toLowerCase()] ?? "readinessiq";
 }
 
-async function readLegacyRows(input: { limit: number; email?: string }) {
-  const svc = legacyClient();
-  let q = svc.from("assessments").select("*").order("created_at", { ascending: false }).limit(input.limit);
-  if (input.email) q = q.eq("email", input.email.trim().toLowerCase());
-  const { data, error } = await q;
-  if (error) throw new Error(`legacy read failed: ${error.message}`);
-  return (data ?? []) as LegacyRow[];
+async function readLegacyRows(input: { limit: number; email?: string }): Promise<LegacyRow[]> {
+  const url = process.env.READINESS_READ_URL;
+  const key = process.env.GEMIQ_API_KEY;
+  if (!url || !key) {
+    throw new Error(
+      "READINESS_READ_URL and GEMIQ_API_KEY must be configured in the Hub environment. " +
+      "The Hub reads legacy assessments through ReadinessIQ's gemiq-read endpoint, not with its credentials.",
+    );
+  }
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-gemiq-key": key },
+    body: JSON.stringify({ limit: input.limit, email: input.email?.trim().toLowerCase() }),
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`gemiq-read failed [${res.status}]: ${text.slice(0, 500)}`);
+  let body: unknown;
+  try { body = JSON.parse(text); } catch { throw new Error(`gemiq-read returned non-JSON: ${text.slice(0, 200)}`); }
+  const rows = Array.isArray(body)
+    ? body
+    : ((body as { rows?: unknown; data?: unknown }).rows ?? (body as { data?: unknown }).data);
+  if (!Array.isArray(rows)) throw new Error("gemiq-read response has no rows array");
+  return rows as LegacyRow[];
 }
+
 
 // ---------------------------------------------------------------- calibration
 

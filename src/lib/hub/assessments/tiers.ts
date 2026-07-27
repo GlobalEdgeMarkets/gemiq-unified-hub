@@ -23,6 +23,16 @@ const ALIASES: Record<string, string> = {
   "not ready": "reactive",
   building: "developing",
   ready: "optimized",
+  // legacy TariffIQ labels
+  novice: "reactive",
+  beginner: "reactive",
+  emerging: "developing",
+  basic: "developing",
+  competent: "defined",
+  proficient: "advanced",
+  expert: "optimized",
+  leader: "optimized",
+
   // canonical passthrough
   reactive: "reactive",
   developing: "developing",

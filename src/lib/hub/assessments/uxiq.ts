@@ -1,4 +1,5 @@
 import type { AssessmentSpec, SubmissionForMapping } from "./types";
+import { CANONICAL_TIER_OPTIONS, normalizeTier, tierFromScore } from "./tiers";
 
 /** UXIQ spec — PLACEHOLDER; replace with real fields when confirmed. */
 const prefix = "gem_ux";
@@ -8,17 +9,12 @@ export const uxiq: AssessmentSpec = {
   displayName: "UXIQ",
   contactProperties: [
     { name: `${prefix}_score`, label: "GEM UXIQ Score", type: "number" },
-    { name: `${prefix}_tier`, label: "GEM UXIQ Tier", type: "enum",
-      options: [
-        { label: "At risk", value: "at_risk" },
-        { label: "Developing", value: "developing" },
-        { label: "Optimized", value: "optimized" },
-      ] },
+    { name: `${prefix}_tier`, label: "GEM UXIQ Tier", type: "enum", options: CANONICAL_TIER_OPTIONS },
     { name: `${prefix}_completed_at`, label: "GEM UXIQ Completed At", type: "date" },
   ],
   toContactProperties: (s: SubmissionForMapping) => ({
     [`${prefix}_score`]: s.score,
-    [`${prefix}_tier`]: s.tier,
+    [`${prefix}_tier`]: normalizeTier(s.tier) ?? tierFromScore(s.score),
     [`${prefix}_completed_at`]: s.submitted_at.slice(0, 10),
     ...flattenDimensions(prefix, s.dimensions),
   }),

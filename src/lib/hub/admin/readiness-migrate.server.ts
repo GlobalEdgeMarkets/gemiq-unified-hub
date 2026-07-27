@@ -77,16 +77,22 @@ async function readLegacyRows(input: { limit: number; email?: string }): Promise
   }
   const email = input.email?.trim().toLowerCase();
   // gemiq-read contract: body { action: "stats" | "list" | "byEmail" }.
-  // The deployed function authenticates on `x-gemiq-key`; `x-api-key` is sent
-  // too so either header spelling works.
+  // The Supabase gateway requires the ReadinessIQ publishable anon key in
+  // `apikey`; the function itself authenticates on the shared key.
   const payload = email
     ? { action: "byEmail", email }
     : { action: "list", limit: input.limit };
   const res = await fetch(url, {
     method: "POST",
-    headers: { "content-type": "application/json", "x-gemiq-key": key, "x-api-key": key },
+    headers: {
+      "content-type": "application/json",
+      apikey: process.env.READINESS_ANON_KEY || READINESS_ANON_KEY_DEFAULT,
+      "x-gemiq-key": key,
+      "x-api-key": key,
+    },
     body: JSON.stringify(payload),
   });
+
   const text = await res.text();
   if (!res.ok) throw new Error(`gemiq-read failed [${res.status}]: ${text.slice(0, 500)}`);
   let body: unknown;

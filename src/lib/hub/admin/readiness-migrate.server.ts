@@ -4,6 +4,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { tierFromScore } from "@/lib/hub/assessments/tiers";
 import type { SubmissionPayload } from "@/lib/hub/schemas";
+import type { ImportRowResult, ImportHubspotResult } from "@/lib/hub/admin/legacy-submissions.server";
 
 const STORED_TOTAL_KEYS = ["total", "composite", "overall", "score", "score100", "score_100"];
 
@@ -95,7 +96,7 @@ export type CalibrationRow = {
   legacy_tier_label: string | null;
   report_url: string | null;
   non_numeric_keys: string[];
-  raw_scores: Record<string, unknown> | null;
+  raw_scores: Record<string, string | number | boolean | null> | null;
 };
 
 export async function runCalibrateReadinessScores(input: { limit?: number; email?: string }) {
@@ -135,7 +136,7 @@ export async function runCalibrateReadinessScores(input: { limit?: number; email
       legacy_tier_label: str(r, "tier", "tier_label", "maturity_tier", "level"),
       report_url: str(r, "report_url", "pdf_url", "result_url"),
       non_numeric_keys: nonNumeric,
-      raw_scores: scores,
+      raw_scores: (scores as Record<string, string | number | boolean | null> | null),
     };
   });
 
@@ -292,7 +293,12 @@ export async function runMigrateReadinessIQ(input: MigrateInput) {
   }
 
   const { runImportLegacySubmissions } = await import("@/lib/hub/admin/legacy-submissions.server");
-  const batches: unknown[] = [];
+  const batches: Array<{
+    batch: number;
+    size: number;
+    results: ImportRowResult[];
+    hubspot: ImportHubspotResult[] | "skipped";
+  }> = [];
   const totals = { inserted: 0, duplicate: 0, insert_error: 0 };
   const hubspotSkipped: { email: string; skipped: string[] }[] = [];
   const hubspotErrors: { email: string; detail?: string }[] = [];

@@ -66,6 +66,11 @@ export function keyForProductType(productType: string | null): string {
   return PRODUCT_TYPE_TO_KEY[(productType ?? "").toLowerCase()] ?? "readinessiq";
 }
 
+// ReadinessIQ's publishable anon key — required by the Supabase gateway in the
+// `apikey` header. Publishable, safe in config; overridable via env.
+const READINESS_ANON_KEY_DEFAULT =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkb2xjb3hya2JlcHdidXZ1d3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MDYzMTAsImV4cCI6MjA4ODQ4MjMxMH0.tfZAcYkx4iK6UMTFEBIvmQIPhtq090oG9oKcDgTBXbE";
+
 async function readLegacyRows(input: { limit: number; email?: string }): Promise<LegacyRow[]> {
   const url = process.env.READINESS_READ_URL;
   const key = process.env.GEMIQ_API_KEY;
@@ -77,16 +82,22 @@ async function readLegacyRows(input: { limit: number; email?: string }): Promise
   }
   const email = input.email?.trim().toLowerCase();
   // gemiq-read contract: body { action: "stats" | "list" | "byEmail" }.
-  // The deployed function authenticates on `x-gemiq-key`; `x-api-key` is sent
-  // too so either header spelling works.
+  // The Supabase gateway requires the ReadinessIQ publishable anon key in
+  // `apikey`; the function itself authenticates on the shared key.
   const payload = email
     ? { action: "byEmail", email }
     : { action: "list", limit: input.limit };
   const res = await fetch(url, {
     method: "POST",
-    headers: { "content-type": "application/json", "x-gemiq-key": key, "x-api-key": key },
+    headers: {
+      "content-type": "application/json",
+      apikey: process.env.READINESS_ANON_KEY || READINESS_ANON_KEY_DEFAULT,
+      "x-gemiq-key": key,
+      "x-api-key": key,
+    },
     body: JSON.stringify(payload),
   });
+
   const text = await res.text();
   if (!res.ok) throw new Error(`gemiq-read failed [${res.status}]: ${text.slice(0, 500)}`);
   let body: unknown;

@@ -66,9 +66,35 @@ export async function upsertContactByEmail(
   throw new Error("HubSpot upsert: exhausted retries");
 }
 
+/**
+ * Property names HubSpot refused that are safe to drop and retry without:
+ *   - unknown / not-yet-bootstrapped gem_* fields
+ *   - read-only fields (hs_analytics_source* on an EXISTING contact — HubSpot
+ *     honors them on create only and 400s the whole batch on update)
+ * Anything else (invalid option value, wrong type) is a real data bug and
+ * surfaces as a thrown error instead of being silently stripped.
+ */
 function extractUnknownProps(errText: string): string[] {
   const found = new Set<string>();
-  for (const m of errText.matchAll(/["']([a-z0-9_]+)["'][^"']*(?:does not exist|is not a known|invalid property)/gi)) {
+
+  // Structured HubSpot validation envelope — most reliable path.
+  try {
+    const body = JSON.parse(errText) as {
+      errors?: { code?: string; context?: { propertyName?: string[] } }[];
+      message?: string;
+    };
+    for (const e of body.errors ?? []) {
+      if (!e.code || !["READ_ONLY_VALUE", "PROPERTY_DOESNT_EXIST", "INVALID_PROPERTY"].includes(e.code)) continue;
+      for (const n of e.context?.propertyName ?? []) found.add(n);
+    }
+    for (const m of (body.message ?? "").matchAll(/"([a-z0-9_]+)"\s+is a read only property/gi)) {
+      found.add(m[1]);
+    }
+  } catch {
+    /* not JSON — fall through to text scanning */
+  }
+
+  for (const m of errText.matchAll(/["'\\]+([a-z0-9_]+)["'\\]+[^"']*(?:does not exist|is not a known|invalid property|is a read only property)/gi)) {
     found.add(m[1]);
   }
   for (const m of errText.matchAll(/property\s+([a-z0-9_]+)\s+(?:does not exist|is not defined)/gi)) {

@@ -88,12 +88,40 @@ export function makeReadinessFamilySpec(args: {
         [`${prefix}_pdf_report`]: asString(pdfs.report ?? d.pdfUrl ?? d.reportUrl),
       };
 
+      const dimIndex = indexDimensions(dims, prefix);
       for (const k of dimensionKeys) {
-        out[dimensionPropName(prefix, k)] = asNumber(dims[k]);
+        out[dimensionPropName(prefix, k)] = asNumber(dimIndex.get(canonKey(k)));
       }
       return out;
     },
   };
+}
+
+/**
+ * Incoming dimension keys are matched loosely: IQ apps send `ai-strategy`,
+ * `aiStrategy`, `AI Strategy`, or `gem_aitransform_ai_strategy` for the same
+ * dimension. Everything is folded to bare alphanumerics so a hyphen or a
+ * camelCase rename can never silently drop a score.
+ */
+export function canonKey(k: string): string {
+  return String(k)
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function indexDimensions(dims: Record<string, unknown>, prefix: string) {
+  const bare = canonKey(prefix); // e.g. "gemaitransform"
+  const map = new Map<string, unknown>();
+  for (const [rawKey, value] of Object.entries(dims)) {
+    const k = canonKey(rawKey);
+    if (!map.has(k)) map.set(k, value);
+    if (k.startsWith(bare)) {
+      const stripped = k.slice(bare.length);
+      if (stripped && !map.has(stripped)) map.set(stripped, value);
+    }
+  }
+  return map;
 }
 
 function normalizeSegment(v: unknown): string | null {

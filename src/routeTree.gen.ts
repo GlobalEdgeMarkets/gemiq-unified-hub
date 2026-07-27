@@ -32,6 +32,7 @@ import { Route as ApiPublicBillingCreatePortalSessionRouteImport } from './route
 import { Route as ApiPublicBillingCreateCheckoutRouteImport } from './routes/api/public/billing/create-checkout'
 import { Route as ApiPublicBillingCheckSubscriptionRouteImport } from './routes/api/public/billing/check-subscription'
 import { Route as ApiPublicAuthSessionRouteImport } from './routes/api/public/auth/session'
+import { Route as ApiPublicAdminMigrateReadinessiqRouteImport } from './routes/api/public/admin/migrate-readinessiq'
 import { Route as ApiPublicAdminImportLegacyUsersRouteImport } from './routes/api/public/admin/import-legacy-users'
 import { Route as ApiPublicAdminImportLegacySubmissionsRouteImport } from './routes/api/public/admin/import-legacy-submissions'
 import { Route as ApiPublicAdminBootstrapHubspotSchemaRouteImport } from './routes/api/public/admin/bootstrap-hubspot-schema'
@@ -162,6 +163,12 @@ const ApiPublicAuthSessionRoute = ApiPublicAuthSessionRouteImport.update({
   path: '/api/public/auth/session',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAdminMigrateReadinessiqRoute =
+  ApiPublicAdminMigrateReadinessiqRouteImport.update({
+    id: '/api/public/admin/migrate-readinessiq',
+    path: '/api/public/admin/migrate-readinessiq',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicAdminImportLegacyUsersRoute =
   ApiPublicAdminImportLegacyUsersRouteImport.update({
     id: '/api/public/admin/import-legacy-users',
@@ -197,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
   '/api/public/admin/import-legacy-users': typeof ApiPublicAdminImportLegacyUsersRoute
+  '/api/public/admin/migrate-readinessiq': typeof ApiPublicAdminMigrateReadinessiqRoute
   '/api/public/auth/session': typeof ApiPublicAuthSessionRoute
   '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
@@ -225,6 +233,7 @@ export interface FileRoutesByTo {
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
   '/api/public/admin/import-legacy-users': typeof ApiPublicAdminImportLegacyUsersRoute
+  '/api/public/admin/migrate-readinessiq': typeof ApiPublicAdminMigrateReadinessiqRoute
   '/api/public/auth/session': typeof ApiPublicAuthSessionRoute
   '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
@@ -254,6 +263,7 @@ export interface FileRoutesById {
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
   '/api/public/admin/import-legacy-users': typeof ApiPublicAdminImportLegacyUsersRoute
+  '/api/public/admin/migrate-readinessiq': typeof ApiPublicAdminMigrateReadinessiqRoute
   '/api/public/auth/session': typeof ApiPublicAuthSessionRoute
   '/api/public/billing/check-subscription': typeof ApiPublicBillingCheckSubscriptionRoute
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
@@ -284,6 +294,7 @@ export interface FileRouteTypes {
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
     | '/api/public/admin/import-legacy-users'
+    | '/api/public/admin/migrate-readinessiq'
     | '/api/public/auth/session'
     | '/api/public/billing/check-subscription'
     | '/api/public/billing/create-checkout'
@@ -312,6 +323,7 @@ export interface FileRouteTypes {
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
     | '/api/public/admin/import-legacy-users'
+    | '/api/public/admin/migrate-readinessiq'
     | '/api/public/auth/session'
     | '/api/public/billing/check-subscription'
     | '/api/public/billing/create-checkout'
@@ -340,6 +352,7 @@ export interface FileRouteTypes {
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
     | '/api/public/admin/import-legacy-users'
+    | '/api/public/admin/migrate-readinessiq'
     | '/api/public/auth/session'
     | '/api/public/billing/check-subscription'
     | '/api/public/billing/create-checkout'
@@ -369,6 +382,7 @@ export interface RootRouteChildren {
   ApiPublicAdminBootstrapHubspotSchemaRoute: typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   ApiPublicAdminImportLegacySubmissionsRoute: typeof ApiPublicAdminImportLegacySubmissionsRoute
   ApiPublicAdminImportLegacyUsersRoute: typeof ApiPublicAdminImportLegacyUsersRoute
+  ApiPublicAdminMigrateReadinessiqRoute: typeof ApiPublicAdminMigrateReadinessiqRoute
   ApiPublicAuthSessionRoute: typeof ApiPublicAuthSessionRoute
   ApiPublicBillingCheckSubscriptionRoute: typeof ApiPublicBillingCheckSubscriptionRoute
   ApiPublicBillingCreateCheckoutRoute: typeof ApiPublicBillingCreateCheckoutRoute
@@ -545,6 +559,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAuthSessionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/admin/migrate-readinessiq': {
+      id: '/api/public/admin/migrate-readinessiq'
+      path: '/api/public/admin/migrate-readinessiq'
+      fullPath: '/api/public/admin/migrate-readinessiq'
+      preLoaderRoute: typeof ApiPublicAdminMigrateReadinessiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/admin/import-legacy-users': {
       id: '/api/public/admin/import-legacy-users'
       path: '/api/public/admin/import-legacy-users'
@@ -588,6 +609,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicAdminImportLegacySubmissionsRoute:
     ApiPublicAdminImportLegacySubmissionsRoute,
   ApiPublicAdminImportLegacyUsersRoute: ApiPublicAdminImportLegacyUsersRoute,
+  ApiPublicAdminMigrateReadinessiqRoute: ApiPublicAdminMigrateReadinessiqRoute,
   ApiPublicAuthSessionRoute: ApiPublicAuthSessionRoute,
   ApiPublicBillingCheckSubscriptionRoute:
     ApiPublicBillingCheckSubscriptionRoute,

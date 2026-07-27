@@ -66,6 +66,11 @@ export function keyForProductType(productType: string | null): string {
   return PRODUCT_TYPE_TO_KEY[(productType ?? "").toLowerCase()] ?? "readinessiq";
 }
 
+// ReadinessIQ's publishable anon key — required by the Supabase gateway in the
+// `apikey` header. Publishable, safe in config; overridable via env.
+const READINESS_ANON_KEY_DEFAULT =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkb2xjb3hya2JlcHdidXZ1d3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MDYzMTAsImV4cCI6MjA4ODQ4MjMxMH0.tfZAcYkx4iK6UMTFEBIvmQIPhtq090oG9oKcDgTBXbE";
+
 async function readLegacyRows(input: { limit: number; email?: string }): Promise<LegacyRow[]> {
   const url = process.env.READINESS_READ_URL;
   const key = process.env.GEMIQ_API_KEY;

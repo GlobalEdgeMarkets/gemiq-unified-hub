@@ -72,3 +72,36 @@ export const adminListSubmissions = createServerFn({ method: "POST" })
     const { listSubmissions } = await import("@/lib/hub/admin/status.server");
     return await listSubmissions(data);
   });
+
+export const adminCalibrateReadinessScores = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      limit: z.number().int().min(1).max(200).optional(),
+      email: z.string().optional(),
+    }).parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { runCalibrateReadinessScores } = await import("@/lib/hub/admin/readiness-migrate.server");
+    return await runCalibrateReadinessScores({ limit: data.limit, email: data.email?.trim() || undefined });
+  });
+
+export const adminMigrateReadinessIQ = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      dry_run: z.boolean().default(true),
+      email: z.string().optional(),
+      limit: z.number().int().min(1).max(5000).optional(),
+      confirm_calibrated: z.boolean().optional(),
+      create_users: z.boolean().default(false),
+    }).parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { runMigrateReadinessIQ } = await import("@/lib/hub/admin/readiness-migrate.server");
+    return await runMigrateReadinessIQ({ ...data, email: data.email?.trim() || undefined });
+  });

@@ -6,10 +6,10 @@
 // secret, so the service role key and PII boundary stay inside that project.
 //
 //   POST  $READINESS_READ_URL
-//   headers: { "x-gemiq-key": $GEMIQ_API_KEY, "content-type": "application/json" }
-//   body:    { "limit": number, "email"?: string }
-//   200:     { "rows": Array<assessment row> }   (also accepts a bare array,
-//                                                 or { data: [...] })
+//   headers: { "x-api-key": $GEMIQ_API_KEY, "content-type": "application/json" }
+//   body:    { "action": "list", "limit": number } | { "action": "byEmail", "email": string }
+//   200:     { "rows": Array<assessment row> }   (also accepts a bare array, or
+//                                                 { data | assessments | results: [...] })
 import { tierFromScore } from "@/lib/hub/assessments/tiers";
 import type { SubmissionPayload } from "@/lib/hub/schemas";
 import type { ImportRowResult, ImportHubspotResult } from "@/lib/hub/admin/legacy-submissions.server";
@@ -75,19 +75,23 @@ async function readLegacyRows(input: { limit: number; email?: string }): Promise
       "The Hub reads legacy assessments through ReadinessIQ's gemiq-read endpoint, not with its credentials.",
     );
   }
+  const email = input.email?.trim().toLowerCase();
+  // gemiq-read contract: header `x-api-key`, body { action: "stats" | "list" | "byEmail" }.
+  const payload = email
+    ? { action: "byEmail", email }
+    : { action: "list", limit: input.limit };
   const res = await fetch(url, {
     method: "POST",
-    headers: { "content-type": "application/json", "x-gemiq-key": key },
-    body: JSON.stringify({ limit: input.limit, email: input.email?.trim().toLowerCase() }),
+    headers: { "content-type": "application/json", "x-api-key": key },
+    body: JSON.stringify(payload),
   });
   const text = await res.text();
   if (!res.ok) throw new Error(`gemiq-read failed [${res.status}]: ${text.slice(0, 500)}`);
   let body: unknown;
   try { body = JSON.parse(text); } catch { throw new Error(`gemiq-read returned non-JSON: ${text.slice(0, 200)}`); }
-  const rows = Array.isArray(body)
-    ? body
-    : ((body as { rows?: unknown; data?: unknown }).rows ?? (body as { data?: unknown }).data);
-  if (!Array.isArray(rows)) throw new Error("gemiq-read response has no rows array");
+  const b = body as { rows?: unknown; data?: unknown; assessments?: unknown; results?: unknown };
+  const rows = Array.isArray(body) ? body : (b.rows ?? b.data ?? b.assessments ?? b.results);
+  if (!Array.isArray(rows)) throw new Error(`gemiq-read response has no rows array: ${text.slice(0, 200)}`);
   return rows as LegacyRow[];
 }
 

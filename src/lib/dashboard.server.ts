@@ -30,6 +30,24 @@ export type DashboardRecommendation = {
   reason: string;
 };
 
+export type CompositeDimension = {
+  key: string;
+  label: string;
+  score: number;
+  /** Display names of the IQs contributing to this rolled-up dimension. */
+  sources: string[];
+};
+
+export type DashboardComposite = {
+  score: number | null;
+  tier: string | null;
+  coverage: { completed: number; total: number };
+  strengths: CompositeDimension[];
+  gaps: CompositeDimension[];
+  /** Per-IQ contribution to the composite, ordered strongest first. */
+  contributions: Array<{ assessment_key: string; display_name: string; score: number | null; tier: string | null }>;
+};
+
 export type DashboardData = {
   user: { email: string; first_name: string | null; company: string | null };
   subscription: {
@@ -42,6 +60,7 @@ export type DashboardData = {
   } | null;
   results: DashboardResult[];
   recommendations: DashboardRecommendation[];
+  composite: DashboardComposite;
   stats: { completed: number; average_score: number | null; total_submissions: number };
 };
 
@@ -213,6 +232,44 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
     .slice(0, 4);
 
   const scores = results.map((r) => r.score).filter((n): n is number => typeof n === "number");
+  const compositeScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+
+  // Roll every IQ's dimensions up into one cross-discipline capability profile.
+  const rollup = new Map<string, { label: string; total: number; count: number; sources: Set<string> }>();
+  for (const r of results) {
+    for (const d of r.dimensions) {
+      const key = d.label.toLowerCase();
+      const entry = rollup.get(key) ?? { label: d.label, total: 0, count: 0, sources: new Set<string>() };
+      entry.total += d.score;
+      entry.count += 1;
+      entry.sources.add(r.display_name);
+      rollup.set(key, entry);
+    }
+  }
+  const compositeDims: CompositeDimension[] = [...rollup.entries()]
+    .map(([key, e]) => ({
+      key,
+      label: e.label,
+      score: Math.round(e.total / e.count),
+      sources: [...e.sources],
+    }))
+    .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label));
+
+  const composite: DashboardComposite = {
+    score: compositeScore,
+    tier: tierFromScore(compositeScore),
+    coverage: { completed: results.length, total: REGISTRY.length },
+    strengths: compositeDims.slice(0, 5),
+    gaps: [...compositeDims].reverse().slice(0, 5),
+    contributions: results
+      .map((r) => ({
+        assessment_key: r.assessment_key,
+        display_name: r.display_name,
+        score: r.score,
+        tier: r.tier,
+      }))
+      .sort((a, b) => (b.score ?? -1) - (a.score ?? -1)),
+  };
 
   const sub = subRes.data as DashboardData["subscription"] extends null ? never : any;
 
@@ -234,6 +291,8 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
       : null,
     results,
     recommendations,
+    composite,
+
     stats: {
       completed: results.length,
       average_score: scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null,

@@ -254,8 +254,65 @@ function DashboardPage() {
               </div>
             )}
 
+
+            {data.composite.score !== null && (
+              <section className="mt-8 rounded-2xl border border-gem-navy/20 bg-card/70 p-6 backdrop-blur">
+                <div className="flex flex-wrap items-start gap-6">
+                  <ScoreRing score={data.composite.score} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="font-heading text-xl text-foreground">Composite GEM.IQ report</h2>
+                      {data.composite.tier && (
+                        <span className={`rounded-full border px-2.5 py-0.5 text-xs ${tierStyle(data.composite.tier)}`}>
+                          {TIER_LABEL[data.composite.tier] ?? data.composite.tier}
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Your overall maturity across {data.composite.coverage.completed} of{" "}
+                      {data.composite.coverage.total} GEM.IQ assessments.
+                    </p>
+                    {data.composite.contributions.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {data.composite.contributions.map((c) => (
+                          <span
+                            key={c.assessment_key}
+                            className="rounded-full border border-border/60 bg-background/60 px-2.5 py-0.5 text-xs text-muted-foreground"
+                          >
+                            {c.display_name} · <strong className="text-foreground">{c.score ?? "—"}</strong>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {(data.composite.strengths.length > 0 || data.composite.gaps.length > 0) && (
+                  <div className="mt-6 grid gap-6 sm:grid-cols-2">
+                    <div>
+                      <h3 className="text-xs uppercase tracking-wide text-muted-foreground">Cross-IQ strengths</h3>
+                      <div className="mt-3 grid gap-3">
+                        {data.composite.strengths.map((d) => (
+                          <DimensionBar key={d.key} label={d.label} score={d.score} />
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xs uppercase tracking-wide text-muted-foreground">Cross-IQ gaps</h3>
+                      <div className="mt-3 grid gap-3">
+                        {data.composite.gaps.map((d) => (
+                          <DimensionBar key={d.key} label={d.label} score={d.score} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
+
             <section className="mt-10">
               <h2 className="font-heading text-xl text-foreground">Completed assessments</h2>
+
               {data.results.length === 0 ? (
                 <p className="mt-3 rounded-2xl border border-border/60 bg-card/60 p-6 text-muted-foreground">
                   No results yet. Start any IQ below and your scores will appear here automatically.

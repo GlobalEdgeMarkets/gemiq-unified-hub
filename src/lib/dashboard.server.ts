@@ -291,6 +291,8 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
       : null,
     results,
     recommendations,
+    composite,
+
     stats: {
       completed: results.length,
       average_score: scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null,

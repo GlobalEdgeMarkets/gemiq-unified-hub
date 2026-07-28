@@ -30,6 +30,24 @@ export type DashboardRecommendation = {
   reason: string;
 };
 
+export type CompositeDimension = {
+  key: string;
+  label: string;
+  score: number;
+  /** Display names of the IQs contributing to this rolled-up dimension. */
+  sources: string[];
+};
+
+export type DashboardComposite = {
+  score: number | null;
+  tier: string | null;
+  coverage: { completed: number; total: number };
+  strengths: CompositeDimension[];
+  gaps: CompositeDimension[];
+  /** Per-IQ contribution to the composite, ordered strongest first. */
+  contributions: Array<{ assessment_key: string; display_name: string; score: number | null; tier: string | null }>;
+};
+
 export type DashboardData = {
   user: { email: string; first_name: string | null; company: string | null };
   subscription: {
@@ -42,6 +60,7 @@ export type DashboardData = {
   } | null;
   results: DashboardResult[];
   recommendations: DashboardRecommendation[];
+  composite: DashboardComposite;
   stats: { completed: number; average_score: number | null; total_submissions: number };
 };
 

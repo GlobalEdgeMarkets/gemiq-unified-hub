@@ -350,11 +350,24 @@ const stop = hub.manifest.watch(
             GitHub sources of truth
           </h3>
           <ul className="list-disc space-y-1 pl-5">
+            <li>
+              Playbook (v1.4 — source of truth) —{" "}
+              <a
+                href="https://github.com/GlobalEdgeMarkets/gemiq-unified-hub/blob/main/PLAYBOOK.md"
+                target="_blank"
+                rel="noreferrer"
+                className="text-gem-mint underline underline-offset-4"
+              >
+                <code>PLAYBOOK.md</code>
+              </a>{" "}
+              — 6 capability IQs, 8–9 dimensions, canonical 5-tier model, pricing
+            </li>
             <li>SDK — <code>packages/hub-sdk/sdk.ts</code></li>
             <li>Manifest — <code>packages/hub-sdk/manifest.json</code> (semver — bump on every change)</li>
             <li>Puller — <code>packages/hub-sdk/pull-hub-sdk.mjs</code> (copy into each IQ)</li>
             <li>Repo — <code>GlobalEdgeMarkets/gemiq-unified-hub</code></li>
           </ul>
+
         </Section>
 
         <Section id="reference" title="Reference">

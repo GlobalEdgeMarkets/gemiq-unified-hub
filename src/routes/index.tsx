@@ -349,7 +349,7 @@ function HeroTile() {
               </Link>
               <Link
                 to="/auth"
-                search={{ mode: "signup" }}
+                search={{ mode: "signup", buy: "single" }}
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
                 style={{ fontFamily: "'League Spartan', sans-serif" }}
               >
@@ -774,7 +774,7 @@ function Pricing() {
           <div className="mt-auto pt-8">
             <Link
               to="/auth"
-              search={{ mode: "signup" }}
+              search={{ mode: "signup", buy: "single" }}
               className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-white/20"
               style={{ fontFamily: "'League Spartan', sans-serif" }}
             >

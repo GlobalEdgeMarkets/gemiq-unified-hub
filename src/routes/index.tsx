@@ -13,6 +13,8 @@ import themeManagement from "@/assets/theme-management.jpg";
 import { ACCENT, IQ_PRODUCTS, type Accent, type IQProduct } from "@/lib/iq-catalog";
 import { SampleReportShowcase } from "@/components/home/SampleReportShowcase";
 import { MaturityLadder } from "@/components/home/MaturityLadder";
+import { DiagnosticApproach } from "@/components/home/DiagnosticApproach";
+
 
 
 
@@ -33,18 +35,19 @@ const HERO_ROTATION: { src: string; label: string }[] = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GEM.IQ Hub — Executive assessments for global readiness" },
+      { title: "GEM.IQ Hub — Decision-grade diagnostics for high-stakes calls" },
       {
         name: "description",
         content:
-          "The GEM.IQ Hub by GlobalEdgeMarkets — one identity, one subscription, and a unified dashboard across every GEM.IQ executive assessment.",
+          "GEM.IQ by GlobalEdgeMarkets scores market entry, tariff, go-to-market, product, AI and experience risk across weighted dimensions — a gap map, not a vanity number.",
       },
-      { property: "og:title", content: "GEM.IQ Hub — One account across every GEM.IQ assessment" },
+      { property: "og:title", content: "GEM.IQ Hub — A diagnostic, not a single score" },
       {
         property: "og:description",
         content:
-          "One identity, one subscription, and a unified dashboard across every GEM.IQ executive assessment.",
+          "Weighted, multidimensional assessments that tell you what to fix — with one identity, one subscription and a unified benchmarked dashboard.",
       },
+
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://gemiq.globaledgemarkets.com/" },
     ],
@@ -97,8 +100,10 @@ function Index() {
         <main className="mx-auto max-w-7xl px-6 pb-24 pt-4 md:px-10 md:pb-32">
           <HeroBento />
           <IntelligenceStrip />
+          <DiagnosticApproach />
           <SampleReportShowcase />
           <MaturityLadder />
+
           <TrustMarquee />
 
           <Pricing />
@@ -301,15 +306,18 @@ function HeroTile() {
             className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
-            GEM.IQ Hub — Unified executive assessments for{" "}
+            GEM.IQ Hub — Decision-grade diagnostics when the{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">
-              global readiness.
+              stakes are the company.
             </span>
           </h1>
           <p className="mt-5 text-base md:text-lg text-white/60 max-w-xl leading-relaxed">
-            GEM.IQ Hub centralizes identity, billing, and results across every executive assessment — so
-            your team benchmarks trade, market entry, digital, and delivery from a single view.
+            Market entry, tariff exposure, go-to-market, delivery capacity, AI spend — these are risk-based
+            bets that decide whether a company compounds or stalls. GEM.IQ scores each one across weighted,
+            independent dimensions and returns a gap map, not a vanity number. One identity, one subscription,
+            one benchmarked view of where you actually stand.
           </p>
+
 
           {/* Rotating showcase */}
           <div key={current.key} className="mt-8 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">

@@ -3,6 +3,8 @@ import { useMemo, useState } from "react";
 import { HubHeader } from "@/components/HubHeader";
 import { REGISTRY } from "@/lib/hub/assessments";
 import manifest from "@/lib/hub/manifest.json";
+import { applyHubBrand, type HubManifest } from "@/lib/hub/sdk";
+
 
 export const Route = createFileRoute("/onboard")({
   head: () => ({

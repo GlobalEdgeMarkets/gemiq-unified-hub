@@ -125,16 +125,16 @@ no 2-month minimum.
 
 ## 7. Open items carried into v1.4
 
-- `readinessiq.globaledgemarkets.com` still needs a DNS-level repoint (app-level
-  307 to Hub `/dashboard` is already live).
+- `readinessiq.globaledgemarkets.com` is cut over: DNS repointed to the Hub and the
+  legacy project unpublished; legacy paths now return permanent 301s to `/dashboard`.
 - "AI Transformation Compass" (`future-readiness-check`) is redundant with
   AITransformIQ — cleanup candidate, 0 submissions.
-- AITransformIQ's project metadata still reads as a PDF retriever — cosmetic rename.
+- AITransformIQ project metadata has been corrected to AI transformation readiness
+  (previously described as a PDF retriever). Closed.
 - Stack split is deliberate: Hub + 4 new IQs on TanStack Start; TariffIQ and UXIQ
   remain stable legacy on Vite/React.
-- The Hub manifest's `assessments` array still lists the v1.3-era four keys; it is
-  informational only (gating uses `assessment_key`), but should be refreshed to the
-  six capability IQs in a scoped change to `src/lib/hub/manifest.json`.
+- The Hub manifest (`src/lib/hub/manifest.json`, v1.4.0) now lists the six capability
+  IQs and is mirrored to `packages/hub-sdk/manifest.json`. Closed.
 
 ## 8. Related docs
 

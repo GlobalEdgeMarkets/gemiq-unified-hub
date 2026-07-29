@@ -38,7 +38,7 @@ const HERO_ROTATION: { src: string; label: string }[] = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GEM.IQ Hub — Decision-grade diagnostics for high-stakes calls" },
+      { title: "GEM.IQ Hub — Diagnostics for make-or-break decisions" },
       {
         name: "description",
         content:

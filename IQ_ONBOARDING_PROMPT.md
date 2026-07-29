@@ -52,10 +52,11 @@ Wire this project into GEM.IQ Hub. Do exactly these steps and nothing else.
    pull_request touching src/lib/hub.ts or scripts/pull-hub-sdk.mjs, run
    `node scripts/pull-hub-sdk.mjs` and fail if it produces a diff.
 
-3. At app boot, subscribe to live Hub values:
-   hub.manifest.watch({ intervalMs: 5 * 60_000 }, (next) => applyBrand(next));
-   Drive colors, fonts, price labels and IQ deep links from the manifest —
-   never hardcode them.
+3. Live sync is automatic — createHubClient() polls the Hub manifest every
+   5 min (and on tab focus) and applies brand tokens itself. Just render logos
+   as <img data-gem-logo="standard" alt="GEM" /> and drive colors, fonts, price
+   labels and IQ deep links from the manifest — never hardcode them.
+
 
 4. Gate the assessment:
    const status = await hub.subscription.check();

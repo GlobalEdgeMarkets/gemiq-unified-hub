@@ -370,7 +370,21 @@ Docs: ${HUB_ORIGIN}/docs`,
             copy the whole thing into your IQ project&apos;s Lovable chat and it wires
             itself into the Hub: SDK, manifest sync, checkout gate, and submissions.
           </p>
+          <p className="mt-3 text-sm text-slate-400">
+            New to the suite? Read the{" "}
+            <a
+              href={`https://github.com/${REPO}/blob/main/PLAYBOOK.md`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-gem-mint underline underline-offset-4"
+            >
+              GEM.IQ Playbook (v1.4)
+            </a>{" "}
+            first — the six capability IQs, the 8–9 dimension standard, the canonical
+            five-tier maturity model, and current pricing.
+          </p>
         </header>
+
 
         <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
           <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">

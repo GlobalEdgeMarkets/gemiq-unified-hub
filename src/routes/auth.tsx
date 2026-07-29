@@ -24,7 +24,10 @@ const searchSchema = z.object({
   trial: z.string().optional(),
   /** Which plan the trial should convert to. Defaults to monthly. */
   plan: z.enum(["monthly", "annual"]).optional(),
+  /** "single" when arriving from the one-time $179 CTA. Starts payment checkout. */
+  buy: z.enum(["single"]).optional(),
 });
+
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,

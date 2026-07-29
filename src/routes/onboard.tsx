@@ -85,9 +85,13 @@ function Block({
   );
 }
 
+// ReadinessIQ is retired — it stays in the registry for legacy submission
+// mapping, but is never offered as an onboarding target.
+const ONBOARDABLE = REGISTRY.filter((s) => s.key !== "readinessiq");
+
 function OnboardPage() {
-  const [key, setKey] = useState(REGISTRY[0]?.key ?? "tariffiq");
-  const spec = REGISTRY.find((s) => s.key === key);
+  const [key, setKey] = useState(ONBOARDABLE[0]?.key ?? "tariffiq");
+  const spec = ONBOARDABLE.find((s) => s.key === key);
   const displayName = spec?.displayName ?? key;
 
   const initCmd = useMemo(
@@ -218,7 +222,7 @@ Docs: ${HUB_ORIGIN}/docs`,
             Assessment key
           </label>
           <div className="mt-3 flex flex-wrap gap-2">
-            {REGISTRY.map((s) => (
+            {ONBOARDABLE.map((s) => (
               <button
                 key={s.key}
                 type="button"

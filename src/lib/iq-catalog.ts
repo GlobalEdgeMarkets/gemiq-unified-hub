@@ -36,7 +36,7 @@ export type IQProduct = {
   outcomes: string[];
 };
 
-export const IQ_PRODUCTS: IQProduct[] = [
+const IQ_PRODUCTS_UNORDERED: IQProduct[] = [
   {
     key: "tariffiq",
     path: "/tariffiq",

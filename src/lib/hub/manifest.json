@@ -1,7 +1,7 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.0.1",
-  "updated_at": "2026-07-22",
+  "version": "1.1.0",
+  "updated_at": "2026-07-29",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
     "docs_url": "https://gemiq.globaledgemarkets.com/docs",

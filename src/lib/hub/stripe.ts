@@ -15,6 +15,52 @@ export async function priceByLookupKey(lookupKey: string): Promise<Stripe.Price>
   return list.data[0];
 }
 
+/**
+ * Quarterly subscription: $279 every 3 months. Created on first use so the
+ * catalog self-heals across Stripe environments (same pattern as the
+ * single-assessment price below).
+ */
+export const QUARTERLY_LOOKUP_KEY = "gemiq_professional_quarterly";
+export const QUARTERLY_AMOUNT = 27900; // $279.00 USD / 3 months
+
+export async function ensureQuarterlyPrice(): Promise<Stripe.Price> {
+  const s = stripe();
+  const existing = await s.prices.list({
+    lookup_keys: [QUARTERLY_LOOKUP_KEY], active: true, limit: 1,
+  });
+  if (existing.data[0]) return existing.data[0];
+
+  // Reuse the existing GEM.IQ Professional product when it is already there.
+  const monthly = await s.prices.list({
+    lookup_keys: ["gemiq_professional_monthly"], active: true, limit: 1,
+  });
+  const productId =
+    typeof monthly.data[0]?.product === "string"
+      ? monthly.data[0].product
+      : (monthly.data[0]?.product as Stripe.Product | undefined)?.id;
+
+  const product =
+    productId ??
+    (
+      await s.products.create({
+        name: "GEM.IQ Professional",
+        description: "All GEM.IQ assessments, the composite report, and score-over-time tracking.",
+        metadata: { gemiq_sku: "professional", source: "gemiq_hub" },
+      })
+    ).id;
+
+  return s.prices.create({
+    product,
+    currency: "usd",
+    unit_amount: QUARTERLY_AMOUNT,
+    recurring: { interval: "month", interval_count: 3 },
+    lookup_key: QUARTERLY_LOOKUP_KEY,
+    transfer_lookup_key: true,
+    metadata: { source: "gemiq_hub", kind: "professional_quarterly" },
+  });
+}
+
+
 /** One-time purchase: a single assessment, any IQ. */
 export const SINGLE_ASSESSMENT_LOOKUP_KEY = "gemiq_single_assessment";
 export const SINGLE_ASSESSMENT_AMOUNT = 17900; // $179.00 USD

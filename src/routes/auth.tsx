@@ -31,7 +31,7 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — GEM.IQ Hub" },
-      { name: "description", content: "One account across every GEM.IQ assessment — TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ." },
+      { name: "description", content: "One account across every GEM.IQ assessment — TariffIQ, GTMIQ, SalesIQ, ProductIQ, AITransformIQ, and UXIQ." },
       { property: "og:title", content: "GEM.IQ Hub — Sign in" },
       { property: "og:description", content: "One identity across all GEM.IQ assessments." },
       { property: "og:type", content: "website" },
@@ -41,10 +41,12 @@ export const Route = createFileRoute("/auth")({
 });
 
 const IQ_LIST: { key: string; name: string; blurb: string; accent: string }[] = [
-  { key: "tariffiq",       name: "TariffIQ",       blurb: "Tariff exposure & savings",       accent: "#05CFAB" },
-  { key: "readinessiq",    name: "ReadinessIQ",    blurb: "Operational readiness",           accent: "#2D1594" },
-  { key: "uxiq",           name: "UXIQ",           blurb: "Digital experience maturity",     accent: "#5aa9c9" },
-  { key: "techservicesiq", name: "TechServicesIQ", blurb: "Technology services capability",  accent: "#e8b64a" },
+  { key: "tariffiq",      name: "TariffIQ",       blurb: "Tariff exposure & savings",     accent: "#05CFAB" },
+  { key: "gtmiq",         name: "GTMIQ",          blurb: "Market entry readiness",        accent: "#a78bfa" },
+  { key: "salesiq",       name: "SalesIQ",        blurb: "Enterprise sales readiness",    accent: "#e8b64a" },
+  { key: "productiq",     name: "ProductIQ",      blurb: "Productization & scale",        accent: "#60a5fa" },
+  { key: "aitransformiq", name: "AITransformIQ",  blurb: "AI transformation readiness",   accent: "#fb7185" },
+  { key: "uxiq",          name: "UXIQ",           blurb: "Digital experience maturity",   accent: "#5aa9c9" },
 ];
 
 function AuthPage() {

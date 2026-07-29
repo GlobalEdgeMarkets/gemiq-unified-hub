@@ -10,6 +10,7 @@ import themeInvestments from "@/assets/theme-investments.jpg";
 import themeStartups from "@/assets/theme-startups.jpg";
 import themeAi from "@/assets/theme-ai.jpg";
 import themeManagement from "@/assets/theme-management.jpg";
+import { ACCENT, IQ_PRODUCTS, type Accent, type IQProduct } from "@/lib/iq-catalog";
 
 
 const HERO_ROTATION: { src: string; label: string }[] = [
@@ -18,8 +19,8 @@ const HERO_ROTATION: { src: string; label: string }[] = [
   { src: themeStartups, label: "Startups & scale-ups" },
   { src: themeManagement, label: "Executive management" },
   { src: themeAi, label: "AI & innovation" },
-  { src: themeServices, label: "Services delivery" },
-  { src: themeReadiness, label: "Boardroom readiness" },
+  { src: themeServices, label: "Enterprise sales" },
+  { src: themeReadiness, label: "Product & platform scale" },
   { src: themeUx, label: "Digital experience" },
 ];
 
@@ -71,74 +72,10 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Accent = "mint" | "violet" | "cyan" | "amber";
+type Assessment = IQProduct;
 
-type Assessment = {
-  key: string;
-  name: string;
-  url: string;
-  tagline: string;
-  body: string;
-  live: boolean;
-  accent: Accent;
-  domain: string;
-  image: string;
-};
+const ASSESSMENTS: Assessment[] = IQ_PRODUCTS;
 
-const ASSESSMENTS: Assessment[] = [
-  {
-    key: "tariffiq",
-    name: "TariffIQ",
-    url: "https://tariffiq.globaledgemarkets.com",
-    tagline: "Duty exposure & savings",
-    body: "Eight dimensions of tariff engineering maturity — HTS classification, first-sale, FTZ readiness. Annualized savings estimate in under 10 minutes.",
-    live: true,
-    accent: "mint",
-    domain: "Global Trade & Supply Chain",
-    image: themeTariff,
-  },
-  {
-    key: "readinessiq",
-    name: "ReadinessIQ",
-    url: "https://readinessiq.globaledgemarkets.com",
-    tagline: "Go-to-market maturity",
-    body: "Four executive assessments across market entry, enterprise sales, productization, and AI transformation — CMMI/TRL-weighted scoring for your growth stage.",
-    live: true,
-    accent: "violet",
-    domain: "GoToMarket Strategy",
-    image: themeReadiness,
-  },
-  {
-    key: "uxiq",
-    name: "UXIQ",
-    url: "https://uxreadiness.globaledgemarkets.com",
-    tagline: "Digital & AI experience",
-    body: "Benchmark research, design system, accessibility, and conversion craft against best-in-class peers — dimension-level tiering with prioritized recommendations.",
-    live: true,
-    accent: "cyan",
-    domain: "Digital & AI Experience",
-    image: themeUx,
-  },
-  {
-    key: "techservicesiq",
-    name: "TechServicesIQ",
-    url: "https://techservicesiq.globaledgemarkets.com",
-    tagline: "Services delivery health",
-    body: "Engagement, delivery, staffing, and margin performance across your services organization — surface leaks in utilization, scoping, and repeatability.",
-    live: false,
-    accent: "amber",
-    domain: "Product & Service Delivery",
-    image: themeServices,
-  },
-];
-
-
-const ACCENT: Record<Accent, { text: string; ring: string; dot: string; glow: string; chip: string }> = {
-  mint:   { text: "text-[#4ade80]", ring: "hover:border-[#4ade80]/50", dot: "bg-[#4ade80]",   glow: "shadow-[0_0_40px_-8px_rgba(74,222,128,0.6)]",  chip: "bg-[#4ade80]/10 text-[#4ade80]" },
-  violet: { text: "text-[#a78bfa]", ring: "hover:border-[#a78bfa]/50", dot: "bg-[#a78bfa]",   glow: "shadow-[0_0_40px_-8px_rgba(167,139,250,0.6)]", chip: "bg-[#a78bfa]/10 text-[#a78bfa]" },
-  cyan:   { text: "text-[#67e8f9]", ring: "hover:border-[#67e8f9]/50", dot: "bg-[#67e8f9]",   glow: "shadow-[0_0_40px_-8px_rgba(103,232,249,0.6)]", chip: "bg-[#67e8f9]/10 text-[#67e8f9]" },
-  amber:  { text: "text-[#fbbf24]", ring: "hover:border-[#fbbf24]/50", dot: "bg-[#fbbf24]",   glow: "shadow-[0_0_40px_-8px_rgba(251,191,36,0.5)]",  chip: "bg-[#fbbf24]/10 text-[#fbbf24]" },
-};
 
 function Index() {
   return (
@@ -252,8 +189,8 @@ function TopNav() {
 function HeroBento() {
   return (
     <section id="assessments" className="pt-10 md:pt-14">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:auto-rows-[minmax(180px,auto)]">
-        {/* 4 assessment tiles */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:auto-rows-[minmax(180px,auto)]">
+        {/* assessment tiles */}
         {ASSESSMENTS.map((a) => (
           <AssessmentTile key={a.key} a={a} />
         ))}
@@ -336,7 +273,7 @@ function HeroTile() {
             className="text-[#4ade80] text-xs font-bold uppercase tracking-[0.25em]"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
-            Intelligence Suite · 4 Assessments
+            Intelligence Suite · 6 Assessments
           </span>
           <div className="hidden md:flex items-center gap-2">
             {ASSESSMENTS.map((a, idx) => (
@@ -397,7 +334,7 @@ function HeroTile() {
               Try any GEM.IQ <span className="text-[#4ade80]">free for 7 days.</span>
             </div>
             <p className="mt-1.5 text-sm text-white/70">
-              Includes <strong className="text-white">1 complete assessment</strong> across any discipline — TariffIQ, ReadinessIQ, UXIQ, or TechServicesIQ. Full dimension-level report yours to keep, forever.
+              Includes <strong className="text-white">1 complete assessment</strong> across any discipline — TariffIQ, GTMIQ, SalesIQ, ProductIQ, AITransformIQ, or UXIQ. Full dimension-level report yours to keep, forever.
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Link
@@ -651,8 +588,8 @@ function FeatureDiagram({ accent, kind }: { accent: Accent; kind: "identity" | "
 
 function AssessmentTile({ a }: { a: Assessment }) {
   const c = ACCENT[a.accent];
-  const Wrapper: any = a.live ? "a" : "div";
-  const wrapperProps = a.live ? { href: a.url, target: "_blank", rel: "noreferrer" } : {};
+  const Wrapper: any = a.live ? Link : "div";
+  const wrapperProps = a.live ? { to: a.path } : {};
   return (
     <Wrapper
       {...wrapperProps}
@@ -695,7 +632,7 @@ function AssessmentTile({ a }: { a: Assessment }) {
 
 function AssessmentGlyph({ accent }: { accent: Accent }) {
   const c = ACCENT[accent];
-  const stroke = accent === "mint" ? "#4ade80" : accent === "violet" ? "#a78bfa" : accent === "cyan" ? "#67e8f9" : "#fbbf24";
+  const stroke = c.hex;
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke={stroke} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="9" />
@@ -729,7 +666,7 @@ function MethodologyTile() {
 
 function BenchmarkTile() {
   return (
-    <div className="md:col-span-2 md:row-span-1 rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-8 relative overflow-hidden">
+    <div className="md:col-span-1 md:row-span-1 rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-8 relative overflow-hidden">
       <div aria-hidden className="absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-[#a78bfa]/15 blur-3xl" />
       <div className="relative z-10 flex items-start justify-between gap-6">
         <div>

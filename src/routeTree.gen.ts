@@ -9,13 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UxiqRouteImport } from './routes/uxiq'
+import { Route as TariffiqRouteImport } from './routes/tariffiq'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SalesiqRouteImport } from './routes/salesiq'
 import { Route as ReadinessiqRouteImport } from './routes/readinessiq'
+import { Route as ProductiqRouteImport } from './routes/productiq'
 import { Route as OnboardRouteImport } from './routes/onboard'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as GtmiqRouteImport } from './routes/gtmiq'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AitransformiqRouteImport } from './routes/aitransformiq'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReadinessiqSplatRouteImport } from './routes/readinessiq.$'
@@ -41,14 +47,34 @@ import { Route as ApiPublicAdminImportLegacyUsersRouteImport } from './routes/ap
 import { Route as ApiPublicAdminImportLegacySubmissionsRouteImport } from './routes/api/public/admin/import-legacy-submissions'
 import { Route as ApiPublicAdminBootstrapHubspotSchemaRouteImport } from './routes/api/public/admin/bootstrap-hubspot-schema'
 
+const UxiqRoute = UxiqRouteImport.update({
+  id: '/uxiq',
+  path: '/uxiq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TariffiqRoute = TariffiqRouteImport.update({
+  id: '/tariffiq',
+  path: '/tariffiq',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SalesiqRoute = SalesiqRouteImport.update({
+  id: '/salesiq',
+  path: '/salesiq',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReadinessiqRoute = ReadinessiqRouteImport.update({
   id: '/readinessiq',
   path: '/readinessiq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductiqRoute = ProductiqRouteImport.update({
+  id: '/productiq',
+  path: '/productiq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardRoute = OnboardRouteImport.update({
@@ -59,6 +85,11 @@ const OnboardRoute = OnboardRouteImport.update({
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GtmiqRoute = GtmiqRouteImport.update({
+  id: '/gtmiq',
+  path: '/gtmiq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocsRoute = DocsRouteImport.update({
@@ -74,6 +105,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AitransformiqRoute = AitransformiqRouteImport.update({
+  id: '/aitransformiq',
+  path: '/aitransformiq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -215,13 +251,19 @@ const ApiPublicAdminBootstrapHubspotSchemaRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/aitransformiq': typeof AitransformiqRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
+  '/gtmiq': typeof GtmiqRoute
   '/mcp': typeof McpRoute
   '/onboard': typeof OnboardRoute
+  '/productiq': typeof ProductiqRoute
   '/readinessiq': typeof ReadinessiqRouteWithChildren
+  '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tariffiq': typeof TariffiqRoute
+  '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
@@ -248,13 +290,19 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/aitransformiq': typeof AitransformiqRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
+  '/gtmiq': typeof GtmiqRoute
   '/mcp': typeof McpRoute
   '/onboard': typeof OnboardRoute
+  '/productiq': typeof ProductiqRoute
   '/readinessiq': typeof ReadinessiqRouteWithChildren
+  '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tariffiq': typeof TariffiqRoute
+  '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
@@ -282,13 +330,19 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/aitransformiq': typeof AitransformiqRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
+  '/gtmiq': typeof GtmiqRoute
   '/mcp': typeof McpRoute
   '/onboard': typeof OnboardRoute
+  '/productiq': typeof ProductiqRoute
   '/readinessiq': typeof ReadinessiqRouteWithChildren
+  '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tariffiq': typeof TariffiqRoute
+  '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
@@ -317,13 +371,19 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/aitransformiq'
     | '/auth'
     | '/dashboard'
     | '/docs'
+    | '/gtmiq'
     | '/mcp'
     | '/onboard'
+    | '/productiq'
     | '/readinessiq'
+    | '/salesiq'
     | '/sitemap.xml'
+    | '/tariffiq'
+    | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/readinessiq/$'
@@ -350,13 +410,19 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/aitransformiq'
     | '/auth'
     | '/dashboard'
     | '/docs'
+    | '/gtmiq'
     | '/mcp'
     | '/onboard'
+    | '/productiq'
     | '/readinessiq'
+    | '/salesiq'
     | '/sitemap.xml'
+    | '/tariffiq'
+    | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/readinessiq/$'
@@ -383,13 +449,19 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/aitransformiq'
     | '/auth'
     | '/dashboard'
     | '/docs'
+    | '/gtmiq'
     | '/mcp'
     | '/onboard'
+    | '/productiq'
     | '/readinessiq'
+    | '/salesiq'
     | '/sitemap.xml'
+    | '/tariffiq'
+    | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/readinessiq/$'
@@ -417,13 +489,19 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  AitransformiqRoute: typeof AitransformiqRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
   DocsRoute: typeof DocsRoute
+  GtmiqRoute: typeof GtmiqRoute
   McpRoute: typeof McpRoute
   OnboardRoute: typeof OnboardRoute
+  ProductiqRoute: typeof ProductiqRoute
   ReadinessiqRoute: typeof ReadinessiqRouteWithChildren
+  SalesiqRoute: typeof SalesiqRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TariffiqRoute: typeof TariffiqRoute
+  UxiqRoute: typeof UxiqRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -449,6 +527,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/uxiq': {
+      id: '/uxiq'
+      path: '/uxiq'
+      fullPath: '/uxiq'
+      preLoaderRoute: typeof UxiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tariffiq': {
+      id: '/tariffiq'
+      path: '/tariffiq'
+      fullPath: '/tariffiq'
+      preLoaderRoute: typeof TariffiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -456,11 +548,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/salesiq': {
+      id: '/salesiq'
+      path: '/salesiq'
+      fullPath: '/salesiq'
+      preLoaderRoute: typeof SalesiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/readinessiq': {
       id: '/readinessiq'
       path: '/readinessiq'
       fullPath: '/readinessiq'
       preLoaderRoute: typeof ReadinessiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/productiq': {
+      id: '/productiq'
+      path: '/productiq'
+      fullPath: '/productiq'
+      preLoaderRoute: typeof ProductiqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboard': {
@@ -475,6 +581,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gtmiq': {
+      id: '/gtmiq'
+      path: '/gtmiq'
+      fullPath: '/gtmiq'
+      preLoaderRoute: typeof GtmiqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs': {
@@ -496,6 +609,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aitransformiq': {
+      id: '/aitransformiq'
+      path: '/aitransformiq'
+      fullPath: '/aitransformiq'
+      preLoaderRoute: typeof AitransformiqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -684,13 +804,19 @@ const ReadinessiqRouteWithChildren = ReadinessiqRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  AitransformiqRoute: AitransformiqRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
   DocsRoute: DocsRoute,
+  GtmiqRoute: GtmiqRoute,
   McpRoute: McpRoute,
   OnboardRoute: OnboardRoute,
+  ProductiqRoute: ProductiqRoute,
   ReadinessiqRoute: ReadinessiqRouteWithChildren,
+  SalesiqRoute: SalesiqRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TariffiqRoute: TariffiqRoute,
+  UxiqRoute: UxiqRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,

@@ -36,6 +36,13 @@
   "pricing": {
     "currency": "USD",
     "trial": { "days": 7, "assessments_included": 1, "card_required": true },
+    "guarantee": { "days": 14, "type": "money_back" },
+    "one_time": {
+      "id": "gemiq_single_assessment",
+      "name": "GEM.IQ Single Assessment",
+      "amount": 179,
+      "lookup_key": "gemiq_single_assessment"
+    },
     "plans": [
       {
         "id": "gemiq_professional_monthly",
@@ -62,6 +69,7 @@
   "deep_links": {
     "signup_trial_monthly": "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=monthly",
     "signup_trial_annual":  "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual",
+    "buy_single_assessment": "https://gemiq.globaledgemarkets.com/auth?mode=signup&buy=single",
     "login":                "https://gemiq.globaledgemarkets.com/auth",
     "portal":               "https://gemiq.globaledgemarkets.com/account"
   }

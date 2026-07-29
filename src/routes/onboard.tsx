@@ -246,6 +246,9 @@ Docs: ${HUB_ORIGIN}/docs`,
           </p>
         </div>
 
+        <SyncNowPanel />
+
+
         <div className="mt-6 rounded-xl border border-gem-mint/30 bg-gem-mint/[0.07] p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>

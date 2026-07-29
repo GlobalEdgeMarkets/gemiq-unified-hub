@@ -58,8 +58,13 @@ export interface CheckStatus {
   trialing?: boolean;
   /** True when the trial's free-assessment quota has been consumed. */
   trial_exhausted?: boolean;
+  /** Unconsumed one-time assessment credits ($179 purchases). */
+  credits_available?: number;
+  /** True when the user can run one more assessment right now (sub, trial, or credit). */
+  entitled?: boolean;
   user?: HubUser;
   subscription: HubSubscription | null;
+
 }
 
 export interface HubProfile {

@@ -410,8 +410,20 @@ const stop = hub.manifest.watch(
 
           <p className="mt-6 text-sm text-slate-400">
             Full integration guide including HubSpot property registration and legacy user
-            import lives in <code>INTEGRATING.md</code> in the Hub repo.
+            import lives in <code>INTEGRATING.md</code> in the Hub repo. The suite-level
+            source of truth — six capability IQs, the 8–9 dimension standard, the canonical
+            five-tier model and pricing — is{" "}
+            <a
+              href="https://github.com/GlobalEdgeMarkets/gemiq-unified-hub/blob/main/PLAYBOOK.md"
+              target="_blank"
+              rel="noreferrer"
+              className="text-gem-mint underline underline-offset-4"
+            >
+              PLAYBOOK.md (v1.4)
+            </a>
+            .
           </p>
+
         </Section>
       </main>
     </div>

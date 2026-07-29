@@ -947,12 +947,18 @@ function Footer() {
     <footer className="relative z-10 border-t border-white/5 mt-8 py-10 text-white/60">
       <div className="mx-auto max-w-7xl px-6 md:px-10">
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <img src={gemLogo.url} alt="GEM" className="h-8 w-auto opacity-90" />
-            <span className="font-display text-lg font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              GEM.IQ Hub
-            </span>
+          <div className="flex flex-col items-center gap-2 md:items-start">
+            <div className="flex items-center gap-3">
+              <img src={gemLogo.url} alt="GEM" className="h-8 w-auto opacity-90" />
+              <span className="font-display text-lg font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                GEM.IQ Hub
+              </span>
+            </div>
+            <p className="text-xs text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              CANsulting when you can. <span className="text-[#4ade80]">Consulting when you can&#39;t.</span>
+            </p>
           </div>
+
           <div className="flex flex-wrap justify-center gap-6 text-xs text-white/40">
             <a href="mailto:info@globaledgemarkets.com" className="hover:text-white">info@globaledgemarkets.com</a>
             <a href="https://globaledgemarkets.com" target="_blank" rel="noreferrer" className="hover:text-white">globaledgemarkets.com</a>

@@ -755,7 +755,7 @@ function TrustMarquee() {
 }
 
 function Pricing() {
-  const [interval, setInterval] = useState<"monthly" | "annual">("monthly");
+  const [interval, setInterval] = useState<"monthly" | "quarterly" | "annual">("quarterly");
   return (
     <section id="pricing" className="mt-20 md:mt-28">
       <div className="text-center max-w-2xl mx-auto">

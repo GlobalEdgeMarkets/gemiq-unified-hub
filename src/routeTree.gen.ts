@@ -25,6 +25,7 @@ import { Route as AitransformiqRouteImport } from './routes/aitransformiq'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReadinessiqSplatRouteImport } from './routes/readinessiq.$'
+import { Route as DocsMarketEntryMaturityFrameworksRouteImport } from './routes/docs_.market-entry-maturity-frameworks'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ApiPublicProfileRouteImport } from './routes/api/public/profile'
@@ -127,6 +128,12 @@ const ReadinessiqSplatRoute = ReadinessiqSplatRouteImport.update({
   path: '/$',
   getParentRoute: () => ReadinessiqRoute,
 } as any)
+const DocsMarketEntryMaturityFrameworksRoute =
+  DocsMarketEntryMaturityFrameworksRouteImport.update({
+    id: '/docs_/market-entry-maturity-frameworks',
+    path: '/docs/market-entry-maturity-frameworks',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
@@ -266,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/docs/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -305,6 +313,7 @@ export interface FileRoutesByTo {
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/docs/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -345,6 +354,7 @@ export interface FileRoutesById {
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/docs_/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -386,6 +396,7 @@ export interface FileRouteTypes {
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/docs/market-entry-maturity-frameworks'
     | '/readinessiq/$'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/docs/market-entry-maturity-frameworks'
     | '/readinessiq/$'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -464,6 +476,7 @@ export interface FileRouteTypes {
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/docs_/market-entry-maturity-frameworks'
     | '/readinessiq/$'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -504,6 +517,7 @@ export interface RootRouteChildren {
   UxiqRoute: typeof UxiqRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  DocsMarketEntryMaturityFrameworksRoute: typeof DocsMarketEntryMaturityFrameworksRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
@@ -638,6 +652,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/readinessiq/$'
       preLoaderRoute: typeof ReadinessiqSplatRouteImport
       parentRoute: typeof ReadinessiqRoute
+    }
+    '/docs_/market-entry-maturity-frameworks': {
+      id: '/docs_/market-entry-maturity-frameworks'
+      path: '/docs/market-entry-maturity-frameworks'
+      fullPath: '/docs/market-entry-maturity-frameworks'
+      preLoaderRoute: typeof DocsMarketEntryMaturityFrameworksRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
@@ -820,6 +841,8 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  DocsMarketEntryMaturityFrameworksRoute:
+    DocsMarketEntryMaturityFrameworksRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,

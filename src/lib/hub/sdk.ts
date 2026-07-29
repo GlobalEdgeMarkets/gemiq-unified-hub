@@ -208,6 +208,27 @@ export function createHubClient(opts: HubClientOptions) {
         return { url };
       },
 
+      /**
+       * One-time $179 purchase covering a single assessment (any IQ).
+       * Redirects to Stripe Checkout in `payment` mode — no subscription.
+       */
+      buySingleAssessment: async function (
+        opts: { successUrl: string; cancelUrl: string; assessmentKey?: string },
+      ) {
+        const { url } = await req("/api/public/billing/create-checkout", {
+          method: "POST",
+          body: JSON.stringify({
+            lookup_key: "gemiq_single_assessment",
+            success_url: opts.successUrl,
+            cancel_url: opts.cancelUrl,
+            ...(opts.assessmentKey ? { assessment_key: opts.assessmentKey } : {}),
+          }),
+        });
+        if (typeof window === "undefined") return { url };
+        window.location.href = url;
+        return { url };
+      },
+
       /** Legacy alias: returns the session { url, id } without redirecting. */
       createCheckout: (lookup_key: string, success_url: string, cancel_url: string) =>
         req("/api/public/billing/create-checkout", { method: "POST", body: JSON.stringify({ lookup_key, success_url, cancel_url }) }),

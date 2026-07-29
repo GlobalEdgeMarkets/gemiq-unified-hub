@@ -9,7 +9,7 @@ import { z } from "zod";
 // Never throws: anonymous callers get a signed-out payload so /admin can render
 // its sign-in state instead of crashing with an unhandled 401.
 export const adminWhoami = createServerFn({ method: "GET" }).handler(async () => {
-  const { resolveHubAdmin } = await import("@/lib/hub/admin/middleware");
+  const { resolveHubAdmin } = await import("@/lib/hub/admin/resolve.server");
   const hubAdmin = await resolveHubAdmin();
   return {
     signed_in: !!hubAdmin,

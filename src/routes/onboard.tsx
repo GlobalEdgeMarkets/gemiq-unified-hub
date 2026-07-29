@@ -3,6 +3,8 @@ import { useMemo, useState } from "react";
 import { HubHeader } from "@/components/HubHeader";
 import { REGISTRY } from "@/lib/hub/assessments";
 import manifest from "@/lib/hub/manifest.json";
+import { applyHubBrand, type HubManifest } from "@/lib/hub/sdk";
+
 
 export const Route = createFileRoute("/onboard")({
   head: () => ({
@@ -85,9 +87,85 @@ function Block({
   );
 }
 
+/**
+ * Force-refresh the Hub manifest (and the brand tokens it carries) without
+ * waiting for the SDK's 5-minute poller. Purely a client-side re-fetch.
+ */
+function SyncNowPanel() {
+  const [state, setState] = useState<"idle" | "syncing" | "done" | "error">("idle");
+  const [info, setInfo] = useState<{ version: string; servedAt: string } | null>(null);
+
+  const syncNow = async () => {
+    setState("syncing");
+    try {
+      const res = await fetch(`/api/public/manifest?t=${Date.now()}`, {
+        cache: "no-store",
+        headers: { "cache-control": "no-cache" },
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const next = (await res.json()) as HubManifest & { served_at?: string };
+      applyHubBrand(next);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("gemiq:manifest", { detail: next }));
+      }
+      setInfo({
+        version: next.version,
+        servedAt: new Date(next.served_at ?? Date.now()).toLocaleTimeString(),
+      });
+      setState("done");
+    } catch {
+      setState("error");
+    }
+  };
+
+  return (
+    <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] p-5">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="font-display text-xl font-semibold text-white">Sync now</h2>
+          <p className="mt-1 text-sm text-slate-300">
+            Pulls the latest manifest and re-applies brand tokens immediately, instead of
+            waiting for the SDK&apos;s 5-minute poller.
+          </p>
+          <p className="mt-2 text-xs text-slate-400">
+            Bundled manifest: <span className="font-mono text-slate-200">v{manifest.version}</span>
+            {info && (
+              <>
+                {" · "}live: <span className="font-mono text-gem-mint">v{info.version}</span> at{" "}
+                {info.servedAt}
+              </>
+            )}
+            {state === "error" && <span className="ml-2 text-red-400">Sync failed — retry.</span>}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={syncNow}
+            disabled={state === "syncing"}
+            className="rounded-lg bg-gem-mint px-4 py-2 text-sm font-semibold text-gem-navy transition hover:opacity-90 disabled:opacity-60"
+          >
+            {state === "syncing" ? "Syncing…" : state === "done" ? "Synced ✓" : "Sync now"}
+          </button>
+          <CopyButton
+            text={`// Force a manifest + brand refresh in an IQ app (no rebuild):
+const { manifest } = await hub.manifest.get();
+if (manifest) applyHubBrand(manifest);
+
+// Re-pull the vendored SDK + manifest files:
+node scripts/pull-hub-sdk.mjs`}
+            label="Copy IQ-side snippet"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ReadinessIQ is retired — it stays in the registry for legacy submission
 // mapping, but is never offered as an onboarding target.
 const ONBOARDABLE = REGISTRY.filter((s) => s.key !== "readinessiq");
+
 
 function OnboardPage() {
   const [key, setKey] = useState(ONBOARDABLE[0]?.key ?? "tariffiq");
@@ -245,6 +323,9 @@ Docs: ${HUB_ORIGIN}/docs`,
             submissions with an unknown key are dropped.
           </p>
         </div>
+
+        <SyncNowPanel />
+
 
         <div className="mt-6 rounded-xl border border-gem-mint/30 bg-gem-mint/[0.07] p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">

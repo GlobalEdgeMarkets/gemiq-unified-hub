@@ -19,8 +19,8 @@ const HERO_ROTATION: { src: string; label: string }[] = [
   { src: themeStartups, label: "Startups & scale-ups" },
   { src: themeManagement, label: "Executive management" },
   { src: themeAi, label: "AI & innovation" },
-  { src: themeServices, label: "Services delivery" },
-  { src: themeReadiness, label: "Boardroom readiness" },
+  { src: themeServices, label: "Enterprise sales" },
+  { src: themeReadiness, label: "Product & platform scale" },
   { src: themeUx, label: "Digital experience" },
 ];
 
@@ -273,7 +273,7 @@ function HeroTile() {
             className="text-[#4ade80] text-xs font-bold uppercase tracking-[0.25em]"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
-            Intelligence Suite · 4 Assessments
+            Intelligence Suite · 6 Assessments
           </span>
           <div className="hidden md:flex items-center gap-2">
             {ASSESSMENTS.map((a, idx) => (
@@ -334,7 +334,7 @@ function HeroTile() {
               Try any GEM.IQ <span className="text-[#4ade80]">free for 7 days.</span>
             </div>
             <p className="mt-1.5 text-sm text-white/70">
-              Includes <strong className="text-white">1 complete assessment</strong> across any discipline — TariffIQ, ReadinessIQ, UXIQ, or TechServicesIQ. Full dimension-level report yours to keep, forever.
+              Includes <strong className="text-white">1 complete assessment</strong> across any discipline — TariffIQ, GTMIQ, SalesIQ, ProductIQ, AITransformIQ, or UXIQ. Full dimension-level report yours to keep, forever.
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Link
@@ -666,7 +666,7 @@ function MethodologyTile() {
 
 function BenchmarkTile() {
   return (
-    <div className="md:col-span-2 md:row-span-1 rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-8 relative overflow-hidden">
+    <div className="md:col-span-1 md:row-span-1 rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-8 relative overflow-hidden">
       <div aria-hidden className="absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-[#a78bfa]/15 blur-3xl" />
       <div className="relative z-10 flex items-start justify-between gap-6">
         <div>

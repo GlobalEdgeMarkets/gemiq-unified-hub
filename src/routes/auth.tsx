@@ -41,10 +41,12 @@ export const Route = createFileRoute("/auth")({
 });
 
 const IQ_LIST: { key: string; name: string; blurb: string; accent: string }[] = [
-  { key: "tariffiq",       name: "TariffIQ",       blurb: "Tariff exposure & savings",       accent: "#05CFAB" },
-  { key: "readinessiq",    name: "ReadinessIQ",    blurb: "Operational readiness",           accent: "#2D1594" },
-  { key: "uxiq",           name: "UXIQ",           blurb: "Digital experience maturity",     accent: "#5aa9c9" },
-  { key: "techservicesiq", name: "TechServicesIQ", blurb: "Technology services capability",  accent: "#e8b64a" },
+  { key: "tariffiq",      name: "TariffIQ",       blurb: "Tariff exposure & savings",     accent: "#05CFAB" },
+  { key: "gtmiq",         name: "GTMIQ",          blurb: "Market entry readiness",        accent: "#a78bfa" },
+  { key: "salesiq",       name: "SalesIQ",        blurb: "Enterprise sales readiness",    accent: "#e8b64a" },
+  { key: "productiq",     name: "ProductIQ",      blurb: "Productization & scale",        accent: "#60a5fa" },
+  { key: "aitransformiq", name: "AITransformIQ",  blurb: "AI transformation readiness",   accent: "#fb7185" },
+  { key: "uxiq",          name: "UXIQ",           blurb: "Digital experience maturity",   accent: "#5aa9c9" },
 ];
 
 function AuthPage() {

@@ -14,6 +14,8 @@ import { ACCENT, IQ_PRODUCTS, type Accent, type IQProduct } from "@/lib/iq-catal
 import { SampleReportShowcase } from "@/components/home/SampleReportShowcase";
 import { MaturityLadder } from "@/components/home/MaturityLadder";
 import { DiagnosticApproach } from "@/components/home/DiagnosticApproach";
+import { CanRule } from "@/components/CanRule";
+
 
 
 
@@ -104,10 +106,13 @@ function Index() {
           <SampleReportShowcase />
           <MaturityLadder />
 
+          <CanRule seed="hub-home-mid" className="mt-16" accentHex="#a78bfa" />
+
           <TrustMarquee />
 
           <Pricing />
           <FinalCTA />
+
         </main>
 
         <Footer />
@@ -373,6 +378,15 @@ function HeroTile() {
                 14-day money-back guarantee · Cancel anytime
               </span>
             </div>
+            <p className="mt-4 border-t border-white/10 pt-3 text-[13px] text-white/60">
+              <span className="font-bold text-white/85" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                CANsulting when you can.
+              </span>{" "}
+              <span className="font-bold text-[#4ade80]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                Consulting when you can&#39;t.
+              </span>
+            </p>
+
 
           </div>
         </div>
@@ -755,7 +769,9 @@ function Pricing() {
         <p className="mt-4 text-white/55">
           Buy a single assessment when you need one number. Subscribe when you want all six IQs, the composite GEM.IQ report, and re-assessment over time.
         </p>
+        <CanRule seed="pricing-section" variant="inline" className="mt-4" />
       </div>
+
 
       <div className="mt-10 grid gap-4 md:grid-cols-2 max-w-4xl mx-auto items-stretch">
         {/* Single assessment */}
@@ -918,6 +934,8 @@ function FinalCTA() {
               I already have an account
             </Link>
           </div>
+          <CanRule seed="final-cta" variant="inline" className="mt-6" accentHex="#a78bfa" />
+
         </div>
       </div>
     </section>
@@ -929,12 +947,18 @@ function Footer() {
     <footer className="relative z-10 border-t border-white/5 mt-8 py-10 text-white/60">
       <div className="mx-auto max-w-7xl px-6 md:px-10">
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <img src={gemLogo.url} alt="GEM" className="h-8 w-auto opacity-90" />
-            <span className="font-display text-lg font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              GEM.IQ Hub
-            </span>
+          <div className="flex flex-col items-center gap-2 md:items-start">
+            <div className="flex items-center gap-3">
+              <img src={gemLogo.url} alt="GEM" className="h-8 w-auto opacity-90" />
+              <span className="font-display text-lg font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                GEM.IQ Hub
+              </span>
+            </div>
+            <p className="text-xs text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              CANsulting when you can. <span className="text-[#4ade80]">Consulting when you can&#39;t.</span>
+            </p>
           </div>
+
           <div className="flex flex-wrap justify-center gap-6 text-xs text-white/40">
             <a href="mailto:info@globaledgemarkets.com" className="hover:text-white">info@globaledgemarkets.com</a>
             <a href="https://globaledgemarkets.com" target="_blank" rel="noreferrer" className="hover:text-white">globaledgemarkets.com</a>

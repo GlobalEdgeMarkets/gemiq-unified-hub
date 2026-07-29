@@ -106,10 +106,13 @@ function Index() {
           <SampleReportShowcase />
           <MaturityLadder />
 
+          <CanRule seed="hub-home-mid" className="mt-16" accentHex="#a78bfa" />
+
           <TrustMarquee />
 
           <Pricing />
           <FinalCTA />
+
         </main>
 
         <Footer />
@@ -375,6 +378,15 @@ function HeroTile() {
                 14-day money-back guarantee · Cancel anytime
               </span>
             </div>
+            <p className="mt-4 border-t border-white/10 pt-3 text-[13px] text-white/60">
+              <span className="font-bold text-white/85" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                CANsulting when you can.
+              </span>{" "}
+              <span className="font-bold text-[#4ade80]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                Consulting when you can&#39;t.
+              </span>
+            </p>
+
 
           </div>
         </div>

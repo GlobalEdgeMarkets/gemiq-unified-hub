@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ReadinessiqRouteImport } from './routes/readinessiq'
 import { Route as OnboardRouteImport } from './routes/onboard'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as DocsRouteImport } from './routes/docs'
@@ -17,6 +18,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReadinessiqSplatRouteImport } from './routes/readinessiq.$'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ApiPublicProfileRouteImport } from './routes/api/public/profile'
@@ -42,6 +44,11 @@ import { Route as ApiPublicAdminBootstrapHubspotSchemaRouteImport } from './rout
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReadinessiqRoute = ReadinessiqRouteImport.update({
+  id: '/readinessiq',
+  path: '/readinessiq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardRoute = OnboardRouteImport.update({
@@ -78,6 +85,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ReadinessiqSplatRoute = ReadinessiqSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => ReadinessiqRoute,
 } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
@@ -208,9 +220,11 @@ export interface FileRoutesByFullPath {
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/onboard': typeof OnboardRoute
+  '/readinessiq': typeof ReadinessiqRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -239,9 +253,11 @@ export interface FileRoutesByTo {
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/onboard': typeof OnboardRoute
+  '/readinessiq': typeof ReadinessiqRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -271,9 +287,11 @@ export interface FileRoutesById {
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/onboard': typeof OnboardRoute
+  '/readinessiq': typeof ReadinessiqRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -304,9 +322,11 @@ export interface FileRouteTypes {
     | '/docs'
     | '/mcp'
     | '/onboard'
+    | '/readinessiq'
     | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/readinessiq/$'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
@@ -335,9 +355,11 @@ export interface FileRouteTypes {
     | '/docs'
     | '/mcp'
     | '/onboard'
+    | '/readinessiq'
     | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/readinessiq/$'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
@@ -366,9 +388,11 @@ export interface FileRouteTypes {
     | '/docs'
     | '/mcp'
     | '/onboard'
+    | '/readinessiq'
     | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/readinessiq/$'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
@@ -398,6 +422,7 @@ export interface RootRouteChildren {
   DocsRoute: typeof DocsRoute
   McpRoute: typeof McpRoute
   OnboardRoute: typeof OnboardRoute
+  ReadinessiqRoute: typeof ReadinessiqRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -429,6 +454,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/readinessiq': {
+      id: '/readinessiq'
+      path: '/readinessiq'
+      fullPath: '/readinessiq'
+      preLoaderRoute: typeof ReadinessiqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboard': {
@@ -479,6 +511,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/readinessiq/$': {
+      id: '/readinessiq/$'
+      path: '/$'
+      fullPath: '/readinessiq/$'
+      preLoaderRoute: typeof ReadinessiqSplatRouteImport
+      parentRoute: typeof ReadinessiqRoute
     }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
@@ -630,6 +669,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ReadinessiqRouteChildren {
+  ReadinessiqSplatRoute: typeof ReadinessiqSplatRoute
+}
+
+const ReadinessiqRouteChildren: ReadinessiqRouteChildren = {
+  ReadinessiqSplatRoute: ReadinessiqSplatRoute,
+}
+
+const ReadinessiqRouteWithChildren = ReadinessiqRoute._addFileChildren(
+  ReadinessiqRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -638,6 +689,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocsRoute: DocsRoute,
   McpRoute: McpRoute,
   OnboardRoute: OnboardRoute,
+  ReadinessiqRoute: ReadinessiqRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:

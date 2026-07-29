@@ -97,7 +97,8 @@ function AdminConsole() {
       try {
         const who = await whoami();
         if (cancelled) return;
-        setGate({ state: who.is_admin ? "ok" : "denied", email: who.email });
+        if (!who.signed_in) setGate({ state: "anon" });
+        else setGate({ state: who.is_admin ? "ok" : "denied", email: who.email });
       } catch {
         if (!cancelled) setGate({ state: "anon" });
       }

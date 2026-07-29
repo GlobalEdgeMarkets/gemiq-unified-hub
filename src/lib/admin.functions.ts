@@ -6,11 +6,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireHubAdmin } from "@/lib/hub/admin/middleware";
 import { z } from "zod";
 
-export const adminWhoami = createServerFn({ method: "GET" })
-  .middleware([requireHubAdmin])
-  .handler(async ({ context }) => {
-    return { email: context.hubAdmin.email, is_admin: context.hubAdmin.isAdmin };
-  });
+// Never throws: anonymous callers get a signed-out payload so /admin can render
+// its sign-in state instead of crashing with an unhandled 401.
+export const adminWhoami = createServerFn({ method: "GET" }).handler(async () => {
+  const { resolveHubAdmin } = await import("@/lib/hub/admin/middleware");
+  const hubAdmin = await resolveHubAdmin();
+  return {
+    signed_in: !!hubAdmin,
+    email: hubAdmin?.email ?? null,
+    is_admin: hubAdmin?.isAdmin ?? false,
+  };
+});
 
 export const adminBootstrapHubspot = createServerFn({ method: "POST" })
   .middleware([requireHubAdmin])

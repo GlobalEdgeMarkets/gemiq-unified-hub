@@ -753,6 +753,34 @@ function TrustMarquee() {
     </section>
   );
 }
+type PlanTerm = "monthly" | "quarterly" | "annual";
+
+const PLAN_TERMS: { key: PlanTerm; label: string }[] = [
+  { key: "monthly", label: "Monthly" },
+  { key: "quarterly", label: "Quarterly · save 6%" },
+  { key: "annual", label: "Annual · 2 months free" },
+];
+
+const PLAN_TERM_MAP: Record<PlanTerm, { price: string; unit: string; effective?: string; note: string }> = {
+  monthly: {
+    price: "$99",
+    unit: "/ month",
+    note: "Cancel anytime from the billing portal.",
+  },
+  quarterly: {
+    price: "$279",
+    unit: "/ quarter",
+    effective: "≈ $93 / mo",
+    note: "Matches the re-assessment cadence — one quarter is long enough to move a tier.",
+  },
+  annual: {
+    price: "$990",
+    unit: "/ year",
+    effective: "≈ $83 / mo",
+    note: "Track progress for a full year — best for teams benchmarking every quarter.",
+  },
+};
+
 
 function Pricing() {
   const [interval, setInterval] = useState<"monthly" | "quarterly" | "annual">("quarterly");

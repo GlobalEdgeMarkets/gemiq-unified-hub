@@ -24,8 +24,16 @@ export const CANONICAL_SLOGAN: Slogan = {
   sub: "Diagnose yourself first. Bring in senior hands where the map says you need them.",
 };
 
+/** The growth-path line — diagnostic first, senior engagement as you scale. */
+export const SCALE_SLOGAN: Slogan = {
+  lead: "Start with CANsulting.",
+  accent: "Scale with consulting.",
+  sub: "Diagnose in ten minutes, then bring in senior hands where the map says it pays.",
+};
+
 export const CANSULTING_SLOGANS: Slogan[] = [
   CANONICAL_SLOGAN,
+  SCALE_SLOGAN,
   {
     lead: "You CAN measure it.",
     accent: "We can fix it with you.",

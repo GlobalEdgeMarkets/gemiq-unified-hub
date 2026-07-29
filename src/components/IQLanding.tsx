@@ -21,8 +21,12 @@ export function IQLanding({ product }: { product: IQProduct }) {
       {/* Nav */}
       <header className="border-b border-white/10 bg-[#0a0a16]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
-          <Link to="/" className="flex items-center gap-3">
-            <img src={gemLogo.url} alt="GEM.IQ" className="h-8 w-auto" />
+          <Link to="/" aria-label={`GEM.IQ — ${product.name}`} className="flex items-center gap-3">
+            <img src={gemLogo.url} alt="GEM" className="h-8 w-auto" />
+            <span aria-hidden className="h-6 w-px bg-white/20" />
+            <span className="text-lg font-bold tracking-tight text-white" style={DISPLAY}>
+              {product.name}
+            </span>
           </Link>
           <div className="flex items-center gap-3">
             <Link to="/auth" search={{ mode: "signin" }} className="text-sm font-semibold text-white/70 hover:text-white" style={DISPLAY}>

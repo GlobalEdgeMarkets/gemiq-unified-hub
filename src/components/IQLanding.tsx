@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
 import { ReportPreview } from "@/components/iq/ReportPreview";
 import { ACCENT, IQ_PRODUCTS, type IQProduct } from "@/lib/iq-catalog";
+import { CanRule } from "@/components/CanRule";
+
 
 
 function ArrowIcon({ className = "" }: { className?: string }) {

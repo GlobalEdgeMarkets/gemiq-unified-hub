@@ -301,6 +301,13 @@ const IQ_PRODUCTS_UNORDERED: IQProduct[] = [
   },
 ];
 
+/** Display order across the site: GTM, Sales, Product, AITransform, UX, Tariff. */
+const DISPLAY_ORDER = ["gtmiq", "salesiq", "productiq", "aitransformiq", "uxiq", "tariffiq"];
+
+export const IQ_PRODUCTS: IQProduct[] = [...IQ_PRODUCTS_UNORDERED].sort(
+  (a, b) => DISPLAY_ORDER.indexOf(a.key) - DISPLAY_ORDER.indexOf(b.key),
+);
+
 export const IQ_BY_PATH = Object.fromEntries(
   IQ_PRODUCTS.map((p) => [p.path, p]),
 ) as Record<string, IQProduct>;

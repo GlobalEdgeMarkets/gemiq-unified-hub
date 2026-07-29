@@ -122,10 +122,40 @@ export interface HubManifest {
 export interface HubClientOptions {
   /** Origin of the GEM.IQ Hub, e.g. "https://gemiq.globaledgemarkets.com". */
   hubOrigin: string;
+  /**
+   * Automatically poll the Hub manifest in the browser and apply brand tokens
+   * (colors, fonts, logo URLs) to the document — no per-IQ wiring required.
+   * Defaults to `true`. Set `false` to opt out, or pass options to tune it.
+   */
+  autoSync?: boolean | { intervalMs?: number; applyBrand?: boolean; onChange?: (m: HubManifest) => void };
+}
+
+/**
+ * Apply Hub brand tokens to the document, idempotently:
+ *  - CSS variables `--gem-mint`, `--gem-navy`, ... on :root
+ *  - `--gem-font-heading` / `--gem-font-body`
+ *  - every `<img data-gem-logo>` / `<img data-gem-logo="light">` src
+ * Safe to call repeatedly; no-op outside the browser.
+ */
+export function applyHubBrand(manifest: HubManifest): void {
+  if (typeof document === "undefined" || !manifest?.brand) return;
+  const { colors, fonts, logos } = manifest.brand;
+  const root = document.documentElement;
+  for (const [k, v] of Object.entries(colors ?? {})) {
+    root.style.setProperty(`--gem-${k.replace(/_/g, "-")}`, v);
+  }
+  if (fonts?.heading) root.style.setProperty("--gem-font-heading", `"${fonts.heading}"`);
+  if (fonts?.body) root.style.setProperty("--gem-font-body", `"${fonts.body}"`);
+  document.querySelectorAll<HTMLImageElement>("img[data-gem-logo]").forEach((img) => {
+    const variant = (img.dataset.gemLogo || "standard").replace(/-/g, "_");
+    const url = logos?.[variant] ?? logos?.standard;
+    if (url && img.src !== url) img.src = url;
+  });
 }
 
 
 export function createHubClient(opts: HubClientOptions) {
+
   const base = opts.hubOrigin.replace(/\/$/, "");
   const req = async (path: string, init: RequestInit = {}) => {
     const res = await fetch(base + path, {
@@ -139,7 +169,8 @@ export function createHubClient(opts: HubClientOptions) {
     return body;
   };
 
-  return {
+  const client = {
+
     /** URL to send unauthenticated users to; returns to `returnTo` after auth. */
     loginUrl(returnTo: string, mode: "signin" | "signup" = "signin") {
       const u = new URL("/auth", base);
@@ -368,7 +399,33 @@ export function createHubClient(opts: HubClientOptions) {
     },
 
   };
+
+  // --- Automatic central sync -------------------------------------------
+  // Previously each IQ had to call `hub.manifest.watch(...)` itself, so in
+  // practice nobody did and central changes never propagated. It is now on
+  // by default: one poller per client, browser-only, self-healing.
+  const sync = opts.autoSync ?? true;
+  if (sync !== false && typeof window !== "undefined") {
+    const cfg = typeof sync === "object" ? sync : {};
+    client.manifest.watch({ intervalMs: cfg.intervalMs ?? 5 * 60_000 }, (next) => {
+      if (cfg.applyBrand !== false) applyHubBrand(next);
+      cfg.onChange?.(next);
+      window.dispatchEvent(new CustomEvent("gemiq:manifest", { detail: next }));
+    });
+    // Re-check as soon as the tab regains focus so a user never sits on a
+    // stale price/brand for up to a full interval.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        void client.manifest.get().then(({ manifest }) => {
+          if (manifest && cfg.applyBrand !== false) applyHubBrand(manifest);
+        }).catch(() => {});
+      }
+    });
+  }
+
+  return client;
 }
+
 
 /**
  * Type guard for the 402 `trial_limit_reached` error thrown by `results.submit`.

@@ -114,13 +114,15 @@ export const ASSESSMENT_KEY = "${key}";
 
 export const hub = createHubClient({
   hubOrigin: import.meta.env.VITE_HUB_ORIGIN || manifest.hub.origin,
+  // autoSync is ON by default: the SDK polls the Hub manifest every 5 min,
+  // re-checks on tab focus, and applies brand tokens automatically.
+  // Opt out with autoSync: false, or tune: { intervalMs, onChange }.
 });
 
-// Live brand + pricing sync (no rebuild needed)
-hub.manifest.watch({ intervalMs: 5 * 60_000 }, (next) => {
-  document.documentElement.style.setProperty("--gem-mint", next.brand.colors.mint);
-  document.documentElement.style.setProperty("--gem-navy", next.brand.colors.navy);
-});`,
+// Render logos from the Hub so central changes land with zero code:
+//   <img data-gem-logo="standard" alt="GEM" />
+//   <img data-gem-logo="light-white-mint" alt="GEM" />   (dark surfaces)`,
+
     [key],
   );
 

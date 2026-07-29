@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
+import { ReportPreview } from "@/components/iq/ReportPreview";
 import { ACCENT, IQ_PRODUCTS, type IQProduct } from "@/lib/iq-catalog";
+
 
 function ArrowIcon({ className = "" }: { className?: string }) {
   return (
@@ -87,7 +89,57 @@ export function IQLanding({ product }: { product: IQProduct }) {
       </section>
 
       <main className="mx-auto max-w-7xl px-6 pb-24 md:px-10 md:pb-32">
+        {/* Overview */}
+        <section className="mt-16 grid gap-10 md:mt-20 md:grid-cols-[1.6fr_1fr]">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl" style={DISPLAY}>
+              Why {product.name} exists
+            </h2>
+            <div className="mt-5 space-y-5">
+              {product.overview.map((para, i) => (
+                <p
+                  key={para.slice(0, 24)}
+                  className={i === 0 ? "text-base leading-relaxed text-white/80 md:text-[17px]" : "text-[15px] leading-relaxed text-white/60"}
+                >
+                  {para}
+                </p>
+              ))}
+            </div>
+          </div>
+          <aside className="h-fit rounded-3xl bg-white/[0.04] p-6 ring-1 ring-inset ring-white/[0.06] backdrop-blur-xl">
+            <div className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ ...DISPLAY, color: c.hex }}>
+              Built for
+            </div>
+            <ul className="mt-4 space-y-3">
+              {product.audience.map((a) => (
+                <li key={a} className="flex gap-3 text-sm text-white/75">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: c.hex }} />
+                  {a}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 border-t border-white/10 pt-5 text-xs text-white/50">
+              ~10 minutes · {product.dimensions.length} scored dimensions · report delivered immediately
+            </div>
+          </aside>
+        </section>
+
+        {/* Sample report */}
+        <section className="mt-16 md:mt-20">
+          <h2 className="text-2xl font-bold tracking-tight md:text-3xl" style={DISPLAY}>
+            Inside the {product.name} report
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-white/60">
+            A composite maturity score, every dimension ranked, and a spiderweb profile plotted against the
+            peer median — the same layout your own report uses.
+          </p>
+          <div className="mt-8">
+            <ReportPreview product={product} color={c.hex} />
+          </div>
+        </section>
+
         {/* Dimensions */}
+
         <section className="mt-16 md:mt-20">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl" style={DISPLAY}>
             What {product.name} scores

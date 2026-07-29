@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HubHeader } from "@/components/HubHeader";
 import { REGISTRY } from "@/lib/hub/assessments";
 import manifest from "@/lib/hub/manifest.json";
@@ -87,6 +87,13 @@ function Block({
   );
 }
 
+const SYNC_INTERVAL_MS = 5 * 60_000;
+
+function fmtCountdown(ms: number) {
+  const s = Math.max(0, Math.round(ms / 1000));
+  return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+}
+
 /**
  * Force-refresh the Hub manifest (and the brand tokens it carries) without
  * waiting for the SDK's 5-minute poller. Purely a client-side re-fetch.
@@ -94,24 +101,60 @@ function Block({
 function SyncNowPanel() {
   const [state, setState] = useState<"idle" | "syncing" | "done" | "error">("idle");
   const [info, setInfo] = useState<{ version: string; servedAt: string } | null>(null);
+  const [lastSyncAt, setLastSyncAt] = useState<number | null>(null);
+  const [autoOn, setAutoOn] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+
+  const pull = async () => {
+    const res = await fetch(`/api/public/manifest?t=${Date.now()}`, {
+      cache: "no-store",
+      headers: { "cache-control": "no-cache" },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const next = (await res.json()) as HubManifest & { served_at?: string };
+    applyHubBrand(next);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("gemiq:manifest", { detail: next }));
+    }
+    setInfo({
+      version: next.version,
+      servedAt: new Date(next.served_at ?? Date.now()).toLocaleTimeString(),
+    });
+    setLastSyncAt(Date.now());
+  };
+
+  // Timer sync, mirroring the SDK's autoSync poller: same interval, same
+  // re-check on tab focus. Running it here is what the status below reports.
+  useEffect(() => {
+    let cancelled = false;
+    const tick = () => {
+      void pull().catch(() => {
+        if (!cancelled) setState((s) => (s === "syncing" ? s : "error"));
+      });
+    };
+    tick();
+    setAutoOn(true);
+    const poll = window.setInterval(tick, SYNC_INTERVAL_MS);
+    const clock = window.setInterval(() => setNow(Date.now()), 1000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") tick();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      setAutoOn(false);
+      window.clearInterval(poll);
+      window.clearInterval(clock);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+
+  const nextSyncIn = lastSyncAt ? lastSyncAt + SYNC_INTERVAL_MS - now : null;
 
   const syncNow = async () => {
     setState("syncing");
     try {
-      const res = await fetch(`/api/public/manifest?t=${Date.now()}`, {
-        cache: "no-store",
-        headers: { "cache-control": "no-cache" },
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const next = (await res.json()) as HubManifest & { served_at?: string };
-      applyHubBrand(next);
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("gemiq:manifest", { detail: next }));
-      }
-      setInfo({
-        version: next.version,
-        servedAt: new Date(next.served_at ?? Date.now()).toLocaleTimeString(),
-      });
+      await pull();
       setState("done");
     } catch {
       setState("error");
@@ -127,6 +170,37 @@ function SyncNowPanel() {
             Pulls the latest manifest and re-applies brand tokens immediately, instead of
             waiting for the SDK&apos;s 5-minute poller.
           </p>
+          <p className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-300">
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-semibold ${
+                autoOn
+                  ? "border-gem-mint/40 bg-gem-mint/10 text-gem-mint"
+                  : "border-white/15 bg-white/5 text-slate-300"
+              }`}
+            >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${autoOn ? "animate-pulse bg-gem-mint" : "bg-slate-400"}`}
+              />
+              Auto-sync {autoOn ? "running" : "stopped"}
+            </span>
+            <span>every 5 min + on tab focus</span>
+            {lastSyncAt && (
+              <>
+                <span>
+                  · last sync{" "}
+                  <span className="font-mono text-slate-200">
+                    {new Date(lastSyncAt).toLocaleTimeString()}
+                  </span>
+                </span>
+                <span>
+                  · next in{" "}
+                  <span className="font-mono text-gem-mint">
+                    {fmtCountdown(nextSyncIn ?? 0)}
+                  </span>
+                </span>
+              </>
+            )}
+          </p>
           <p className="mt-2 text-xs text-slate-400">
             Bundled manifest: <span className="font-mono text-slate-200">v{manifest.version}</span>
             {info && (
@@ -138,6 +212,7 @@ function SyncNowPanel() {
             {state === "error" && <span className="ml-2 text-red-400">Sync failed — retry.</span>}
           </p>
         </div>
+
         <div className="flex items-center gap-2">
           <button
             type="button"

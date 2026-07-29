@@ -11,6 +11,9 @@ import themeStartups from "@/assets/theme-startups.jpg";
 import themeAi from "@/assets/theme-ai.jpg";
 import themeManagement from "@/assets/theme-management.jpg";
 import { ACCENT, IQ_PRODUCTS, type Accent, type IQProduct } from "@/lib/iq-catalog";
+import { SampleReportShowcase } from "@/components/home/SampleReportShowcase";
+import { MaturityLadder } from "@/components/home/MaturityLadder";
+
 
 
 const HERO_ROTATION: { src: string; label: string }[] = [
@@ -94,7 +97,10 @@ function Index() {
         <main className="mx-auto max-w-7xl px-6 pb-24 pt-4 md:px-10 md:pb-32">
           <HeroBento />
           <IntelligenceStrip />
+          <SampleReportShowcase />
+          <MaturityLadder />
           <TrustMarquee />
+
           <Pricing />
           <FinalCTA />
         </main>

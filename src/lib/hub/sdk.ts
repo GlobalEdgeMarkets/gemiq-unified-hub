@@ -58,8 +58,13 @@ export interface CheckStatus {
   trialing?: boolean;
   /** True when the trial's free-assessment quota has been consumed. */
   trial_exhausted?: boolean;
+  /** Unconsumed one-time assessment credits ($179 purchases). */
+  credits_available?: number;
+  /** True when the user can run one more assessment right now (sub, trial, or credit). */
+  entitled?: boolean;
   user?: HubUser;
   subscription: HubSubscription | null;
+
 }
 
 export interface HubProfile {
@@ -196,6 +201,27 @@ export function createHubClient(opts: HubClientOptions) {
             success_url: opts.successUrl,
             cancel_url: opts.cancelUrl,
             ...(opts.trial ? { trial: true } : {}),
+          }),
+        });
+        if (typeof window === "undefined") return { url };
+        window.location.href = url;
+        return { url };
+      },
+
+      /**
+       * One-time $179 purchase covering a single assessment (any IQ).
+       * Redirects to Stripe Checkout in `payment` mode — no subscription.
+       */
+      buySingleAssessment: async function (
+        opts: { successUrl: string; cancelUrl: string; assessmentKey?: string },
+      ) {
+        const { url } = await req("/api/public/billing/create-checkout", {
+          method: "POST",
+          body: JSON.stringify({
+            lookup_key: "gemiq_single_assessment",
+            success_url: opts.successUrl,
+            cancel_url: opts.cancelUrl,
+            ...(opts.assessmentKey ? { assessment_key: opts.assessmentKey } : {}),
           }),
         });
         if (typeof window === "undefined") return { url };

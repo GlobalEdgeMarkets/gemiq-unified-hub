@@ -24,7 +24,10 @@ const searchSchema = z.object({
   trial: z.string().optional(),
   /** Which plan the trial should convert to. Defaults to monthly. */
   plan: z.enum(["monthly", "annual"]).optional(),
+  /** "single" when arriving from the one-time $179 CTA. Starts payment checkout. */
+  buy: z.enum(["single"]).optional(),
 });
+
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
@@ -103,6 +106,23 @@ function AuthPage() {
         setErr("Account created but no session — please check your email to confirm, then sign in.");
         setMode("signin");
         return;
+      }
+      // One-time purchase intent from landing: $179 single assessment.
+      if (search.buy === "single" && !safeReturn) {
+        try {
+          const co = await fetch("/api/public/billing/create-checkout", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              lookup_key: "gemiq_single_assessment",
+              success_url: `${window.location.origin}/dashboard?purchase=1`,
+              cancel_url: window.location.href,
+            }),
+          });
+          const cob = await co.json();
+          if (co.ok && cob.url) { window.location.href = cob.url; return; }
+        } catch (e) { /* fall through */ }
       }
       // Trial intent from landing: start Stripe checkout with a 7-day trial.
       // Only when there's no IQ redirect — an IQ handles its own checkout.

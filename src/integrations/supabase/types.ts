@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      assessment_credits: {
+        Row: {
+          amount_total: number | null
+          consumed_assessment_key: string | null
+          consumed_at: string | null
+          consumed_submission_id: string | null
+          created_at: string
+          currency: string | null
+          email: string
+          id: string
+          lookup_key: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount_total?: number | null
+          consumed_assessment_key?: string | null
+          consumed_at?: string | null
+          consumed_submission_id?: string | null
+          created_at?: string
+          currency?: string | null
+          email: string
+          id?: string
+          lookup_key?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount_total?: number | null
+          consumed_assessment_key?: string | null
+          consumed_at?: string | null
+          consumed_submission_id?: string | null
+          created_at?: string
+          currency?: string | null
+          email?: string
+          id?: string
+          lookup_key?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company: string | null

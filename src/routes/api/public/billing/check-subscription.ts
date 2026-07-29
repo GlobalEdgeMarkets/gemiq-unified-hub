@@ -46,14 +46,25 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
         const trialing = data?.status === "trialing";
         const trialExhausted = trialing
           && (data?.trial_assessments_used ?? 0) >= (data?.trial_assessment_limit ?? 1);
+
+        // One-time $179 purchases each cover a single assessment.
+        const { count: creditsAvailable } = await svc
+          .from("assessment_credits")
+          .select("id", { count: "exact", head: true })
+          .is("consumed_at", null)
+          .or(`user_id.eq.${user.id},email.eq.${(user.email ?? "").toLowerCase()}`);
+
         return json({
           authenticated: true,
           active,
           trialing,
           trial_exhausted: trialExhausted,
+          credits_available: creditsAvailable ?? 0,
+          entitled: active ? !trialExhausted : (creditsAvailable ?? 0) > 0,
           subscription: data ?? null,
           user: { id: user.id, email: user.email },
         }, undefined, request);
+
       },
     },
   },

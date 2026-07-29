@@ -23,6 +23,29 @@ export const Route = createFileRoute("/api/public/billing/payments-webhook")({
           switch (event.type) {
             case "checkout.session.completed": {
               const s = event.data.object as Stripe.Checkout.Session;
+
+              // One-time single-assessment purchase → grant one assessment credit.
+              if (s.mode === "payment") {
+                if (s.metadata?.kind !== "single_assessment" || s.payment_status !== "paid") {
+                  console.log("[stripe webhook] ignored non-gemiq event", event.type, event.id);
+                  break;
+                }
+                const { createHubServiceClient } = await import("@/lib/hub/supabase-server");
+                const svc = createHubServiceClient();
+                const email = (s.customer_details?.email ?? s.customer_email ?? "").toLowerCase();
+                const { error } = await svc.from("assessment_credits").upsert({
+                  user_id: (s.metadata?.supabase_user_id as string | undefined) ?? s.client_reference_id ?? null,
+                  email,
+                  stripe_session_id: s.id,
+                  stripe_payment_intent_id: (s.payment_intent as string | null) ?? null,
+                  amount_total: s.amount_total ?? null,
+                  currency: s.currency ?? null,
+                  lookup_key: (s.metadata?.lookup_key as string | undefined) ?? null,
+                }, { onConflict: "stripe_session_id" });
+                if (error) throw error;
+                break;
+              }
+
               // Only subscription-mode checkouts owned by the hub.
               const ownedByHub =
                 s.mode === "subscription" &&
@@ -31,6 +54,7 @@ export const Route = createFileRoute("/api/public/billing/payments-webhook")({
                 console.log("[stripe webhook] ignored non-gemiq event", event.type, event.id);
                 break;
               }
+
               const sub = await stripe().subscriptions.retrieve(s.subscription as string);
               // Backfill metadata on the sub so later events pass isHubSubscription.
               const patch: Record<string, string> = {};

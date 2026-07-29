@@ -1,6 +1,6 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.1.0",
+  "version": "1.4.0",
   "updated_at": "2026-07-29",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
@@ -68,10 +68,12 @@
     ]
   },
   "assessments": [
-    { "key": "tariffiq",        "name": "TariffIQ",        "url": "https://tariffiq.globaledgemarkets.com" },
-    { "key": "readinessiq",     "name": "ReadinessIQ",     "url": "https://readinessiq.globaledgemarkets.com" },
-    { "key": "uxiq",            "name": "UXIQ",            "url": "https://uxiq.globaledgemarkets.com" },
-    { "key": "techservicesiq",  "name": "TechServicesIQ",  "url": "https://techservicesiq.globaledgemarkets.com" }
+    { "key": "gtmiq",         "name": "GTMIQ",         "url": "https://gtmiq.globaledgemarkets.com" },
+    { "key": "salesiq",       "name": "SalesIQ",       "url": "https://salesiq.globaledgemarkets.com" },
+    { "key": "productiq",     "name": "ProductIQ",     "url": "https://productiq.globaledgemarkets.com" },
+    { "key": "aitransformiq", "name": "AITransformIQ", "url": "https://aitransformiq.globaledgemarkets.com" },
+    { "key": "uxiq",          "name": "UXIQ",          "url": "https://uxreadiness.globaledgemarkets.com" },
+    { "key": "tariffiq",      "name": "TariffIQ",      "url": "https://tariffiq.globaledgemarkets.com" }
   ],
   "deep_links": {
     "signup_trial_monthly": "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=monthly",

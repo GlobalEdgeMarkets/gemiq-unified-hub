@@ -234,7 +234,11 @@ export function IQLanding({ product }: { product: IQProduct }) {
         </section>
 
         {/* CTA */}
-        <section className="mt-16 rounded-3xl bg-gradient-to-br from-[#16213e]/70 to-[#0a0a16]/50 p-8 text-center ring-1 ring-inset ring-white/[0.06] md:mt-24 md:p-14">
+        <CanRule seed={product.key} className="mt-16 md:mt-24" accentHex={c.hex} />
+
+        {/* CTA */}
+        <section className="mt-6 rounded-3xl bg-gradient-to-br from-[#16213e]/70 to-[#0a0a16]/50 p-8 text-center ring-1 ring-inset ring-white/[0.06] md:p-14">
+
           <h2 className="text-2xl font-bold tracking-tight md:text-4xl" style={DISPLAY}>
             Start {product.name} free for 7 days.
           </h2>

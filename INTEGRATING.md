@@ -82,7 +82,7 @@ At the end of the assessment:
 ```ts
 await hub.results.submit({
   email: user.email,
-  assessment_key: "tariffiq", // or readinessiq / uxiq / techservicesiq
+  assessment_key: "gtmiq", // or salesiq / productiq / aitransformiq / uxiq / tariffiq
   score, tier, dimensions,
   detail: {
     // Anything IQ-specific — recommendations, sub-scores, verbatims, etc.

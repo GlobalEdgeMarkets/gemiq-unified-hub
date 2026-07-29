@@ -753,9 +753,37 @@ function TrustMarquee() {
     </section>
   );
 }
+type PlanTerm = "monthly" | "quarterly" | "annual";
+
+const PLAN_TERMS: { key: PlanTerm; label: string }[] = [
+  { key: "monthly", label: "Monthly" },
+  { key: "quarterly", label: "Quarterly · save 6%" },
+  { key: "annual", label: "Annual · 2 months free" },
+];
+
+const PLAN_TERM_MAP: Record<PlanTerm, { price: string; unit: string; effective?: string; note: string }> = {
+  monthly: {
+    price: "$99",
+    unit: "/ month",
+    note: "Cancel anytime from the billing portal.",
+  },
+  quarterly: {
+    price: "$279",
+    unit: "/ quarter",
+    effective: "≈ $93 / mo",
+    note: "Matches the re-assessment cadence — one quarter is long enough to move a tier.",
+  },
+  annual: {
+    price: "$990",
+    unit: "/ year",
+    effective: "≈ $83 / mo",
+    note: "Track progress for a full year — best for teams benchmarking every quarter.",
+  },
+};
+
 
 function Pricing() {
-  const [interval, setInterval] = useState<"monthly" | "annual">("monthly");
+  const [interval, setInterval] = useState<"monthly" | "quarterly" | "annual">("quarterly");
   return (
     <section id="pricing" className="mt-20 md:mt-28">
       <div className="text-center max-w-2xl mx-auto">
@@ -830,32 +858,34 @@ function Pricing() {
             </span>
           </div>
 
-          <div className="relative z-10 mt-5 inline-flex rounded-full border border-white/10 bg-white/5 p-1 text-xs font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            {(["monthly", "annual"] as const).map((k) => (
+          <div className="relative z-10 mt-5 inline-flex flex-wrap rounded-full border border-white/10 bg-white/5 p-1 text-xs font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            {PLAN_TERMS.map((t) => (
               <button
-                key={k}
+                key={t.key}
                 type="button"
-                onClick={() => setInterval(k)}
+                onClick={() => setInterval(t.key)}
                 className={`rounded-full px-4 py-1.5 transition-colors ${
-                  interval === k ? "bg-[#4ade80] text-[#0a0a16]" : "text-white/60 hover:text-white"
+                  interval === t.key ? "bg-[#4ade80] text-[#0a0a16]" : "text-white/60 hover:text-white"
                 }`}
               >
-                {k === "monthly" ? "Monthly" : "Annual · 2 months free"}
+                {t.label}
               </button>
             ))}
           </div>
 
           <div className="relative z-10 mt-5 flex items-baseline gap-2">
             <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              {interval === "monthly" ? "$99" : "$990"}
+              {PLAN_TERM_MAP[interval].price}
             </div>
-            <div className="text-white/50">{interval === "monthly" ? "/ month" : "/ year"}</div>
+            <div className="text-white/50">{PLAN_TERM_MAP[interval].unit}</div>
+            {PLAN_TERM_MAP[interval].effective && (
+              <div className="text-xs text-white/40">{PLAN_TERM_MAP[interval].effective}</div>
+            )}
           </div>
           <p className="relative z-10 mt-2 text-xs text-white/45">
-            {interval === "monthly"
-              ? "Cancel anytime from the billing portal."
-              : "Track progress for a full year — best for quarterly benchmarking teams."}
+            {PLAN_TERM_MAP[interval].note}
           </p>
+
 
           <ul className="relative z-10 mt-6 space-y-3 text-sm text-white/70">
             {[

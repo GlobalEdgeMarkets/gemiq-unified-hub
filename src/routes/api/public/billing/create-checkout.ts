@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHubSupabaseSSR } from "@/lib/hub/supabase-server";
-import { stripe, priceByLookupKey, ensureSingleAssessmentPrice, SINGLE_ASSESSMENT_LOOKUP_KEY } from "@/lib/hub/stripe";
+import { stripe, priceByLookupKey, ensureSingleAssessmentPrice, ensureQuarterlyPrice, SINGLE_ASSESSMENT_LOOKUP_KEY, QUARTERLY_LOOKUP_KEY } from "@/lib/hub/stripe";
 import { json, corsHeaders } from "@/lib/hub/http";
 import { z } from "zod";
 
@@ -31,7 +31,9 @@ export const Route = createFileRoute("/api/public/billing/create-checkout")({
         const oneTime = parsed.data.lookup_key === SINGLE_ASSESSMENT_LOOKUP_KEY;
         const price = oneTime
           ? await ensureSingleAssessmentPrice()
-          : await priceByLookupKey(parsed.data.lookup_key);
+          : parsed.data.lookup_key === QUARTERLY_LOOKUP_KEY
+            ? await ensureQuarterlyPrice()
+            : await priceByLookupKey(parsed.data.lookup_key);
         const s = stripe();
 
         // find or create customer

@@ -31,7 +31,7 @@ export function RadarChart({ labels, values, benchmark, color, size = 460 }: Pro
       .join(" ");
 
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} className="h-auto w-full" role="img" aria-label="Dimension score radar chart">
+    <svg viewBox={`-80 10 ${size + 160} ${size - 20}`} className="h-auto w-full" role="img" aria-label="Dimension score radar chart">
       {[0.2, 0.4, 0.6, 0.8, 1].map((f) => (
         <polygon key={f} points={ring(f)} fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1" />
       ))}

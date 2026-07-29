@@ -131,16 +131,17 @@ function TrialBanner() {
           New
         </span>
         <span className="text-xs md:text-sm font-semibold text-white/95">
-          <span className="text-[#4ade80] font-bold">7-day free trial</span>
+          <span className="text-[#4ade80] font-bold">$179 single assessment</span>
           <span className="mx-2 text-white/40">·</span>
-          <span>1 free assessment across any GEM.IQ</span>
+          <span>or all six IQs for $99/mo</span>
           <span className="mx-2 text-white/40">·</span>
-          <span className="text-white/70">Cancel anytime</span>
+          <span className="text-white/70">14-day money-back guarantee</span>
         </span>
         <span className="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-bold text-white group-hover:bg-white group-hover:text-[#0a0a16] transition-colors">
-          Start 7-day free trial
+          See pricing
           <ArrowIcon className="h-3 w-3" />
         </span>
+
       </Link>
     </div>
   );

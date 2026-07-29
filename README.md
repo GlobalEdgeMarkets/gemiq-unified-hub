@@ -1,9 +1,13 @@
 # GEM.IQ Hub
 
-The central identity, billing, and HubSpot-write service for every GEM.IQ
-assessment (TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ, and future IQs).
+The central identity, billing, and HubSpot-write service for the six GEM.IQ
+capability assessments: GTMIQ, SalesIQ, ProductIQ, AITransformIQ, UXIQ, TariffIQ.
+
+Start here: [`PLAYBOOK.md`](./PLAYBOOK.md) — the v1.4 source of truth for the
+product set, the 8–9 dimension standard, the canonical 5-tier model, and pricing.
 
 Live: https://gemiq.globaledgemarkets.com
+
 
 ## What lives here
 

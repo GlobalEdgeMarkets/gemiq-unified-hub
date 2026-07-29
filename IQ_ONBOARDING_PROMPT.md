@@ -31,8 +31,8 @@ IQ prefers to paste the SDK once and update on request.
 ## How to run onboarding inside a Lovable IQ project
 
 Open the IQ project's chat and paste the prompt below, replacing
-`<ASSESSMENT_KEY>` with the registered key (`tariffiq`, `readinessiq`, `uxiq`,
-`techservicesiq`, `gtmiq`, `salesiq`, `productiq`, `aitransformiq`).
+`<ASSESSMENT_KEY>` with the registered key (`gtmiq`, `salesiq`, `productiq`,
+`aitransformiq`, `uxiq`, `tariffiq`).
 
 The agent in that project has a sandbox shell, so it can run the init script
 itself — you don't need one.

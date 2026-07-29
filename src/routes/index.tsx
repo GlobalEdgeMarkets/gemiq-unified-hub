@@ -725,6 +725,7 @@ function TrustMarquee() {
 }
 
 function Pricing() {
+  const [interval, setInterval] = useState<"monthly" | "annual">("monthly");
   return (
     <section id="pricing" className="mt-20 md:mt-28">
       <div className="text-center max-w-2xl mx-auto">
@@ -733,116 +734,141 @@ function Pricing() {
           Pricing
         </div>
         <h2 className="mt-6 font-display text-4xl md:text-5xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-          One subscription. <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">Every assessment.</span>
+          One answer, or <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">the whole picture.</span>
         </h2>
         <p className="mt-4 text-white/55">
-          GEM.IQ Professional unlocks unlimited access, retake history, and executive-ready benchmarking across every IQ.
+          Buy a single assessment when you need one number. Subscribe when you want all six IQs, the composite GEM.IQ report, and re-assessment over time.
         </p>
       </div>
 
-      <div className="mt-10 grid gap-4 md:grid-cols-2 max-w-4xl mx-auto">
-        <PricingCard plan="Monthly" price="$99" unit="/ month" planKey="monthly" note="Cancel anytime from the billing portal." />
-        <PricingCard plan="Annual" price="$990" unit="/ year" planKey="annual" note="Two months on us — best for quarterly benchmarking teams." featured />
+      <div className="mt-10 grid gap-4 md:grid-cols-2 max-w-4xl mx-auto items-stretch">
+        {/* Single assessment */}
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl flex flex-col">
+          <div className="font-display text-xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            Single assessment
+          </div>
+          <p className="mt-1 text-sm text-white/50">One IQ, one report, no subscription.</p>
+          <div className="mt-6 flex items-baseline gap-2">
+            <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              $179
+            </div>
+            <div className="text-white/50">one-time</div>
+          </div>
+          <ul className="mt-6 space-y-3 text-sm text-white/70">
+            {[
+              "Any one IQ of your choice",
+              "Full dimension-level scoring and tier",
+              "Executive-ready PDF report",
+              "Credit applies to your first month if you upgrade",
+            ].map((line) => (
+              <li key={line} className="flex items-start gap-3">
+                <svg className="mt-0.5 h-4 w-4 shrink-0 text-white/40" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 10l4 4 8-8" />
+                </svg>
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-auto pt-8">
+            <Link
+              to="/auth"
+              search={{ mode: "signup" }}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-white/20"
+              style={{ fontFamily: "'League Spartan', sans-serif" }}
+            >
+              Buy one assessment
+              <ArrowIcon className="h-4 w-4" />
+            </Link>
+            <p className="mt-4 text-xs text-white/40">Pick your IQ at checkout. No recurring charge.</p>
+          </div>
+        </div>
+
+        {/* Full suite subscription */}
+        <div className="relative overflow-hidden rounded-3xl border border-[#4ade80]/40 bg-gradient-to-br from-[#16213e]/80 to-[#0a0a16]/60 p-8 backdrop-blur-xl shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)] flex flex-col">
+          <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#4ade80]/20 blur-3xl" />
+          <div className="relative z-10 flex items-center justify-between gap-3">
+            <div>
+              <div className="font-display text-xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                Full suite
+              </div>
+              <p className="mt-1 text-sm text-white/50">All six IQs plus the composite report.</p>
+            </div>
+            <span className="shrink-0 rounded-full bg-[#4ade80] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              Best value
+            </span>
+          </div>
+
+          <div className="relative z-10 mt-5 inline-flex rounded-full border border-white/10 bg-white/5 p-1 text-xs font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            {(["monthly", "annual"] as const).map((k) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => setInterval(k)}
+                className={`rounded-full px-4 py-1.5 transition-colors ${
+                  interval === k ? "bg-[#4ade80] text-[#0a0a16]" : "text-white/60 hover:text-white"
+                }`}
+              >
+                {k === "monthly" ? "Monthly" : "Annual · 2 months free"}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative z-10 mt-5 flex items-baseline gap-2">
+            <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              {interval === "monthly" ? "$99" : "$990"}
+            </div>
+            <div className="text-white/50">{interval === "monthly" ? "/ month" : "/ year"}</div>
+          </div>
+          <p className="relative z-10 mt-2 text-xs text-white/45">
+            {interval === "monthly"
+              ? "Cancel anytime from the billing portal."
+              : "Track progress for a full year — best for quarterly benchmarking teams."}
+          </p>
+
+          <ul className="relative z-10 mt-6 space-y-3 text-sm text-white/70">
+            {[
+              "Unlimited access to all six GEM.IQ assessments",
+              "Composite GEM.IQ report across every discipline",
+              "Re-assess quarterly with score-over-time tracking",
+              "Dimension-level benchmarks and executive PDFs",
+            ].map((line) => (
+              <li key={line} className="flex items-start gap-3">
+                <svg className="mt-0.5 h-4 w-4 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 10l4 4 8-8" />
+                </svg>
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="relative z-10 mt-auto pt-8">
+            <Link
+              to="/auth"
+              search={{ mode: "signup", trial: "1", plan: interval }}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-5 py-3 text-sm font-bold text-[#0a0a16] transition-all hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]"
+              style={{ fontFamily: "'League Spartan', sans-serif" }}
+            >
+              Start 7-day trial
+              <ArrowIcon className="h-4 w-4" />
+            </Link>
+            <p className="mt-4 text-xs text-white/40">Card required so access continues uninterrupted. Cancel before day 7 and you're not charged.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Guarantee trust line under both */}
+      <div className="mx-auto mt-6 flex max-w-4xl items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center">
+        <svg className="h-5 w-5 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10 1.5l6.5 2.6v5.2c0 4-2.8 7.6-6.5 8.7-3.7-1.1-6.5-4.7-6.5-8.7V4.1L10 1.5zm3.7 6.8a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z" />
+        </svg>
+        <p className="text-sm text-white/70">
+          <span className="font-bold text-white">14-day money-back guarantee</span> on both options — no questions asked.
+        </p>
       </div>
     </section>
   );
 }
 
-function PricingCard({
-  plan,
-  price,
-  unit,
-  note,
-  planKey,
-  featured,
-}: {
-  plan: string;
-  price: string;
-  unit: string;
-  note: string;
-  planKey: "monthly" | "annual";
-  featured?: boolean;
-}) {
-  return (
-    <div
-      className={`relative overflow-hidden rounded-3xl border p-8 backdrop-blur-xl flex flex-col ${
-        featured
-          ? "border-[#4ade80]/40 bg-gradient-to-br from-[#16213e]/80 to-[#0a0a16]/60 shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)]"
-          : "border-white/10 bg-white/5"
-      }`}
-    >
-      {featured && (
-        <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#4ade80]/20 blur-3xl" />
-      )}
-      <div className="relative z-10 flex items-center justify-between">
-        <div className="font-display text-xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-          {plan}
-        </div>
-        {featured && (
-          <span className="rounded-full bg-[#4ade80] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            Best value
-          </span>
-        )}
-      </div>
-      <div className="relative z-10 mt-6 flex items-baseline gap-2">
-        <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-          {price}
-        </div>
-        <div className="text-white/50">{unit}</div>
-      </div>
-      <div className="relative z-10 mt-4 flex items-center gap-2 rounded-lg border border-[#4ade80]/40 bg-[#4ade80]/10 px-3 py-2">
-        <svg className="h-4 w-4 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm3.7 6.3a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z"/></svg>
-        <span className="text-xs font-semibold text-white/90" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-          <span className="text-[#4ade80]">7-day free trial</span> with 1 free assessment
-        </span>
-      </div>
-      <ul className="relative z-10 mt-6 space-y-3 text-sm text-white/70">
-        {[
-          "Unlimited access to every GEM.IQ assessment",
-          "Full retake history and score-over-time tracking",
-          "Dimension-level benchmarks and executive PDFs",
-          "Priority HubSpot sync for your team",
-        ].map((line) => (
-          <li key={line} className="flex items-start gap-3">
-            <svg className="mt-0.5 h-4 w-4 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 10l4 4 8-8" />
-            </svg>
-            <span>{line}</span>
-          </li>
-        ))}
-      </ul>
-      <div className="relative z-10 mt-auto pt-8 space-y-2">
-        <Link
-          to="/auth"
-          search={{ mode: "signup", trial: "1", plan: planKey }}
-          className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-all ${
-            featured
-              ? "bg-gradient-to-r from-[#4ade80] to-[#a78bfa] text-[#0a0a16] hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]"
-              : "bg-[#4ade80] text-[#0a0a16] hover:bg-[#4ade80]/90"
-          }`}
-          style={{ fontFamily: "'League Spartan', sans-serif" }}
-        >
-          Start 7-day free trial
-          <ArrowIcon className="h-4 w-4" />
-        </Link>
-        <Link
-          to="/auth"
-          search={{ mode: "signup", plan: planKey }}
-          className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-all ${
-            featured
-              ? "border border-white/15 bg-white/5 hover:bg-white/10 text-white"
-              : "border border-white/20 bg-white/10 hover:bg-white/20"
-          }`}
-          style={{ fontFamily: "'League Spartan', sans-serif" }}
-        >
-          Or subscribe directly
-          <ArrowIcon className="h-4 w-4" />
-        </Link>
-        <p className="mt-4 text-xs text-white/40">{note}</p>
-      </div>
-    </div>
-  );
-}
 
 function FinalCTA() {
   return (

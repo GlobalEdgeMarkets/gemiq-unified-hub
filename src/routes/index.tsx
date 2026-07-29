@@ -769,7 +769,9 @@ function Pricing() {
         <p className="mt-4 text-white/55">
           Buy a single assessment when you need one number. Subscribe when you want all six IQs, the composite GEM.IQ report, and re-assessment over time.
         </p>
+        <CanRule seed="pricing-section" variant="inline" className="mt-4" />
       </div>
+
 
       <div className="mt-10 grid gap-4 md:grid-cols-2 max-w-4xl mx-auto items-stretch">
         {/* Single assessment */}
@@ -932,6 +934,8 @@ function FinalCTA() {
               I already have an account
             </Link>
           </div>
+          <CanRule seed="final-cta" variant="inline" className="mt-6" accentHex="#a78bfa" />
+
         </div>
       </div>
     </section>

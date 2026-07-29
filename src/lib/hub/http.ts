@@ -9,6 +9,10 @@ const ALLOWED_HOSTS = new Set([
   "readinessiq.globaledgemarkets.com",
   "uxiq.globaledgemarkets.com",
   "techservicesiq.globaledgemarkets.com",
+  "gtmiq.globaledgemarkets.com",
+  "salesiq.globaledgemarkets.com",
+  "productiq.globaledgemarkets.com",
+  "aitransformiq.globaledgemarkets.com",
   "globaledgemarkets.com",
   "www.globaledgemarkets.com",
 ]);

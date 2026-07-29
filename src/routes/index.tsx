@@ -10,6 +10,7 @@ import themeInvestments from "@/assets/theme-investments.jpg";
 import themeStartups from "@/assets/theme-startups.jpg";
 import themeAi from "@/assets/theme-ai.jpg";
 import themeManagement from "@/assets/theme-management.jpg";
+import { ACCENT, IQ_PRODUCTS, type Accent, type IQProduct } from "@/lib/iq-catalog";
 
 
 const HERO_ROTATION: { src: string; label: string }[] = [

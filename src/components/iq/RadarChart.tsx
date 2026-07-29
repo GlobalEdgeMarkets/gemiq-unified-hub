@@ -15,7 +15,7 @@ function polar(cx: number, cy: number, r: number, angle: number) {
 export function RadarChart({ labels, values, benchmark, color, size = 460 }: Props) {
   const cx = size / 2;
   const cy = size / 2;
-  const radius = size * 0.32;
+  const radius = size * 0.29;
   const n = labels.length;
   const step = (Math.PI * 2) / n;
   const start = -Math.PI / 2;
@@ -58,7 +58,7 @@ export function RadarChart({ labels, values, benchmark, color, size = 460 }: Pro
 
       {labels.map((l, i) => {
         const angle = start + i * step;
-        const [x, y] = polar(cx, cy, radius + 26, angle);
+        const [x, y] = polar(cx, cy, radius + 20, angle);
         const anchor = Math.abs(Math.cos(angle)) < 0.2 ? "middle" : Math.cos(angle) > 0 ? "start" : "end";
         const words = l.split(" ");
         const lines: string[] = [];

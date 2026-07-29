@@ -311,9 +311,9 @@ function HeroTile() {
             className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
-            GEM.IQ Hub — Decision-grade diagnostics when the{" "}
+            Make-or-break calls deserve more than{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">
-              stakes are the company.
+              a gut feel.
             </span>
           </h1>
           <p className="mt-5 text-base md:text-lg text-white/60 max-w-xl leading-relaxed">
@@ -322,6 +322,8 @@ function HeroTile() {
             independent dimensions and returns a gap map, not a vanity number. One identity, one subscription,
             one benchmarked view of where you actually stand.
           </p>
+          <CanRule slogan={SCALE_SLOGAN} variant="inline" className="mt-5" />
+
 
 
           {/* Rotating showcase */}

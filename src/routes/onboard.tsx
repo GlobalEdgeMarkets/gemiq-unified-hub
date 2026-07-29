@@ -222,7 +222,7 @@ Docs: ${HUB_ORIGIN}/docs`,
             Assessment key
           </label>
           <div className="mt-3 flex flex-wrap gap-2">
-            {REGISTRY.map((s) => (
+            {ONBOARDABLE.map((s) => (
               <button
                 key={s.key}
                 type="button"

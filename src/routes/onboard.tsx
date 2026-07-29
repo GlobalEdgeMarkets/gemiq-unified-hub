@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HubHeader } from "@/components/HubHeader";
 import { REGISTRY } from "@/lib/hub/assessments";
 import manifest from "@/lib/hub/manifest.json";

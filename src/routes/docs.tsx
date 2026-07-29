@@ -170,7 +170,7 @@ if (!status.active) {
   trial: true,
 });`}</Code>
           <p>
-            Use <code>gemiq_professional_annual</code> for the annual variant. Card is required
+            Use <code>gemiq_professional_quarterly</code> or <code>gemiq_professional_annual</code> for the other terms. Card is required
             up-front; the subscription auto-converts on day 7. Stripe sends the reminder email
             3 days before conversion automatically.
           </p>
@@ -377,6 +377,7 @@ const stop = hub.manifest.watch(
           <h3 className="mt-6 font-display text-lg font-semibold text-white">Stripe lookup keys</h3>
           <ul className="list-disc space-y-1 pl-5">
             <li><code>gemiq_professional_monthly</code> — $99/mo</li>
+            <li><code>gemiq_professional_quarterly</code> — $279 / 3 months</li>
             <li><code>gemiq_professional_annual</code> — $990/yr</li>
           </ul>
 

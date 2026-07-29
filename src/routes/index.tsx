@@ -15,6 +15,7 @@ import { SampleReportShowcase } from "@/components/home/SampleReportShowcase";
 import { MaturityLadder } from "@/components/home/MaturityLadder";
 import { DiagnosticApproach } from "@/components/home/DiagnosticApproach";
 import { CanRule } from "@/components/CanRule";
+import { SCALE_SLOGAN } from "@/lib/cansulting";
 
 
 

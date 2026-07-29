@@ -33,18 +33,19 @@ const HERO_ROTATION: { src: string; label: string }[] = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GEM.IQ Hub — Executive assessments for global readiness" },
+      { title: "GEM.IQ Hub — Decision-grade diagnostics for high-stakes calls" },
       {
         name: "description",
         content:
-          "The GEM.IQ Hub by GlobalEdgeMarkets — one identity, one subscription, and a unified dashboard across every GEM.IQ executive assessment.",
+          "GEM.IQ by GlobalEdgeMarkets scores market entry, tariff, go-to-market, product, AI and experience risk across weighted dimensions — a gap map, not a vanity number.",
       },
-      { property: "og:title", content: "GEM.IQ Hub — One account across every GEM.IQ assessment" },
+      { property: "og:title", content: "GEM.IQ Hub — A diagnostic, not a single score" },
       {
         property: "og:description",
         content:
-          "One identity, one subscription, and a unified dashboard across every GEM.IQ executive assessment.",
+          "Weighted, multidimensional assessments that tell you what to fix — with one identity, one subscription and a unified benchmarked dashboard.",
       },
+
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://gemiq.globaledgemarkets.com/" },
     ],

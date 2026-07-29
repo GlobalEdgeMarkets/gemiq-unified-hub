@@ -301,15 +301,18 @@ function HeroTile() {
             className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
-            GEM.IQ Hub — Unified executive assessments for{" "}
+            GEM.IQ Hub — Decision-grade diagnostics when the{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">
-              global readiness.
+              stakes are the company.
             </span>
           </h1>
           <p className="mt-5 text-base md:text-lg text-white/60 max-w-xl leading-relaxed">
-            GEM.IQ Hub centralizes identity, billing, and results across every executive assessment — so
-            your team benchmarks trade, market entry, digital, and delivery from a single view.
+            Market entry, tariff exposure, go-to-market, delivery capacity, AI spend — these are risk-based
+            bets that decide whether a company compounds or stalls. GEM.IQ scores each one across weighted,
+            independent dimensions and returns a gap map, not a vanity number. One identity, one subscription,
+            one benchmarked view of where you actually stand.
           </p>
+
 
           {/* Rotating showcase */}
           <div key={current.key} className="mt-8 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">

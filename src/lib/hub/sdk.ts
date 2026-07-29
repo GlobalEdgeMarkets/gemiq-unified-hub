@@ -169,7 +169,8 @@ export function createHubClient(opts: HubClientOptions) {
     return body;
   };
 
-  return {
+  const client = {
+
     /** URL to send unauthenticated users to; returns to `returnTo` after auth. */
     loginUrl(returnTo: string, mode: "signin" | "signup" = "signin") {
       const u = new URL("/auth", base);

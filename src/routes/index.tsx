@@ -189,8 +189,8 @@ function TopNav() {
 function HeroBento() {
   return (
     <section id="assessments" className="pt-10 md:pt-14">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:auto-rows-[minmax(180px,auto)]">
-        {/* 4 assessment tiles */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:auto-rows-[minmax(180px,auto)]">
+        {/* assessment tiles */}
         {ASSESSMENTS.map((a) => (
           <AssessmentTile key={a.key} a={a} />
         ))}
@@ -588,8 +588,8 @@ function FeatureDiagram({ accent, kind }: { accent: Accent; kind: "identity" | "
 
 function AssessmentTile({ a }: { a: Assessment }) {
   const c = ACCENT[a.accent];
-  const Wrapper: any = a.live ? "a" : "div";
-  const wrapperProps = a.live ? { href: a.url, target: "_blank", rel: "noreferrer" } : {};
+  const Wrapper: any = a.live ? Link : "div";
+  const wrapperProps = a.live ? { to: a.path } : {};
   return (
     <Wrapper
       {...wrapperProps}

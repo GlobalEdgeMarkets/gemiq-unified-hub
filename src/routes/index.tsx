@@ -71,74 +71,10 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Accent = "mint" | "violet" | "cyan" | "amber";
+type Assessment = IQProduct;
 
-type Assessment = {
-  key: string;
-  name: string;
-  url: string;
-  tagline: string;
-  body: string;
-  live: boolean;
-  accent: Accent;
-  domain: string;
-  image: string;
-};
+const ASSESSMENTS: Assessment[] = IQ_PRODUCTS;
 
-const ASSESSMENTS: Assessment[] = [
-  {
-    key: "tariffiq",
-    name: "TariffIQ",
-    url: "https://tariffiq.globaledgemarkets.com",
-    tagline: "Duty exposure & savings",
-    body: "Eight dimensions of tariff engineering maturity — HTS classification, first-sale, FTZ readiness. Annualized savings estimate in under 10 minutes.",
-    live: true,
-    accent: "mint",
-    domain: "Global Trade & Supply Chain",
-    image: themeTariff,
-  },
-  {
-    key: "readinessiq",
-    name: "ReadinessIQ",
-    url: "https://readinessiq.globaledgemarkets.com",
-    tagline: "Go-to-market maturity",
-    body: "Four executive assessments across market entry, enterprise sales, productization, and AI transformation — CMMI/TRL-weighted scoring for your growth stage.",
-    live: true,
-    accent: "violet",
-    domain: "GoToMarket Strategy",
-    image: themeReadiness,
-  },
-  {
-    key: "uxiq",
-    name: "UXIQ",
-    url: "https://uxreadiness.globaledgemarkets.com",
-    tagline: "Digital & AI experience",
-    body: "Benchmark research, design system, accessibility, and conversion craft against best-in-class peers — dimension-level tiering with prioritized recommendations.",
-    live: true,
-    accent: "cyan",
-    domain: "Digital & AI Experience",
-    image: themeUx,
-  },
-  {
-    key: "techservicesiq",
-    name: "TechServicesIQ",
-    url: "https://techservicesiq.globaledgemarkets.com",
-    tagline: "Services delivery health",
-    body: "Engagement, delivery, staffing, and margin performance across your services organization — surface leaks in utilization, scoping, and repeatability.",
-    live: false,
-    accent: "amber",
-    domain: "Product & Service Delivery",
-    image: themeServices,
-  },
-];
-
-
-const ACCENT: Record<Accent, { text: string; ring: string; dot: string; glow: string; chip: string }> = {
-  mint:   { text: "text-[#4ade80]", ring: "hover:border-[#4ade80]/50", dot: "bg-[#4ade80]",   glow: "shadow-[0_0_40px_-8px_rgba(74,222,128,0.6)]",  chip: "bg-[#4ade80]/10 text-[#4ade80]" },
-  violet: { text: "text-[#a78bfa]", ring: "hover:border-[#a78bfa]/50", dot: "bg-[#a78bfa]",   glow: "shadow-[0_0_40px_-8px_rgba(167,139,250,0.6)]", chip: "bg-[#a78bfa]/10 text-[#a78bfa]" },
-  cyan:   { text: "text-[#67e8f9]", ring: "hover:border-[#67e8f9]/50", dot: "bg-[#67e8f9]",   glow: "shadow-[0_0_40px_-8px_rgba(103,232,249,0.6)]", chip: "bg-[#67e8f9]/10 text-[#67e8f9]" },
-  amber:  { text: "text-[#fbbf24]", ring: "hover:border-[#fbbf24]/50", dot: "bg-[#fbbf24]",   glow: "shadow-[0_0_40px_-8px_rgba(251,191,36,0.5)]",  chip: "bg-[#fbbf24]/10 text-[#fbbf24]" },
-};
 
 function Index() {
   return (

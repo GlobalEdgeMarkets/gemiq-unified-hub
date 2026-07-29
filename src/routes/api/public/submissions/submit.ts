@@ -73,12 +73,25 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
         const svc = createHubServiceClient();
         const email = payload.email.toLowerCase();
 
+        // Entitlement: an unconsumed one-time assessment credit ($179 purchase)
+        // covers exactly one submission, whether or not a trial is in play.
+        const { data: credit } = await svc
+          .from("assessment_credits")
+          .select("id")
+          .is("consumed_at", null)
+          .or(user?.id ? `user_id.eq.${user.id},email.eq.${email}` : `email.eq.${email}`)
+          .order("created_at", { ascending: true })
+          .limit(1)
+          .maybeSingle();
+        const creditId = credit?.id ?? null;
+
         // Trial enforcement: signed-in users on a `trialing` subscription get
         // `trial_assessment_limit` free submissions (default 1) across any IQ.
         // Once exhausted, block with 402 so the IQ can prompt to upgrade.
         // Anonymous submissions and non-trial subscriptions are unaffected here.
         let trialSubId: string | null = null;
         let trialUsedBefore = 0;
+        let hasPaidSub = false;
         if (user?.id) {
           const { data: sub } = await svc
             .from("subscriptions")
@@ -87,10 +100,11 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             .order("updated_at", { ascending: false })
             .limit(1)
             .maybeSingle();
+          hasPaidSub = sub?.status === "active";
           if (sub && sub.status === "trialing") {
             const used = sub.trial_assessments_used ?? 0;
             const limit = sub.trial_assessment_limit ?? 1;
-            if (used >= limit) {
+            if (used >= limit && !creditId) {
               return json({
                 error: "trial_limit_reached",
                 trial_assessments_used: used,
@@ -98,10 +112,13 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
                 message: "Your 7-day trial includes 1 free assessment. Upgrade to continue.",
               }, { status: 402 }, request);
             }
-            trialSubId = sub.id;
-            trialUsedBefore = used;
+            if (used < limit) {
+              trialSubId = sub.id;
+              trialUsedBefore = used;
+            }
           }
         }
+
 
         // Dedupe: within last 10 minutes, same email+assessment → return existing
         const tenMinAgo = new Date(Date.now() - 10 * 60_000).toISOString();

@@ -632,7 +632,7 @@ function AssessmentTile({ a }: { a: Assessment }) {
 
 function AssessmentGlyph({ accent }: { accent: Accent }) {
   const c = ACCENT[accent];
-  const stroke = accent === "mint" ? "#4ade80" : accent === "violet" ? "#a78bfa" : accent === "cyan" ? "#67e8f9" : "#fbbf24";
+  const stroke = c.hex;
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke={stroke} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="9" />

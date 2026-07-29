@@ -52,6 +52,13 @@
         "lookup_key": "gemiq_professional_monthly"
       },
       {
+        "id": "gemiq_professional_quarterly",
+        "name": "GEM.IQ Professional — Quarterly",
+        "amount": 279,
+        "interval": "quarter",
+        "lookup_key": "gemiq_professional_quarterly"
+      },
+      {
         "id": "gemiq_professional_annual",
         "name": "GEM.IQ Professional — Annual",
         "amount": 990,

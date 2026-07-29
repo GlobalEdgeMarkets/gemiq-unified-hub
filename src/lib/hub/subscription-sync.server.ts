@@ -4,6 +4,7 @@ import { stripe } from "./stripe";
 
 export const HUB_LOOKUP_KEYS = new Set([
   "gemiq_professional_monthly",
+  "gemiq_professional_quarterly",
   "gemiq_professional_annual",
 ]);
 

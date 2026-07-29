@@ -160,6 +160,21 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             .eq("id", trialSubId);
         }
 
+        // Consume a one-time credit only when nothing else covered this run
+        // (no paid subscription, and it wasn't taken out of the free trial).
+        if (creditId && !hasPaidSub && !trialSubId) {
+          await svc.from("assessment_credits")
+            .update({
+              consumed_at: new Date().toISOString(),
+              consumed_submission_id: inserted.id,
+              consumed_assessment_key: payload.assessment_key,
+              ...(user?.id ? { user_id: user.id } : {}),
+            })
+            .eq("id", creditId)
+            .is("consumed_at", null);
+        }
+
+
         // Load full history for this email so HubSpot props reflect the whole profile.
         const { data: historyRows } = await svc
           .from("submissions")

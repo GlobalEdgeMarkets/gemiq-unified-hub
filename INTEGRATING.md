@@ -1,8 +1,12 @@
 # Integrating an IQ assessment with GEM.IQ Hub
 
+Read [`PLAYBOOK.md`](./PLAYBOOK.md) (v1.4) first — it defines the six capability
+IQs, the 8–9 dimension standard, the canonical 5-tier scale, and pricing.
+
 The Hub is the single source of identity, billing, and HubSpot writes. Every
-IQ subdomain (tariffiq / readinessiq / uxiq / techservicesiq / future ones)
-delegates all three to the Hub via `@gemiq/hub-sdk`.
+IQ subdomain (gtmiq / salesiq / productiq / aitransformiq / uxiq / tariffiq and
+future ones) delegates all three to the Hub via `@gemiq/hub-sdk`.
+
 
 ## 1. Install the SDK (auto-pull from Hub)
 

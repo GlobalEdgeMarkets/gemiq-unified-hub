@@ -399,7 +399,33 @@ export function createHubClient(opts: HubClientOptions) {
     },
 
   };
+
+  // --- Automatic central sync -------------------------------------------
+  // Previously each IQ had to call `hub.manifest.watch(...)` itself, so in
+  // practice nobody did and central changes never propagated. It is now on
+  // by default: one poller per client, browser-only, self-healing.
+  const sync = opts.autoSync ?? true;
+  if (sync !== false && typeof window !== "undefined") {
+    const cfg = typeof sync === "object" ? sync : {};
+    client.manifest.watch({ intervalMs: cfg.intervalMs ?? 5 * 60_000 }, (next) => {
+      if (cfg.applyBrand !== false) applyHubBrand(next);
+      cfg.onChange?.(next);
+      window.dispatchEvent(new CustomEvent("gemiq:manifest", { detail: next }));
+    });
+    // Re-check as soon as the tab regains focus so a user never sits on a
+    // stale price/brand for up to a full interval.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        void client.manifest.get().then(({ manifest }) => {
+          if (manifest && cfg.applyBrand !== false) applyHubBrand(manifest);
+        }).catch(() => {});
+      }
+    });
+  }
+
+  return client;
 }
+
 
 /**
  * Type guard for the 402 `trial_limit_reached` error thrown by `results.submit`.

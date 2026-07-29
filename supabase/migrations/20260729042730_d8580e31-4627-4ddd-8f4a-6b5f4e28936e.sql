@@ -1,0 +1,1 @@
+DELETE FROM public.retry_queue WHERE status = 'done' AND created_at < now() - interval '7 days';

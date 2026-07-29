@@ -18,9 +18,21 @@ export const requireHubAdmin = createMiddleware({ type: "function" }).server(
     if (!request?.headers) throw authError("Unauthorized", 401);
 
     const supabase = createHubSupabaseSSR(request, []);
-    const { data, error } = await supabase.auth.getUser();
+
+    // 1) Hub HttpOnly cookie session (production, cross-subdomain).
+    let { data, error } = await supabase.auth.getUser();
+
+    // 2) Fallback: Authorization bearer attached by the client middleware.
+    //    The preview iframe has no Hub cookie, so cookie-only auth 401s there.
+    if (error || !data.user) {
+      const authHeader = request.headers.get("authorization") ?? "";
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+      if (token) ({ data, error } = await supabase.auth.getUser(token));
+    }
+
     const user = data.user;
     if (error || !user) throw authError("Unauthorized", 401);
+
 
     const email = user.email ?? null;
     let isAdmin = false;

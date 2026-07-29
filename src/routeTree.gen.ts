@@ -17,6 +17,7 @@ import { Route as ReadinessiqRouteImport } from './routes/readinessiq'
 import { Route as ProductiqRouteImport } from './routes/productiq'
 import { Route as OnboardRouteImport } from './routes/onboard'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as MarketEntryRouteImport } from './routes/market-entry'
 import { Route as GtmiqRouteImport } from './routes/gtmiq'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -25,6 +26,7 @@ import { Route as AitransformiqRouteImport } from './routes/aitransformiq'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReadinessiqSplatRouteImport } from './routes/readinessiq.$'
+import { Route as MarketEntrySplatRouteImport } from './routes/market-entry.$'
 import { Route as DocsMarketEntryMaturityFrameworksRouteImport } from './routes/docs_.market-entry-maturity-frameworks'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
@@ -88,6 +90,11 @@ const McpRoute = McpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketEntryRoute = MarketEntryRouteImport.update({
+  id: '/market-entry',
+  path: '/market-entry',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GtmiqRoute = GtmiqRouteImport.update({
   id: '/gtmiq',
   path: '/gtmiq',
@@ -127,6 +134,11 @@ const ReadinessiqSplatRoute = ReadinessiqSplatRouteImport.update({
   id: '/$',
   path: '/$',
   getParentRoute: () => ReadinessiqRoute,
+} as any)
+const MarketEntrySplatRoute = MarketEntrySplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => MarketEntryRoute,
 } as any)
 const DocsMarketEntryMaturityFrameworksRoute =
   DocsMarketEntryMaturityFrameworksRouteImport.update({
@@ -263,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
   '/gtmiq': typeof GtmiqRoute
+  '/market-entry': typeof MarketEntryRouteWithChildren
   '/mcp': typeof McpRoute
   '/onboard': typeof OnboardRoute
   '/productiq': typeof ProductiqRoute
@@ -274,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/docs/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
+  '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -303,6 +317,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
   '/gtmiq': typeof GtmiqRoute
+  '/market-entry': typeof MarketEntryRouteWithChildren
   '/mcp': typeof McpRoute
   '/onboard': typeof OnboardRoute
   '/productiq': typeof ProductiqRoute
@@ -314,6 +329,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/docs/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
+  '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -344,6 +360,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
   '/gtmiq': typeof GtmiqRoute
+  '/market-entry': typeof MarketEntryRouteWithChildren
   '/mcp': typeof McpRoute
   '/onboard': typeof OnboardRoute
   '/productiq': typeof ProductiqRoute
@@ -355,6 +372,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/docs_/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
+  '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -386,6 +404,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/docs'
     | '/gtmiq'
+    | '/market-entry'
     | '/mcp'
     | '/onboard'
     | '/productiq'
@@ -397,6 +416,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/docs/market-entry-maturity-frameworks'
+    | '/market-entry/$'
     | '/readinessiq/$'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -426,6 +446,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/docs'
     | '/gtmiq'
+    | '/market-entry'
     | '/mcp'
     | '/onboard'
     | '/productiq'
@@ -437,6 +458,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/docs/market-entry-maturity-frameworks'
+    | '/market-entry/$'
     | '/readinessiq/$'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -466,6 +488,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/docs'
     | '/gtmiq'
+    | '/market-entry'
     | '/mcp'
     | '/onboard'
     | '/productiq'
@@ -477,6 +500,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/docs_/market-entry-maturity-frameworks'
+    | '/market-entry/$'
     | '/readinessiq/$'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -507,6 +531,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DocsRoute: typeof DocsRoute
   GtmiqRoute: typeof GtmiqRoute
+  MarketEntryRoute: typeof MarketEntryRouteWithChildren
   McpRoute: typeof McpRoute
   OnboardRoute: typeof OnboardRoute
   ProductiqRoute: typeof ProductiqRoute
@@ -597,6 +622,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/market-entry': {
+      id: '/market-entry'
+      path: '/market-entry'
+      fullPath: '/market-entry'
+      preLoaderRoute: typeof MarketEntryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gtmiq': {
       id: '/gtmiq'
       path: '/gtmiq'
@@ -652,6 +684,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/readinessiq/$'
       preLoaderRoute: typeof ReadinessiqSplatRouteImport
       parentRoute: typeof ReadinessiqRoute
+    }
+    '/market-entry/$': {
+      id: '/market-entry/$'
+      path: '/$'
+      fullPath: '/market-entry/$'
+      preLoaderRoute: typeof MarketEntrySplatRouteImport
+      parentRoute: typeof MarketEntryRoute
     }
     '/docs_/market-entry-maturity-frameworks': {
       id: '/docs_/market-entry-maturity-frameworks'
@@ -810,6 +849,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface MarketEntryRouteChildren {
+  MarketEntrySplatRoute: typeof MarketEntrySplatRoute
+}
+
+const MarketEntryRouteChildren: MarketEntryRouteChildren = {
+  MarketEntrySplatRoute: MarketEntrySplatRoute,
+}
+
+const MarketEntryRouteWithChildren = MarketEntryRoute._addFileChildren(
+  MarketEntryRouteChildren,
+)
+
 interface ReadinessiqRouteChildren {
   ReadinessiqSplatRoute: typeof ReadinessiqSplatRoute
 }
@@ -830,6 +881,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DocsRoute: DocsRoute,
   GtmiqRoute: GtmiqRoute,
+  MarketEntryRoute: MarketEntryRouteWithChildren,
   McpRoute: McpRoute,
   OnboardRoute: OnboardRoute,
   ProductiqRoute: ProductiqRoute,

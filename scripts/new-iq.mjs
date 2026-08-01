@@ -13,7 +13,7 @@
  *   2. Adds the import + registry entry in     src/lib/hub/assessments/index.ts
  *   3. Adds a manifest entry in                src/lib/hub/manifest.json
  *      and bumps its patch version.
- *   4. Runs the SDK/manifest sync so packages/hub-sdk/manifest.json matches.
+ *   4. Mirrors the SDK to packages/hub-sdk/sdk.ts.
  *
  * After running:
  *   - Edit src/lib/hub/assessments/<key>.ts to declare the real fields.

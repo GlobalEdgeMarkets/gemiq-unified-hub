@@ -134,7 +134,7 @@ no 2-month minimum.
 - Stack split is deliberate: Hub + 4 new IQs on TanStack Start; TariffIQ and UXIQ
   remain stable legacy on Vite/React.
 - The Hub manifest (`src/lib/hub/manifest.json`, v1.4.0) now lists the six capability
-  IQs and is mirrored to `packages/hub-sdk/manifest.json`. Closed.
+  IQs and is mirrored to `src/lib/hub/manifest.json`. Closed.
 
 ## 8. Related docs
 

@@ -18,17 +18,26 @@ export function HubHeader({ variant = "landing", right }: Props) {
   return (
     <header className="sticky top-0 z-30 border-b border-gem-navy/10 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link
-          to="/"
-          aria-label="GEM.IQ Hub — home"
-          className="flex items-center gap-3 rounded-md outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-gem-mint"
-        >
-          <img src={gemLogo.url} alt="GEM" className="h-8 w-auto" />
+        <div className="flex items-center gap-3">
+          <a
+            href="https://globaledgemarkets.com"
+            aria-label="GlobalEdgeMarkets — corporate site"
+            className="rounded-md outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-gem-mint"
+          >
+            <img src={gemLogo.url} alt="GEM" className="h-8 w-auto" />
+          </a>
           <span className="hidden h-6 w-px bg-gem-navy/20 sm:block" />
-          <span className="hidden font-display text-lg font-bold tracking-tight text-gem-navy sm:inline">
-            GEM.IQ Hub
-          </span>
-        </Link>
+          <Link
+            to="/"
+            aria-label="GEM.IQ Hub — home"
+            className="rounded-md outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-gem-mint"
+          >
+            <span className="hidden font-display text-lg font-bold tracking-tight text-gem-navy sm:inline">
+              GEM.IQ Hub
+            </span>
+          </Link>
+        </div>
+
 
         <nav className="flex items-center gap-1 text-sm sm:gap-3">
           {right}

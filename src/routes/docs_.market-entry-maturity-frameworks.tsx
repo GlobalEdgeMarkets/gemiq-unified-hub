@@ -81,9 +81,14 @@ function Page() {
     <div className="min-h-screen w-full bg-[#0a0a16] font-sans text-white antialiased">
       <header className="border-b border-white/10 bg-[#0a0a16]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
-          <Link to="/" className="flex items-center gap-3">
+          <a
+            href="https://globaledgemarkets.com"
+            aria-label="GlobalEdgeMarkets — corporate site"
+            className="flex items-center gap-3 transition-opacity hover:opacity-80"
+          >
             <img src={gemLogo.url} alt="GEM.IQ" className="h-8 w-auto" />
-          </Link>
+          </a>
+
           <Link to="/docs" className="text-sm font-semibold text-white/70 hover:text-white" style={DISPLAY}>
             Developer docs
           </Link>

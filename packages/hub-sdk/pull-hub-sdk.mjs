@@ -33,7 +33,7 @@
  *   HUB_SDK_REF        default: main
  *   HUB_SDK_PATH       default: packages/hub-sdk/sdk.ts
  *   HUB_SDK_DEST       default: src/lib/hub.ts
- *   HUB_MANIFEST_PATH  default: packages/hub-sdk/manifest.json
+ *   HUB_MANIFEST_PATH  default: src/lib/hub/manifest.json
  *   HUB_MANIFEST_DEST  default: src/lib/hub-manifest.json
  *   HUB_ALLOW_STALE    default: unset (set to "1" to skip version check)
  */
@@ -46,7 +46,7 @@ const REF  = process.env.HUB_SDK_REF  || "main";
 const SDK_PATH = process.env.HUB_SDK_PATH || "packages/hub-sdk/sdk.ts";
 const SDK_DEST = resolve(process.cwd(), process.env.HUB_SDK_DEST || "src/lib/hub.ts");
 
-const MANIFEST_PATH = process.env.HUB_MANIFEST_PATH || "packages/hub-sdk/manifest.json";
+const MANIFEST_PATH = process.env.HUB_MANIFEST_PATH || "src/lib/hub/manifest.json";
 const MANIFEST_DEST = resolve(process.cwd(), process.env.HUB_MANIFEST_DEST || "src/lib/hub-manifest.json");
 
 const raw = (path) => `https://raw.githubusercontent.com/${REPO}/${REF}/${path}`;

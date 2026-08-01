@@ -11,9 +11,9 @@
     "lint": "eslint .",
     "test": "vitest run",
     "format": "prettier --write .",
-    "sync:hub-sdk": "node scripts/sync-hub-sdk.mjs",
-    "check:hub-sdk": "node scripts/sync-hub-sdk.mjs --check",
-    "prebuild": "node scripts/sync-hub-sdk.mjs --check"
+    "sync:hub-sdk": "node scripts/mirror-sdk.mjs",
+    "check:hub-sdk": "node scripts/mirror-sdk.mjs --check",
+    "prebuild": "node scripts/mirror-sdk.mjs --check"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

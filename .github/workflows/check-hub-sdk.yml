@@ -1,15 +1,5 @@
 name: check-hub-sdk-sync
-on:
-  push:
-    paths:
-      - "src/lib/hub/sdk.ts"
-      - "packages/hub-sdk/sdk.ts"
-      - "scripts/sync-hub-sdk.mjs"
-  pull_request:
-    paths:
-      - "src/lib/hub/sdk.ts"
-      - "packages/hub-sdk/sdk.ts"
-      - "scripts/sync-hub-sdk.mjs"
+on: [push, pull_request]
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -18,4 +8,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - run: node scripts/sync-hub-sdk.mjs --check
+      - run: node scripts/mirror-sdk.mjs --check

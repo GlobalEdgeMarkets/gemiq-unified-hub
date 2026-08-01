@@ -133,7 +133,7 @@ writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
 console.log(`✓ manifest bumped → v${manifest.version}`);
 
 // 4. Sync package copy
-const sync = spawnSync("node", ["scripts/sync-hub-sdk.mjs"], { cwd: root, stdio: "inherit" });
+const sync = spawnSync("node", ["scripts/mirror-sdk.mjs"], { cwd: root, stdio: "inherit" });
 if (sync.status !== 0) process.exit(sync.status ?? 1);
 
 console.log(`

@@ -1,12 +1,12 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.4.0",
-  "updated_at": "2026-07-29",
+  "version": "1.4.1",
+  "updated_at": "2026-08-01",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
     "docs_url": "https://gemiq.globaledgemarkets.com/docs",
     "sdk_source": "https://raw.githubusercontent.com/GlobalEdgeMarkets/gemiq-unified-hub/main/packages/hub-sdk/sdk.ts",
-    "manifest_source": "https://raw.githubusercontent.com/GlobalEdgeMarkets/gemiq-unified-hub/main/packages/hub-sdk/manifest.json",
+    "manifest_source": "https://raw.githubusercontent.com/GlobalEdgeMarkets/gemiq-unified-hub/main/src/lib/hub/manifest.json",
     "repo": "GlobalEdgeMarkets/gemiq-unified-hub"
   },
   "brand": {

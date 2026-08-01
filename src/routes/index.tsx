@@ -168,13 +168,22 @@ function TopNav() {
   return (
     <nav className="sticky top-0 z-30 backdrop-blur-xl bg-[#0a0a16]/70 border-b border-white/5">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
-        <Link to="/" className="flex items-center gap-3 group" aria-label="GEM.IQ Hub — home">
-          <img src={gemLogo.url} alt="GEM" className="h-9 w-auto transition-opacity group-hover:opacity-80" />
+        <div className="flex items-center gap-3">
+          <a
+            href="https://globaledgemarkets.com"
+            aria-label="GlobalEdgeMarkets — corporate site"
+            className="transition-opacity hover:opacity-80"
+          >
+            <img src={gemLogo.url} alt="GEM" className="h-9 w-auto" />
+          </a>
           <span className="hidden h-6 w-px bg-white/15 sm:block" />
-          <span className="font-display text-2xl font-bold tracking-tight">
-            GEM.IQ <span className="text-[#05CFAB]">Hub</span>
-          </span>
-        </Link>
+          <Link to="/" aria-label="GEM.IQ Hub — home">
+            <span className="font-display text-2xl font-bold tracking-tight">
+              GEM.IQ <span className="text-[#05CFAB]">Hub</span>
+            </span>
+          </Link>
+        </div>
+
         <div className="flex items-center gap-2 md:gap-3">
           <a href="#assessments" className="hidden md:inline px-3 py-2 text-sm text-white/60 hover:text-white transition-colors">
             Assessments

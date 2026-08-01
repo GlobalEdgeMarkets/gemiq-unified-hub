@@ -13,7 +13,7 @@
  *   2. Adds the import + registry entry in     src/lib/hub/assessments/index.ts
  *   3. Adds a manifest entry in                src/lib/hub/manifest.json
  *      and bumps its patch version.
- *   4. Runs the SDK/manifest sync so packages/hub-sdk/manifest.json matches.
+ *   4. Mirrors the SDK to packages/hub-sdk/sdk.ts.
  *
  * After running:
  *   - Edit src/lib/hub/assessments/<key>.ts to declare the real fields.
@@ -133,7 +133,7 @@ writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
 console.log(`✓ manifest bumped → v${manifest.version}`);
 
 // 4. Sync package copy
-const sync = spawnSync("node", ["scripts/sync-hub-sdk.mjs"], { cwd: root, stdio: "inherit" });
+const sync = spawnSync("node", ["scripts/mirror-sdk.mjs"], { cwd: root, stdio: "inherit" });
 if (sync.status !== 0) process.exit(sync.status ?? 1);
 
 console.log(`

@@ -1,6 +1,6 @@
 // AUTO-GENERATED — DO NOT EDIT.
 // Source of truth: src/lib/hub/sdk.ts
-// Regenerate with: node scripts/sync-hub-sdk.mjs
+// Regenerate with: node scripts/mirror-sdk.mjs
 
 /**
  * @gemiq/hub-sdk — client for GEM.IQ Hub, used from every IQ subdomain.

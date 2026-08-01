@@ -278,7 +278,7 @@ https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual`}</Code
             <code>/api/public/manifest</code> that every IQ should treat as the source of
             truth for brand tokens, pricing, deep links, and the assessment registry.
             The manifest is also committed to GitHub at{" "}
-            <code>packages/hub-sdk/manifest.json</code> so IQ builds can pin it.
+            <code>src/lib/hub/manifest.json</code> so IQ builds can pin it.
           </p>
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">
@@ -363,7 +363,7 @@ const stop = hub.manifest.watch(
               — 6 capability IQs, 8–9 dimensions, canonical 5-tier model, pricing
             </li>
             <li>SDK — <code>packages/hub-sdk/sdk.ts</code></li>
-            <li>Manifest — <code>packages/hub-sdk/manifest.json</code> (semver — bump on every change)</li>
+            <li>Manifest — <code>src/lib/hub/manifest.json</code> (semver — bump on every change)</li>
             <li>Puller — <code>packages/hub-sdk/pull-hub-sdk.mjs</code> (copy into each IQ)</li>
             <li>Repo — <code>GlobalEdgeMarkets/gemiq-unified-hub</code></li>
           </ul>

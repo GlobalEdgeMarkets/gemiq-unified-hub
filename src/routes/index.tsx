@@ -28,12 +28,20 @@ import {
   ANNUAL_PRICE,
   GUARANTEE_DAYS,
   effectiveMonthly,
+  hasPlan,
+  savingsLabel,
+  type PlanInterval,
 } from "@/lib/pricing";
 import { SampleReportShowcase } from "@/components/home/SampleReportShowcase";
 import { MaturityLadder } from "@/components/home/MaturityLadder";
 import { DiagnosticApproach } from "@/components/home/DiagnosticApproach";
 import { CanRule } from "@/components/CanRule";
 import { SCALE_SLOGAN } from "@/lib/cansulting";
+
+/** Names in canonical DISPLAY_ORDER: "GTMIQ, SalesIQ, … or TariffIQ". */
+const IQ_NAME_LIST = IQ_PRODUCTS.map((p) => p.name).reduce((acc, name, i, arr) =>
+  i === 0 ? name : i === arr.length - 1 ? `${acc} or ${name}` : `${acc}, ${name}`,
+"");
 
 
 
@@ -351,7 +359,7 @@ function HeroTile() {
             className="text-[#4ade80] text-xs font-bold uppercase tracking-[0.25em]"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
-            Intelligence Suite · 6 Assessments
+            Intelligence Suite · {IQ_PRODUCTS.length} Assessments
           </span>
           <div className="hidden md:flex items-center gap-2">
             {ASSESSMENTS.map((a, idx) => (
@@ -414,10 +422,10 @@ function HeroTile() {
               </span>
             </div>
             <div className="mt-3 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              One assessment for <span className="text-[#4ade80]">{ONE_TIME_PRICE}</span>, or all six for <span className="text-[#4ade80]">{MONTHLY_PRICE}/mo.</span>
+              One assessment for <span className="text-[#4ade80]">{ONE_TIME_PRICE}</span>, or all {IQ_PRODUCTS.length} for <span className="text-[#4ade80]">{MONTHLY_PRICE}/mo.</span>
             </div>
             <p className="mt-1.5 text-sm text-white/70">
-              Buy a single IQ when you need one answer — TariffIQ, GTMIQ, SalesIQ, ProductIQ, AITransformIQ or UXIQ. Subscribe for all six across both tracks, plus the composite GEM.IQ report and quarterly re-assessment.
+              Buy a single IQ when you need one answer — {IQ_NAME_LIST}. Subscribe for all {IQ_PRODUCTS.length} across both tracks, plus the composite GEM.IQ report and quarterly re-assessment.
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Link
@@ -438,7 +446,7 @@ function HeroTile() {
                 Buy one assessment
               </Link>
               <span className="text-[11px] text-white/50">
-                14-day money-back guarantee · Cancel anytime
+                {GUARANTEE_DAYS}-day money-back guarantee · Cancel anytime
               </span>
             </div>
             <p className="mt-4 border-t border-white/10 pt-3 text-[13px] text-white/60">
@@ -778,14 +786,14 @@ function TrustMarquee() {
 }
 type PlanTerm = "monthly" | "quarterly" | "annual";
 
-const PLAN_TERMS: { key: PlanTerm; label: string }[] = [
-  { key: "monthly", label: "Monthly" },
-  { key: "quarterly", label: "Quarterly · save 6%" },
-  { key: "annual", label: "Annual · 2 months free" },
-];
+const TERM_INTERVAL: Record<PlanTerm, PlanInterval> = {
+  monthly: "month",
+  quarterly: "quarter",
+  annual: "year",
+};
 
-/** Prices and effective rates are derived from the manifest — never restated here. */
-const PLAN_TERM_MAP: Record<PlanTerm, { price: string; unit: string; effective?: string; note: string }> = {
+/** Prices, savings labels and effective rates all derive from the manifest. */
+const PLAN_TERM_MAP: Record<PlanTerm, { price?: string; unit: string; effective?: string; note: string }> = {
   monthly: {
     price: MONTHLY_PRICE,
     unit: "/ month",
@@ -805,9 +813,23 @@ const PLAN_TERM_MAP: Record<PlanTerm, { price: string; unit: string; effective?:
   },
 };
 
+/** Only offer terms the manifest actually ships; savings text is computed, not typed. */
+const PLAN_TERMS: { key: PlanTerm; label: string }[] = (
+  ["monthly", "quarterly", "annual"] as PlanTerm[]
+)
+  .filter((key) => hasPlan(TERM_INTERVAL[key]))
+  .map((key) => {
+    const base = key === "monthly" ? "Monthly" : key === "quarterly" ? "Quarterly" : "Annual";
+    const saving = savingsLabel(TERM_INTERVAL[key]);
+    return { key, label: saving ? `${base} · ${saving}` : base };
+  });
+
+const DEFAULT_PLAN_TERM: PlanTerm =
+  PLAN_TERMS.find((t) => t.key === "quarterly")?.key ?? PLAN_TERMS[0]?.key ?? "monthly";
+
 
 function Pricing() {
-  const [interval, setInterval] = useState<"monthly" | "quarterly" | "annual">("quarterly");
+  const [interval, setInterval] = useState<PlanTerm>(DEFAULT_PLAN_TERM);
   return (
     <section id="pricing" className="mt-20 md:mt-28">
       <div className="text-center max-w-2xl mx-auto">
@@ -819,7 +841,7 @@ function Pricing() {
           One answer, or <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">the whole picture.</span>
         </h2>
         <p className="mt-4 text-white/55">
-          Buy a single assessment when you need one number. Subscribe when you want all six IQs — capability and specialist — the composite GEM.IQ report, and re-assessment over time.
+          Buy a single assessment when you need one number. Subscribe when you want all {IQ_PRODUCTS.length} IQs — capability and specialist — the composite GEM.IQ report, and re-assessment over time.
         </p>
         <CanRule seed="pricing-section" variant="inline" className="mt-4" />
       </div>
@@ -875,7 +897,7 @@ function Pricing() {
               <div className="font-display text-xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
                 Full suite
               </div>
-              <p className="mt-1 text-sm text-white/50">All six IQs plus the composite report.</p>
+              <p className="mt-1 text-sm text-white/50">All {IQ_PRODUCTS.length} IQs plus the composite report.</p>
             </div>
             <span className="shrink-0 rounded-full bg-[#4ade80] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
               Best value
@@ -913,7 +935,7 @@ function Pricing() {
 
           <ul className="relative z-10 mt-6 space-y-3 text-sm text-white/70">
             {[
-              "Unlimited access to all six GEM.IQ assessments — capability and specialist",
+              `Unlimited access to all ${IQ_PRODUCTS.length} GEM.IQ assessments — capability and specialist`,
               "Composite GEM.IQ report across every discipline",
               "Re-assess quarterly with score-over-time tracking",
               "Dimension-level benchmarks and executive PDFs",
@@ -948,7 +970,7 @@ function Pricing() {
           <path d="M10 1.5l6.5 2.6v5.2c0 4-2.8 7.6-6.5 8.7-3.7-1.1-6.5-4.7-6.5-8.7V4.1L10 1.5zm3.7 6.8a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z" />
         </svg>
         <p className="text-sm text-white/70">
-          <span className="font-bold text-white">14-day money-back guarantee</span> on both options — no questions asked.
+          <span className="font-bold text-white">{GUARANTEE_DAYS}-day money-back guarantee</span> on both options — no questions asked.
         </p>
       </div>
     </section>

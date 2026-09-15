@@ -90,13 +90,14 @@ function DocsPage() {
             Developer Docs
           </p>
           <h1 className="mt-2 font-display text-4xl font-bold text-white sm:text-5xl">
-            Start the 7-day trial &amp; submit results
+            Start the {TRIAL_PHRASE} &amp; submit results
           </h1>
           <p className="mt-4 text-lg text-slate-400">
-            For all six live IQs — {IQ_NAMES} ({TRACK_SUMMARY}) — and any future IQ. Everything
+            For all {IQ_COUNT} live IQs — {IQ_NAMES} ({TRACK_SUMMARY}) — and any future IQ. Everything
             runs through <code className="rounded bg-white/10 px-1.5 py-0.5">@gemiq/hub-sdk</code>{" "}
             — no direct Stripe, Supabase, or HubSpot calls from your IQ.
           </p>
+
 
           <nav className="mt-6 flex flex-wrap gap-2 text-sm">
             {[

@@ -670,6 +670,30 @@ function FeatureDiagram({ accent, kind }: { accent: Accent; kind: "identity" | "
 }
 
 
+function SpecialistPanel() {
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-dashed border-white/15 bg-white/[0.03] p-6 flex flex-col justify-between">
+      <div aria-hidden className="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-[#67e8f9] opacity-10 blur-3xl" />
+      <div className="relative z-10">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white/60" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          <span className="h-1.5 w-1.5 rounded-full bg-[#67e8f9]" />
+          Who this is for
+        </div>
+        <p className="mt-4 text-[15px] leading-relaxed text-white/65">
+          A specialist diagnostic only applies if you carry that exposure. If you
+          import, manufacture abroad, or pay duty, TariffIQ is scored the same way
+          as the capability IQs — but the output is a recoverable dollar figure.
+          No exposure, no need to run it.
+        </p>
+      </div>
+      <p className="relative z-10 mt-5 text-xs text-white/40">
+        Included in the suite plan alongside every capability diagnostic. More
+        specialist diagnostics are in development.
+      </p>
+    </div>
+  );
+}
+
 function AssessmentTile({ a }: { a: Assessment }) {
   const c = ACCENT[a.accent];
   const Wrapper: any = a.live ? Link : "div";

@@ -39,8 +39,10 @@ export function hasPlan(interval: PlanInterval): boolean {
 }
 
 /**
- * Exact plan when present, otherwise the nearest available term (by length),
- * otherwise undefined. Never throws.
+ * NOT FOR DISPLAY. Returns the exact plan when present, otherwise the nearest
+ * available term by length. Only for logic that needs *a* plan to point at
+ * (e.g. a default checkout term). Never render its amount under another
+ * term's label — use `priceFor`, which is exact-match only.
  */
 export function planFor(interval: PlanInterval): Plan | undefined {
   const exact = findPlan(interval);
@@ -56,11 +58,15 @@ export function planFor(interval: PlanInterval): Plan | undefined {
   );
 }
 
-/** Formatted price, or undefined when nothing can stand in — callers hide the line. */
+/**
+ * Formatted price for exactly this interval. Undefined when the manifest has
+ * no such plan — callers hide the whole clause. Never substitutes another term.
+ */
 export function priceFor(interval: PlanInterval): string | undefined {
-  const plan = findPlan(interval) ?? planFor(interval);
+  const plan = findPlan(interval);
   return plan ? money(plan.amount) : undefined;
 }
+
 
 export const ONE_TIME = PRICING.one_time;
 export const ONE_TIME_PRICE = ONE_TIME ? money(ONE_TIME.amount) : undefined;

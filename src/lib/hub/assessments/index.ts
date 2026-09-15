@@ -28,6 +28,16 @@ export const REGISTRY: AssessmentSpec[] = [
   aitransformiq,
 ];
 
+/**
+ * Retired IQs. Their specs stay in REGISTRY so historical submissions keep
+ * mapping to HubSpot, but they are never marketed or onboarded.
+ * Retiring another IQ = add its key here.
+ */
+export const RETIRED_KEYS: ReadonlySet<string> = new Set(["readinessiq", "techservicesiq"]);
+
+/** Specs for IQs that are live and onboardable today. */
+export const LIVE_REGISTRY: AssessmentSpec[] = REGISTRY.filter((s) => !RETIRED_KEYS.has(s.key));
+
 export const REGISTRY_BY_KEY: Record<string, AssessmentSpec> =
   Object.fromEntries(REGISTRY.map(s => [s.key, s]));
 

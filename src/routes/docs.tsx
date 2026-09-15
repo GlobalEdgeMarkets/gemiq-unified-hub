@@ -374,7 +374,7 @@ const stop = hub.manifest.watch(
           </h3>
           <ul className="list-disc space-y-1 pl-5">
             <li>
-              Playbook (v1.4 — source of truth) —{" "}
+              Playbook (v1.5 — source of truth) —{" "}
               <a
                 href="https://github.com/GlobalEdgeMarkets/gemiq-unified-hub/blob/main/PLAYBOOK.md"
                 target="_blank"
@@ -383,7 +383,7 @@ const stop = hub.manifest.watch(
               >
                 <code>PLAYBOOK.md</code>
               </a>{" "}
-              — 6 capability IQs, 8–9 dimensions, canonical 5-tier model, pricing
+              — {TRACK_SUMMARY}, 8–9 dimensions, canonical 5-tier model, pricing
             </li>
             <li>SDK — <code>packages/hub-sdk/sdk.ts</code></li>
             <li>Manifest — <code>src/lib/hub/manifest.json</code> (semver — bump on every change)</li>
@@ -412,9 +412,10 @@ const stop = hub.manifest.watch(
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">Stripe lookup keys</h3>
           <ul className="list-disc space-y-1 pl-5">
-            <li><code>gemiq_professional_monthly</code> — $99/mo</li>
-            <li><code>gemiq_professional_quarterly</code> — $279 / 3 months</li>
-            <li><code>gemiq_professional_annual</code> — $990/yr</li>
+            <li><code>gemiq_professional_monthly</code> — {MONTHLY_PRICE}/mo</li>
+            <li><code>gemiq_professional_quarterly</code> — {QUARTERLY_PRICE} / 3 months (default)</li>
+            <li><code>gemiq_professional_annual</code> — {ANNUAL_PRICE}/yr</li>
+            <li><code>gemiq_single_assessment</code> — {ONE_TIME_PRICE} one-time, {GUARANTEE_DAYS}-day money-back guarantee</li>
           </ul>
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">CheckStatus shape</h3>

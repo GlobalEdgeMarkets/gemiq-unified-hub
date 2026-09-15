@@ -34,6 +34,8 @@ export type IQProduct = {
   /** Illustrative peer benchmark composite */
   benchmark: number;
   outcomes: string[];
+  /** Assigned centrally by track; see TRACK_META below. */
+  track?: Track;
 };
 
 const IQ_PRODUCTS_UNORDERED: IQProduct[] = [

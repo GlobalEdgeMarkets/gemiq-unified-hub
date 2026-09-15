@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { HubHeader } from "@/components/HubHeader";
-import { REGISTRY } from "@/lib/hub/assessments";
+import { LIVE_REGISTRY } from "@/lib/hub/assessments";
+import { DISPLAY_ORDER } from "@/lib/iq-catalog";
 import manifest from "@/lib/hub/manifest.json";
 import { applyHubBrand, type HubManifest } from "@/lib/hub/sdk";
 
@@ -237,9 +238,11 @@ node scripts/pull-hub-sdk.mjs`}
   );
 }
 
-// ReadinessIQ is retired — it stays in the registry for legacy submission
-// mapping, but is never offered as an onboarding target.
-const ONBOARDABLE = REGISTRY.filter((s) => s.key !== "readinessiq");
+// Live IQs only (retired ones stay in the registry for legacy submission
+// mapping), sorted into the canonical site-wide display order — PLAYBOOK §1.
+const ONBOARDABLE = [...LIVE_REGISTRY].sort(
+  (a, b) => DISPLAY_ORDER.indexOf(a.key) - DISPLAY_ORDER.indexOf(b.key),
+);
 
 
 function OnboardPage() {
@@ -380,7 +383,7 @@ Docs: ${HUB_ORIGIN}/docs`,
             >
               GEM.IQ Playbook (v1.4)
             </a>{" "}
-            first — the six capability IQs, the 8–9 dimension standard, the canonical
+            first — the five capability IQs plus the specialist track, the 8–9 dimension standard, the canonical
             five-tier maturity model, and current pricing.
           </p>
         </header>

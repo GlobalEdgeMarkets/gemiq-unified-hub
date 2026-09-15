@@ -17,6 +17,7 @@ import {
   SPECIALIST_IQS,
   TRACK_META,
   type Track,
+  TOTAL_DIMENSIONS,
   type Accent,
   type IQProduct,
 } from "@/lib/iq-catalog";
@@ -159,7 +160,7 @@ function TrialBanner() {
         <span className="text-xs md:text-sm font-semibold text-white/95">
           <span className="text-[#4ade80] font-bold">$179 single assessment</span>
           <span className="mx-2 text-white/40">·</span>
-          <span>or all six IQs for $99/mo</span>
+          <span>or all six IQs — both tracks — for $99/mo</span>
           <span className="mx-2 text-white/40">·</span>
           <span className="text-white/70">14-day money-back guarantee</span>
         </span>
@@ -254,10 +255,18 @@ function HeroBento() {
 
       <div>
         <TrackHeading track="specialist" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:auto-rows-[minmax(180px,auto)]">
-          {SPECIALIST_IQS.map((a) => (
-            <AssessmentTile key={a.key} a={a} />
-          ))}
+        {/* Specialist track: usually a single tile today. Pair the tiles with a
+            companion panel so one item reads as a deliberate section rather
+            than a broken row. The tile column grows as more are added. */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:auto-rows-[minmax(180px,auto)]">
+          <div
+            className={`grid gap-4 ${SPECIALIST_IQS.length > 1 ? "sm:grid-cols-2" : "grid-cols-1"} lg:col-span-2`}
+          >
+            {SPECIALIST_IQS.map((a) => (
+              <AssessmentTile key={a.key} a={a} />
+            ))}
+          </div>
+          <SpecialistPanel />
         </div>
       </div>
     </section>
@@ -400,7 +409,7 @@ function HeroTile() {
               One assessment for <span className="text-[#4ade80]">$179</span>, or all six for <span className="text-[#4ade80]">$99/mo.</span>
             </div>
             <p className="mt-1.5 text-sm text-white/70">
-              Buy a single IQ when you need one answer — TariffIQ, GTMIQ, SalesIQ, ProductIQ, AITransformIQ or UXIQ. Subscribe for all six plus the composite GEM.IQ report and quarterly re-assessment.
+              Buy a single IQ when you need one answer — TariffIQ, GTMIQ, SalesIQ, ProductIQ, AITransformIQ or UXIQ. Subscribe for all six across both tracks, plus the composite GEM.IQ report and quarterly re-assessment.
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Link
@@ -481,7 +490,7 @@ function IntelligenceStrip() {
   }, []);
 
   const stats = [
-    { label: "Assessment dimensions", target: 42, suffix: "+", accent: "text-[#4ade80]" },
+    { label: "Assessment dimensions", target: TOTAL_DIMENSIONS, suffix: "", accent: "text-[#4ade80]" },
     { label: "Global markets analyzed", target: 180, suffix: "", accent: "text-[#a78bfa]" },
     { label: "Executive benchmarks", target: 2600, suffix: "+", accent: "text-[#67e8f9]" },
     { label: "Median time to insight", target: 9, suffix: " min", accent: "text-[#4ade80]" },
@@ -600,67 +609,29 @@ function StatCounter({
 }
 
 
-
-function FeatureTile({
-  badge,
-  title,
-  body,
-  accent,
-}: {
-  badge: string;
-  title: string;
-  body: string;
-  accent: Accent;
-}) {
-  const c = ACCENT[accent];
+function SpecialistPanel() {
   return (
-    <div className="md:col-span-1 md:row-span-1 relative overflow-hidden rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-6 flex flex-col justify-between hover:bg-white/[0.08] transition-colors">
-      <div aria-hidden className={`pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full ${c.dot} opacity-20 blur-3xl`} />
-
-      <div className="relative z-10 flex items-start justify-between gap-3">
-        <div className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${c.chip}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
-          <span className={`h-1.5 w-1.5 rounded-full ${c.dot}`} />
-          {badge}
-        </div>
-        <FeatureDiagram accent={accent} kind={title.toLowerCase().includes("identity") ? "identity" : "speed"} />
-      </div>
-
+    <div className="relative overflow-hidden rounded-3xl border border-dashed border-white/15 bg-white/[0.03] p-6 flex flex-col justify-between">
+      <div aria-hidden className="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-[#67e8f9] opacity-10 blur-3xl" />
       <div className="relative z-10">
-        <h3 className="font-display text-3xl md:text-4xl font-bold leading-[0.95] tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-          {title}
-        </h3>
-        <p className="mt-3 text-[15px] text-white/65 leading-relaxed">{body}</p>
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white/60" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          <span className="h-1.5 w-1.5 rounded-full bg-[#67e8f9]" />
+          Who this is for
+        </div>
+        <p className="mt-4 text-[15px] leading-relaxed text-white/65">
+          A specialist diagnostic only applies if you carry that exposure. If you
+          import, manufacture abroad, or pay duty, TariffIQ is scored the same way
+          as the capability IQs — but the output is a recoverable dollar figure.
+          No exposure, no need to run it.
+        </p>
       </div>
+      <p className="relative z-10 mt-5 text-xs text-white/40">
+        Included in the suite plan alongside every capability diagnostic. More
+        specialist diagnostics are in development.
+      </p>
     </div>
   );
 }
-
-function FeatureDiagram({ accent, kind }: { accent: Accent; kind: "identity" | "speed" }) {
-  const stroke =
-    accent === "mint" ? "#4ade80" : accent === "violet" ? "#a78bfa" : accent === "cyan" ? "#67e8f9" : "#fca5a5";
-  if (kind === "identity") {
-    return (
-      <svg viewBox="0 0 80 60" className="h-14 w-20 opacity-80" fill="none" stroke={stroke} strokeWidth="1.25">
-        <circle cx="40" cy="30" r="7" />
-        <circle cx="12" cy="12" r="4" />
-        <circle cx="68" cy="12" r="4" />
-        <circle cx="12" cy="48" r="4" />
-        <circle cx="68" cy="48" r="4" />
-        <path d="M16 14L34 27M64 14L46 27M16 46L34 33M64 46L46 33" opacity="0.6" />
-      </svg>
-    );
-  }
-  return (
-    <svg viewBox="0 0 80 60" className="h-14 w-20 opacity-80" fill="none" stroke={stroke} strokeWidth="1.25">
-      <circle cx="40" cy="30" r="22" opacity="0.35" />
-      <path d="M40 12 A18 18 0 0 1 58 30" strokeWidth="2" />
-      <path d="M40 30 L40 18" strokeWidth="2" strokeLinecap="round" />
-      <path d="M40 30 L50 34" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="40" cy="30" r="1.8" fill={stroke} />
-    </svg>
-  );
-}
-
 
 function AssessmentTile({ a }: { a: Assessment }) {
   const c = ACCENT[a.accent];
@@ -773,14 +744,12 @@ function BenchmarkTile() {
 
 function TrustMarquee() {
   const items = [
-    "GoToMarket Strategy",
-    "Tariff Engineering",
-    "AI Experience",
+    "Market Entry & GTM",
     "Enterprise Sales",
-    "Digital Accessibility",
-    "Services Delivery",
-    "Market Entry",
     "Product Maturity",
+    "AI Transformation",
+    "Digital Experience",
+    "Tariff Engineering",
   ];
   return (
     <section className="mt-16 border-y border-white/5 py-6 overflow-hidden">
@@ -841,7 +810,7 @@ function Pricing() {
           One answer, or <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">the whole picture.</span>
         </h2>
         <p className="mt-4 text-white/55">
-          Buy a single assessment when you need one number. Subscribe when you want all six IQs, the composite GEM.IQ report, and re-assessment over time.
+          Buy a single assessment when you need one number. Subscribe when you want all six IQs — capability and specialist — the composite GEM.IQ report, and re-assessment over time.
         </p>
         <CanRule seed="pricing-section" variant="inline" className="mt-4" />
       </div>
@@ -935,7 +904,7 @@ function Pricing() {
 
           <ul className="relative z-10 mt-6 space-y-3 text-sm text-white/70">
             {[
-              "Unlimited access to all six GEM.IQ assessments",
+              "Unlimited access to all six GEM.IQ assessments — capability and specialist",
               "Composite GEM.IQ report across every discipline",
               "Re-assess quarterly with score-over-time tracking",
               "Dimension-level benchmarks and executive PDFs",

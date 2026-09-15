@@ -834,7 +834,7 @@ function Pricing() {
           <p className="mt-1 text-sm text-white/50">One IQ, one report, no subscription.</p>
           <div className="mt-6 flex items-baseline gap-2">
             <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              $179
+              {ONE_TIME_PRICE}
             </div>
             <div className="text-white/50">one-time</div>
           </div>

@@ -167,7 +167,7 @@ function AuthPage() {
             <h2 className="mt-3 font-display text-4xl font-bold leading-[1.05] tracking-tight text-gem-navy sm:text-5xl">
               One account.
               <br />
-              <span className="text-gem-mint">Four assessments.</span>
+              <span className="text-gem-mint">{IQ_LIST.length} assessments.</span>
             </h2>
             <p className="mt-4 max-w-md text-base leading-relaxed text-gem-navy/70">
               <strong className="text-gem-navy">GEM.IQ</strong> — GlobalEdgeMarkets

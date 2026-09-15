@@ -1,5 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { HubHeader } from "@/components/HubHeader";
+import { IQ_PRODUCTS, TIER_SCALE, TRACK_META, CAPABILITY_IQS, SPECIALIST_IQS } from "@/lib/iq-catalog";
+import manifest from "@/lib/hub/manifest.json";
+import { MONTHLY_PRICE, QUARTERLY_PRICE, ANNUAL_PRICE, ONE_TIME_PRICE, TRIAL_DAYS, GUARANTEE_DAYS } from "@/lib/pricing";
+
+/** Everything below is derived — never retype a value that lives in the catalog or manifest. */
+const IQ_NAMES = IQ_PRODUCTS.map((p) => p.name).join(", ");
+const IQ_KEYS_COMMENT = IQ_PRODUCTS.map((p) => `"${p.key}"`).join(" | ");
+const TIER_UNION = TIER_SCALE.map((t) => `"${t}"`).join(" | ");
+const PRIMARY_KEY = IQ_PRODUCTS[0].key;
+const TRACK_SUMMARY = `${CAPABILITY_IQS.length} ${TRACK_META.capability.label.toLowerCase()} and ${SPECIALIST_IQS.length} ${TRACK_META.specialist.label.toLowerCase()}`;
 
 export const Route = createFileRoute("/docs")({
   head: () => ({

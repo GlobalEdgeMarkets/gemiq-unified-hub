@@ -1,14 +1,14 @@
-# GEM.IQ Playbook — v1.4
+# GEM.IQ Playbook — v1.5
 
-**Status:** current as of 2026-07-29. Supersedes v1.3 (8 industry IQs, 5-dimension
-standard, no Hub). If a doc, prompt, or GitHub knowledge file disagrees with this
-file, this file wins.
+**Status:** current as of 2026-09-15. Supersedes v1.4 (6 undifferentiated
+"capability" IQs, manifest v1.4.0). If a doc, prompt, or GitHub knowledge file
+disagrees with this file, this file wins.
 
 ## What changed since v1.3
 
-| Area | v1.3 | v1.4 (now) |
+| Area | v1.3 | v1.5 (now) |
 | --- | --- | --- |
-| Product set | 8 *industry* IQs | 6 *capability* IQs |
+| Product set | 8 *industry* IQs | 6 IQs in **two tracks**: 5 capability + 1 specialist |
 | Dimensions | 5 per assessment | 8–9 per assessment |
 | Maturity model | Ad-hoc per IQ | One canonical 5-tier scale |
 | Identity / billing / CRM | Per-IQ, duplicated | Centralized in GEM.IQ Hub |
@@ -18,22 +18,47 @@ file, this file wins.
 
 ---
 
-## 1. The suite — 6 capability IQs
+## 1. The suite — two tracks, one site
 
-Display order is centrally defined in `src/lib/iq-catalog.ts` (`DISPLAY_ORDER`) and
-must be identical on every surface (home grid, sample-report tabs, onboarding list):
+As of 2026-09-15 the six IQs are split into **two tracks**. Both are covered by the
+suite plan; the split is about relevance, not entitlement.
 
-| # | IQ | `assessment_key` | Subdomain | Dimensions | What it answers |
-| --- | --- | --- | --- | --- | --- |
-| 1 | GTMIQ | `gtmiq` | gtmiq.globaledgemarkets.com | 9 | Can we enter or expand in this market, and in what order? |
-| 2 | SalesIQ | `salesiq` | salesiq.globaledgemarkets.com | 9 | Is the commercial engine ready to carry the number? |
-| 3 | ProductIQ | `productiq` | productiq.globaledgemarkets.com | 9 | Is the product packaged, documented, and scalable enough to sell repeatedly? |
-| 4 | AITransformIQ | `aitransformiq` | aitransformiq.globaledgemarkets.com | 9 | Are strategy, data, talent, and governance ready for AI to matter? |
-| 5 | UXIQ | `uxiq` | uxiq.globaledgemarkets.com | 8 | Does the experience convert, retain, and include? |
-| 6 | TariffIQ | `tariffiq` | tariffiq.globaledgemarkets.com | 8 | What is duty actually costing us and what is recoverable? |
+**Capability diagnostics (5)** — GTMIQ, SalesIQ, ProductIQ, AITransformIQ, UXIQ.
+They answer *"is this capability mature?"*, score 8–9 dimensions each, and land on
+the canonical five-tier maturity scale. Every company has these functions, so every
+company can run them and compare across disciplines.
 
-Retired / non-marketed keys still present in the Hub registry for historical data:
-`readinessiq` (migrated, 33 legacy submissions), `techservicesiq`.
+**Specialist diagnostics (1)** — TariffIQ. A narrow domain question with a dollar
+output (recoverable duty), relevant only to companies carrying that exposure —
+importers, offshore manufacturers, duty payers. Same rigour and same tier scale, but
+it does not apply universally, and the home page says so.
+
+**The suite plan covers both tracks.** A subscriber gets all six IQs, capability and
+specialist alike, plus the composite report.
+
+Display order is centrally defined by the **exported** `DISPLAY_ORDER` in
+`src/lib/iq-catalog.ts` — the single source for ordering — and must be identical on
+every surface (home grid, sample-report tabs, onboarding list, sitemap, llms.txt).
+
+| # | IQ | `assessment_key` | Track | Subdomain | Dimensions | What it answers |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | GTMIQ | `gtmiq` | capability | gtmiq.globaledgemarkets.com | 9 | Can we enter or expand in this market, and in what order? |
+| 2 | SalesIQ | `salesiq` | capability | salesiq.globaledgemarkets.com | 9 | Is the commercial engine ready to carry the number? |
+| 3 | ProductIQ | `productiq` | capability | productiq.globaledgemarkets.com | 9 | Is the product packaged, documented, and scalable enough to sell repeatedly? |
+| 4 | AITransformIQ | `aitransformiq` | capability | aitransformiq.globaledgemarkets.com | 9 | Are strategy, data, talent, and governance ready for AI to matter? |
+| 5 | UXIQ | `uxiq` | capability | uxreadiness.globaledgemarkets.com | 8 | Does the experience convert, retain, and include? |
+| 6 | TariffIQ | `tariffiq` | specialist | tariffiq.globaledgemarkets.com | 8 | What is duty actually costing us and what is recoverable? |
+
+Note: UXIQ's `assessment_key` is `uxiq` but its host is **uxreadiness**. The catalog,
+the manifest, and the `/auth` context map all key off `uxreadiness`.
+
+Retired / non-marketed keys are one exported set — `RETIRED_KEYS` in
+`src/lib/hub/assessments/index.ts` (`readinessiq`, 33 migrated legacy submissions;
+`techservicesiq`) — with `LIVE_REGISTRY` derived from it. Their specs stay in
+`REGISTRY` so historical submissions keep mapping to HubSpot.
+
+**Rule:** retiring an IQ means adding its key to `RETIRED_KEYS`, nothing else. Never
+hand-filter a retired key at a call site; consume `LIVE_REGISTRY` instead.
 
 **Rule:** an IQ is "in the suite" only when it (a) has a registry spec in
 `src/lib/hub/assessments/`, (b) appears in `src/lib/iq-catalog.ts`, and (c) submits
@@ -98,7 +123,7 @@ Automatic central sync: the SDK polls the Hub manifest every 5 minutes (and on t
 focus) and applies brand tokens/logos. `/onboard` exposes a **Sync now** button and
 a live next-sync countdown.
 
-## 5. Pricing (v1.4)
+## 5. Pricing (v1.5)
 
 Two choices only — never present a third path:
 
@@ -123,7 +148,7 @@ no 2-month minimum.
 - Composite report = mean of completed IQ composites, with strengths/gaps rolled up
   across assessments.
 
-## 7. Open items carried into v1.4
+## 7. Open items carried into v1.5
 
 - `readinessiq.globaledgemarkets.com` is cut over: DNS repointed to the Hub and the
   legacy project unpublished; legacy paths now return permanent 301s to `/dashboard`.
@@ -133,8 +158,20 @@ no 2-month minimum.
   (previously described as a PDF retriever). Closed.
 - Stack split is deliberate: Hub + 4 new IQs on TanStack Start; TariffIQ and UXIQ
   remain stable legacy on Vite/React.
-- The Hub manifest (`src/lib/hub/manifest.json`, v1.4.0) now lists the six capability
-  IQs and is mirrored to `src/lib/hub/manifest.json`. Closed.
+- The Hub manifest is a **single file** — `src/lib/hub/manifest.json`, now **v1.5.0**
+  — served at `/api/public/manifest`. It carries `track` on every assessment plus a
+  top-level `tracks` object. There is no manifest mirror. Only the SDK is mirrored:
+  `src/lib/hub/sdk.ts` → `packages/hub-sdk/sdk.ts` via `scripts/mirror-sdk.mjs`.
+  Never hand-edit the package copy. Closed.
+
+### Decisions
+
+- **VentureIQ — PARKED (2026-09-15).** Proposed as a merge of M&AReadinessIQ and
+  FundraiseIQ into a single "is the company investable, and at what discount?"
+  diagnostic (~9 dimensions, raising-vs-selling intake branch). Considered and
+  deliberately parked; **nothing was built** — no catalog entry, no registry spec,
+  no landing page. Do not build it, and do not re-propose it as a new idea: it
+  requires a fresh explicit decision from the owner first.
 
 ## 8. Related docs
 

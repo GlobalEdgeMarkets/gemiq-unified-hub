@@ -169,9 +169,9 @@ if (!status.active) {
           </p>
         </Section>
 
-        <Section id="trial" title="4. Start the 7-day free trial">
+        <Section id="trial" title={`4. Start the ${TRIAL_PHRASE}`}>
           <p>
-            Add a <strong>Start 7-day free trial</strong> button next to your existing subscribe
+            Add a <strong>Start {TRIAL_PHRASE}</strong> button next to your existing subscribe
             CTA. Pass <code>trial: true</code>:
           </p>
           <Code>{`await hub.subscription.startCheckout("gemiq_professional_monthly", {
@@ -181,9 +181,11 @@ if (!status.active) {
 });`}</Code>
           <p>
             Use <code>gemiq_professional_quarterly</code> or <code>gemiq_professional_annual</code> for the other terms. Card is required
-            up-front; the subscription auto-converts on day 7. Stripe sends the reminder email
-            3 days before conversion automatically.
+            up-front
+            {TRIAL_DAYS ? `; the subscription auto-converts on day ${TRIAL_DAYS}` : "; the subscription auto-converts when the trial ends"}
+            . Stripe sends the reminder email 3 days before conversion automatically.
           </p>
+
           <p>
             Trial ships <strong>one free assessment across any IQ</strong> — enforced by the
             Hub, not by your IQ.

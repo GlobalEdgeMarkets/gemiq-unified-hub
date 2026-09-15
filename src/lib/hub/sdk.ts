@@ -85,6 +85,13 @@ export type HubProfilePatch = Partial<Omit<HubProfile, "id" | "email" | "full_na
  * Every IQ should treat this as the source of truth for brand, pricing,
  * assessment routing, and deep links — no hard-coded copies.
  */
+/**
+ * Which track an assessment belongs to. Capability diagnostics score a function
+ * every company runs; specialist diagnostics answer a narrow, domain-specific
+ * question for companies with that exposure.
+ */
+export type HubTrack = "capability" | "specialist";
+
 export interface HubManifest {
   version: string;
   etag?: string;

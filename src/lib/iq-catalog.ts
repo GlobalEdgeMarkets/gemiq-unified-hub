@@ -304,9 +304,38 @@ const IQ_PRODUCTS_UNORDERED: IQProduct[] = [
 /** Display order across the site: GTM, Sales, Product, AITransform, UX, Tariff. */
 const DISPLAY_ORDER = ["gtmiq", "salesiq", "productiq", "aitransformiq", "uxiq", "tariffiq"];
 
-export const IQ_PRODUCTS: IQProduct[] = [...IQ_PRODUCTS_UNORDERED].sort(
-  (a, b) => DISPLAY_ORDER.indexOf(a.key) - DISPLAY_ORDER.indexOf(b.key),
-);
+/**
+ * Two tracks, one suite. Capability diagnostics ask "is this capability mature?".
+ * Specialist diagnostics answer a domain-specific question (e.g. recoverable duty)
+ * and only apply to companies in that domain. Both are included in the suite plan.
+ */
+export type Track = "capability" | "specialist";
+
+const SPECIALIST_KEYS = new Set(["tariffiq"]);
+
+export const TRACK_META: Record<Track, { label: string; blurb: string }> = {
+  capability: {
+    label: "Capability diagnostics",
+    blurb:
+      "Maturity X-rays of the functions every company runs — go-to-market, sales, product, AI, and experience. Scored on the same 5-tier scale so results compare across disciplines.",
+  },
+  specialist: {
+    label: "Specialist diagnostics",
+    blurb:
+      "Domain-specific diagnostics for companies with that exposure. Same rigour and the same tier scale, but the question is narrower — and the output is usually a dollar figure, not just a maturity level.",
+  },
+};
+
+export function trackFor(key: string): Track {
+  return SPECIALIST_KEYS.has(key) ? "specialist" : "capability";
+}
+
+export const IQ_PRODUCTS: IQProduct[] = [...IQ_PRODUCTS_UNORDERED]
+  .sort((a, b) => DISPLAY_ORDER.indexOf(a.key) - DISPLAY_ORDER.indexOf(b.key))
+  .map((p) => ({ ...p, track: trackFor(p.key) }));
+
+export const CAPABILITY_IQS = IQ_PRODUCTS.filter((p) => p.track === "capability");
+export const SPECIALIST_IQS = IQ_PRODUCTS.filter((p) => p.track === "specialist");
 
 export const IQ_BY_PATH = Object.fromEntries(
   IQ_PRODUCTS.map((p) => [p.path, p]),

@@ -969,10 +969,14 @@ function Pricing() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-5 py-3 text-sm font-bold text-[#0a0a16] transition-all hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]"
               style={{ fontFamily: "'League Spartan', sans-serif" }}
             >
-              Start 7-day trial
+              Start {TRIAL_LABEL}
               <ArrowIcon className="h-4 w-4" />
             </Link>
-            <p className="mt-4 text-xs text-white/40">Card required so access continues uninterrupted. Cancel before day 7 and you're not charged.</p>
+            <p className="mt-4 text-xs text-white/40">
+              Card required so access continues uninterrupted.
+              {TRIAL_DAYS ? ` Cancel before day ${TRIAL_DAYS} and you're not charged.` : " Cancel before the trial ends and you're not charged."}
+            </p>
+
           </div>
         </div>
       </div>

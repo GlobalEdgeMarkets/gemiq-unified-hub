@@ -412,11 +412,23 @@ const stop = hub.manifest.watch(
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">Stripe lookup keys</h3>
           <ul className="list-disc space-y-1 pl-5">
-            <li><code>gemiq_professional_monthly</code> — {MONTHLY_PRICE}/mo</li>
-            <li><code>gemiq_professional_quarterly</code> — {QUARTERLY_PRICE} / 3 months (default)</li>
-            <li><code>gemiq_professional_annual</code> — {ANNUAL_PRICE}/yr</li>
-            <li><code>gemiq_single_assessment</code> — {ONE_TIME_PRICE} one-time, {GUARANTEE_DAYS}-day money-back guarantee</li>
+            {MONTHLY_PRICE && (
+              <li><code>gemiq_professional_monthly</code> — {MONTHLY_PRICE}/mo</li>
+            )}
+            {QUARTERLY_PRICE && (
+              <li><code>gemiq_professional_quarterly</code> — {QUARTERLY_PRICE} / 3 months (default)</li>
+            )}
+            {ANNUAL_PRICE && (
+              <li><code>gemiq_professional_annual</code> — {ANNUAL_PRICE}/yr</li>
+            )}
+            {ONE_TIME_PRICE && (
+              <li>
+                <code>gemiq_single_assessment</code> — {ONE_TIME_PRICE} one-time
+                {GUARANTEE_LABEL ? `, ${GUARANTEE_LABEL}` : ""}
+              </li>
+            )}
           </ul>
+
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">CheckStatus shape</h3>
           <Code>{`{

@@ -932,15 +932,18 @@ function Pricing() {
             ))}
           </div>
 
-          <div className="relative z-10 mt-5 flex items-baseline gap-2">
-            <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              {PLAN_TERM_MAP[interval].price}
+          {PLAN_TERM_MAP[interval].price && (
+            <div className="relative z-10 mt-5 flex items-baseline gap-2">
+              <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                {PLAN_TERM_MAP[interval].price}
+              </div>
+              <div className="text-white/50">{PLAN_TERM_MAP[interval].unit}</div>
+              {PLAN_TERM_MAP[interval].effective && (
+                <div className="text-xs text-white/40">{PLAN_TERM_MAP[interval].effective}</div>
+              )}
             </div>
-            <div className="text-white/50">{PLAN_TERM_MAP[interval].unit}</div>
-            {PLAN_TERM_MAP[interval].effective && (
-              <div className="text-xs text-white/40">{PLAN_TERM_MAP[interval].effective}</div>
-            )}
-          </div>
+          )}
+
           <p className="relative z-10 mt-2 text-xs text-white/45">
             {PLAN_TERM_MAP[interval].note}
           </p>

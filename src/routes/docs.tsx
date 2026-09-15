@@ -432,10 +432,19 @@ const stop = hub.manifest.watch(
   } | null;
 }`}</Code>
 
+          <h3 className="mt-6 font-display text-lg font-semibold text-white">
+            Canonical tier vocabulary
+          </h3>
+          <p>
+            The only accepted values for <code>tier</code>, lowest to highest. Submit these
+            exact lowercase strings — anything else has to be guessed at on the Hub side.
+          </p>
+          <Code>{TIER_SCALE.join("  →  ")}</Code>
+
           <p className="mt-6 text-sm text-slate-400">
             Full integration guide including HubSpot property registration and legacy user
             import lives in <code>INTEGRATING.md</code> in the Hub repo. The suite-level
-            source of truth — six capability IQs, the 8–9 dimension standard, the canonical
+            source of truth — {TRACK_SUMMARY}, the 8–9 dimension standard, the canonical
             five-tier model and pricing — is{" "}
             <a
               href="https://github.com/GlobalEdgeMarkets/gemiq-unified-hub/blob/main/PLAYBOOK.md"

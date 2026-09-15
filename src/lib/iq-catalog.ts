@@ -303,8 +303,11 @@ const IQ_PRODUCTS_UNORDERED: IQProduct[] = [
   },
 ];
 
-/** Display order across the site: GTM, Sales, Product, AITransform, UX, Tariff. */
-const DISPLAY_ORDER = ["gtmiq", "salesiq", "productiq", "aitransformiq", "uxiq", "tariffiq"];
+/**
+ * Display order across EVERY surface (home grid, sample-report tabs, onboarding
+ * list, docs). PLAYBOOK §1: display order must be identical everywhere.
+ */
+export const DISPLAY_ORDER = ["gtmiq", "salesiq", "productiq", "aitransformiq", "uxiq", "tariffiq"];
 
 /**
  * Two tracks, one suite. Capability diagnostics ask "is this capability mature?".
@@ -332,16 +335,25 @@ export function trackFor(key: string): Track {
   return SPECIALIST_KEYS.has(key) ? "specialist" : "capability";
 }
 
-export const IQ_PRODUCTS: IQProduct[] = [...IQ_PRODUCTS_UNORDERED]
+/**
+ * A catalog product after track stamping. `track` is REQUIRED here, so
+ * consumers can read `product.track` directly instead of re-deriving it.
+ */
+export type TrackedIQProduct = IQProduct & { track: Track };
+
+export const IQ_PRODUCTS: TrackedIQProduct[] = [...IQ_PRODUCTS_UNORDERED]
   .sort((a, b) => DISPLAY_ORDER.indexOf(a.key) - DISPLAY_ORDER.indexOf(b.key))
   .map((p) => ({ ...p, track: trackFor(p.key) }));
 
 export const CAPABILITY_IQS = IQ_PRODUCTS.filter((p) => p.track === "capability");
 export const SPECIALIST_IQS = IQ_PRODUCTS.filter((p) => p.track === "specialist");
 
+/** Total scored dimensions across the live catalog. Derived, never hardcoded. */
+export const TOTAL_DIMENSIONS = IQ_PRODUCTS.reduce((n, p) => n + p.dimensions.length, 0);
+
 export const IQ_BY_PATH = Object.fromEntries(
   IQ_PRODUCTS.map((p) => [p.path, p]),
-) as Record<string, IQProduct>;
+) as Record<string, TrackedIQProduct>;
 
 export const TIER_SCALE = ["reactive", "developing", "defined", "advanced", "optimized"] as const;
 

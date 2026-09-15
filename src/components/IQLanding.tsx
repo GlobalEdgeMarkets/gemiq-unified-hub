@@ -3,7 +3,7 @@ import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
 import { ReportPreview } from "@/components/iq/ReportPreview";
 import { ACCENT, IQ_PRODUCTS, TRACK_META, type TrackedIQProduct } from "@/lib/iq-catalog";
 import { CanRule } from "@/components/CanRule";
-import { TRIAL_LABEL } from "@/lib/pricing";
+import { TRIAL_DAYS, TRIAL_LABEL } from "@/lib/pricing";
 
 
 
@@ -254,7 +254,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
 
 
           <h2 className="text-2xl font-bold tracking-tight md:text-4xl" style={DISPLAY}>
-            Start {product.name} free for 7 days.
+            Start {product.name} free{TRIAL_DAYS ? ` for ${TRIAL_DAYS} days` : ""}.
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-white/65">
             One GEM.IQ subscription unlocks every assessment in the suite and a unified dashboard of your results.

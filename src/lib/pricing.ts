@@ -123,3 +123,15 @@ export function savingsLabel(interval: PlanInterval): string | undefined {
 
 export const TRIAL_DAYS = PRICING.trial?.days;
 export const GUARANTEE_DAYS = PRICING.guarantee?.days;
+
+/**
+ * Ready-made phrases. A CTA cannot disappear, so the trial label degrades to
+ * "free trial" when the manifest ships no day count. The guarantee phrase is
+ * undefined when absent — callers drop the whole clause.
+ */
+export const TRIAL_LABEL = TRIAL_DAYS ? `${TRIAL_DAYS}-day trial` : "free trial";
+export const TRIAL_PHRASE = TRIAL_DAYS ? `${TRIAL_DAYS}-day free trial` : "free trial";
+export const GUARANTEE_LABEL = GUARANTEE_DAYS
+  ? `${GUARANTEE_DAYS}-day money-back guarantee`
+  : undefined;
+

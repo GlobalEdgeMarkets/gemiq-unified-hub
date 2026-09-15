@@ -452,7 +452,7 @@ const stop = hub.manifest.watch(
               rel="noreferrer"
               className="text-gem-mint underline underline-offset-4"
             >
-              PLAYBOOK.md (v1.4)
+              PLAYBOOK.md (v1.5)
             </a>
             .
           </p>

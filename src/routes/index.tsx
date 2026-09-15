@@ -435,8 +435,18 @@ function HeroTile() {
               </span>
             </div>
             <div className="mt-3 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              One assessment for <span className="text-[#4ade80]">{ONE_TIME_PRICE}</span>, or all {IQ_PRODUCTS.length} for <span className="text-[#4ade80]">{MONTHLY_PRICE}/mo.</span>
+              {ONE_TIME_PRICE && (
+                <>One assessment for <span className="text-[#4ade80]">{ONE_TIME_PRICE}</span>, or all </>
+              )}
+              {!ONE_TIME_PRICE && <>All </>}
+              {IQ_PRODUCTS.length}
+              {MONTHLY_PRICE ? (
+                <> for <span className="text-[#4ade80]">{MONTHLY_PRICE}/mo.</span></>
+              ) : (
+                <> IQs in one subscription.</>
+              )}
             </div>
+
             <p className="mt-1.5 text-sm text-white/70">
               Buy a single IQ when you need one answer — {IQ_NAME_LIST}. Subscribe for all {IQ_PRODUCTS.length} across both tracks, plus the composite GEM.IQ report and quarterly re-assessment.
             </p>

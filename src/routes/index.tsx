@@ -174,12 +174,25 @@ function TrialBanner() {
           New
         </span>
         <span className="text-xs md:text-sm font-semibold text-white/95">
-          <span className="text-[#4ade80] font-bold">{ONE_TIME_PRICE} single assessment</span>
-          <span className="mx-2 text-white/40">·</span>
-          <span>or all {IQ_PRODUCTS.length} IQs — both tracks — for {MONTHLY_PRICE}/mo</span>
-          <span className="mx-2 text-white/40">·</span>
-          <span className="text-white/70">{GUARANTEE_DAYS}-day money-back guarantee</span>
+          {ONE_TIME_PRICE && (
+            <>
+              <span className="text-[#4ade80] font-bold">{ONE_TIME_PRICE} single assessment</span>
+              <span className="mx-2 text-white/40">·</span>
+            </>
+          )}
+          <span>
+            {MONTHLY_PRICE
+              ? `or all ${IQ_PRODUCTS.length} IQs — both tracks — for ${MONTHLY_PRICE}/mo`
+              : `all ${IQ_PRODUCTS.length} IQs — both tracks — in one subscription`}
+          </span>
+          {GUARANTEE_LABEL && (
+            <>
+              <span className="mx-2 text-white/40">·</span>
+              <span className="text-white/70">{GUARANTEE_LABEL}</span>
+            </>
+          )}
         </span>
+
         <span className="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-bold text-white group-hover:bg-white group-hover:text-[#0a0a16] transition-colors">
           See pricing
           <ArrowIcon className="h-3 w-3" />

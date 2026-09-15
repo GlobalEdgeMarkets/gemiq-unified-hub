@@ -29,13 +29,18 @@ const searchSchema = z.object({
   buy: z.enum(["single"]).optional(),
 });
 
+/** Canonical DISPLAY_ORDER, derived — never hand-listed. */
+const IQ_NAMES = IQ_PRODUCTS.map((p) => p.name).reduce((acc, name, i, arr) =>
+  i === 0 ? name : i === arr.length - 1 ? `${acc}, and ${name}` : `${acc}, ${name}`,
+"");
+
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
       { title: "Sign in — GEM.IQ Hub" },
-      { name: "description", content: "One account across every GEM.IQ assessment — TariffIQ, GTMIQ, SalesIQ, ProductIQ, AITransformIQ, and UXIQ." },
+      { name: "description", content: `One account across every GEM.IQ assessment — ${IQ_NAMES}.` },
       { property: "og:title", content: "GEM.IQ Hub — Sign in" },
       { property: "og:description", content: "One identity across all GEM.IQ assessments." },
       { property: "og:type", content: "website" },

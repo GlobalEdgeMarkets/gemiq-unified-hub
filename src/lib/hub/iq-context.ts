@@ -8,6 +8,7 @@
 
 import { IQ_PRODUCTS } from "@/lib/iq-catalog";
 import manifest from "@/lib/hub/manifest.json";
+import { planFor, money } from "@/lib/pricing";
 
 export interface IqContext {
   key: string;
@@ -19,11 +20,16 @@ export interface IqContext {
   legacy?: boolean;
 }
 
-/** One shared price line, derived from the manifest's default (quarterly) plan. */
-const DEFAULT_PLAN =
-  manifest.pricing.plans.find((p) => p.interval === "quarter") ?? manifest.pricing.plans[0];
+/**
+ * One shared price line, derived from the manifest's default (quarterly) plan.
+ * Degrades to a price-free line rather than throwing if the manifest ships no plans.
+ */
+const DEFAULT_PLAN = planFor("quarter");
+const TRIAL = manifest.pricing.trial?.days;
 
-const PRICE_LINE = `$${DEFAULT_PLAN.amount}/${DEFAULT_PLAN.interval} — ${manifest.pricing.trial.days}-day trial, cancel anytime.`;
+const PRICE_LINE = DEFAULT_PLAN
+  ? `${money(DEFAULT_PLAN.amount)}/${DEFAULT_PLAN.interval} — ${TRIAL ?? 7}-day trial, cancel anytime.`
+  : `${TRIAL ?? 7}-day trial, cancel anytime.`;
 
 function hostOf(url: string): string {
   try {

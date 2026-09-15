@@ -158,11 +158,11 @@ function TrialBanner() {
           New
         </span>
         <span className="text-xs md:text-sm font-semibold text-white/95">
-          <span className="text-[#4ade80] font-bold">$179 single assessment</span>
+          <span className="text-[#4ade80] font-bold">{ONE_TIME_PRICE} single assessment</span>
           <span className="mx-2 text-white/40">·</span>
-          <span>or all six IQs — both tracks — for $99/mo</span>
+          <span>or all {IQ_PRODUCTS.length} IQs — both tracks — for {MONTHLY_PRICE}/mo</span>
           <span className="mx-2 text-white/40">·</span>
-          <span className="text-white/70">14-day money-back guarantee</span>
+          <span className="text-white/70">{GUARANTEE_DAYS}-day money-back guarantee</span>
         </span>
         <span className="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-bold text-white group-hover:bg-white group-hover:text-[#0a0a16] transition-colors">
           See pricing
@@ -406,7 +406,7 @@ function HeroTile() {
               </span>
             </div>
             <div className="mt-3 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              One assessment for <span className="text-[#4ade80]">$179</span>, or all six for <span className="text-[#4ade80]">$99/mo.</span>
+              One assessment for <span className="text-[#4ade80]">{ONE_TIME_PRICE}</span>, or all six for <span className="text-[#4ade80]">{MONTHLY_PRICE}/mo.</span>
             </div>
             <p className="mt-1.5 text-sm text-white/70">
               Buy a single IQ when you need one answer — TariffIQ, GTMIQ, SalesIQ, ProductIQ, AITransformIQ or UXIQ. Subscribe for all six across both tracks, plus the composite GEM.IQ report and quarterly re-assessment.
@@ -776,22 +776,23 @@ const PLAN_TERMS: { key: PlanTerm; label: string }[] = [
   { key: "annual", label: "Annual · 2 months free" },
 ];
 
+/** Prices and effective rates are derived from the manifest — never restated here. */
 const PLAN_TERM_MAP: Record<PlanTerm, { price: string; unit: string; effective?: string; note: string }> = {
   monthly: {
-    price: "$99",
+    price: MONTHLY_PRICE,
     unit: "/ month",
     note: "Cancel anytime from the billing portal.",
   },
   quarterly: {
-    price: "$279",
+    price: QUARTERLY_PRICE,
     unit: "/ quarter",
-    effective: "≈ $93 / mo",
+    effective: effectiveMonthly("quarter"),
     note: "Matches the re-assessment cadence — one quarter is long enough to move a tier.",
   },
   annual: {
-    price: "$990",
+    price: ANNUAL_PRICE,
     unit: "/ year",
-    effective: "≈ $83 / mo",
+    effective: effectiveMonthly("year"),
     note: "Track progress for a full year — best for teams benchmarking every quarter.",
   },
 };

@@ -459,8 +459,9 @@ function HeroTile() {
                 Buy one assessment
               </Link>
               <span className="text-[11px] text-white/50">
-                {GUARANTEE_DAYS}-day money-back guarantee · Cancel anytime
+                {GUARANTEE_LABEL ? `${GUARANTEE_LABEL} · Cancel anytime` : "Cancel anytime"}
               </span>
+
             </div>
             <p className="mt-4 border-t border-white/10 pt-3 text-[13px] text-white/60">
               <span className="font-bold text-white/85" style={{ fontFamily: "'League Spartan', sans-serif" }}>

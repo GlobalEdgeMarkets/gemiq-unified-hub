@@ -274,11 +274,13 @@ if (status.trial_exhausted) {
             Marketing pages and blog CTAs can send visitors directly into the Hub signup with
             the trial preselected:
           </p>
-          <Code>{`https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=monthly
-https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual`}</Code>
+          <Code>{`${manifest.deep_links.signup_trial_monthly}
+${manifest.deep_links.signup_trial_quarterly}   // quarterly is the default plan
+${manifest.deep_links.signup_trial_annual}
+${manifest.deep_links.buy_single_assessment}`}</Code>
           <p>
             After signup, the Hub auto-initiates Stripe checkout with{" "}
-            <code>trial_period_days: 7</code> on the chosen plan.
+            <code>trial_period_days: {TRIAL_DAYS}</code> on the chosen plan.
           </p>
         </Section>
 
@@ -302,7 +304,7 @@ https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual`}</Code
           <Code>{`↓ SDK      https://raw.githubusercontent.com/.../sdk.ts
 ↓ manifest https://raw.githubusercontent.com/.../manifest.json
 ✓ wrote src/lib/hub.ts
-✓ wrote src/lib/hub-manifest.json (v1.0.0)`}</Code>
+✓ wrote src/lib/hub-manifest.json (v${manifest.version})`}</Code>
           <p>Use it in your IQ:</p>
           <Code>{`import manifest from "@/lib/hub-manifest.json";
 
@@ -344,16 +346,27 @@ const stop = hub.manifest.watch(
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">Manifest shape</h3>
           <Code>{`{
-  version: "1.0.0",
-  etag: "\\"1.0.0-<hash>\\"",
+  version: "${manifest.version}",
+  etag: "\\"${manifest.version}-<hash>\\"",
+  served_at: "<ISO timestamp>",
   hub:   { origin, docs_url, sdk_source, manifest_source, repo },
   brand: { name, fonts, colors, logos, usage_rules },
   pricing: {
-    currency, trial: { days, assessments_included, card_required },
-    plans: [{ id, name, amount, interval, lookup_key }]
+    currency,
+    trial:     { days: ${TRIAL_DAYS}, assessments_included, card_required },
+    guarantee: { days: ${GUARANTEE_DAYS}, type: "money_back" },
+    one_time:  { id, name, amount: ${manifest.pricing.one_time.amount}, lookup_key },
+    plans: [{ id, name, amount, interval, lookup_key }]   // interval: "month" | "quarter" | "year"
   },
-  assessments: [{ key, name, url }],
-  deep_links: { signup_trial_monthly, signup_trial_annual, login, portal }
+  tracks: {
+    capability: { label, blurb },
+    specialist: { label, blurb }
+  },
+  assessments: [{ key, name, url, track }],   // track: "capability" | "specialist"
+  deep_links: {
+    signup_trial_monthly, signup_trial_quarterly, signup_trial_annual,
+    buy_single_assessment, login, portal
+  }
 }`}</Code>
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">

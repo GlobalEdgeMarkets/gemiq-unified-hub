@@ -2,14 +2,27 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HubHeader } from "@/components/HubHeader";
 import { IQ_PRODUCTS, TIER_SCALE, TRACK_META, CAPABILITY_IQS, SPECIALIST_IQS } from "@/lib/iq-catalog";
 import manifest from "@/lib/hub/manifest.json";
-import { MONTHLY_PRICE, QUARTERLY_PRICE, ANNUAL_PRICE, ONE_TIME_PRICE, TRIAL_DAYS, GUARANTEE_DAYS } from "@/lib/pricing";
+import {
+  MONTHLY_PRICE,
+  QUARTERLY_PRICE,
+  ANNUAL_PRICE,
+  ONE_TIME,
+  ONE_TIME_PRICE,
+  TRIAL_DAYS,
+  TRIAL_PHRASE,
+  GUARANTEE_DAYS,
+  GUARANTEE_LABEL,
+} from "@/lib/pricing";
 
 /** Everything below is derived — never retype a value that lives in the catalog or manifest. */
+const IQ_COUNT = IQ_PRODUCTS.length;
 const IQ_NAMES = IQ_PRODUCTS.map((p) => p.name).join(", ");
 const IQ_KEYS_COMMENT = IQ_PRODUCTS.map((p) => `"${p.key}"`).join(" | ");
 const TIER_UNION = TIER_SCALE.map((t) => `"${t}"`).join(" | ");
 const PRIMARY_KEY = IQ_PRODUCTS[0].key;
 const TRACK_SUMMARY = `${CAPABILITY_IQS.length} ${TRACK_META.capability.label.toLowerCase()} and ${SPECIALIST_IQS.length} ${TRACK_META.specialist.label.toLowerCase()}`;
+/** Trial length must never print "undefined" into SEO or a social card. */
+const TRIAL_CLAUSE = TRIAL_DAYS ? `the ${TRIAL_DAYS}-day trial` : "the free trial";
 
 export const Route = createFileRoute("/docs")({
   head: () => ({
@@ -18,13 +31,13 @@ export const Route = createFileRoute("/docs")({
       {
         name: "description",
         content:
-          `How the six live GEM.IQ assessments (${IQ_NAMES}) start the ${TRIAL_DAYS}-day trial and submit results via @gemiq/hub-sdk.`,
+          `How the ${IQ_COUNT} live GEM.IQ assessments (${IQ_NAMES}) start ${TRIAL_CLAUSE} and submit results via @gemiq/hub-sdk.`,
       },
       { property: "og:title", content: "GEM.IQ Hub — Developer Docs" },
       {
         property: "og:description",
         content:
-          "SDK integration guide for the 7-day trial, checkout, and result submission across all GEM.IQ assessments.",
+          `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission across all GEM.IQ assessments.`,
       },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
@@ -32,12 +45,13 @@ export const Route = createFileRoute("/docs")({
       {
         name: "twitter:description",
         content:
-          "SDK integration guide for the 7-day trial, checkout, and result submission.",
+          `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission.`,
       },
     ],
   }),
   component: DocsPage,
 });
+
 
 function Code({ children }: { children: string }) {
   return (

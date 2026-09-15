@@ -106,15 +106,26 @@ export interface HubManifest {
   pricing: {
     currency: string;
     trial: { days: number; assessments_included: number; card_required: boolean };
+    /** 14-day money-back guarantee. Optional so older manifests still type-check. */
+    guarantee?: { days: number; type: string };
+    /** Single-assessment purchase (gemiq_single_assessment, $179). */
+    one_time?: {
+      id: string;
+      name: string;
+      amount: number;
+      lookup_key: string;
+    };
     plans: Array<{
       id: string;
       name: string;
       amount: number;
-      interval: "month" | "year";
+      interval: "month" | "quarter" | "year";
       lookup_key: string;
     }>;
   };
-  assessments: Array<{ key: AssessmentKey; name: string; url: string }>;
+  /** Track metadata, added in manifest 1.5.0. Optional for older manifests. */
+  tracks?: Record<HubTrack, { label: string; blurb: string }>;
+  assessments: Array<{ key: AssessmentKey; name: string; url: string; track?: HubTrack }>;
   deep_links: Record<string, string>;
 }
 

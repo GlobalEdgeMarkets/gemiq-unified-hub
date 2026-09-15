@@ -457,7 +457,7 @@ function HeroTile() {
                 className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
                 style={{ fontFamily: "'League Spartan', sans-serif" }}
               >
-                Start 7-day trial
+                Start {TRIAL_LABEL}
                 <ArrowIcon className="h-4 w-4" />
               </Link>
               <Link

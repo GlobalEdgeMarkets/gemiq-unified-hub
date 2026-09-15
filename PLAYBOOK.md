@@ -13,7 +13,7 @@ disagrees with this file, this file wins.
 | Maturity model | Ad-hoc per IQ | One canonical 5-tier scale |
 | Identity / billing / CRM | Per-IQ, duplicated | Centralized in GEM.IQ Hub |
 | Pricing | Subscription only | $179 single assessment **or** suite subscription |
-| ReadinessIQ | Flagship market-entry IQ | Retired → replaced by GTMIQ, legacy links 307 to Hub `/dashboard` |
+| ReadinessIQ | Flagship market-entry IQ | Retired → replaced by GTMIQ, legacy links 301 to Hub `/dashboard` |
 | TechServicesIQ | Live | Not marketed; registry entry retained only |
 
 ---

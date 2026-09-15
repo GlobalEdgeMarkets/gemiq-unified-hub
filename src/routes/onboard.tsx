@@ -381,7 +381,7 @@ Docs: ${HUB_ORIGIN}/docs`,
               rel="noreferrer"
               className="text-gem-mint underline underline-offset-4"
             >
-              GEM.IQ Playbook (v1.4)
+              GEM.IQ Playbook (v1.5)
             </a>{" "}
             first — the five capability IQs plus the specialist track, the 8–9 dimension standard, the canonical
             five-tier maturity model, and current pricing.

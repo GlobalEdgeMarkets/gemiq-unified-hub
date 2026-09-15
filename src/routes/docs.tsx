@@ -1,5 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { HubHeader } from "@/components/HubHeader";
+import { IQ_PRODUCTS, TIER_SCALE, TRACK_META, CAPABILITY_IQS, SPECIALIST_IQS } from "@/lib/iq-catalog";
+import manifest from "@/lib/hub/manifest.json";
+import { MONTHLY_PRICE, QUARTERLY_PRICE, ANNUAL_PRICE, ONE_TIME_PRICE, TRIAL_DAYS, GUARANTEE_DAYS } from "@/lib/pricing";
+
+/** Everything below is derived — never retype a value that lives in the catalog or manifest. */
+const IQ_NAMES = IQ_PRODUCTS.map((p) => p.name).join(", ");
+const IQ_KEYS_COMMENT = IQ_PRODUCTS.map((p) => `"${p.key}"`).join(" | ");
+const TIER_UNION = TIER_SCALE.map((t) => `"${t}"`).join(" | ");
+const PRIMARY_KEY = IQ_PRODUCTS[0].key;
+const TRACK_SUMMARY = `${CAPABILITY_IQS.length} ${TRACK_META.capability.label.toLowerCase()} and ${SPECIALIST_IQS.length} ${TRACK_META.specialist.label.toLowerCase()}`;
 
 export const Route = createFileRoute("/docs")({
   head: () => ({
@@ -8,7 +18,7 @@ export const Route = createFileRoute("/docs")({
       {
         name: "description",
         content:
-          "How TariffIQ, ReadinessIQ, UXIQ, and TechServicesIQ start the 7-day trial and submit results via @gemiq/hub-sdk.",
+          `How the six live GEM.IQ assessments (${IQ_NAMES}) start the ${TRIAL_DAYS}-day trial and submit results via @gemiq/hub-sdk.`,
       },
       { property: "og:title", content: "GEM.IQ Hub — Developer Docs" },
       {
@@ -69,7 +79,7 @@ function DocsPage() {
             Start the 7-day trial &amp; submit results
           </h1>
           <p className="mt-4 text-lg text-slate-400">
-            For TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ, and any future IQ. Everything
+            For all six live IQs — {IQ_NAMES} ({TRACK_SUMMARY}) — and any future IQ. Everything
             runs through <code className="rounded bg-white/10 px-1.5 py-0.5">@gemiq/hub-sdk</code>{" "}
             — no direct Stripe, Supabase, or HubSpot calls from your IQ.
           </p>
@@ -199,9 +209,9 @@ if (status.active) {
           <p>At the end of the assessment:</p>
           <Code>{`await hub.results.submit({
   email: user.email,
-  assessment_key: "tariffiq", // or "readinessiq" | "uxiq" | "techservicesiq"
+  assessment_key: "${PRIMARY_KEY}", // one of: ${IQ_KEYS_COMMENT}
   score,
-  tier,          // lowercase: "emerging" | "developing" | "established" | "advanced" | "leading"
+  tier,          // canonical 5-tier scale, lowercase: ${TIER_UNION}
   dimensions,    // { [dimensionKey]: number }
   detail: {
     // IQ-specific rich payload — stored verbatim, mapped to gem_* HubSpot properties
@@ -264,11 +274,13 @@ if (status.trial_exhausted) {
             Marketing pages and blog CTAs can send visitors directly into the Hub signup with
             the trial preselected:
           </p>
-          <Code>{`https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=monthly
-https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual`}</Code>
+          <Code>{`${manifest.deep_links.signup_trial_monthly}
+${manifest.deep_links.signup_trial_quarterly}   // quarterly is the default plan
+${manifest.deep_links.signup_trial_annual}
+${manifest.deep_links.buy_single_assessment}`}</Code>
           <p>
             After signup, the Hub auto-initiates Stripe checkout with{" "}
-            <code>trial_period_days: 7</code> on the chosen plan.
+            <code>trial_period_days: {TRIAL_DAYS}</code> on the chosen plan.
           </p>
         </Section>
 
@@ -292,7 +304,7 @@ https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual`}</Code
           <Code>{`↓ SDK      https://raw.githubusercontent.com/.../sdk.ts
 ↓ manifest https://raw.githubusercontent.com/.../manifest.json
 ✓ wrote src/lib/hub.ts
-✓ wrote src/lib/hub-manifest.json (v1.0.0)`}</Code>
+✓ wrote src/lib/hub-manifest.json (v${manifest.version})`}</Code>
           <p>Use it in your IQ:</p>
           <Code>{`import manifest from "@/lib/hub-manifest.json";
 
@@ -334,16 +346,27 @@ const stop = hub.manifest.watch(
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">Manifest shape</h3>
           <Code>{`{
-  version: "1.0.0",
-  etag: "\\"1.0.0-<hash>\\"",
+  version: "${manifest.version}",
+  etag: "\\"${manifest.version}-<hash>\\"",
+  served_at: "<ISO timestamp>",
   hub:   { origin, docs_url, sdk_source, manifest_source, repo },
   brand: { name, fonts, colors, logos, usage_rules },
   pricing: {
-    currency, trial: { days, assessments_included, card_required },
-    plans: [{ id, name, amount, interval, lookup_key }]
+    currency,
+    trial:     { days: ${TRIAL_DAYS}, assessments_included, card_required },
+    guarantee: { days: ${GUARANTEE_DAYS}, type: "money_back" },
+    one_time:  { id, name, amount: ${manifest.pricing.one_time.amount}, lookup_key },
+    plans: [{ id, name, amount, interval, lookup_key }]   // interval: "month" | "quarter" | "year"
   },
-  assessments: [{ key, name, url }],
-  deep_links: { signup_trial_monthly, signup_trial_annual, login, portal }
+  tracks: {
+    capability: { label, blurb },
+    specialist: { label, blurb }
+  },
+  assessments: [{ key, name, url, track }],   // track: "capability" | "specialist"
+  deep_links: {
+    signup_trial_monthly, signup_trial_quarterly, signup_trial_annual,
+    buy_single_assessment, login, portal
+  }
 }`}</Code>
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">
@@ -351,7 +374,7 @@ const stop = hub.manifest.watch(
           </h3>
           <ul className="list-disc space-y-1 pl-5">
             <li>
-              Playbook (v1.4 — source of truth) —{" "}
+              Playbook (v1.5 — source of truth) —{" "}
               <a
                 href="https://github.com/GlobalEdgeMarkets/gemiq-unified-hub/blob/main/PLAYBOOK.md"
                 target="_blank"
@@ -360,7 +383,7 @@ const stop = hub.manifest.watch(
               >
                 <code>PLAYBOOK.md</code>
               </a>{" "}
-              — 6 capability IQs, 8–9 dimensions, canonical 5-tier model, pricing
+              — {TRACK_SUMMARY}, 8–9 dimensions, canonical 5-tier model, pricing
             </li>
             <li>SDK — <code>packages/hub-sdk/sdk.ts</code></li>
             <li>Manifest — <code>src/lib/hub/manifest.json</code> (semver — bump on every change)</li>
@@ -389,9 +412,10 @@ const stop = hub.manifest.watch(
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">Stripe lookup keys</h3>
           <ul className="list-disc space-y-1 pl-5">
-            <li><code>gemiq_professional_monthly</code> — $99/mo</li>
-            <li><code>gemiq_professional_quarterly</code> — $279 / 3 months</li>
-            <li><code>gemiq_professional_annual</code> — $990/yr</li>
+            <li><code>gemiq_professional_monthly</code> — {MONTHLY_PRICE}/mo</li>
+            <li><code>gemiq_professional_quarterly</code> — {QUARTERLY_PRICE} / 3 months (default)</li>
+            <li><code>gemiq_professional_annual</code> — {ANNUAL_PRICE}/yr</li>
+            <li><code>gemiq_single_assessment</code> — {ONE_TIME_PRICE} one-time, {GUARANTEE_DAYS}-day money-back guarantee</li>
           </ul>
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">CheckStatus shape</h3>
@@ -408,10 +432,19 @@ const stop = hub.manifest.watch(
   } | null;
 }`}</Code>
 
+          <h3 className="mt-6 font-display text-lg font-semibold text-white">
+            Canonical tier vocabulary
+          </h3>
+          <p>
+            The only accepted values for <code>tier</code>, lowest to highest. Submit these
+            exact lowercase strings — anything else has to be guessed at on the Hub side.
+          </p>
+          <Code>{TIER_SCALE.join("  →  ")}</Code>
+
           <p className="mt-6 text-sm text-slate-400">
             Full integration guide including HubSpot property registration and legacy user
             import lives in <code>INTEGRATING.md</code> in the Hub repo. The suite-level
-            source of truth — six capability IQs, the 8–9 dimension standard, the canonical
+            source of truth — {TRACK_SUMMARY}, the 8–9 dimension standard, the canonical
             five-tier model and pricing — is{" "}
             <a
               href="https://github.com/GlobalEdgeMarkets/gemiq-unified-hub/blob/main/PLAYBOOK.md"
@@ -419,7 +452,7 @@ const stop = hub.manifest.watch(
               rel="noreferrer"
               className="text-gem-mint underline underline-offset-4"
             >
-              PLAYBOOK.md (v1.4)
+              PLAYBOOK.md (v1.5)
             </a>
             .
           </p>

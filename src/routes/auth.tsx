@@ -3,6 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { iqContextFromReturnUrl } from "@/lib/hub/iq-context";
 import { HubHeader } from "@/components/HubHeader";
+import { ACCENT, IQ_PRODUCTS } from "@/lib/iq-catalog";
 
 /** Only allow return-to URLs on the GEM.IQ Hub itself or *.globaledgemarkets.com. */
 function isAllowedReturnUrl(raw: string | undefined): string | null {
@@ -43,14 +44,13 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-const IQ_LIST: { key: string; name: string; blurb: string; accent: string }[] = [
-  { key: "tariffiq",      name: "TariffIQ",       blurb: "Tariff exposure & savings",     accent: "#05CFAB" },
-  { key: "gtmiq",         name: "GTMIQ",          blurb: "Market entry readiness",        accent: "#a78bfa" },
-  { key: "salesiq",       name: "SalesIQ",        blurb: "Enterprise sales readiness",    accent: "#e8b64a" },
-  { key: "productiq",     name: "ProductIQ",      blurb: "Productization & scale",        accent: "#60a5fa" },
-  { key: "aitransformiq", name: "AITransformIQ",  blurb: "AI transformation readiness",   accent: "#fb7185" },
-  { key: "uxiq",          name: "UXIQ",           blurb: "Digital experience maturity",   accent: "#5aa9c9" },
-];
+/** Derived from the catalog — never hand-maintained. PLAYBOOK §1: one display order everywhere. */
+const IQ_LIST = IQ_PRODUCTS.map((p) => ({
+  key: p.key,
+  name: p.name,
+  blurb: p.tagline,
+  accent: ACCENT[p.accent].hex,
+}));
 
 function AuthPage() {
   const search = useSearch({ from: "/auth" });
@@ -167,7 +167,7 @@ function AuthPage() {
             <h2 className="mt-3 font-display text-4xl font-bold leading-[1.05] tracking-tight text-gem-navy sm:text-5xl">
               One account.
               <br />
-              <span className="text-gem-mint">Four assessments.</span>
+              <span className="text-gem-mint">{IQ_LIST.length} assessments.</span>
             </h2>
             <p className="mt-4 max-w-md text-base leading-relaxed text-gem-navy/70">
               <strong className="text-gem-navy">GEM.IQ</strong> — GlobalEdgeMarkets

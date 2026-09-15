@@ -10,7 +10,16 @@ import themeInvestments from "@/assets/theme-investments.jpg";
 import themeStartups from "@/assets/theme-startups.jpg";
 import themeAi from "@/assets/theme-ai.jpg";
 import themeManagement from "@/assets/theme-management.jpg";
-import { ACCENT, IQ_PRODUCTS, type Accent, type IQProduct } from "@/lib/iq-catalog";
+import {
+  ACCENT,
+  IQ_PRODUCTS,
+  CAPABILITY_IQS,
+  SPECIALIST_IQS,
+  TRACK_META,
+  type Track,
+  type Accent,
+  type IQProduct,
+} from "@/lib/iq-catalog";
 import { SampleReportShowcase } from "@/components/home/SampleReportShowcase";
 import { MaturityLadder } from "@/components/home/MaturityLadder";
 import { DiagnosticApproach } from "@/components/home/DiagnosticApproach";

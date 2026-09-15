@@ -21,6 +21,14 @@ import {
   type Accent,
   type IQProduct,
 } from "@/lib/iq-catalog";
+import {
+  ONE_TIME_PRICE,
+  MONTHLY_PRICE,
+  QUARTERLY_PRICE,
+  ANNUAL_PRICE,
+  GUARANTEE_DAYS,
+  effectiveMonthly,
+} from "@/lib/pricing";
 import { SampleReportShowcase } from "@/components/home/SampleReportShowcase";
 import { MaturityLadder } from "@/components/home/MaturityLadder";
 import { DiagnosticApproach } from "@/components/home/DiagnosticApproach";

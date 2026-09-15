@@ -16,7 +16,7 @@ function ArrowIcon({ className = "" }: { className?: string }) {
 
 const DISPLAY = { fontFamily: "'League Spartan', sans-serif" } as const;
 
-export function IQLanding({ product }: { product: IQProduct }) {
+export function IQLanding({ product }: { product: TrackedIQProduct }) {
   const c = ACCENT[product.accent];
   const others = IQ_PRODUCTS.filter((p) => p.key !== product.key);
 
@@ -292,7 +292,7 @@ export function IQLanding({ product }: { product: IQProduct }) {
   );
 }
 
-export function iqHead(product: IQProduct) {
+export function iqHead(product: TrackedIQProduct) {
   const title = `${product.name} — ${product.tagline} | GEM.IQ`;
   const description = product.intro.slice(0, 155);
   return {

@@ -254,10 +254,18 @@ function HeroBento() {
 
       <div>
         <TrackHeading track="specialist" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:auto-rows-[minmax(180px,auto)]">
-          {SPECIALIST_IQS.map((a) => (
-            <AssessmentTile key={a.key} a={a} />
-          ))}
+        {/* Specialist track: usually a single tile today. Pair the tiles with a
+            companion panel so one item reads as a deliberate section rather
+            than a broken row. The tile column grows as more are added. */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:auto-rows-[minmax(180px,auto)]">
+          <div
+            className={`grid gap-4 ${SPECIALIST_IQS.length > 1 ? "sm:grid-cols-2" : "grid-cols-1"} lg:col-span-2`}
+          >
+            {SPECIALIST_IQS.map((a) => (
+              <AssessmentTile key={a.key} a={a} />
+            ))}
+          </div>
+          <SpecialistPanel />
         </div>
       </div>
     </section>

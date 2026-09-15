@@ -278,10 +278,13 @@ if (status.trial_exhausted) {
 ${manifest.deep_links.signup_trial_quarterly}   // quarterly is the default plan
 ${manifest.deep_links.signup_trial_annual}
 ${manifest.deep_links.buy_single_assessment}`}</Code>
-          <p>
-            After signup, the Hub auto-initiates Stripe checkout with{" "}
-            <code>trial_period_days: {TRIAL_DAYS}</code> on the chosen plan.
-          </p>
+          {TRIAL_DAYS !== undefined && (
+            <p>
+              After signup, the Hub auto-initiates Stripe checkout with{" "}
+              <code>trial_period_days: {TRIAL_DAYS}</code> on the chosen plan.
+            </p>
+          )}
+
         </Section>
 
         <Section id="manifest" title="9. Central manifest — brand, pricing, deep links">

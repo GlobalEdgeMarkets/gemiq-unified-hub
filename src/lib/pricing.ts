@@ -105,7 +105,9 @@ export function savingsAgainstMonthly(
   if (plan.amount >= full) return undefined;
   return {
     percent: Math.round(((full - plan.amount) / full) * 100),
-    monthsFree: Math.round((full - plan.amount) / monthly.amount),
+    // Floor, never round: a half-month saving must not advertise a whole month.
+    monthsFree: Math.floor((full - plan.amount) / monthly.amount),
+
   };
 }
 

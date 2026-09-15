@@ -353,9 +353,9 @@ const stop = hub.manifest.watch(
   brand: { name, fonts, colors, logos, usage_rules },
   pricing: {
     currency,
-    trial:     { days: ${TRIAL_DAYS}, assessments_included, card_required },
-    guarantee: { days: ${GUARANTEE_DAYS}, type: "money_back" },
-    one_time:  { id, name, amount: ${manifest.pricing.one_time.amount}, lookup_key },
+    trial:     { days${TRIAL_DAYS ? `: ${TRIAL_DAYS}` : ""}, assessments_included, card_required },
+    guarantee: { days${GUARANTEE_DAYS ? `: ${GUARANTEE_DAYS}` : ""}, type: "money_back" },
+    one_time:  { id, name, amount${ONE_TIME ? `: ${ONE_TIME.amount}` : ""}, lookup_key },
     plans: [{ id, name, amount, interval, lookup_key }]   // interval: "month" | "quarter" | "year"
   },
   tracks: {
@@ -368,6 +368,7 @@ const stop = hub.manifest.watch(
     buy_single_assessment, login, portal
   }
 }`}</Code>
+
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">
             GitHub sources of truth

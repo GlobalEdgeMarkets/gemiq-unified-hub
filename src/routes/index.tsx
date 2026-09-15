@@ -213,6 +213,21 @@ function TopNav() {
   );
 }
 
+function TrackHeading({ track }: { track: Track }) {
+  const meta = TRACK_META[track];
+  return (
+    <div className="mb-4 flex flex-col gap-1 md:flex-row md:items-baseline md:justify-between">
+      <h2
+        className="text-xl md:text-2xl font-bold tracking-tight"
+        style={{ fontFamily: "'League Spartan', sans-serif" }}
+      >
+        {meta.label}
+      </h2>
+      <p className="max-w-xl text-sm text-white/50 md:text-right">{meta.blurb}</p>
+    </div>
+  );
+}
+
 function HeroBento() {
   return (
     <section id="assessments" className="pt-10 md:pt-14 space-y-10">

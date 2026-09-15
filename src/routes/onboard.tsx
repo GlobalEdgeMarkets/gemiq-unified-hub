@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { HubHeader } from "@/components/HubHeader";
-import { REGISTRY } from "@/lib/hub/assessments";
+import { LIVE_REGISTRY } from "@/lib/hub/assessments";
+import { DISPLAY_ORDER } from "@/lib/iq-catalog";
 import manifest from "@/lib/hub/manifest.json";
 import { applyHubBrand, type HubManifest } from "@/lib/hub/sdk";
 

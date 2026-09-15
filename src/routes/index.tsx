@@ -978,14 +978,17 @@ function Pricing() {
       </div>
 
       {/* Guarantee trust line under both */}
-      <div className="mx-auto mt-6 flex max-w-4xl items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center">
-        <svg className="h-5 w-5 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M10 1.5l6.5 2.6v5.2c0 4-2.8 7.6-6.5 8.7-3.7-1.1-6.5-4.7-6.5-8.7V4.1L10 1.5zm3.7 6.8a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z" />
-        </svg>
-        <p className="text-sm text-white/70">
-          <span className="font-bold text-white">{GUARANTEE_DAYS}-day money-back guarantee</span> on both options — no questions asked.
-        </p>
-      </div>
+      {GUARANTEE_LABEL && (
+        <div className="mx-auto mt-6 flex max-w-4xl items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center">
+          <svg className="h-5 w-5 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 1.5l6.5 2.6v5.2c0 4-2.8 7.6-6.5 8.7-3.7-1.1-6.5-4.7-6.5-8.7V4.1L10 1.5zm3.7 6.8a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z" />
+          </svg>
+          <p className="text-sm text-white/70">
+            <span className="font-bold text-white">{GUARANTEE_LABEL}</span> on both options — no questions asked.
+          </p>
+        </div>
+      )}
+
     </section>
   );
 }

@@ -39,8 +39,10 @@ export function hasPlan(interval: PlanInterval): boolean {
 }
 
 /**
- * Exact plan when present, otherwise the nearest available term (by length),
- * otherwise undefined. Never throws.
+ * NOT FOR DISPLAY. Returns the exact plan when present, otherwise the nearest
+ * available term by length. Only for logic that needs *a* plan to point at
+ * (e.g. a default checkout term). Never render its amount under another
+ * term's label — use `priceFor`, which is exact-match only.
  */
 export function planFor(interval: PlanInterval): Plan | undefined {
   const exact = findPlan(interval);
@@ -56,11 +58,15 @@ export function planFor(interval: PlanInterval): Plan | undefined {
   );
 }
 
-/** Formatted price, or undefined when nothing can stand in — callers hide the line. */
+/**
+ * Formatted price for exactly this interval. Undefined when the manifest has
+ * no such plan — callers hide the whole clause. Never substitutes another term.
+ */
 export function priceFor(interval: PlanInterval): string | undefined {
-  const plan = findPlan(interval) ?? planFor(interval);
+  const plan = findPlan(interval);
   return plan ? money(plan.amount) : undefined;
 }
+
 
 export const ONE_TIME = PRICING.one_time;
 export const ONE_TIME_PRICE = ONE_TIME ? money(ONE_TIME.amount) : undefined;
@@ -99,7 +105,9 @@ export function savingsAgainstMonthly(
   if (plan.amount >= full) return undefined;
   return {
     percent: Math.round(((full - plan.amount) / full) * 100),
-    monthsFree: Math.round((full - plan.amount) / monthly.amount),
+    // Floor, never round: a half-month saving must not advertise a whole month.
+    monthsFree: Math.floor((full - plan.amount) / monthly.amount),
+
   };
 }
 
@@ -115,3 +123,15 @@ export function savingsLabel(interval: PlanInterval): string | undefined {
 
 export const TRIAL_DAYS = PRICING.trial?.days;
 export const GUARANTEE_DAYS = PRICING.guarantee?.days;
+
+/**
+ * Ready-made phrases. A CTA cannot disappear, so the trial label degrades to
+ * "free trial" when the manifest ships no day count. The guarantee phrase is
+ * undefined when absent — callers drop the whole clause.
+ */
+export const TRIAL_LABEL = TRIAL_DAYS ? `${TRIAL_DAYS}-day trial` : "free trial";
+export const TRIAL_PHRASE = TRIAL_DAYS ? `${TRIAL_DAYS}-day free trial` : "free trial";
+export const GUARANTEE_LABEL = GUARANTEE_DAYS
+  ? `${GUARANTEE_DAYS}-day money-back guarantee`
+  : undefined;
+

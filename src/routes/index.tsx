@@ -26,7 +26,10 @@ import {
   MONTHLY_PRICE,
   QUARTERLY_PRICE,
   ANNUAL_PRICE,
-  GUARANTEE_DAYS,
+  GUARANTEE_LABEL,
+  TRIAL_LABEL,
+  TRIAL_DAYS,
+
   effectiveMonthly,
   hasPlan,
   savingsLabel,
@@ -174,12 +177,25 @@ function TrialBanner() {
           New
         </span>
         <span className="text-xs md:text-sm font-semibold text-white/95">
-          <span className="text-[#4ade80] font-bold">{ONE_TIME_PRICE} single assessment</span>
-          <span className="mx-2 text-white/40">·</span>
-          <span>or all {IQ_PRODUCTS.length} IQs — both tracks — for {MONTHLY_PRICE}/mo</span>
-          <span className="mx-2 text-white/40">·</span>
-          <span className="text-white/70">{GUARANTEE_DAYS}-day money-back guarantee</span>
+          {ONE_TIME_PRICE && (
+            <>
+              <span className="text-[#4ade80] font-bold">{ONE_TIME_PRICE} single assessment</span>
+              <span className="mx-2 text-white/40">·</span>
+            </>
+          )}
+          <span>
+            {MONTHLY_PRICE
+              ? `or all ${IQ_PRODUCTS.length} IQs — both tracks — for ${MONTHLY_PRICE}/mo`
+              : `all ${IQ_PRODUCTS.length} IQs — both tracks — in one subscription`}
+          </span>
+          {GUARANTEE_LABEL && (
+            <>
+              <span className="mx-2 text-white/40">·</span>
+              <span className="text-white/70">{GUARANTEE_LABEL}</span>
+            </>
+          )}
         </span>
+
         <span className="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-bold text-white group-hover:bg-white group-hover:text-[#0a0a16] transition-colors">
           See pricing
           <ArrowIcon className="h-3 w-3" />
@@ -422,8 +438,18 @@ function HeroTile() {
               </span>
             </div>
             <div className="mt-3 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              One assessment for <span className="text-[#4ade80]">{ONE_TIME_PRICE}</span>, or all {IQ_PRODUCTS.length} for <span className="text-[#4ade80]">{MONTHLY_PRICE}/mo.</span>
+              {ONE_TIME_PRICE && (
+                <>One assessment for <span className="text-[#4ade80]">{ONE_TIME_PRICE}</span>, or all </>
+              )}
+              {!ONE_TIME_PRICE && <>All </>}
+              {IQ_PRODUCTS.length}
+              {MONTHLY_PRICE ? (
+                <> for <span className="text-[#4ade80]">{MONTHLY_PRICE}/mo.</span></>
+              ) : (
+                <> IQs in one subscription.</>
+              )}
             </div>
+
             <p className="mt-1.5 text-sm text-white/70">
               Buy a single IQ when you need one answer — {IQ_NAME_LIST}. Subscribe for all {IQ_PRODUCTS.length} across both tracks, plus the composite GEM.IQ report and quarterly re-assessment.
             </p>
@@ -434,7 +460,7 @@ function HeroTile() {
                 className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
                 style={{ fontFamily: "'League Spartan', sans-serif" }}
               >
-                Start 7-day trial
+                Start {TRIAL_LABEL}
                 <ArrowIcon className="h-4 w-4" />
               </Link>
               <Link
@@ -446,8 +472,9 @@ function HeroTile() {
                 Buy one assessment
               </Link>
               <span className="text-[11px] text-white/50">
-                {GUARANTEE_DAYS}-day money-back guarantee · Cancel anytime
+                {GUARANTEE_LABEL ? `${GUARANTEE_LABEL} · Cancel anytime` : "Cancel anytime"}
               </span>
+
             </div>
             <p className="mt-4 border-t border-white/10 pt-3 text-[13px] text-white/60">
               <span className="font-bold text-white/85" style={{ fontFamily: "'League Spartan', sans-serif" }}>
@@ -854,12 +881,15 @@ function Pricing() {
             Single assessment
           </div>
           <p className="mt-1 text-sm text-white/50">One IQ, one report, no subscription.</p>
-          <div className="mt-6 flex items-baseline gap-2">
-            <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              {ONE_TIME_PRICE}
+          {ONE_TIME_PRICE && (
+            <div className="mt-6 flex items-baseline gap-2">
+              <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                {ONE_TIME_PRICE}
+              </div>
+              <div className="text-white/50">one-time</div>
             </div>
-            <div className="text-white/50">one-time</div>
-          </div>
+          )}
+
           <ul className="mt-6 space-y-3 text-sm text-white/70">
             {[
               "Any one IQ of your choice",
@@ -919,15 +949,18 @@ function Pricing() {
             ))}
           </div>
 
-          <div className="relative z-10 mt-5 flex items-baseline gap-2">
-            <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              {PLAN_TERM_MAP[interval].price}
+          {PLAN_TERM_MAP[interval].price && (
+            <div className="relative z-10 mt-5 flex items-baseline gap-2">
+              <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                {PLAN_TERM_MAP[interval].price}
+              </div>
+              <div className="text-white/50">{PLAN_TERM_MAP[interval].unit}</div>
+              {PLAN_TERM_MAP[interval].effective && (
+                <div className="text-xs text-white/40">{PLAN_TERM_MAP[interval].effective}</div>
+              )}
             </div>
-            <div className="text-white/50">{PLAN_TERM_MAP[interval].unit}</div>
-            {PLAN_TERM_MAP[interval].effective && (
-              <div className="text-xs text-white/40">{PLAN_TERM_MAP[interval].effective}</div>
-            )}
-          </div>
+          )}
+
           <p className="relative z-10 mt-2 text-xs text-white/45">
             {PLAN_TERM_MAP[interval].note}
           </p>
@@ -956,23 +989,30 @@ function Pricing() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-5 py-3 text-sm font-bold text-[#0a0a16] transition-all hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]"
               style={{ fontFamily: "'League Spartan', sans-serif" }}
             >
-              Start 7-day trial
+              Start {TRIAL_LABEL}
               <ArrowIcon className="h-4 w-4" />
             </Link>
-            <p className="mt-4 text-xs text-white/40">Card required so access continues uninterrupted. Cancel before day 7 and you're not charged.</p>
+            <p className="mt-4 text-xs text-white/40">
+              Card required so access continues uninterrupted.
+              {TRIAL_DAYS ? ` Cancel before day ${TRIAL_DAYS} and you're not charged.` : " Cancel before the trial ends and you're not charged."}
+            </p>
+
           </div>
         </div>
       </div>
 
       {/* Guarantee trust line under both */}
-      <div className="mx-auto mt-6 flex max-w-4xl items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center">
-        <svg className="h-5 w-5 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M10 1.5l6.5 2.6v5.2c0 4-2.8 7.6-6.5 8.7-3.7-1.1-6.5-4.7-6.5-8.7V4.1L10 1.5zm3.7 6.8a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z" />
-        </svg>
-        <p className="text-sm text-white/70">
-          <span className="font-bold text-white">{GUARANTEE_DAYS}-day money-back guarantee</span> on both options — no questions asked.
-        </p>
-      </div>
+      {GUARANTEE_LABEL && (
+        <div className="mx-auto mt-6 flex max-w-4xl items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center">
+          <svg className="h-5 w-5 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 1.5l6.5 2.6v5.2c0 4-2.8 7.6-6.5 8.7-3.7-1.1-6.5-4.7-6.5-8.7V4.1L10 1.5zm3.7 6.8a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z" />
+          </svg>
+          <p className="text-sm text-white/70">
+            <span className="font-bold text-white">{GUARANTEE_LABEL}</span> on both options — no questions asked.
+          </p>
+        </div>
+      )}
+
     </section>
   );
 }

@@ -5,6 +5,8 @@ import { getDashboard } from "@/lib/dashboard.functions";
 import type { DashboardData, DashboardResult } from "@/lib/dashboard.server";
 import { HubHeader } from "@/components/HubHeader";
 import { Button } from "@/components/ui/button";
+import { TRIAL_LABEL } from "@/lib/pricing";
+
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
@@ -238,7 +240,7 @@ function DashboardPage() {
               <div className="mt-6 rounded-xl border border-gem-mint/40 bg-gem-mint/5 px-5 py-4 text-sm text-foreground/85">
                 {data.subscription.trialing ? (
                   <>
-                    <strong>7-day trial active</strong>
+                    <strong>{TRIAL_LABEL} active</strong>
                     {data.subscription.trial_ends_at ? ` until ${fmtDate(data.subscription.trial_ends_at)}` : ""} ·{" "}
                     {data.subscription.trial_assessments_used}/{data.subscription.trial_assessment_limit} trial
                     assessment used

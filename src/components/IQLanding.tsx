@@ -3,6 +3,8 @@ import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
 import { ReportPreview } from "@/components/iq/ReportPreview";
 import { ACCENT, IQ_PRODUCTS, TRACK_META, type TrackedIQProduct } from "@/lib/iq-catalog";
 import { CanRule } from "@/components/CanRule";
+import { TRIAL_LABEL } from "@/lib/pricing";
+
 
 
 
@@ -97,7 +99,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
               Open the assessment
               <ArrowIcon className="h-4 w-4" />
             </a>
-            <span className="text-[11px] text-white/50">7-day trial · 1 full assessment · Cancel anytime</span>
+            <span className="text-[11px] text-white/50">{TRIAL_LABEL} · 1 full assessment · Cancel anytime</span>
           </div>
         </div>
       </section>

@@ -2,14 +2,27 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HubHeader } from "@/components/HubHeader";
 import { IQ_PRODUCTS, TIER_SCALE, TRACK_META, CAPABILITY_IQS, SPECIALIST_IQS } from "@/lib/iq-catalog";
 import manifest from "@/lib/hub/manifest.json";
-import { MONTHLY_PRICE, QUARTERLY_PRICE, ANNUAL_PRICE, ONE_TIME_PRICE, TRIAL_DAYS, GUARANTEE_DAYS } from "@/lib/pricing";
+import {
+  MONTHLY_PRICE,
+  QUARTERLY_PRICE,
+  ANNUAL_PRICE,
+  ONE_TIME,
+  ONE_TIME_PRICE,
+  TRIAL_DAYS,
+  TRIAL_PHRASE,
+  GUARANTEE_DAYS,
+  GUARANTEE_LABEL,
+} from "@/lib/pricing";
 
 /** Everything below is derived — never retype a value that lives in the catalog or manifest. */
+const IQ_COUNT = IQ_PRODUCTS.length;
 const IQ_NAMES = IQ_PRODUCTS.map((p) => p.name).join(", ");
 const IQ_KEYS_COMMENT = IQ_PRODUCTS.map((p) => `"${p.key}"`).join(" | ");
 const TIER_UNION = TIER_SCALE.map((t) => `"${t}"`).join(" | ");
 const PRIMARY_KEY = IQ_PRODUCTS[0].key;
 const TRACK_SUMMARY = `${CAPABILITY_IQS.length} ${TRACK_META.capability.label.toLowerCase()} and ${SPECIALIST_IQS.length} ${TRACK_META.specialist.label.toLowerCase()}`;
+/** Trial length must never print "undefined" into SEO or a social card. */
+const TRIAL_CLAUSE = TRIAL_DAYS ? `the ${TRIAL_DAYS}-day trial` : "the free trial";
 
 export const Route = createFileRoute("/docs")({
   head: () => ({
@@ -18,13 +31,13 @@ export const Route = createFileRoute("/docs")({
       {
         name: "description",
         content:
-          `How the six live GEM.IQ assessments (${IQ_NAMES}) start the ${TRIAL_DAYS}-day trial and submit results via @gemiq/hub-sdk.`,
+          `How the ${IQ_COUNT} live GEM.IQ assessments (${IQ_NAMES}) start ${TRIAL_CLAUSE} and submit results via @gemiq/hub-sdk.`,
       },
       { property: "og:title", content: "GEM.IQ Hub — Developer Docs" },
       {
         property: "og:description",
         content:
-          "SDK integration guide for the 7-day trial, checkout, and result submission across all GEM.IQ assessments.",
+          `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission across all GEM.IQ assessments.`,
       },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
@@ -32,12 +45,13 @@ export const Route = createFileRoute("/docs")({
       {
         name: "twitter:description",
         content:
-          "SDK integration guide for the 7-day trial, checkout, and result submission.",
+          `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission.`,
       },
     ],
   }),
   component: DocsPage,
 });
+
 
 function Code({ children }: { children: string }) {
   return (
@@ -76,13 +90,14 @@ function DocsPage() {
             Developer Docs
           </p>
           <h1 className="mt-2 font-display text-4xl font-bold text-white sm:text-5xl">
-            Start the 7-day trial &amp; submit results
+            Start the {TRIAL_PHRASE} &amp; submit results
           </h1>
           <p className="mt-4 text-lg text-slate-400">
-            For all six live IQs — {IQ_NAMES} ({TRACK_SUMMARY}) — and any future IQ. Everything
+            For all {IQ_COUNT} live IQs — {IQ_NAMES} ({TRACK_SUMMARY}) — and any future IQ. Everything
             runs through <code className="rounded bg-white/10 px-1.5 py-0.5">@gemiq/hub-sdk</code>{" "}
             — no direct Stripe, Supabase, or HubSpot calls from your IQ.
           </p>
+
 
           <nav className="mt-6 flex flex-wrap gap-2 text-sm">
             {[
@@ -169,9 +184,9 @@ if (!status.active) {
           </p>
         </Section>
 
-        <Section id="trial" title="4. Start the 7-day free trial">
+        <Section id="trial" title={`4. Start the ${TRIAL_PHRASE}`}>
           <p>
-            Add a <strong>Start 7-day free trial</strong> button next to your existing subscribe
+            Add a <strong>Start {TRIAL_PHRASE}</strong> button next to your existing subscribe
             CTA. Pass <code>trial: true</code>:
           </p>
           <Code>{`await hub.subscription.startCheckout("gemiq_professional_monthly", {
@@ -181,9 +196,11 @@ if (!status.active) {
 });`}</Code>
           <p>
             Use <code>gemiq_professional_quarterly</code> or <code>gemiq_professional_annual</code> for the other terms. Card is required
-            up-front; the subscription auto-converts on day 7. Stripe sends the reminder email
-            3 days before conversion automatically.
+            up-front
+            {TRIAL_DAYS ? `; the subscription auto-converts on day ${TRIAL_DAYS}` : "; the subscription auto-converts when the trial ends"}
+            . Stripe sends the reminder email 3 days before conversion automatically.
           </p>
+
           <p>
             Trial ships <strong>one free assessment across any IQ</strong> — enforced by the
             Hub, not by your IQ.
@@ -278,10 +295,13 @@ if (status.trial_exhausted) {
 ${manifest.deep_links.signup_trial_quarterly}   // quarterly is the default plan
 ${manifest.deep_links.signup_trial_annual}
 ${manifest.deep_links.buy_single_assessment}`}</Code>
-          <p>
-            After signup, the Hub auto-initiates Stripe checkout with{" "}
-            <code>trial_period_days: {TRIAL_DAYS}</code> on the chosen plan.
-          </p>
+          {TRIAL_DAYS !== undefined && (
+            <p>
+              After signup, the Hub auto-initiates Stripe checkout with{" "}
+              <code>trial_period_days: {TRIAL_DAYS}</code> on the chosen plan.
+            </p>
+          )}
+
         </Section>
 
         <Section id="manifest" title="9. Central manifest — brand, pricing, deep links">
@@ -353,9 +373,9 @@ const stop = hub.manifest.watch(
   brand: { name, fonts, colors, logos, usage_rules },
   pricing: {
     currency,
-    trial:     { days: ${TRIAL_DAYS}, assessments_included, card_required },
-    guarantee: { days: ${GUARANTEE_DAYS}, type: "money_back" },
-    one_time:  { id, name, amount: ${manifest.pricing.one_time.amount}, lookup_key },
+    trial:     { days${TRIAL_DAYS ? `: ${TRIAL_DAYS}` : ""}, assessments_included, card_required },
+    guarantee: { days${GUARANTEE_DAYS ? `: ${GUARANTEE_DAYS}` : ""}, type: "money_back" },
+    one_time:  { id, name, amount${ONE_TIME ? `: ${ONE_TIME.amount}` : ""}, lookup_key },
     plans: [{ id, name, amount, interval, lookup_key }]   // interval: "month" | "quarter" | "year"
   },
   tracks: {
@@ -368,6 +388,7 @@ const stop = hub.manifest.watch(
     buy_single_assessment, login, portal
   }
 }`}</Code>
+
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">
             GitHub sources of truth
@@ -412,11 +433,23 @@ const stop = hub.manifest.watch(
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">Stripe lookup keys</h3>
           <ul className="list-disc space-y-1 pl-5">
-            <li><code>gemiq_professional_monthly</code> — {MONTHLY_PRICE}/mo</li>
-            <li><code>gemiq_professional_quarterly</code> — {QUARTERLY_PRICE} / 3 months (default)</li>
-            <li><code>gemiq_professional_annual</code> — {ANNUAL_PRICE}/yr</li>
-            <li><code>gemiq_single_assessment</code> — {ONE_TIME_PRICE} one-time, {GUARANTEE_DAYS}-day money-back guarantee</li>
+            {MONTHLY_PRICE && (
+              <li><code>gemiq_professional_monthly</code> — {MONTHLY_PRICE}/mo</li>
+            )}
+            {QUARTERLY_PRICE && (
+              <li><code>gemiq_professional_quarterly</code> — {QUARTERLY_PRICE} / 3 months (default)</li>
+            )}
+            {ANNUAL_PRICE && (
+              <li><code>gemiq_professional_annual</code> — {ANNUAL_PRICE}/yr</li>
+            )}
+            {ONE_TIME_PRICE && (
+              <li>
+                <code>gemiq_single_assessment</code> — {ONE_TIME_PRICE} one-time
+                {GUARANTEE_LABEL ? `, ${GUARANTEE_LABEL}` : ""}
+              </li>
+            )}
           </ul>
+
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">CheckStatus shape</h3>
           <Code>{`{

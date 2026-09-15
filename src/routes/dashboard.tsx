@@ -5,6 +5,8 @@ import { getDashboard } from "@/lib/dashboard.functions";
 import type { DashboardData, DashboardResult } from "@/lib/dashboard.server";
 import { HubHeader } from "@/components/HubHeader";
 import { Button } from "@/components/ui/button";
+import { TRIAL_LABEL } from "@/lib/pricing";
+
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,

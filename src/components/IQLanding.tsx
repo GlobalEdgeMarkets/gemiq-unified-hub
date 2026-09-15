@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
 import { ReportPreview } from "@/components/iq/ReportPreview";
-import { ACCENT, IQ_PRODUCTS, TRACK_META, trackFor, type IQProduct } from "@/lib/iq-catalog";
+import { ACCENT, IQ_PRODUCTS, TRACK_META, type TrackedIQProduct } from "@/lib/iq-catalog";
 import { CanRule } from "@/components/CanRule";
 
 
@@ -69,7 +69,7 @@ export function IQLanding({ product }: { product: IQProduct }) {
         <div className="relative z-10 mx-auto max-w-7xl px-6 py-20 md:px-10 md:py-28">
           <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/50" style={DISPLAY}>
             <span className={`rounded-full px-2.5 py-1 ${c.chip}`}>
-              {TRACK_META[trackFor(product.key)].label}
+              {TRACK_META[product.track].label}
             </span>
             <span>{product.domain}</span>
           </div>

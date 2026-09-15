@@ -5,18 +5,22 @@ import manifest from "@/lib/hub/manifest.json";
 /**
  * GET /api/public/manifest
  *
- * Canonical, cache-friendly source of truth for every IQ (TariffIQ,
- * ReadinessIQ, UXIQ, TechServicesIQ, ...). IQs poll this endpoint on a
- * schedule (or on app boot) and reconcile local brand, pricing, deep
- * links, and SDK version against it. See @gemiq/hub-sdk `hub.manifest`
- * for the recommended client integration.
+ * Canonical, cache-friendly source of truth for the six live IQs — GTMIQ,
+ * SalesIQ, ProductIQ, AITransformIQ, UXIQ (capability diagnostics) and
+ * TariffIQ (specialist diagnostics). Each assessment carries a `track`, and
+ * the top-level `tracks` object supplies the label/blurb for each so IQs can
+ * render the split without hardcoding copy. IQs poll this endpoint on a
+ * schedule (or on app boot) and reconcile local brand, pricing, deep links,
+ * and SDK version against it. See @gemiq/hub-sdk `hub.manifest` for the
+ * recommended client integration.
  *
  * Response shape:
  *   {
- *     version: "1.0.0",                       // semver — bump on any change
+ *     version: "1.5.0",                       // semver — bump on any change
  *     etag: "\"<hash>\"",                     // strong etag over the payload
- *     served_at: "2026-07-22T12:00:00.000Z",
- *     hub: {...}, brand: {...}, pricing: {...}, assessments: [...], deep_links: {...}
+ *     served_at: "2026-09-15T12:00:00.000Z",
+ *     hub: {...}, brand: {...}, pricing: {...}, tracks: {...},
+ *     assessments: [{ key, name, url, track }, ...], deep_links: {...}
  *   }
  *
  * Supports `If-None-Match` for 304 responses so pollers stay cheap.

@@ -18,7 +18,7 @@ export const Route = createFileRoute("/docs")({
       {
         name: "description",
         content:
-          "How TariffIQ, ReadinessIQ, UXIQ, and TechServicesIQ start the 7-day trial and submit results via @gemiq/hub-sdk.",
+          `How the six live GEM.IQ assessments (${IQ_NAMES}) start the ${TRIAL_DAYS}-day trial and submit results via @gemiq/hub-sdk.`,
       },
       { property: "og:title", content: "GEM.IQ Hub — Developer Docs" },
       {
@@ -79,7 +79,7 @@ function DocsPage() {
             Start the 7-day trial &amp; submit results
           </h1>
           <p className="mt-4 text-lg text-slate-400">
-            For TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ, and any future IQ. Everything
+            For all six live IQs — {IQ_NAMES} ({TRACK_SUMMARY}) — and any future IQ. Everything
             runs through <code className="rounded bg-white/10 px-1.5 py-0.5">@gemiq/hub-sdk</code>{" "}
             — no direct Stripe, Supabase, or HubSpot calls from your IQ.
           </p>
@@ -209,9 +209,9 @@ if (status.active) {
           <p>At the end of the assessment:</p>
           <Code>{`await hub.results.submit({
   email: user.email,
-  assessment_key: "tariffiq", // or "readinessiq" | "uxiq" | "techservicesiq"
+  assessment_key: "${PRIMARY_KEY}", // one of: ${IQ_KEYS_COMMENT}
   score,
-  tier,          // lowercase: "emerging" | "developing" | "established" | "advanced" | "leading"
+  tier,          // canonical 5-tier scale, lowercase: ${TIER_UNION}
   dimensions,    // { [dimensionKey]: number }
   detail: {
     // IQ-specific rich payload — stored verbatim, mapped to gem_* HubSpot properties

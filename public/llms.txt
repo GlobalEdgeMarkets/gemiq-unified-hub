@@ -1,21 +1,45 @@
 # GEM.IQ
 
-> The GEM.IQ Hub by GlobalEdgeMarkets — one identity, one subscription, and a unified dashboard across every GEM.IQ executive assessment (TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ).
+> The GEM.IQ Hub by GlobalEdgeMarkets — one identity, one subscription, and a unified dashboard across every GEM.IQ executive assessment (GTMIQ, SalesIQ, ProductIQ, AITransformIQ, UXIQ, TariffIQ).
 
-GEM.IQ is a family of self-service executive assessments covering global trade, go-to-market readiness, digital/AI experience, and product/service delivery. Each assessment produces dimension-level scoring, benchmarks, and prioritized recommendations in under 10 minutes.
+GEM.IQ is a family of self-service executive assessments covering go-to-market, enterprise sales, productization, AI transformation, digital experience, and global trade. Each assessment produces dimension-level scoring, benchmarks, and prioritized recommendations in under 10 minutes, scored on one shared 5-tier maturity scale so results compare across disciplines.
 
 ## Pages
 
-- [GEM.IQ Hub — home](/): Overview of the GEM.IQ platform, the four assessments, pricing, and the 7-day free trial.
+- [GEM.IQ Hub — home](/): Overview of the GEM.IQ platform, the six assessments, the two tracks, pricing, and the 7-day free trial.
 - [Sign in / Create account](/auth): Unified authentication for the GEM.IQ Hub with 7-day free trial signup.
+- [Dashboard](/dashboard): Unified view of every completed IQ — scores, tiers, report links, and cross-IQ recommendations.
 
 ## Docs
 
 - [Developer docs](/docs): SDK integration guide for IQ apps — trial initiation, 402 upgrade handling, and result submission via `@gemiq/hub-sdk`.
 
+## Tracks
+
+- **Capability diagnostics**: Maturity X-rays of the functions every company runs — go-to-market, sales, product, AI, and experience. Scored on the same 5-tier scale so results compare across disciplines.
+- **Specialist diagnostics**: Domain-specific diagnostics for companies with that exposure. Same rigour and the same tier scale, but the question is narrower — and the output is usually a dollar figure, not just a maturity level.
+
 ## Assessments
 
-- [TariffIQ](https://tariffiq.globaledgemarkets.com): Duty exposure and tariff-engineering maturity across HTS classification, first-sale, and FTZ readiness.
-- [ReadinessIQ](https://readinessiq.globaledgemarkets.com): Go-to-market maturity across market entry, enterprise sales, productization, and AI transformation with CMMI/TRL-weighted scoring.
-- [UXIQ](https://uxreadiness.globaledgemarkets.com): Digital and AI experience benchmarks across research, design systems, accessibility, and conversion craft.
-- [TechServicesIQ](https://techservicesiq.globaledgemarkets.com): Services delivery health across engagement, delivery, staffing, and margin performance.
+- [GTMIQ](/gtmiq) — [gtmiq.globaledgemarkets.com](https://gtmiq.globaledgemarkets.com): Market entry & go-to-market readiness. Capability diagnostic.
+- [SalesIQ](/salesiq) — [salesiq.globaledgemarkets.com](https://salesiq.globaledgemarkets.com): Enterprise sales readiness. Capability diagnostic.
+- [ProductIQ](/productiq) — [productiq.globaledgemarkets.com](https://productiq.globaledgemarkets.com): Productization & scale readiness. Capability diagnostic.
+- [AITransformIQ](/aitransformiq) — [aitransformiq.globaledgemarkets.com](https://aitransformiq.globaledgemarkets.com): AI transformation readiness. Capability diagnostic.
+- [UXIQ](/uxiq) — [uxreadiness.globaledgemarkets.com](https://uxreadiness.globaledgemarkets.com): Digital & AI experience. Capability diagnostic.
+- [TariffIQ](/tariffiq) — [tariffiq.globaledgemarkets.com](https://tariffiq.globaledgemarkets.com): Duty exposure & savings. Specialist diagnostic.
+
+## Maturity scale
+
+Every GEM.IQ assessment scores each dimension on the same five tiers: reactive, developing, defined, advanced, optimized.
+
+## Pricing
+
+- Single assessment: $179 one-time.
+- Suite subscription — covers both tracks, all six assessments: $99/month, $279/quarter (the default plan), or $990/year.
+- Trial: 7 days, one assessment included, card required.
+- Guarantee: 14-day money-back.
+
+## Retired
+
+- ReadinessIQ has been broken up into GTMIQ, SalesIQ, ProductIQ, and AITransformIQ. readinessiq.globaledgemarkets.com now redirects (301) to the Hub dashboard.
+- TechServicesIQ is not a live product.

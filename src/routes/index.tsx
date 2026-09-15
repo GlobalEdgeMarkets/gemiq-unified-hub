@@ -10,7 +10,16 @@ import themeInvestments from "@/assets/theme-investments.jpg";
 import themeStartups from "@/assets/theme-startups.jpg";
 import themeAi from "@/assets/theme-ai.jpg";
 import themeManagement from "@/assets/theme-management.jpg";
-import { ACCENT, IQ_PRODUCTS, type Accent, type IQProduct } from "@/lib/iq-catalog";
+import {
+  ACCENT,
+  IQ_PRODUCTS,
+  CAPABILITY_IQS,
+  SPECIALIST_IQS,
+  TRACK_META,
+  type Track,
+  type Accent,
+  type IQProduct,
+} from "@/lib/iq-catalog";
 import { SampleReportShowcase } from "@/components/home/SampleReportShowcase";
 import { MaturityLadder } from "@/components/home/MaturityLadder";
 import { DiagnosticApproach } from "@/components/home/DiagnosticApproach";
@@ -213,18 +222,43 @@ function TopNav() {
   );
 }
 
+function TrackHeading({ track }: { track: Track }) {
+  const meta = TRACK_META[track];
+  return (
+    <div className="mb-4 flex flex-col gap-1 md:flex-row md:items-baseline md:justify-between">
+      <h2
+        className="text-xl md:text-2xl font-bold tracking-tight"
+        style={{ fontFamily: "'League Spartan', sans-serif" }}
+      >
+        {meta.label}
+      </h2>
+      <p className="max-w-xl text-sm text-white/50 md:text-right">{meta.blurb}</p>
+    </div>
+  );
+}
+
 function HeroBento() {
   return (
-    <section id="assessments" className="pt-10 md:pt-14">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:auto-rows-[minmax(180px,auto)]">
-        {/* assessment tiles */}
-        {ASSESSMENTS.map((a) => (
-          <AssessmentTile key={a.key} a={a} />
-        ))}
+    <section id="assessments" className="pt-10 md:pt-14 space-y-10">
+      <div>
+        <TrackHeading track="capability" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:auto-rows-[minmax(180px,auto)]">
+          {CAPABILITY_IQS.map((a) => (
+            <AssessmentTile key={a.key} a={a} />
+          ))}
+          {/* Methodology strip */}
+          <MethodologyTile />
+          <BenchmarkTile />
+        </div>
+      </div>
 
-        {/* Methodology strip */}
-        <MethodologyTile />
-        <BenchmarkTile />
+      <div>
+        <TrackHeading track="specialist" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:auto-rows-[minmax(180px,auto)]">
+          {SPECIALIST_IQS.map((a) => (
+            <AssessmentTile key={a.key} a={a} />
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -26,7 +26,10 @@ import {
   MONTHLY_PRICE,
   QUARTERLY_PRICE,
   ANNUAL_PRICE,
-  GUARANTEE_DAYS,
+  GUARANTEE_LABEL,
+  TRIAL_LABEL,
+  TRIAL_DAYS,
+
   effectiveMonthly,
   hasPlan,
   savingsLabel,

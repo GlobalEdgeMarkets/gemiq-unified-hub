@@ -33,9 +33,10 @@ export default defineTool({
       .from("submissions")
       .select("*")
       .eq("user_id", ctx.getUserId())
-      .order("created_at", { ascending: false })
+      .order("submitted_at", { ascending: false })
       .limit(limit ?? 20);
-    if (tool) query = query.eq("tool", tool);
+    // The submissions table keys the IQ on assessment_key, not "tool".
+    if (tool) query = query.eq("assessment_key", tool);
     const { data, error } = await query;
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {

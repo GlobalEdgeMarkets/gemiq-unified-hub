@@ -93,13 +93,13 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
         let trialUsedBefore = 0;
         let hasPaidSub = false;
         if (user?.id) {
-          const { data: sub } = await svc
-            .from("subscriptions")
-            .select("id,status,trial_assessments_used,trial_assessment_limit")
-            .eq("user_id", user.id)
-            .order("updated_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
+          const { data: sub } = await selectCurrentSubscription<{
+            id: string;
+            status: string;
+            trial_assessments_used: number | null;
+            trial_assessment_limit: number | null;
+          }>(svc, user.id, "id,status,trial_assessments_used,trial_assessment_limit");
+
           hasPaidSub = sub?.status === "active";
           if (sub && sub.status === "trialing") {
             const used = sub.trial_assessments_used ?? 0;

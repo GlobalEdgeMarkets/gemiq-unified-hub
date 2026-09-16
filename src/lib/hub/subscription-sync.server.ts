@@ -20,14 +20,23 @@ async function resolveUserIdFromCustomer(customerId: string): Promise<string | n
   if (customer.metadata?.supabase_user_id) return customer.metadata.supabase_user_id;
   if (!customer.email) return null;
 
+  // `profiles.email` has no unique constraint, so this can legitimately return
+  // more than one row. Tie-break: oldest profile wins (the original account for
+  // that email); duplicates are later accidents. Never throw here — a webhook
+  // must not 500 over a data-shape surprise and trigger Stripe retries.
   const service = createHubServiceClient();
   const { data, error } = await service
     .from("profiles")
     .select("id")
     .eq("email", customer.email)
-    .maybeSingle();
-  if (error) throw error;
-  return data?.id ?? null;
+    .order("created_at", { ascending: true })
+    .limit(1);
+  if (error) {
+    console.error("[subscription sync] profile lookup failed", error);
+    return null;
+  }
+  return data?.[0]?.id ?? null;
+
 }
 
 export async function syncSubscription(sub: Stripe.Subscription, knownUserId?: string) {

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createHubSupabaseSSR, createHubServiceClient } from "@/lib/hub/supabase-server";
+import { createHubSupabaseSSR, createHubServiceClient, selectCurrentSubscription } from "@/lib/hub/supabase-server";
 import { json, corsHeaders } from "@/lib/hub/http";
 import { reconcileSubscriptionForUser } from "@/lib/hub/subscription-sync.server";
 

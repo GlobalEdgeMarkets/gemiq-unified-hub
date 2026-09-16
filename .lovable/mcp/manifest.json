@@ -35,7 +35,7 @@
       {
         "name": "list_submissions",
         "title": "List my assessment submissions",
-        "description": "Lists the signed-in user's assessment submissions across all GEM.IQ tools (TariffIQ, ReadinessIQ, UXIQ, TechServicesIQ), most recent first.",
+        "description": "Lists the signed-in user's assessment submissions across all GEM.IQ tools (GTMIQ, SalesIQ, ProductIQ, AITransformIQ, UXIQ, TariffIQ), most recent first.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -46,13 +46,15 @@
           "type": "object",
           "properties": {
             "tool": {
-              "description": "Filter to a single IQ tool. Omit to list all tools.",
+              "description": "Filter to a single IQ tool. Omit to list all tools. Historical submissions from retired IQs are returned only when no filter is given.",
               "type": "string",
               "enum": [
-                "tariffiq",
-                "readinessiq",
+                "gtmiq",
+                "salesiq",
+                "productiq",
+                "aitransformiq",
                 "uxiq",
-                "techservicesiq"
+                "tariffiq"
               ]
             },
             "limit": {

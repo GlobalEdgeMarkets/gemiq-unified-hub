@@ -2,6 +2,7 @@ import { auth, defineMcp } from "@lovable.dev/mcp-js";
 import getProfileTool from "./tools/get-profile";
 import listSubmissionsTool from "./tools/list-submissions";
 import getSubscriptionTool from "./tools/get-subscription";
+import { LIVE_IQ_NAMES } from "./live-iqs";
 
 // The OAuth issuer MUST be the direct Supabase host — the `.lovable.cloud`
 // proxy fails RFC 8414 issuer verification. VITE_SUPABASE_PROJECT_ID is
@@ -12,8 +13,7 @@ export default defineMcp({
   name: "gemiq-hub-mcp",
   title: "GEM.IQ Hub",
   version: "0.1.0",
-  instructions:
-    "GEM.IQ Hub tools. Read the signed-in user's Hub profile, subscription status, and assessment submissions across TariffIQ, ReadinessIQ, UXIQ, and TechServicesIQ. All tools act as the authenticated user via Supabase RLS.",
+  instructions: `GEM.IQ Hub tools. Read the signed-in user's Hub profile, subscription status, and assessment submissions across the live GEM.IQ suite (${LIVE_IQ_NAMES}) — two tracks: capability diagnostics and specialist diagnostics, all scored on the same 5-tier maturity scale. All tools act as the authenticated user via row-level security.`,
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",

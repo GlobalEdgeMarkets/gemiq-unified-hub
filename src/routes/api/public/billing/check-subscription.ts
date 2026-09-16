@@ -14,13 +14,18 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
         if (!user) return json({ active: false, authenticated: false }, undefined, request);
 
         const svc = createHubServiceClient();
-        let { data, error } = await svc
-          .from("subscriptions")
-          .select("status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id,trial_ends_at,trial_assessments_used,trial_assessment_limit")
-          .eq("user_id", user.id)
-          .order("updated_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
+        const COLUMNS = "status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id,trial_ends_at,trial_assessments_used,trial_assessment_limit";
+        type SubRow = {
+          status: string;
+          lookup_key: string | null;
+          current_period_end: string | null;
+          cancel_at_period_end: boolean | null;
+          stripe_subscription_id: string | null;
+          trial_ends_at: string | null;
+          trial_assessments_used: number | null;
+          trial_assessment_limit: number | null;
+        };
+        let { data, error } = await selectCurrentSubscription<SubRow>(svc, user.id, COLUMNS);
         if (error) return json({ error: "subscription_lookup_failed" }, { status: 500 }, request);
 
         // Stripe remains the source of truth. This self-heals checkout returns
@@ -28,19 +33,14 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
         if (!data || !["active", "trialing"].includes(data.status)) {
           try {
             await reconcileSubscriptionForUser(user.id, user.email ?? "");
-            const refreshed = await svc
-              .from("subscriptions")
-              .select("status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id,trial_ends_at,trial_assessments_used,trial_assessment_limit")
-              .eq("user_id", user.id)
-              .order("updated_at", { ascending: false })
-              .limit(1)
-              .maybeSingle();
+            const refreshed = await selectCurrentSubscription<SubRow>(svc, user.id, COLUMNS);
             if (refreshed.error) throw refreshed.error;
             data = refreshed.data;
           } catch (reconcileError) {
             console.error("[subscription reconciliation]", reconcileError);
           }
         }
+
 
         const active = !!data && ["active", "trialing"].includes(data.status);
         const trialing = data?.status === "trialing";

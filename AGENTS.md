@@ -28,6 +28,11 @@ same pass:
 4. `public/llms.txt` — the file LLMs read; goes stale fastest.
 5. `src/routes/sitemap[.]xml.ts` — product paths.
 6. `PLAYBOOK.md` — §1 table and the version header.
+7. MCP server (`src/lib/mcp/`) — nothing to hand-edit: tool descriptions and the
+   `list_submissions` filter derive from `manifest.json` via
+   `src/lib/mcp/live-iqs.ts`. After step 2, run the MCP manifest extractor so
+   `.lovable/mcp/manifest.json` reflects the new catalog, and check that no tool
+   description or `defineMcp` instruction string names an IQ by hand.
 
 Retiring an IQ: add the key to `RETIRED_KEYS` in
 `src/lib/hub/assessments/index.ts` and consume `LIVE_REGISTRY`. Do not hand-filter

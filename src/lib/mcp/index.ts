@@ -2,6 +2,7 @@ import { auth, defineMcp } from "@lovable.dev/mcp-js";
 import getProfileTool from "./tools/get-profile";
 import listSubmissionsTool from "./tools/list-submissions";
 import getSubscriptionTool from "./tools/get-subscription";
+import { LIVE_IQ_NAMES } from "./live-iqs";
 
 // The OAuth issuer MUST be the direct Supabase host — the `.lovable.cloud`
 // proxy fails RFC 8414 issuer verification. VITE_SUPABASE_PROJECT_ID is

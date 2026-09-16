@@ -53,3 +53,48 @@ export function createHubServiceClient() {
     { auth: { persistSession: false, autoRefreshToken: false } },
   );
 }
+
+/**
+ * Anon-key client acting as the caller (bearer token). RLS applies exactly as
+ * it does in the browser — never swap this for a service-role client.
+ */
+export function createHubUserClient(accessToken: string) {
+  return createClient<Database>(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_PUBLISHABLE_KEY!,
+    {
+      global: { headers: { Authorization: `Bearer ${accessToken}` } },
+      auth: { persistSession: false, autoRefreshToken: false },
+    },
+  );
+}
+
+/**
+ * The one subscription read for a user.
+ *
+ * `subscriptions` has no unique constraint on `user_id` (only on
+ * `stripe_subscription_id`), so a cancel-and-resubscribe can leave a user with
+ * more than one row. Plain `.maybeSingle()` throws PGRST116 in that case, and
+ * plain recency can rank a recently-touched cancelled row above a live one.
+ *
+ * Precedence mirrors `reconcileSubscriptionForUser`: prefer an active/trialing
+ * row, otherwise the most recently updated one. Callers pass their own columns
+ * (must include `status`); the helper owns ordering and the single-row pick.
+ */
+export async function selectCurrentSubscription<Row extends { status?: string | null }>(
+  client: { from: (table: "subscriptions") => any },
+  userId: string,
+  columns: string,
+): Promise<{ data: Row | null; error: { message: string } | null }> {
+  const { data, error } = await client
+    .from("subscriptions")
+    .select(columns)
+    .eq("user_id", userId)
+    .order("updated_at", { ascending: false })
+    .limit(10);
+  if (error) return { data: null, error };
+  const rows = (data ?? []) as Row[];
+  const live = rows.find((r) => r.status === "active" || r.status === "trialing");
+  return { data: live ?? rows[0] ?? null, error: null };
+}
+

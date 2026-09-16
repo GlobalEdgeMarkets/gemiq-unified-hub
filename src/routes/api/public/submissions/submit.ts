@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createHubSupabaseSSR, createHubServiceClient } from "@/lib/hub/supabase-server";
+import { createHubSupabaseSSR, createHubServiceClient, selectCurrentSubscription } from "@/lib/hub/supabase-server";
 import { SubmissionPayloadSchema } from "@/lib/hub/schemas";
 import { upsertContactByEmail, createLeadForContact, classifyLead } from "@/lib/hub/hubspot";
 import { buildContactProperties, REGISTRY_BY_KEY } from "@/lib/hub/assessments";

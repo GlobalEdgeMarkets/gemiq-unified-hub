@@ -12,10 +12,10 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const supabase = createHubUserClient(ctx.getToken());
+    const supabase = createHubUserClient(ctx.getToken()!);
     const { data, error } = await selectCurrentSubscription(
       supabase,
-      ctx.getUserId(),
+      ctx.getUserId()!,
       "status,lookup_key,current_period_end,cancel_at_period_end,trial_ends_at,trial_assessments_used,trial_assessment_limit",
     );
     if (error) {

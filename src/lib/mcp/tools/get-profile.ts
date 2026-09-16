@@ -11,11 +11,11 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const supabase = createHubUserClient(ctx.getToken());
+    const supabase = createHubUserClient(ctx.getToken()!);
     const { data, error } = await supabase
       .from("profiles")
       .select("id,email,first_name,last_name,full_name,company,title,role,industry,created_at")
-      .eq("id", ctx.getUserId())
+      .eq("id", ctx.getUserId()!)
       .maybeSingle();
     if (error) {
       console.error("[mcp get_profile]", error);

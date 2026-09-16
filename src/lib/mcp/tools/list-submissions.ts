@@ -21,13 +21,13 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const supabase = createHubUserClient(ctx.getToken());
+    const supabase = createHubUserClient(ctx.getToken()!);
     // Explicit columns: raw `answers` and the CRM sync internals are needless
     // context for a client and pure token burn.
     let query = supabase
       .from("submissions")
       .select("id,assessment_key,score,tier,dimensions,submitted_at")
-      .eq("user_id", ctx.getUserId())
+      .eq("user_id", ctx.getUserId()!)
       .order("submitted_at", { ascending: false })
       .limit(limit ?? 20);
     // The submissions table keys the IQ on assessment_key, not "tool".

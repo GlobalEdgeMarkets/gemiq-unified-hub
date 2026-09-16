@@ -141,23 +141,40 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
 
   const [profileRes, subRes] = await Promise.all([
     supabase.from("profiles").select("first_name,company").eq("id", user.id).maybeSingle(),
-    supabase
-      .from("subscriptions")
-      .select("status,trial_ends_at,trial_assessments_used,trial_assessment_limit,current_period_end")
-      .eq("user_id", user.id)
-      .maybeSingle(),
+    selectCurrentSubscription<{
+      status: string | null;
+      trial_ends_at: string | null;
+      trial_assessments_used: number | null;
+      trial_assessment_limit: number | null;
+      current_period_end: string | null;
+    }>(
+      supabase,
+      user.id,
+      "status,trial_ends_at,trial_assessments_used,trial_assessment_limit,current_period_end",
+    ),
   ]);
+
+  // A subscription read failure must not silently degrade to "no subscription".
+  if (subRes.error) {
+    console.error("[dashboard] subscription lookup failed", subRes.error);
+    throw new Error("We couldn’t load your billing status. Please try again.");
+  }
 
   // Submissions may predate the account (migrated rows carry the email but no
   // user_id), so match on both. Service client is read-only here and scoped to
   // the verified caller's own user_id/email.
   const service = createHubServiceClient();
-  const { data: rows } = await service
+  const { data: rows, error: rowsError } = await service
     .from("submissions")
     .select("assessment_key,score,tier,dimensions,metadata,submitted_at,user_id,email")
     .or(`user_id.eq.${user.id},email.eq.${email}`)
     .order("submitted_at", { ascending: false })
     .limit(200);
+  if (rowsError) {
+    console.error("[dashboard] submissions lookup failed", rowsError);
+    throw new Error("We couldn’t load your assessment results. Please try again.");
+  }
+
 
   const all = (rows ?? []) as Array<{
     assessment_key: string;

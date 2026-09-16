@@ -3,12 +3,8 @@
 import { createServerFn } from "@tanstack/react-start";
 
 export const getDashboard = createServerFn({ method: "GET" }).handler(async () => {
-  try {
-    const { loadDashboard } = await import("@/lib/dashboard.server");
-    return await loadDashboard();
-  } catch {
-    // Unauthenticated or unresolvable session -> let the route show sign-in.
-    return null;
-  }
+  const { loadDashboard } = await import("@/lib/dashboard.server");
+  // `null` means "no signed-in user" and only that. Any other failure throws so
+  // the route renders an error state instead of a false sign-in prompt.
+  return await loadDashboard();
 });
-

@@ -1,12 +1,5 @@
-import { defineTool, type ToolContext } from "@lovable.dev/mcp-js";
-import { createClient } from "@supabase/supabase-js";
-
-function supabaseForUser(ctx: ToolContext) {
-  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
+import { defineTool } from "@lovable.dev/mcp-js";
+import { createHubUserClient, selectCurrentSubscription } from "@/lib/hub/supabase-server";
 
 export default defineTool({
   name: "get_subscription",
@@ -19,13 +12,16 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const supabase = supabaseForUser(ctx);
-    const { data, error } = await supabase
-      .from("subscriptions")
-      .select("*")
-      .eq("user_id", ctx.getUserId())
-      .maybeSingle();
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    const supabase = createHubUserClient(ctx.getToken()!);
+    const { data, error } = await selectCurrentSubscription(
+      supabase,
+      ctx.getUserId()!,
+      "status,lookup_key,current_period_end,cancel_at_period_end,trial_ends_at,trial_assessments_used,trial_assessment_limit",
+    );
+    if (error) {
+      console.error("[mcp get_subscription]", error);
+      return { content: [{ type: "text", text: "Could not load your subscription." }], isError: true };
+    }
     return {
       content: [{ type: "text", text: JSON.stringify(data ?? { status: "none" }, null, 2) }],
       structuredContent: { subscription: data ?? null },

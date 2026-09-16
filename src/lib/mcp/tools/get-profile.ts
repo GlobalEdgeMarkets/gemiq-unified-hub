@@ -1,12 +1,5 @@
-import { defineTool, type ToolContext } from "@lovable.dev/mcp-js";
-import { createClient } from "@supabase/supabase-js";
-
-function supabaseForUser(ctx: ToolContext) {
-  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
+import { defineTool } from "@lovable.dev/mcp-js";
+import { createHubUserClient } from "@/lib/hub/supabase-server";
 
 export default defineTool({
   name: "get_profile",
@@ -18,13 +11,16 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const supabase = supabaseForUser(ctx);
+    const supabase = createHubUserClient(ctx.getToken()!);
     const { data, error } = await supabase
       .from("profiles")
-      .select("*")
-      .eq("id", ctx.getUserId())
+      .select("id,email,first_name,last_name,full_name,company,title,role,industry,created_at")
+      .eq("id", ctx.getUserId()!)
       .maybeSingle();
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (error) {
+      console.error("[mcp get_profile]", error);
+      return { content: [{ type: "text", text: "Could not load your profile." }], isError: true };
+    }
     const profile = { ...(data ?? {}), email: ctx.getUserEmail() };
     return {
       content: [{ type: "text", text: JSON.stringify(profile, null, 2) }],

@@ -104,17 +104,14 @@ function pickReportUrl(row: { metadata: unknown; detail?: unknown }): string | n
 }
 
 /**
- * Strict auth guard: never throws. Any missing/invalid session — or any
- * unexpected failure while resolving it — resolves to `null` so the route
- * renders its sign-in flow instead of surfacing an "Unauthorized" runtime error.
+ * Auth guard. Returns `null` ONLY when there is genuinely no signed-in user —
+ * any other failure throws, so the route can render an actionable error state
+ * instead of a false "sign in" prompt for a paying customer.
  */
 export async function loadDashboard(): Promise<DashboardData | null> {
-  try {
-    return await loadDashboardForSession();
-  } catch {
-    return null;
-  }
+  return await loadDashboardForSession();
 }
+
 
 async function loadDashboardForSession(): Promise<DashboardData | null> {
   const request = getRequest();

@@ -2,7 +2,7 @@
 // Read-only: resolves the signed-in Hub user's submissions across every IQ,
 // their subscription state, and cross-IQ recommendations.
 import { getRequest } from "@tanstack/react-start/server";
-import { createHubSupabaseSSR, createHubServiceClient } from "@/lib/hub/supabase-server";
+import { createHubSupabaseSSR, createHubServiceClient, selectCurrentSubscription } from "@/lib/hub/supabase-server";
 import { REGISTRY, REGISTRY_BY_KEY } from "@/lib/hub/assessments";
 import { normalizeTier, tierFromScore } from "@/lib/hub/assessments/tiers";
 import manifest from "@/lib/hub/manifest.json";

@@ -38,8 +38,6 @@ import {
 import { SampleReportShowcase } from "@/components/home/SampleReportShowcase";
 import { MaturityLadder } from "@/components/home/MaturityLadder";
 import { DiagnosticApproach } from "@/components/home/DiagnosticApproach";
-import { CanRule } from "@/components/CanRule";
-import { SCALE_SLOGAN } from "@/lib/cansulting";
 
 /** Names in canonical DISPLAY_ORDER: "GTMIQ, SalesIQ, … or TariffIQ". */
 const IQ_NAME_LIST = IQ_PRODUCTS.map((p) => p.name).reduce((acc, name, i, arr) =>
@@ -135,8 +133,6 @@ function Index() {
           <DiagnosticApproach />
           <SampleReportShowcase />
           <MaturityLadder />
-
-          <CanRule seed="hub-home-mid" className="mt-16" accentHex="#a78bfa" />
 
           <TrustMarquee />
 
@@ -408,7 +404,6 @@ function HeroTile() {
             independent dimensions and returns a gap map, not a vanity number. One identity, one subscription,
             one benchmarked view of where you actually stand.
           </p>
-          <CanRule slogan={SCALE_SLOGAN} variant="inline" className="mt-5" />
 
 
 
@@ -477,14 +472,6 @@ function HeroTile() {
               </span>
 
             </div>
-            <p className="mt-4 border-t border-white/10 pt-3 text-[13px] text-white/60">
-              <span className="font-bold text-white/85" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                CANsulting when you can.
-              </span>{" "}
-              <span className="font-bold text-[#4ade80]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                Consulting when you can&#39;t.
-              </span>
-            </p>
 
 
           </div>
@@ -871,7 +858,6 @@ function Pricing() {
         <p className="mt-4 text-white/55">
           Buy a single assessment when you need one number. Subscribe when you want all {IQ_PRODUCTS.length} IQs — capability and specialist — the composite GEM.IQ report, and re-assessment over time.
         </p>
-        <CanRule seed="pricing-section" variant="inline" className="mt-4" />
       </div>
 
 
@@ -1051,7 +1037,6 @@ function FinalCTA() {
               I already have an account
             </Link>
           </div>
-          <CanRule seed="final-cta" variant="inline" className="mt-6" accentHex="#a78bfa" />
 
         </div>
       </div>
@@ -1071,9 +1056,6 @@ function Footer() {
                 GEM.IQ Hub
               </span>
             </div>
-            <p className="text-xs text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              CANsulting when you can. <span className="text-[#4ade80]">Consulting when you can&#39;t.</span>
-            </p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-6 text-xs text-white/40">

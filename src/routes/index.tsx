@@ -67,7 +67,7 @@ const HERO_ROTATION: { src: string; label: string }[] = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GEM.IQ Hub — Diagnostics for make-or-break decisions" },
+      { title: "GEM.IQ by GlobalEdgeMarkets — Executive Readiness Diagnostics" },
       {
         name: "description",
         content:
@@ -216,7 +216,7 @@ function TopNav() {
             aria-label="GlobalEdgeMarkets — corporate site"
             className="transition-opacity hover:opacity-80"
           >
-            <img src={gemLogo.url} alt="GEM" className="h-9 w-auto" />
+            <img src={gemLogo.url} alt="GlobalEdgeMarkets" className="h-9 w-auto" />
           </a>
           <span className="hidden h-6 w-px bg-white/15 sm:block" />
           <Link to="/" aria-label="GEM.IQ Hub — home">
@@ -375,7 +375,7 @@ function HeroTile() {
             className="text-[#4ade80] text-xs font-bold uppercase tracking-[0.25em]"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
-            Intelligence Suite · {IQ_PRODUCTS.length} Assessments
+            GEM.IQ by GlobalEdgeMarkets · {IQ_PRODUCTS.length} Executive Readiness Diagnostics
           </span>
           <div className="hidden md:flex items-center gap-2">
             {ASSESSMENTS.map((a, idx) => (
@@ -403,7 +403,8 @@ function HeroTile() {
           </h1>
           <p className="mt-5 text-base md:text-lg text-white/60 max-w-xl leading-relaxed">
             Market entry, tariff exposure, go-to-market, delivery capacity, AI spend — these are risk-based
-            bets that decide whether a company compounds or stalls. GEM.IQ scores each one across weighted,
+            bets that decide whether a company compounds or stalls. GEM.IQ, the diagnostic suite from
+            GlobalEdgeMarkets, scores each one across weighted,
             independent dimensions and returns a gap map, not a vanity number. One identity, one subscription,
             one benchmarked view of where you actually stand.
           </p>
@@ -1065,7 +1066,7 @@ function Footer() {
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
           <div className="flex flex-col items-center gap-2 md:items-start">
             <div className="flex items-center gap-3">
-              <img src={gemLogo.url} alt="GEM" className="h-8 w-auto opacity-90" />
+              <img src={gemLogo.url} alt="GlobalEdgeMarkets" className="h-8 w-auto opacity-90" />
               <span className="font-display text-lg font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
                 GEM.IQ Hub
               </span>

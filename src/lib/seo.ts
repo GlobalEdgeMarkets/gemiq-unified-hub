@@ -63,8 +63,9 @@ export function buildHead(opts: BuildHeadOptions): { meta: MetaTag[]; links: Lin
     ogDescription = description,
     ogType = "website",
     twitterCard,
-    twitterTitle = ogTitle,
-    twitterDescription = ogDescription,
+    twitterText = false,
+    twitterTitle,
+    twitterDescription,
     image,
     robots,
     author,
@@ -84,9 +85,11 @@ export function buildHead(opts: BuildHeadOptions): { meta: MetaTag[]; links: Lin
   if (url && ogUrl) meta.push({ property: "og:url", content: url });
   if (twitterCard) {
     meta.push({ name: "twitter:card", content: twitterCard });
-    meta.push({ name: "twitter:title", content: twitterTitle });
-    if (twitterDescription) {
-      meta.push({ name: "twitter:description", content: twitterDescription });
+    if (twitterText || twitterTitle !== undefined) {
+      meta.push({ name: "twitter:title", content: twitterTitle ?? ogTitle });
+    }
+    if (twitterText || twitterDescription !== undefined) {
+      meta.push({ name: "twitter:description", content: twitterDescription ?? ogDescription });
     }
   }
   if (image) {

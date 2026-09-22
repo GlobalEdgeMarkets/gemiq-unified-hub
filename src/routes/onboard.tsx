@@ -5,6 +5,7 @@ import { LIVE_REGISTRY } from "@/lib/hub/assessments";
 import { DISPLAY_ORDER } from "@/lib/iq-catalog";
 import manifest from "@/lib/hub/manifest.json";
 import { applyHubBrand, type HubManifest } from "@/lib/hub/sdk";
+import { buildHead } from "@/lib/seo";
 
 
 export const Route = createFileRoute("/onboard")({

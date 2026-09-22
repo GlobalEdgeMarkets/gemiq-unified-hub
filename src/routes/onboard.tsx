@@ -8,29 +8,18 @@ import { applyHubBrand, type HubManifest } from "@/lib/hub/sdk";
 
 
 export const Route = createFileRoute("/onboard")({
-  head: () => ({
-    meta: [
-      { title: "Onboard an IQ — GEM.IQ Hub" },
-      {
-        name: "description",
-        content:
-          "Pick your assessment key and get the exact init command, Hub client, env vars, CI job, and paste-in prompt to wire an IQ into the GEM.IQ Hub.",
-      },
-      { property: "og:title", content: "Onboard an IQ — GEM.IQ Hub" },
-      {
-        property: "og:description",
-        content:
-          "Guided one-click onboarding: register an assessment_key and receive the correct Hub config automatically.",
-      },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Onboard an IQ — GEM.IQ Hub" },
-      {
-        name: "twitter:description",
-        content: "Register an assessment_key and get the exact Hub config for your IQ.",
-      },
-    ],
-  }),
+  head: () =>
+    buildHead({
+      title: "Onboard an IQ — GEM.IQ Hub",
+      description:
+        "Pick your assessment key and get the exact init command, Hub client, env vars, CI job, and paste-in prompt to wire an IQ into the GEM.IQ Hub.",
+      ogDescription:
+        "Guided one-click onboarding: register an assessment_key and receive the correct Hub config automatically.",
+      ogType: "article",
+      twitterCard: "summary",
+      twitterText: true,
+      twitterDescription: "Register an assessment_key and get the exact Hub config for your IQ.",
+    }),
   component: OnboardPage,
 });
 

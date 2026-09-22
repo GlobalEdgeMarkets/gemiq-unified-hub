@@ -218,13 +218,15 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
   const strongest = [...results].sort((a, b) => (b.score ?? -1) - (a.score ?? -1))[0];
   const weakestIQ = [...results].sort((a, b) => (a.score ?? 101) - (b.score ?? 101))[0];
 
+  // Targets must be live IQs only — retired keys may appear as sources
+  // (historical submissions) but never as something to recommend.
   const AFFINITY: Record<string, string[]> = {
     gtmiq: ["salesiq", "productiq"],
     salesiq: ["gtmiq", "aitransformiq"],
     productiq: ["uxiq", "aitransformiq"],
-    aitransformiq: ["techservicesiq", "productiq"],
+    aitransformiq: ["productiq", "uxiq"],
     uxiq: ["productiq", "gtmiq"],
-    tariffiq: ["gtmiq", "techservicesiq"],
+    tariffiq: ["gtmiq", "salesiq"],
     techservicesiq: ["aitransformiq", "salesiq"],
     readinessiq: ["gtmiq", "salesiq", "productiq", "aitransformiq"],
   };
@@ -232,7 +234,7 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
   const suggested = new Set<string>();
   for (const r of results) for (const k of AFFINITY[r.assessment_key] ?? []) if (!taken.has(k)) suggested.add(k);
 
-  const recommendations: DashboardRecommendation[] = REGISTRY.filter((s) => !taken.has(s.key))
+  const recommendations: DashboardRecommendation[] = LIVE_REGISTRY.filter((s) => !taken.has(s.key))
     .map((s) => {
       let reason = `Benchmark a new discipline and add ${s.displayName} to your maturity profile.`;
       if (suggested.has(s.key) && strongest) {

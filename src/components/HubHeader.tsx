@@ -24,7 +24,7 @@ export function HubHeader({ variant = "landing", right }: Props) {
             aria-label="GlobalEdgeMarkets — corporate site"
             className="rounded-md outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-gem-mint"
           >
-            <img src={gemLogo.url} alt="GEM" className="h-8 w-auto" />
+            <img src={gemLogo.url} alt="GEM" className="h-6 w-auto" />
           </a>
           <span className="hidden h-6 w-px bg-gem-navy/20 sm:block" />
           <Link
@@ -32,7 +32,7 @@ export function HubHeader({ variant = "landing", right }: Props) {
             aria-label="GEM.IQ Hub — home"
             className="rounded-md outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-gem-mint"
           >
-            <span className="hidden font-display text-lg font-bold tracking-tight text-gem-navy sm:inline">
+            <span className="hidden font-display text-2xl font-bold tracking-tight text-gem-navy sm:inline">
               GEM.IQ Hub
             </span>
           </Link>

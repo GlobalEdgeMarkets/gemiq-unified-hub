@@ -293,17 +293,11 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
 }
 
 export function iqHead(product: TrackedIQProduct) {
-  const title = `${product.name} — ${product.tagline} | GEM.IQ`;
-  const description = product.intro.slice(0, 155);
-  return {
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: `https://gemiq.globaledgemarkets.com${product.path}` }],
-  };
+  return buildHead({
+    title: `${product.name} — ${product.tagline} | GEM.IQ`,
+    description: product.intro.slice(0, 155),
+    path: product.path,
+    ogUrl: false,
+    twitterCard: "summary_large_image",
+  });
 }

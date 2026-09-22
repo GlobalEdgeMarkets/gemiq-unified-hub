@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
+import { buildHead } from "@/lib/seo";
 
 const URL = "https://gemiq.globaledgemarkets.com/docs/market-entry-maturity-frameworks";
 const TITLE = "Market Entry Maturity Assessment: CMMI, TRL & MRL Guide";

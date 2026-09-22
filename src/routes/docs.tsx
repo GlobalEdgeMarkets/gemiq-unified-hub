@@ -33,6 +33,7 @@ export const Route = createFileRoute("/docs")({
       ogDescription: `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission across all GEM.IQ assessments.`,
       ogType: "article",
       twitterCard: "summary",
+      twitterText: true,
       twitterDescription: `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission.`,
     }),
   component: DocsPage,

@@ -3,7 +3,7 @@
 // their subscription state, and cross-IQ recommendations.
 import { getRequest } from "@tanstack/react-start/server";
 import { createHubSupabaseSSR, createHubServiceClient, selectCurrentSubscription } from "@/lib/hub/supabase-server";
-import { REGISTRY, REGISTRY_BY_KEY } from "@/lib/hub/assessments";
+import { LIVE_REGISTRY, REGISTRY_BY_KEY, RETIRED_KEYS } from "@/lib/hub/assessments";
 import { normalizeTier, tierFromScore } from "@/lib/hub/assessments/tiers";
 import manifest from "@/lib/hub/manifest.json";
 
@@ -274,7 +274,10 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
   const composite: DashboardComposite = {
     score: compositeScore,
     tier: tierFromScore(compositeScore),
-    coverage: { completed: results.length, total: REGISTRY.length },
+    coverage: {
+      completed: results.filter((r) => !RETIRED_KEYS.has(r.assessment_key)).length,
+      total: LIVE_REGISTRY.length,
+    },
     strengths: compositeDims.slice(0, 5),
     gaps: [...compositeDims].reverse().slice(0, 5),
     contributions: results

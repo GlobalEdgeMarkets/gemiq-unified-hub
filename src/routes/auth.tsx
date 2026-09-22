@@ -37,15 +37,13 @@ const IQ_NAMES = IQ_PRODUCTS.map((p) => p.name).reduce((acc, name, i, arr) =>
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
-  head: () => ({
-    meta: [
-      { title: "Sign in — GEM.IQ Hub" },
-      { name: "description", content: `One account across every GEM.IQ assessment — ${IQ_NAMES}.` },
-      { property: "og:title", content: "GEM.IQ Hub — Sign in" },
-      { property: "og:description", content: "One identity across all GEM.IQ assessments." },
-      { property: "og:type", content: "website" },
-    ],
-  }),
+  head: () =>
+    buildHead({
+      title: "Sign in — GEM.IQ Hub",
+      description: `One account across every GEM.IQ assessment — ${IQ_NAMES}.`,
+      ogTitle: "GEM.IQ Hub — Sign in",
+      ogDescription: "One identity across all GEM.IQ assessments.",
+    }),
   component: AuthPage,
 });
 

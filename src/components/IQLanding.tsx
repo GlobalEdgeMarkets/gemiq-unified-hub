@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
 import { ReportPreview } from "@/components/iq/ReportPreview";
 import { ACCENT, IQ_PRODUCTS, TRACK_META, type TrackedIQProduct } from "@/lib/iq-catalog";
-import { CanRule } from "@/components/CanRule";
 import { TRIAL_DAYS, TRIAL_LABEL } from "@/lib/pricing";
 
 
@@ -247,7 +246,6 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
           </div>
         </section>
 
-        <CanRule seed={product.key} className="mt-16 md:mt-24" accentHex={c.hex} />
 
         {/* CTA */}
         <section className="mt-6 rounded-3xl bg-gradient-to-br from-[#16213e]/70 to-[#0a0a16]/50 p-8 text-center ring-1 ring-inset ring-white/[0.06] md:p-14">

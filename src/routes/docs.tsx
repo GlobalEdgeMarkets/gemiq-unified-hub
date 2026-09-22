@@ -29,6 +29,7 @@ export const Route = createFileRoute("/docs")({
   head: () =>
     buildHead({
       title: "GEM.IQ Hub — Developer Docs (Trial + Submit)",
+      path: "/docs",
       description: `How the ${IQ_COUNT} live GEM.IQ assessments (${IQ_NAMES}) start ${TRIAL_CLAUSE} and submit results via @gemiq/hub-sdk.`,
       ogTitle: "GEM.IQ Hub — Developer Docs",
       ogDescription: `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission across all GEM.IQ assessments.`,

@@ -32,7 +32,7 @@ export function HubHeader({ variant = "landing", right }: Props) {
             aria-label="GEM.IQ Hub — home"
             className="rounded-md outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-gem-mint"
           >
-            <span className="hidden font-display text-2xl font-bold tracking-tight text-gem-navy sm:inline">
+            <span className="hidden font-display text-4xl font-bold tracking-tight text-gem-navy sm:inline">
               GEM.IQ Hub
             </span>
           </Link>

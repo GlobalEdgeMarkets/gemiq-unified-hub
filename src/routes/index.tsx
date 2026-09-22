@@ -208,7 +208,7 @@ function TopNav() {
           </a>
           <span className="hidden h-6 w-px bg-white/15 sm:block" />
           <Link to="/" aria-label="GEM.IQ Hub — home">
-            <span className="font-display text-3xl font-bold tracking-tight">
+            <span className="font-display text-4xl font-bold tracking-tight md:text-5xl">
               GEM.IQ <span className="text-[#05CFAB]">Hub</span>
             </span>
           </Link>

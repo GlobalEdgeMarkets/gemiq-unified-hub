@@ -69,7 +69,7 @@ export const Route = createFileRoute("/")({
       title: "GEM.IQ by GlobalEdgeMarkets — Executive Readiness Diagnostics",
       description:
         "GEM.IQ by GlobalEdgeMarkets scores market entry, tariff, go-to-market, product, AI and experience risk across weighted dimensions — a gap map, not a vanity number.",
-      ogTitle: "GEM.IQ Hub — A diagnostic, not a single score",
+      ogTitle: "GEM.IQ by GlobalEdgeMarkets — a diagnostic, not a single score",
       ogDescription:
         "Weighted, multidimensional assessments that tell you what to fix — with one identity, one subscription and a unified benchmarked dashboard.",
       path: "/",

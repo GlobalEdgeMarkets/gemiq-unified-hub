@@ -3,6 +3,7 @@ import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
 import { ReportPreview } from "@/components/iq/ReportPreview";
 import { ACCENT, IQ_PRODUCTS, TRACK_META, type TrackedIQProduct } from "@/lib/iq-catalog";
 import { TRIAL_DAYS, TRIAL_LABEL } from "@/lib/pricing";
+import { buildHead } from "@/lib/seo";
 
 
 

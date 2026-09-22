@@ -204,11 +204,11 @@ function TopNav() {
             aria-label="GlobalEdgeMarkets — corporate site"
             className="transition-opacity hover:opacity-80"
           >
-            <img src={gemLogo.url} alt="GlobalEdgeMarkets" className="h-9 w-auto" />
+            <img src={gemLogo.url} alt="GlobalEdgeMarkets" className="h-6 w-auto" />
           </a>
           <span className="hidden h-6 w-px bg-white/15 sm:block" />
           <Link to="/" aria-label="GEM.IQ Hub — home">
-            <span className="font-display text-2xl font-bold tracking-tight">
+            <span className="font-display text-3xl font-bold tracking-tight">
               GEM.IQ <span className="text-[#05CFAB]">Hub</span>
             </span>
           </Link>

@@ -38,6 +38,8 @@ export type BuildHeadOptions = {
   ogType?: string;
   /** Omit to emit no twitter tags at all. */
   twitterCard?: string;
+  /** Emit twitter:title / twitter:description derived from the og values. */
+  twitterText?: boolean;
   twitterTitle?: string;
   twitterDescription?: string;
   /** Absolute URL; emits og:image + twitter:image. */

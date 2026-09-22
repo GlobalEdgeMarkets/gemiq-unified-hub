@@ -10,16 +10,13 @@ const DISPLAY = { fontFamily: "'League Spartan', sans-serif" } as const;
 
 export const Route = createFileRoute("/docs_/market-entry-maturity-frameworks")({
   head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
-      { property: "og:type", content: "article" },
-      { property: "og:url", content: URL },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: URL }],
+    ...buildHead({
+      title: TITLE,
+      description: DESCRIPTION,
+      ogType: "article",
+      path: "/docs/market-entry-maturity-frameworks",
+      twitterCard: "summary_large_image",
+    }),
     scripts: [
       {
         type: "application/ld+json",

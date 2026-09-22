@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HubHeader } from "@/components/HubHeader";
 import { IQ_PRODUCTS, TIER_SCALE, TRACK_META, CAPABILITY_IQS, SPECIALIST_IQS } from "@/lib/iq-catalog";
 import manifest from "@/lib/hub/manifest.json";
+import { buildHead } from "@/lib/seo";
 import {
   MONTHLY_PRICE,
   QUARTERLY_PRICE,

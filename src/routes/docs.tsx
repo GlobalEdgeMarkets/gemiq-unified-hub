@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HubHeader } from "@/components/HubHeader";
 import { IQ_PRODUCTS, TIER_SCALE, TRACK_META, CAPABILITY_IQS, SPECIALIST_IQS } from "@/lib/iq-catalog";
 import manifest from "@/lib/hub/manifest.json";
+import { buildHead } from "@/lib/seo";
 import {
   MONTHLY_PRICE,
   QUARTERLY_PRICE,
@@ -25,30 +26,17 @@ const TRACK_SUMMARY = `${CAPABILITY_IQS.length} ${TRACK_META.capability.label.to
 const TRIAL_CLAUSE = TRIAL_DAYS ? `the ${TRIAL_DAYS}-day trial` : "the free trial";
 
 export const Route = createFileRoute("/docs")({
-  head: () => ({
-    meta: [
-      { title: "GEM.IQ Hub — Developer Docs (Trial + Submit)" },
-      {
-        name: "description",
-        content:
-          `How the ${IQ_COUNT} live GEM.IQ assessments (${IQ_NAMES}) start ${TRIAL_CLAUSE} and submit results via @gemiq/hub-sdk.`,
-      },
-      { property: "og:title", content: "GEM.IQ Hub — Developer Docs" },
-      {
-        property: "og:description",
-        content:
-          `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission across all GEM.IQ assessments.`,
-      },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "GEM.IQ Hub — Developer Docs" },
-      {
-        name: "twitter:description",
-        content:
-          `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission.`,
-      },
-    ],
-  }),
+  head: () =>
+    buildHead({
+      title: "GEM.IQ Hub — Developer Docs (Trial + Submit)",
+      description: `How the ${IQ_COUNT} live GEM.IQ assessments (${IQ_NAMES}) start ${TRIAL_CLAUSE} and submit results via @gemiq/hub-sdk.`,
+      ogTitle: "GEM.IQ Hub — Developer Docs",
+      ogDescription: `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission across all GEM.IQ assessments.`,
+      ogType: "article",
+      twitterCard: "summary",
+      twitterText: true,
+      twitterDescription: `SDK integration guide for ${TRIAL_CLAUSE}, checkout, and result submission.`,
+    }),
   component: DocsPage,
 });
 

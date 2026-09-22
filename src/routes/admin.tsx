@@ -14,21 +14,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { buildHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
   component: AdminConsole,
-  head: () => ({
-    meta: [
-      { title: "Hub Admin Console | GEM.IQ" },
-      { name: "description", content: "Internal GEM.IQ Hub maintenance console: HubSpot schema, legacy imports, registry status and submission browsing." },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Hub Admin Console | GEM.IQ" },
-      { property: "og:description", content: "Internal GEM.IQ Hub maintenance console." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  head: () =>
+    buildHead({
+      title: "Hub Admin Console | GEM.IQ",
+      description:
+        "Internal GEM.IQ Hub maintenance console: HubSpot schema, legacy imports, registry status and submission browsing.",
+      ogDescription: "Internal GEM.IQ Hub maintenance console.",
+      twitterCard: "summary",
+      robots: "noindex, nofollow",
+    }),
 });
 
 type Json = unknown;

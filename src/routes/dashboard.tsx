@@ -6,29 +6,22 @@ import type { DashboardData, DashboardResult } from "@/lib/dashboard.server";
 import { HubHeader } from "@/components/HubHeader";
 import { Button } from "@/components/ui/button";
 import { TRIAL_LABEL } from "@/lib/pricing";
+import { buildHead } from "@/lib/seo";
 
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
   component: DashboardPage,
-  head: () => ({
-    meta: [
-      { title: "Your IQ Dashboard | GEM.IQ Hub" },
-      {
-        name: "description",
-        content:
-          "See every GEM.IQ assessment you have completed — scores, maturity tiers, dimension breakdowns, reports and recommended next assessments.",
-      },
-      { property: "og:title", content: "Your IQ Dashboard | GEM.IQ Hub" },
-      {
-        property: "og:description",
-        content: "Scores, tiers and reports across every GEM.IQ assessment you have completed.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
+  head: () =>
+    buildHead({
+      title: "Your IQ Dashboard | GEM.IQ Hub",
+      description:
+        "See every GEM.IQ assessment you have completed — scores, maturity tiers, dimension breakdowns, reports and recommended next assessments.",
+      ogDescription:
+        "Scores, tiers and reports across every GEM.IQ assessment you have completed.",
+      twitterCard: "summary",
+      robots: "noindex",
+    }),
 });
 
 const TIER_LABEL: Record<string, string> = {

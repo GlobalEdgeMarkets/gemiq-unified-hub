@@ -4,6 +4,7 @@ import { z } from "zod";
 import { iqContextFromReturnUrl } from "@/lib/hub/iq-context";
 import { HubHeader } from "@/components/HubHeader";
 import { ACCENT, IQ_PRODUCTS } from "@/lib/iq-catalog";
+import { buildHead } from "@/lib/seo";
 
 /** Only allow return-to URLs on the GEM.IQ Hub itself or *.globaledgemarkets.com. */
 function isAllowedReturnUrl(raw: string | undefined): string | null {

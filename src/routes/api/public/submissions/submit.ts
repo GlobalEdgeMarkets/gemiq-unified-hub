@@ -5,6 +5,7 @@ import { upsertContactByEmail, createLeadForContact, classifyLead } from "@/lib/
 import { buildContactProperties, REGISTRY_BY_KEY } from "@/lib/hub/assessments";
 import type { SubmissionForMapping } from "@/lib/hub/assessments/types";
 import { json, corsHeaders } from "@/lib/hub/http";
+import { captureServer, sourceFromRequest } from "@/lib/analytics.server";
 import { sendTemplateEmail } from "@/lib/email-templates/send-email";
 
 const NOTIFY_RECIPIENTS = ["info@globaledgemarkets.com", "alexr@globaledgemarkets.com"];
@@ -105,6 +106,9 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             const used = sub.trial_assessments_used ?? 0;
             const limit = sub.trial_assessment_limit ?? 1;
             if (used >= limit && !creditId) {
+              await captureServer("trial_limit_reached", user.id, {
+                assessment_key: payload.assessment_key, source: sourceFromRequest(request), used, limit,
+              });
               return json({
                 error: "trial_limit_reached",
                 trial_assessments_used: used,
@@ -250,6 +254,24 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           });
           queuedForRetry = true;
         }
+
+        await captureServer("assessment_submitted", user?.id ?? email, {
+          email,
+          assessment_key: payload.assessment_key,
+          source: sourceFromRequest(request),
+          signed_in: !!user?.id,
+          score: payload.score ?? null,
+          tier: payload.tier ?? null,
+          entitlement: hasPaidSub ? "subscription" : trialSubId ? "trial" : creditId ? "single_credit" : "none",
+          lead_temperature: temperature,
+        });
+        await captureServer(hsContactId ? "hubspot_synced" : "hubspot_sync_failed", user?.id ?? email, {
+          assessment_key: payload.assessment_key,
+          hubspot_contact_id: hsContactId,
+          hubspot_lead_created: !!hsLeadId,
+          skipped_properties: skippedProps.length,
+          queued_for_retry: queuedForRetry,
+        });
 
         // Always send the internal notification, regardless of HubSpot outcome.
         await sendSubmissionNotification({

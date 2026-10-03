@@ -2,6 +2,21 @@ import { createFileRoute } from "@tanstack/react-router";
 import { stripe } from "@/lib/hub/stripe";
 import { isHubSubscription, syncSubscription } from "@/lib/hub/subscription-sync.server";
 import type Stripe from "stripe";
+import { captureServer } from "@/lib/analytics.server";
+
+/** Analytics only — never affects billing writes. */
+function subProps(sub: Stripe.Subscription) {
+  const item = sub.items?.data?.[0];
+  return {
+    stripe_subscription_id: sub.id,
+    status: sub.status,
+    lookup_key: item?.price?.lookup_key ?? sub.metadata?.lookup_key ?? null,
+    interval: item?.price?.recurring?.interval ?? null,
+    amount: item?.price?.unit_amount ?? null,
+    currency: item?.price?.currency ?? null,
+    cancel_at_period_end: sub.cancel_at_period_end,
+  };
+}
 
 export const Route = createFileRoute("/api/public/billing/payments-webhook")({
   server: {
@@ -43,6 +58,11 @@ export const Route = createFileRoute("/api/public/billing/payments-webhook")({
                   lookup_key: (s.metadata?.lookup_key as string | undefined) ?? null,
                 }, { onConflict: "stripe_session_id" });
                 if (error) throw error;
+                await captureServer("single_assessment_purchased",
+                  (s.metadata?.supabase_user_id as string | undefined) ?? s.client_reference_id ?? email, {
+                    email, amount: s.amount_total, currency: s.currency,
+                    assessment_key: s.metadata?.assessment_key ?? null, stripe_session_id: s.id,
+                  });
                 break;
               }
 
@@ -70,6 +90,10 @@ export const Route = createFileRoute("/api/public/billing/payments-webhook")({
                 break;
               }
               await syncSubscription(sub);
+              await captureServer(sub.status === "trialing" ? "trial_started" : "subscription_started",
+                uid ?? s.customer_details?.email?.toLowerCase(), {
+                  ...subProps(sub), email: s.customer_details?.email ?? null, stripe_session_id: s.id,
+                });
               break;
             }
             case "customer.subscription.created":
@@ -81,6 +105,16 @@ export const Route = createFileRoute("/api/public/billing/payments-webhook")({
                 break;
               }
               await syncSubscription(sub);
+              const prev = (event.data.previous_attributes ?? {}) as Partial<Stripe.Subscription>;
+              const name = event.type === "customer.subscription.deleted" ? "subscription_cancelled"
+                : event.type === "customer.subscription.created" ? null
+                : prev.status === "trialing" && sub.status === "active" ? "trial_converted"
+                : prev.status && prev.status !== sub.status ? "subscription_status_changed"
+                : prev.cancel_at_period_end === false && sub.cancel_at_period_end ? "subscription_cancel_scheduled"
+                : null;
+              if (name) await captureServer(name, sub.metadata?.supabase_user_id, {
+                ...subProps(sub), previous_status: prev.status ?? null,
+              });
               break;
             }
             case "invoice.payment_succeeded":
@@ -97,6 +131,11 @@ export const Route = createFileRoute("/api/public/billing/payments-webhook")({
                 break;
               }
               await syncSubscription(sub);
+              await captureServer(event.type === "invoice.payment_succeeded" ? "payment_succeeded" : "payment_failed",
+                sub.metadata?.supabase_user_id ?? inv.customer_email?.toLowerCase(), {
+                  ...subProps(sub), invoice_id: inv.id, amount_paid: inv.amount_paid, amount_due: inv.amount_due,
+                  billing_reason: inv.billing_reason,
+                });
               break;
             }
           }

@@ -5,6 +5,7 @@ import { iqContextFromReturnUrl } from "@/lib/hub/iq-context";
 import { HubHeader } from "@/components/HubHeader";
 import { ACCENT, IQ_PRODUCTS } from "@/lib/iq-catalog";
 import { buildHead } from "@/lib/seo";
+import { identifyUser, track } from "@/lib/analytics";
 
 /** Only allow return-to URLs on the GEM.IQ Hub itself or *.globaledgemarkets.com. */
 function isAllowedReturnUrl(raw: string | undefined): string | null {
@@ -106,11 +107,18 @@ function AuthPage() {
         setErr(msg);
         return;
       }
+      const intent = search.buy === "single" ? "single" : search.trial === "1" ? "trial" : "none";
+      const source = iq?.key ?? "hub";
       if (!body.user) {
+        if (mode === "signup") track("signup_completed", { intent, source_iq: source, email_confirmation_pending: true });
         setErr("Account created but no session — please check your email to confirm, then sign in.");
         setMode("signin");
         return;
       }
+      if (body.user.id) identifyUser(body.user.id, { email: body.user.email ?? email, company: company || undefined });
+      track(mode === "signup" ? "signup_completed" : "signin_completed", {
+        intent, source_iq: source, plan: search.trial === "1" ? (search.plan ?? "monthly") : undefined,
+      });
       // One-time purchase intent from landing: $179 single assessment.
       if (search.buy === "single" && !safeReturn) {
         try {

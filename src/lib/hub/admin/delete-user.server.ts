@@ -22,11 +22,9 @@ async function purgeIq(url: string, email: string, secret: string): Promise<Step
 }
 
 async function deleteHubspotContact(email: string): Promise<string> {
-  const GATEWAY = "https://connector-gateway.lovable.dev/hubspot";
-  const headers = {
-    Authorization: `Bearer ${process.env.LOVABLE_API_KEY!}`,
-    "X-Connection-Api-Key": process.env.HUBSPOT_API_KEY!,
-  };
+  const { hsBase, hsAuthHeaders } = await import("@/lib/hub/hubspot-transport");
+  const GATEWAY = hsBase();
+  const headers = hsAuthHeaders();
   const get = await fetch(
     `${GATEWAY}/crm/v3/objects/contacts/${encodeURIComponent(email)}?idProperty=email&properties=email`,
     { headers },

@@ -2,14 +2,12 @@
 // The Hub is the single writer. Property VALUES are computed by the registry
 // (see src/lib/hub/assessments/index.ts::buildContactProperties).
 // This file only owns transport + defensive filtering of unknown properties.
-const GATEWAY = "https://connector-gateway.lovable.dev/hubspot";
+import { hsAuthHeaders, hsBase } from "./hubspot-transport";
+
+const GATEWAY = { toString: hsBase } as unknown as string;
 
 function headers() {
-  return {
-    Authorization: `Bearer ${process.env.LOVABLE_API_KEY!}`,
-    "X-Connection-Api-Key": process.env.HUBSPOT_API_KEY!,
-    "Content-Type": "application/json",
-  };
+  return hsAuthHeaders();
 }
 
 export type HubSpotProps = Record<string, string | number | boolean | null | undefined>;

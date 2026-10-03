@@ -1,4 +1,4 @@
-// Full user deletion: IQ purge endpoints → HubSpot contact → Hub records → auth account.
+// Full user deletion: IQ purge endpoints → HubSpot contact → Stripe customer → Hub records → auth account.
 // Each step is reported separately; one failing step never hides the others.
 import { createHubServiceClient } from "@/lib/hub/supabase-server";
 

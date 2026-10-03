@@ -5,6 +5,7 @@ import { createHubServiceClient } from "@/lib/hub/supabase-server";
 /** IQ apps exposing a purge endpoint. Add an entry when another IQ ships one. */
 const IQ_PURGE_ENDPOINTS: { key: string; url: string }[] = [
   { key: "tariffiq", url: "https://pltvcqnknmukgpsipmec.supabase.co/functions/v1/purge-user" },
+  { key: "salesiq", url: "https://salesiq.globaledgemarkets.com/api/public/purge-user" },
 ];
 
 type Step = { step: string; ok: boolean; detail?: string };

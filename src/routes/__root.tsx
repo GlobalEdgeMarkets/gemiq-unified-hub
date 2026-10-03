@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { initAnalytics } from "../lib/analytics";
 import { buildHead, OG_IMAGE, PARENT_COMPANY, SITE_DESCRIPTION, SITE_TITLE } from "../lib/seo";
 
 function NotFoundComponent() {
@@ -119,6 +120,9 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    void initAnalytics();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

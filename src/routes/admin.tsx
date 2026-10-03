@@ -5,6 +5,7 @@ import {
   adminWhoami,
   adminBootstrapHubspot,
   adminImportLegacyUser,
+  adminDeleteUser,
   adminRegistryStatus,
   adminPreflight,
   adminListSubmissions,
@@ -79,6 +80,7 @@ function AdminConsole() {
   const whoami = useServerFn(adminWhoami);
   const bootstrap = useServerFn(adminBootstrapHubspot);
   const importUser = useServerFn(adminImportLegacyUser);
+  const deleteUser = useServerFn(adminDeleteUser);
   const registryStatus = useServerFn(adminRegistryStatus);
   const preflight = useServerFn(adminPreflight);
   const listSubs = useServerFn(adminListSubmissions);
@@ -138,6 +140,7 @@ function AdminConsole() {
       <div className="grid gap-6">
         <BootstrapCard run={bootstrap} />
         <ImportUsersCard run={importUser} />
+        <DeleteUserCard run={deleteUser} />
         <CalibrationCard run={calibrate} calibrated={calibrated} setCalibrated={setCalibrated} />
         <MigrateCard run={migrate} preflight={preflight} calibrated={calibrated} />
         <RegistryCard run={registryStatus} />
@@ -191,6 +194,32 @@ function BootstrapSummary({ result }: { result: unknown }) {
     <p className="mt-3 text-sm text-muted-foreground">
       {Object.entries(summary).map(([k, v]) => `${v} ${k}`).join(" · ")}
     </p>
+  );
+}
+
+function DeleteUserCard({ run }: { run: (a: { data: unknown }) => Promise<unknown> }) {
+  const a = useAction(run as never);
+  const [email, setEmail] = useState("");
+  return (
+    <Card
+      title="Delete user"
+      description="Permanently removes the person from every IQ app with a purge endpoint, HubSpot, and the Hub (results, credits, subscription records, account). Stripe is not touched."
+    >
+      <Label htmlFor="du-email">Email</Label>
+      <Input id="du-email" value={email} onChange={e => setEmail(e.target.value)} placeholder="person@company.com" />
+      <Button
+        className="mt-4"
+        variant="destructive"
+        disabled={a.loading || !email.includes("@")}
+        onClick={() => {
+          if (!window.confirm(`Permanently delete ${email.trim()} everywhere? This cannot be undone.`)) return;
+          a.run({ data: { email: email.trim() } });
+        }}
+      >
+        {a.loading ? "Deleting…" : "Delete user"}
+      </Button>
+      <Panel data={a.result} />
+    </Card>
   );
 }
 

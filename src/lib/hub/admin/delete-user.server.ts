@@ -8,6 +8,7 @@ const IQ_PURGE_ENDPOINTS: { key: string; url: string }[] = [
   { key: "salesiq", url: "https://salesiq.globaledgemarkets.com/api/public/purge-user" },
   { key: "gtmiq", url: "https://gtmiq.globaledgemarkets.com/api/public/purge-user" },
   { key: "productiq", url: "https://productiq.globaledgemarkets.com/api/public/purge-user" },
+  { key: "aitransformiq", url: "https://aitransformiq.globaledgemarkets.com/api/public/purge-user" },
 ];
 
 type Step = { step: string; ok: boolean; detail?: string };

@@ -45,6 +45,16 @@ export const adminImportLegacyUser = createServerFn({ method: "POST" })
     return await runImportLegacyUser(data);
   });
 
+export const adminDeleteUser = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) => z.object({ email: z.string().email() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { runDeleteUser } = await import("@/lib/hub/admin/delete-user.server");
+    return await runDeleteUser(data.email);
+  });
+
 export const adminRegistryStatus = createServerFn({ method: "GET" })
   .middleware([requireHubAdmin])
   .handler(async ({ context }) => {

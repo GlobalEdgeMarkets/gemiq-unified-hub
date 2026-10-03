@@ -1,7 +1,7 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.5.0",
-  "updated_at": "2026-09-15",
+  "version": "1.6.0",
+  "updated_at": "2026-10-03",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
     "docs_url": "https://gemiq.globaledgemarkets.com/docs",
@@ -35,7 +35,7 @@
   },
   "pricing": {
     "currency": "USD",
-    "trial": { "days": 7, "assessments_included": 1, "card_required": true },
+    "trial": { "days": 7, "assessments_included": 1, "card_required": true, "report_access": "score_and_tier" },
     "guarantee": { "days": 14, "type": "money_back" },
     "one_time": {
       "id": "gemiq_single_assessment",

@@ -804,13 +804,13 @@ const PLAN_TERM_MAP: Record<PlanTerm, { price?: string; unit: string; effective?
   monthly: {
     price: MONTHLY_PRICE,
     unit: "/ month",
-    note: "Cancel anytime from the billing portal.",
+    note: "No minimum term — cancel anytime from the billing portal.",
   },
   quarterly: {
     price: QUARTERLY_PRICE,
     unit: "/ quarter",
     effective: effectiveMonthly("quarter"),
-    note: "Matches the re-assessment cadence — one quarter is long enough to move a tier.",
+    note: "Matches the re-assessment cadence — re-test at 90 days to see whether you moved a tier.",
   },
   annual: {
     price: ANNUAL_PRICE,
@@ -974,6 +974,7 @@ function Pricing() {
             <p className="mt-4 text-xs text-white/40">
               Card required so access continues uninterrupted.
               {TRIAL_DAYS ? ` Cancel before day ${TRIAL_DAYS} and you're not charged.` : " Cancel before the trial ends and you're not charged."}
+              {" "}The trial assessment shows your score and tier; the full report unlocks when your plan starts.
             </p>
 
           </div>

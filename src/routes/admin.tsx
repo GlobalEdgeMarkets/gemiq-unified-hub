@@ -203,7 +203,7 @@ function DeleteUserCard({ run }: { run: (a: { data: unknown }) => Promise<unknow
   return (
     <Card
       title="Delete user"
-      description="Permanently removes the person from every IQ app with a purge endpoint, HubSpot, and the Hub (results, credits, subscription records, account). Stripe is not touched."
+      description="Permanently removes the person from every IQ app with a purge endpoint, HubSpot, Stripe (customer deleted, subscriptions cancelled immediately), and the Hub (results, credits, subscription records, account)."
     >
       <Label htmlFor="du-email">Email</Label>
       <Input id="du-email" value={email} onChange={e => setEmail(e.target.value)} placeholder="person@company.com" />

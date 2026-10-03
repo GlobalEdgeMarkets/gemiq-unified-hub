@@ -4,14 +4,12 @@
 import { collectAllPropertyDefs, REGISTRY } from "@/lib/hub/assessments";
 import type { PropertyDef, PropertyType } from "@/lib/hub/assessments/types";
 
-const GATEWAY = "https://connector-gateway.lovable.dev/hubspot";
+import { hsAuthHeaders, hsBase } from "@/lib/hub/hubspot-transport";
+
+const GATEWAY = { toString: hsBase } as unknown as string;
 
 export function hsHeaders() {
-  return {
-    Authorization: `Bearer ${process.env.LOVABLE_API_KEY!}`,
-    "X-Connection-Api-Key": process.env.HUBSPOT_API_KEY!,
-    "Content-Type": "application/json",
-  };
+  return hsAuthHeaders();
 }
 
 export type PropDef = {

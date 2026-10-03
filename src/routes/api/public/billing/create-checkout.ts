@@ -70,6 +70,16 @@ export const Route = createFileRoute("/api/public/billing/create-checkout")({
               }),
           metadata,
         });
+        const { captureServer, sourceFromRequest } = await import("@/lib/analytics.server");
+        await captureServer("checkout_started", user.id, {
+          email: user.email,
+          lookup_key: parsed.data.lookup_key,
+          kind: oneTime ? "single_assessment" : "subscription",
+          trial: !oneTime && !!parsed.data.trial,
+          assessment_key: parsed.data.assessment_key,
+          source: sourceFromRequest(request),
+          stripe_session_id: session.id,
+        });
         return json({ url: session.url, id: session.id }, undefined, request);
       },
     },

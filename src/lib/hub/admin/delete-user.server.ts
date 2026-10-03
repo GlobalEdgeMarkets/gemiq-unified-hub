@@ -9,6 +9,7 @@ const IQ_PURGE_ENDPOINTS: { key: string; url: string }[] = [
   { key: "gtmiq", url: "https://gtmiq.globaledgemarkets.com/api/public/purge-user" },
   { key: "productiq", url: "https://productiq.globaledgemarkets.com/api/public/purge-user" },
   { key: "aitransformiq", url: "https://aitransformiq.globaledgemarkets.com/api/public/purge-user" },
+  { key: "uxiq", url: "https://dbekvgmuufqbzdahkplw.supabase.co/functions/v1/purge-user" },
 ];
 
 type Step = { step: string; ok: boolean; detail?: string };

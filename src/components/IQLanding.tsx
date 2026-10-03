@@ -99,7 +99,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
               Open the assessment
               <ArrowIcon className="h-4 w-4" />
             </a>
-            <span className="text-[11px] text-white/50">{TRIAL_LABEL} · 1 full assessment · Cancel anytime</span>
+            <span className="text-[11px] text-white/50">{TRIAL_LABEL} · 1 assessment scored · Cancel anytime</span>
           </div>
         </div>
       </section>

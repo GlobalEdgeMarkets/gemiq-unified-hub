@@ -113,7 +113,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
                 error: "trial_limit_reached",
                 trial_assessments_used: used,
                 trial_assessment_limit: limit,
-                message: "Your 7-day trial includes 1 free assessment. Upgrade to continue.",
+                message: "Your 7-day trial includes 1 free scored assessment. Upgrade to continue.",
               }, { status: 402 }, request);
             }
             if (used < limit) {
@@ -138,7 +138,8 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
         if (dupe) return json({ id: dupe.id, deduped: true, hubspot_contact_id: dupe.hubspot_contact_id }, undefined, request);
 
         // Persist. `detail` is folded into metadata alongside anything the IQ sent.
-        const mergedMetadata = { ...(payload.metadata ?? {}), detail: payload.detail ?? {} };
+        const entitlement = hasPaidSub ? "subscription" : trialSubId ? "trial" : creditId ? "single_credit" : "none";
+        const mergedMetadata = { ...(payload.metadata ?? {}), detail: payload.detail ?? {}, entitlement };
         const { data: inserted, error: insErr } = await svc
           .from("submissions")
           .insert({
@@ -262,7 +263,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           signed_in: !!user?.id,
           score: payload.score ?? null,
           tier: payload.tier ?? null,
-          entitlement: hasPaidSub ? "subscription" : trialSubId ? "trial" : creditId ? "single_credit" : "none",
+          entitlement,
           lead_temperature: temperature,
         });
         await captureServer(hsContactId ? "hubspot_synced" : "hubspot_sync_failed", user?.id ?? email, {
@@ -292,6 +293,8 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           lead_temperature: temperature,
           skipped_properties: skippedProps,
           queued_for_retry: queuedForRetry,
+          // Trial runs show score + tier; the full report unlocks when the plan starts.
+          report_locked: entitlement === "trial",
         }, queuedForRetry ? { status: 202 } : undefined, request);
 
       },

@@ -192,7 +192,10 @@ if (!status.active) {
 
           <p>
             Trial ships <strong>one free assessment across any IQ</strong> — enforced by the
-            Hub, not by your IQ.
+            Hub, not by your IQ. A trial assessment is scored (score and tier are always shown), but
+            the submit response returns <code>report_locked: true</code>: show the score and tier, and
+            hold back the full report until the plan starts. Submission history re-computes{" "}
+            <code>report_locked</code>, so the report unlocks automatically once the trial converts.
           </p>
         </Section>
 

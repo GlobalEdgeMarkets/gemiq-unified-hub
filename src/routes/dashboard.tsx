@@ -120,6 +120,11 @@ function ResultCard({ r }: { r: DashboardResult }) {
       )}
 
       <div className="mt-5 flex flex-wrap items-center gap-2">
+        {r.report_locked && (
+          <span className="text-xs text-muted-foreground">
+            Trial result — the full report unlocks when your plan starts.
+          </span>
+        )}
         {r.report_url && (
           <Button asChild size="sm">
             <a href={r.report_url} target="_blank" rel="noreferrer">View report</a>

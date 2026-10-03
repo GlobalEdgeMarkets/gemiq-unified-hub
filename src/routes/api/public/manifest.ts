@@ -16,7 +16,7 @@ import manifest from "@/lib/hub/manifest.json";
  *
  * Response shape:
  *   {
- *     version: "1.5.0",                       // semver — bump on any change
+ *     version: "1.6.0",                       // semver — bump on any change
  *     etag: "\"<hash>\"",                     // strong etag over the payload
  *     served_at: "2026-09-15T12:00:00.000Z",
  *     hub: {...}, brand: {...}, pricing: {...}, tracks: {...},

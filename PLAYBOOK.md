@@ -162,7 +162,7 @@ commitment play and the default.
   (previously described as a PDF retriever). Closed.
 - Stack split is deliberate: Hub + 4 new IQs on TanStack Start; TariffIQ and UXIQ
   remain stable legacy on Vite/React.
-- The Hub manifest is a **single file** — `src/lib/hub/manifest.json`, now **v1.5.0**
+- The Hub manifest is a **single file** — `src/lib/hub/manifest.json`, now **v1.6.0**
   — served at `/api/public/manifest`. It carries `track` on every assessment plus a
   top-level `tracks` object. There is no manifest mirror. Only the SDK is mirrored:
   `src/lib/hub/sdk.ts` → `packages/hub-sdk/sdk.ts` via `scripts/mirror-sdk.mjs`.

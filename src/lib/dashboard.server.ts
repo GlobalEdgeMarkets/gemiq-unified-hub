@@ -14,6 +14,8 @@ export type DashboardResult = {
   display_name: string;
   url: string;
   report_url: string | null;
+  /** Trial run while the plan hasn't started yet: score + tier only. */
+  report_locked: boolean;
   score: number | null;
   tier: string | null;
   submitted_at: string;
@@ -185,6 +187,11 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
     submitted_at: string;
   }>;
 
+  // Trial runs keep the full report locked until the plan is active.
+  const planActive = subRes.data?.status === "active";
+  const isLocked = (m: unknown) =>
+    !planActive && !!m && typeof m === "object" && (m as { entitlement?: unknown }).entitlement === "trial";
+
   const byKey = new Map<string, typeof all>();
   for (const r of all) {
     const list = byKey.get(r.assessment_key) ?? [];
@@ -200,7 +207,8 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
       assessment_key: key,
       display_name: REGISTRY_BY_KEY[key]?.displayName ?? prettify(key),
       url: iqUrl(key),
-      report_url: pickReportUrl(latest),
+      report_url: isLocked(latest.metadata) ? null : pickReportUrl(latest),
+      report_locked: isLocked(latest.metadata),
       score: typeof latest.score === "number" ? Math.round(latest.score) : null,
       tier: normalizeTier(latest.tier) ?? tierFromScore(latest.score),
       submitted_at: latest.submitted_at,

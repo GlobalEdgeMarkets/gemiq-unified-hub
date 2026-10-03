@@ -153,12 +153,33 @@ function AdminConsole() {
 function Shell({ children, email }: { children: React.ReactNode; email?: string | null }) {
   return (
     <main className="mx-auto w-full max-w-4xl px-6 py-14">
-      <header className="mb-10">
-        <h1 className="font-heading text-3xl text-foreground">Hub Admin Console</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Every maintenance action as a button. Nothing here exposes server secrets to the browser.
-          {email ? <> Signed in as <span className="text-foreground">{email}</span>.</> : null}
-        </p>
+      <header className="mb-10 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-heading text-3xl text-foreground">Hub Admin Console</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Every maintenance action as a button. Nothing here exposes server secrets to the browser.
+            {email ? <> Signed in as <span className="text-foreground">{email}</span>.</> : null}
+          </p>
+        </div>
+        {email ? (
+          <Button
+            variant="outline"
+            onClick={async () => {
+              try {
+                await fetch("/api/public/auth/session", {
+                  method: "POST",
+                  headers: { "content-type": "application/json" },
+                  credentials: "include",
+                  body: JSON.stringify({ action: "signout" }),
+                });
+              } finally {
+                window.location.href = "/";
+              }
+            }}
+          >
+            Log out
+          </Button>
+        ) : null}
       </header>
       {children}
     </main>

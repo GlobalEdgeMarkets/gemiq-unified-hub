@@ -116,7 +116,13 @@ export interface HubManifest {
   };
   pricing: {
     currency: string;
-    trial: { days: number; assessments_included: number; card_required: boolean };
+    trial: {
+      days: number;
+      assessments_included: number;
+      card_required: boolean;
+      /** "score_and_tier": trial runs show score + tier; the full report unlocks when the plan starts. */
+      report_access?: "full" | "score_and_tier";
+    };
     /** 14-day money-back guarantee. Optional so older manifests still type-check. */
     guarantee?: { days: number; type: string };
     /** Single-assessment purchase (gemiq_single_assessment, $179). */

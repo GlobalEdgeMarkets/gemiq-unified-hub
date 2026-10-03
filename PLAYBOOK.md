@@ -1,6 +1,6 @@
-# GEM.IQ Playbook — v1.5
+# GEM.IQ Playbook — v1.6
 
-**Status:** current as of 2026-09-15. Supersedes v1.4 (6 undifferentiated
+**Status:** current as of 2026-10-03 (manifest v1.6.0: trial report gating). Supersedes v1.4 (6 undifferentiated
 "capability" IQs, manifest v1.4.0). If a doc, prompt, or GitHub knowledge file
 disagrees with this file, this file wins.
 
@@ -133,9 +133,13 @@ Two choices only — never present a third path:
   **$279/quarter (default)** (`gemiq_professional_quarterly`), $990/yr
   (`gemiq_professional_annual`).
 
-7-day trial includes **one** assessment across any discipline. 14-day money-back
-guarantee. Monthly is cancel-anytime — quarterly is the commitment play; there is
-no 2-month minimum.
+7-day trial includes **one** assessment across any discipline. The trial run is
+scored — score and tier are shown — but the full report is locked until the plan
+starts (manifest `pricing.trial.report_access: "score_and_tier"`; the Hub returns
+`report_locked` on submit and history, and unlocks automatically on conversion).
+This keeps the trial from replacing the $179 single assessment. 14-day money-back
+guarantee. Monthly is cancel-anytime with no minimum term — quarterly is the
+commitment play and the default.
 
 ## 6. Data integrity invariants
 

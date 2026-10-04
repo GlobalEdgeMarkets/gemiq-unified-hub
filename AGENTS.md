@@ -45,3 +45,5 @@ them from `IQ_PRODUCTS`. Correct today, but it is another place the catalog is
 restated by hand — a candidate for derivation on a future pass.
 - HubSpot calls go through `src/lib/hub/hubspot-transport.ts` (direct with HUBSPOT_SERVICE_KEY, else connector gateway) — one place decides auth/base URL.
 - PostHog read-side (admin tracking audit) lives in src/lib/posthog-audit.server.ts using POSTHOG_PERSONAL_API_KEY (phx_, Query:Read); the connector's phc_ token is send-only.
+- The IQ app registry (addresses, purge/status links, lifecycle, pause/notice) lives in the `hub_iq_apps` table via `src/lib/hub/app-control.server.ts`; "Delete user", health checks and the public manifest's `control` block all read it — never re-hardcode app addresses.
+- Prompts handed to IQ apps (sync + onboarding) are generated from `src/lib/iq-prompts.ts`, so contract changes are made there once.

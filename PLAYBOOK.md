@@ -1,6 +1,6 @@
 # GEM.IQ Playbook — v1.6
 
-**Status:** current as of 2026-10-03 (manifest v1.6.0: trial report gating). Supersedes v1.4 (6 undifferentiated
+**Status:** current as of 2026-10-04 (manifest v1.7.0: live control — notices, pause switch, editable wording, status-link contract). Supersedes v1.4 (6 undifferentiated
 "capability" IQs, manifest v1.4.0). If a doc, prompt, or GitHub knowledge file
 disagrees with this file, this file wins.
 
@@ -162,7 +162,7 @@ commitment play and the default.
   (previously described as a PDF retriever). Closed.
 - Stack split is deliberate: Hub + 4 new IQs on TanStack Start; TariffIQ and UXIQ
   remain stable legacy on Vite/React.
-- The Hub manifest is a **single file** — `src/lib/hub/manifest.json`, now **v1.6.0**
+- The Hub manifest is a **single file** — `src/lib/hub/manifest.json`, now **v1.7.0**; `/api/public/manifest` merges live `control` + `pricing.copy` from the app registry
   — served at `/api/public/manifest`. It carries `track` on every assessment plus a
   top-level `tracks` object. There is no manifest mirror. Only the SDK is mirrored:
   `src/lib/hub/sdk.ts` → `packages/hub-sdk/sdk.ts` via `scripts/mirror-sdk.mjs`.

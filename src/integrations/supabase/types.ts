@@ -59,6 +59,99 @@ export type Database = {
         }
         Relationships: []
       }
+      hub_global_settings: {
+        Row: {
+          checkout_cta: string | null
+          guarantee_line: string | null
+          id: boolean
+          notice: string | null
+          notice_level: string
+          trial_line: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          checkout_cta?: string | null
+          guarantee_line?: string | null
+          id?: boolean
+          notice?: string | null
+          notice_level?: string
+          trial_line?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          checkout_cta?: string | null
+          guarantee_line?: string | null
+          id?: boolean
+          notice?: string | null
+          notice_level?: string
+          trial_line?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      hub_iq_apps: {
+        Row: {
+          created_at: string
+          description: string | null
+          key: string
+          last_checked_at: string | null
+          last_status: Json | null
+          lifecycle: string
+          name: string
+          notice: string | null
+          notice_level: string
+          onboarding_checks: Json
+          paused: boolean
+          purge_url: string | null
+          site_url: string
+          status_url: string | null
+          track: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          key: string
+          last_checked_at?: string | null
+          last_status?: Json | null
+          lifecycle?: string
+          name: string
+          notice?: string | null
+          notice_level?: string
+          onboarding_checks?: Json
+          paused?: boolean
+          purge_url?: string | null
+          site_url: string
+          status_url?: string | null
+          track?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          key?: string
+          last_checked_at?: string | null
+          last_status?: Json | null
+          lifecycle?: string
+          name?: string
+          notice?: string | null
+          notice_level?: string
+          onboarding_checks?: Json
+          paused?: boolean
+          purge_url?: string | null
+          site_url?: string
+          status_url?: string | null
+          track?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company: string | null

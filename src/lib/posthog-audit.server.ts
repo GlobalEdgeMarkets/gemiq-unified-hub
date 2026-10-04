@@ -9,7 +9,7 @@ export const AUDIT_SITES = {
   salesiq: "salesiq.globaledgemarkets.com",
   productiq: "productiq.globaledgemarkets.com",
   aitransformiq: "aitransformiq.globaledgemarkets.com",
-  uxiq: "uxiq.globaledgemarkets.com",
+  uxiq: "uxreadiness.globaledgemarkets.com",
 } as const;
 export type AuditSite = keyof typeof AUDIT_SITES;
 
@@ -149,4 +149,13 @@ export async function runPostHogAudit(opts: { from: string; to: string; sites: A
       rows.map((r) => `${r.site}, ${r.event}, ${r.count}`).join("\n"),
   );
   return { rows, lastSeen, report };
+}
+
+/** True when PostHog saw any event from this host in the last 7 days. */
+export async function runHostSeen(host: string): Promise<boolean> {
+  if (!/^[a-z0-9.-]+$/i.test(host)) return false;
+  const rows = await queryPostHog(
+    `SELECT count() FROM events WHERE timestamp > now() - INTERVAL 7 DAY AND properties.$host = '${host}'`,
+  );
+  return Number(rows[0]?.[0] ?? 0) > 0;
 }

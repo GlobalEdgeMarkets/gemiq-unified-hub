@@ -1,7 +1,7 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.6.0",
-  "updated_at": "2026-10-03",
+  "version": "1.7.0",
+  "updated_at": "2026-10-04",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
     "docs_url": "https://gemiq.globaledgemarkets.com/docs",
@@ -27,6 +27,11 @@
       "light":    "https://gemiq.globaledgemarkets.com/brand/gem-logo-light.png",
       "light_white_mint": "https://gemiq.globaledgemarkets.com/brand/gem-logo-light-white-mint.png"
     },
+    "footer_links": [
+      { "label": "Global Edge Markets", "url": "https://globaledgemarkets.com" },
+      { "label": "GEM.IQ Hub", "url": "https://gemiq.globaledgemarkets.com" },
+      { "label": "Docs", "url": "https://gemiq.globaledgemarkets.com/docs" }
+    ],
     "usage_rules": [
       "Use navy+mint standard logo on light surfaces.",
       "Use white+mint (light) logo on dark surfaces.",
@@ -37,6 +42,11 @@
     "currency": "USD",
     "trial": { "days": 7, "assessments_included": 1, "card_required": true, "report_access": "score_and_tier" },
     "guarantee": { "days": 14, "type": "money_back" },
+    "copy": {
+      "checkout_cta": "Start your 7-day trial",
+      "guarantee_line": "14-day money-back guarantee.",
+      "trial_line": "Your trial includes one assessment. You'll see your score and tier; the full report unlocks when your plan starts."
+    },
     "one_time": {
       "id": "gemiq_single_assessment",
       "name": "GEM.IQ Single Assessment",
@@ -92,5 +102,16 @@
     "buy_single_assessment": "https://gemiq.globaledgemarkets.com/auth?mode=signup&buy=single",
     "login":                "https://gemiq.globaledgemarkets.com/auth",
     "portal":               "https://gemiq.globaledgemarkets.com/account"
+  },
+  "contracts": {
+    "status_endpoint": {
+      "method": "POST",
+      "path": "/api/public/hub-status",
+      "auth_header": "x-hub-purge-secret",
+      "response": { "manifest_version": "string", "app_version": "string", "checks": { "sign_in": "boolean", "checkout_link": "boolean", "purge": "boolean", "posthog": "boolean" } }
+    },
+    "purge_endpoint": { "method": "POST", "path": "/api/public/purge-user", "auth_header": "x-hub-purge-secret", "body": { "email": "string" } },
+    "posthog_events": ["signup_completed", "signin_completed", "assessment_started", "assessment_submitted", "results_submitted", "checkout_started", "consultation_clicked"],
+    "control_fields": "control.global.notice, control.apps[<key>].paused/notice — read on boot and every 5 minutes"
   }
 }

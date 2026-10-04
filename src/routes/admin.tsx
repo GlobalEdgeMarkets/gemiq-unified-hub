@@ -16,7 +16,13 @@ import {
   adminCheckHealth,
   adminRegisterApp,
   adminVerifyOnboarding,
+  adminGetReportSettings,
+  adminSaveReportSettings,
+  adminListReports,
+  adminReportAction,
 } from "@/lib/admin.functions";
+import { ReportsPanel } from "@/components/admin/ReportsPanel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -96,6 +102,10 @@ function AdminConsole() {
   const checkHealth = useServerFn(adminCheckHealth);
   const registerApp = useServerFn(adminRegisterApp);
   const verifyOnboarding = useServerFn(adminVerifyOnboarding);
+  const getReportSettings = useServerFn(adminGetReportSettings);
+  const saveReportSettings = useServerFn(adminSaveReportSettings);
+  const listReports = useServerFn(adminListReports);
+  const reportAction = useServerFn(adminReportAction);
   const control = useMemo(
     () => ({ listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding }),
     [listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding],
@@ -150,15 +160,30 @@ function AdminConsole() {
 
   return (
     <Shell email={gate.email}>
-      <div className="grid gap-6">
-        <ControlPanels {...(control as unknown as React.ComponentProps<typeof ControlPanels>)} />
-        <BootstrapCard run={bootstrap} />
-        <ImportUsersCard run={importUser} />
-        <DeleteUserCard run={deleteUser} />
-        <RegistryCard run={registryStatus} />
-        <SubmissionsCard run={listSubs} />
-        <PostHogAuditCard run={phAudit} />
-      </div>
+      <Tabs defaultValue="control">
+        <TabsList className="mb-6">
+          <TabsTrigger value="control">Control</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
+          <TabsTrigger value="tracking">Tracking</TabsTrigger>
+          <TabsTrigger value="users">Users & data</TabsTrigger>
+        </TabsList>
+        <TabsContent value="control" className="grid gap-6">
+          <ControlPanels {...(control as unknown as React.ComponentProps<typeof ControlPanels>)} />
+        </TabsContent>
+        <TabsContent value="reports">
+          <ReportsPanel getSettings={getReportSettings} saveSettings={saveReportSettings} listReports={listReports} reportAction={reportAction} />
+        </TabsContent>
+        <TabsContent value="tracking" className="grid gap-6">
+          <PostHogAuditCard run={phAudit} />
+        </TabsContent>
+        <TabsContent value="users" className="grid gap-6">
+          <DeleteUserCard run={deleteUser} />
+          <ImportUsersCard run={importUser} />
+          <SubmissionsCard run={listSubs} />
+          <RegistryCard run={registryStatus} />
+          <BootstrapCard run={bootstrap} />
+        </TabsContent>
+      </Tabs>
     </Shell>
   );
 }

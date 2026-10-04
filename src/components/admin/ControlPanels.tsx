@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { onboardingPrompt, syncPrompt } from "@/lib/iq-prompts";
+import { onboardingPrompt, reportPrompt, syncPrompt } from "@/lib/iq-prompts";
 
 type Level = "info" | "warning" | "critical";
 type App = {

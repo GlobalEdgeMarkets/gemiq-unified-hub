@@ -179,7 +179,7 @@ async function aiWrite(row: SubRow, missing: string[]): Promise<Partial<ReportCo
         "strengths (3 short bullets, from the highest dimensions), gaps (3 short bullets, from the lowest dimensions), " +
         "recommendations (4 concrete actions tied to the gaps), next_steps (3 actions for the next 30 days). " +
         "Arrays contain strings of at most 30 words each.",
-      input,
+      input: `Assessment data (json):\n${input}`,
     }),
   });
   if (!res.ok) {

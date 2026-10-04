@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { marked } from "marked";
 import {
   adminWhoami,
   adminBootstrapHubspot,
@@ -474,9 +475,10 @@ function PostHogAuditCard({ run }: { run: (a: { data: unknown }) => Promise<unkn
       {out?.error && <p className="mt-4 text-sm text-destructive">{out.error}</p>}
       {out?.report && (
         <>
-          <div className="mt-4 whitespace-pre-wrap rounded-lg bg-muted/60 p-4 text-sm leading-relaxed text-foreground">
-            {out.report}
-          </div>
+          <div
+            className="mt-4 space-y-2 rounded-lg bg-muted/60 p-4 text-sm leading-relaxed text-foreground [&_code]:rounded [&_code]:bg-background [&_code]:px-1 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-5"
+            dangerouslySetInnerHTML={{ __html: marked.parse(out.report.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"), { async: false }) as string }}
+          />
           <div className="mt-4 overflow-auto">
             <table className="w-full text-left text-xs">
               <thead>

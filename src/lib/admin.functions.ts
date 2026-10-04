@@ -143,3 +143,100 @@ export const adminPostHogAudit = createServerFn({ method: "POST" })
     const { runPostHogAudit } = await import("@/lib/posthog-audit.server");
     return await runPostHogAudit(data);
   });
+
+// ---- GEM Hub Central control plane ----
+const noticeLevel = z.enum(["info", "warning", "critical"]);
+const appKey = z.string().regex(/^[a-z0-9]{2,32}$/);
+
+export const adminListApps = createServerFn({ method: "GET" })
+  .middleware([requireHubAdmin])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { listApps, getGlobal } = await import("@/lib/hub/app-control.server");
+    const manifest = (await import("@/lib/hub/manifest.json")).default;
+    const [apps, global] = await Promise.all([listApps(), getGlobal()]);
+    return { apps, global, manifest_version: manifest.version };
+  });
+
+export const adminUpdateApp = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      key: appKey,
+      patch: z.object({
+        paused: z.boolean().optional(),
+        notice: z.string().max(500).nullable().optional(),
+        notice_level: noticeLevel.optional(),
+        status_url: z.string().url().nullable().optional(),
+        purge_url: z.string().url().nullable().optional(),
+        lifecycle: z.enum(["onboarding", "live", "retired"]).optional(),
+      }),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const { updateApp } = await import("@/lib/hub/app-control.server");
+    return await updateApp(data.key, data.patch, by);
+  });
+
+export const adminUpdateGlobal = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      notice: z.string().max(500).nullable(),
+      notice_level: noticeLevel,
+      checkout_cta: z.string().max(120).nullable(),
+      guarantee_line: z.string().max(200).nullable(),
+      trial_line: z.string().max(400).nullable(),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const { updateGlobal } = await import("@/lib/hub/app-control.server");
+    return await updateGlobal(data, by);
+  });
+
+export const adminCheckHealth = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { listApps, checkApp, saveHealth } = await import("@/lib/hub/app-control.server");
+    const manifest = (await import("@/lib/hub/manifest.json")).default;
+    const apps = (await listApps()).filter((a) => a.lifecycle !== "retired");
+    const results = await Promise.all(apps.map((a) => checkApp(a, manifest.version)));
+    await Promise.all(results.map(saveHealth));
+    return results;
+  });
+
+export const adminRegisterApp = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      key: appKey,
+      name: z.string().trim().min(2).max(40),
+      site_url: z.string().url().startsWith("https://"),
+      track: z.enum(["capability", "specialist"]),
+      description: z.string().max(300).optional(),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const { registerApp } = await import("@/lib/hub/app-control.server");
+    return await registerApp(data, by);
+  });
+
+export const adminVerifyOnboarding = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) => z.object({ key: appKey }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { verifyOnboarding } = await import("@/lib/hub/app-control.server");
+    const manifest = (await import("@/lib/hub/manifest.json")).default;
+    return await verifyOnboarding(data.key, manifest.version);
+  });

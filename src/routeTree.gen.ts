@@ -24,7 +24,6 @@ import { Route as ReadinessiqRouteImport } from './routes/readinessiq'
 import { Route as SalesiqRouteImport } from './routes/salesiq'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TariffiqRouteImport } from './routes/tariffiq'
-import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as UxiqRouteImport } from './routes/uxiq'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -126,11 +125,6 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const TariffiqRoute = TariffiqRouteImport.update({
   id: '/tariffiq',
   path: '/tariffiq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UnsubscribeRoute = UnsubscribeRouteImport.update({
-  id: '/unsubscribe',
-  path: '/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UxiqRoute = UxiqRouteImport.update({
@@ -301,7 +295,6 @@ export interface FileRoutesByFullPath {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
-  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -346,7 +339,6 @@ export interface FileRoutesByTo {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
-  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -392,7 +384,6 @@ export interface FileRoutesById {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
-  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -439,7 +430,6 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
-    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -484,7 +474,6 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
-    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -529,7 +518,6 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
-    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -575,7 +563,6 @@ export interface RootRouteChildren {
   SalesiqRoute: typeof SalesiqRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TariffiqRoute: typeof TariffiqRoute
-  UnsubscribeRoute: typeof UnsubscribeRoute
   UxiqRoute: typeof UxiqRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -708,13 +695,6 @@ declare module '@tanstack/react-router' {
       path: '/tariffiq'
       fullPath: '/tariffiq'
       preLoaderRoute: typeof TariffiqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/unsubscribe': {
-      id: '/unsubscribe'
-      path: '/unsubscribe'
-      fullPath: '/unsubscribe'
-      preLoaderRoute: typeof UnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/uxiq': {
@@ -949,7 +929,6 @@ const rootRouteChildren: RootRouteChildren = {
   SalesiqRoute: SalesiqRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TariffiqRoute: TariffiqRoute,
-  UnsubscribeRoute: UnsubscribeRoute,
   UxiqRoute: UxiqRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:

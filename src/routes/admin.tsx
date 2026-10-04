@@ -23,13 +23,9 @@ import {
   adminResetPreview,
   adminResetBatch,
   adminResetFinish,
-  adminGetFollowups,
-  adminSaveFollowups,
-  adminTestFollowup,
   adminContentVersions,
   adminContentAction,
 } from "@/lib/admin.functions";
-import { FollowupsPanel } from "@/components/admin/FollowupsPanel";
 import { ContentPanel } from "@/components/admin/ContentPanel";
 import { ReportsPanel } from "@/components/admin/ReportsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -119,9 +115,6 @@ function AdminConsole() {
   const resetPreview = useServerFn(adminResetPreview);
   const resetBatch = useServerFn(adminResetBatch);
   const resetFinish = useServerFn(adminResetFinish);
-  const getFollowups = useServerFn(adminGetFollowups);
-  const saveFollowups = useServerFn(adminSaveFollowups);
-  const testFollowup = useServerFn(adminTestFollowup);
   const contentVersions = useServerFn(adminContentVersions);
   const contentAction = useServerFn(adminContentAction);
   const control = useMemo(
@@ -193,7 +186,6 @@ function AdminConsole() {
           <ContentPanel versions={contentVersions} action={contentAction} />
         </TabsContent>
         <TabsContent value="reports" className="grid gap-6">
-          <FollowupsPanel get={getFollowups} save={saveFollowups} test={testFollowup} />
           <ReportsPanel getSettings={getReportSettings} saveSettings={saveReportSettings} listReports={listReports} reportAction={reportAction}
             resetPreview={resetPreview} resetBatch={resetBatch} resetFinish={resetFinish} />
         </TabsContent>

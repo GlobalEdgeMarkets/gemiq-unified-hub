@@ -357,40 +357,6 @@ export const adminResetFinish = createServerFn({ method: "POST" })
 // ---- Follow-up emails ----
 const stepKey = z.enum(["tier_advice", "unlock", "retake"]);
 
-export const adminGetFollowups = createServerFn({ method: "GET" })
-  .middleware([requireHubAdmin])
-  .handler(async ({ context }) => {
-    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
-    assertAdmin({ email: context.hubAdmin.email });
-    const { getAllRules, followupLog } = await import("@/lib/hub/followups.server");
-    const [rules, log] = await Promise.all([getAllRules(), followupLog(100)]);
-    return { ...rules, log };
-  });
-
-export const adminSaveFollowups = createServerFn({ method: "POST" })
-  .middleware([requireHubAdmin])
-  .inputValidator((input: unknown) =>
-    z.object({ scope: z.string().min(1).max(64), rules: z.record(z.string(), z.any()).nullable() }).parse(input),
-  )
-  .handler(async ({ data, context }) => {
-    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
-    const by = assertAdmin({ email: context.hubAdmin.email });
-    const { saveRules } = await import("@/lib/hub/followups.server");
-    await saveRules(data.scope, data.rules as never, by);
-    return { ok: true };
-  });
-
-export const adminTestFollowup = createServerFn({ method: "POST" })
-  .middleware([requireHubAdmin])
-  .inputValidator((input: unknown) => z.object({ scope: z.string(), step: stepKey }).parse(input))
-  .handler(async ({ data, context }) => {
-    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
-    const by = assertAdmin({ email: context.hubAdmin.email });
-    const { sendTest } = await import("@/lib/hub/followups.server");
-    return await sendTest(data.scope === "global" ? "gtmiq" : data.scope, data.step, by);
-  });
-
-// ---- Assessment content (questions, weights, tiers) ----
 export const adminContentVersions = createServerFn({ method: "GET" })
   .middleware([requireHubAdmin])
   .inputValidator((input: unknown) => z.object({ key: z.string().min(1).max(64) }).parse(input))

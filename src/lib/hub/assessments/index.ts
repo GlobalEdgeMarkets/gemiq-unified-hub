@@ -74,6 +74,8 @@ export function buildContactProperties(args: {
   current: SubmissionForMapping;
   /** Optional identity fields lifted from submission.metadata. */
   contact?: { first_name?: string; last_name?: string; company?: string; phone?: string };
+  /** Extra fields HubSpot workflows use for follow-up emails (set on live submits). */
+  workflow?: { submission_id: string; report_url: string; report_locked: boolean; entitlement: string };
 }): HubSpotPropertyValues {
   const props: HubSpotPropertyValues = {
     email: args.email,
@@ -83,6 +85,15 @@ export function buildContactProperties(args: {
     gem_assessment_score: args.current.score,
     gem_score_tier: normalizeTier(args.current.tier) ?? tierFromScore(args.current.score),
   };
+  if (args.workflow) {
+    // Follow-up emails are sent by HubSpot workflows; these fields drive them.
+    props.gem_assessment_submitted_at = args.current.submitted_at;
+    props.gem_assessment_label = REGISTRY_BY_KEY[args.current.assessment_key]?.displayName ?? args.current.assessment_key;
+    props.gem_submission_id = args.workflow.submission_id;
+    props.gem_report_url = args.workflow.report_url;
+    props.gem_report_locked = args.workflow.report_locked;
+    props.gem_entitlement = args.workflow.entitlement;
+  }
 
   if (args.contact?.first_name) props.firstname = args.contact.first_name;
   if (args.contact?.last_name)  props.lastname  = args.contact.last_name;

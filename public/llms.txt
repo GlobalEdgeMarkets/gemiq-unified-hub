@@ -44,3 +44,8 @@ Every GEM.IQ assessment scores each dimension on the same five tiers: reactive, 
 
 - ReadinessIQ has been broken up into GTMIQ, SalesIQ, ProductIQ, and AITransformIQ. readinessiq.globaledgemarkets.com now redirects (301) to the Hub dashboard.
 - TechServicesIQ is not a live product.
+
+## Reports (manifest 1.8.0)
+- Live report settings per IQ: manifest `report.apps[<key>]` — sections, trial_access, copy, tiers, mode (app | hub).
+- Every result has a Hub report page: https://gemiq.globaledgemarkets.com/report/<submission id> (owner or admin sign-in). Submit and history responses include `report_url`.
+- IQs may send optional `recommendations` with a submission; the Hub fills missing sections itself.

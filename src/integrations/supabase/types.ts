@@ -152,6 +152,27 @@ export type Database = {
         }
         Relationships: []
       }
+      hub_report_settings: {
+        Row: {
+          scope: string
+          settings: Json
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          scope: string
+          settings?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          scope?: string
+          settings?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company: string | null
@@ -249,6 +270,7 @@ export type Database = {
       }
       submissions: {
         Row: {
+          admin_actions: Json
           answers: Json | null
           assessment_key: string
           created_at: string
@@ -259,6 +281,10 @@ export type Database = {
           hubspot_synced_at: string | null
           id: string
           metadata: Json | null
+          report_content: Json | null
+          report_generated_at: string | null
+          report_hidden: boolean
+          report_unlocked_override: boolean | null
           score: number | null
           submitted_at: string
           tier: string | null
@@ -266,6 +292,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          admin_actions?: Json
           answers?: Json | null
           assessment_key: string
           created_at?: string
@@ -276,6 +303,10 @@ export type Database = {
           hubspot_synced_at?: string | null
           id?: string
           metadata?: Json | null
+          report_content?: Json | null
+          report_generated_at?: string | null
+          report_hidden?: boolean
+          report_unlocked_override?: boolean | null
           score?: number | null
           submitted_at?: string
           tier?: string | null
@@ -283,6 +314,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          admin_actions?: Json
           answers?: Json | null
           assessment_key?: string
           created_at?: string
@@ -293,6 +325,10 @@ export type Database = {
           hubspot_synced_at?: string | null
           id?: string
           metadata?: Json | null
+          report_content?: Json | null
+          report_generated_at?: string | null
+          report_hidden?: boolean
+          report_unlocked_override?: boolean | null
           score?: number | null
           submitted_at?: string
           tier?: string | null

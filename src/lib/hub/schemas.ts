@@ -21,6 +21,17 @@ export const SubmissionPayloadSchema = z.object({
   metadata: z.record(z.string(), z.any()).optional(),
   /** Public URL to a rendered PDF/HTML report for this submission. Included in the internal notification email. */
   report_url: z.string().url().optional(),
+  /** Optional report text written by the IQ; used by Hub-built reports. */
+  recommendations: z.union([
+    z.array(z.string().max(600)).max(20),
+    z.object({
+      summary: z.string().max(1500).optional(),
+      strengths: z.array(z.string().max(600)).max(10).optional(),
+      gaps: z.array(z.string().max(600)).max(10).optional(),
+      recommendations: z.array(z.string().max(600)).max(20).optional(),
+      next_steps: z.array(z.string().max(600)).max(10).optional(),
+    }),
+  ]).optional(),
   submitted_at: z.string().datetime().optional(),
 });
 export type SubmissionPayload = z.infer<typeof SubmissionPayloadSchema>;

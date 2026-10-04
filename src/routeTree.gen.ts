@@ -30,6 +30,7 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as DocsMarketEntryMaturityFrameworksRouteImport } from './routes/docs_.market-entry-maturity-frameworks'
 import { Route as MarketEntrySplatRouteImport } from './routes/market-entry.$'
 import { Route as ReadinessiqSplatRouteImport } from './routes/readinessiq.$'
+import { Route as ReportIdRouteImport } from './routes/report.$id'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
@@ -157,6 +158,11 @@ const ReadinessiqSplatRoute = ReadinessiqSplatRouteImport.update({
   id: '/$',
   path: '/$',
   getParentRoute: () => ReadinessiqRoute,
+} as any)
+const ReportIdRoute = ReportIdRouteImport.update({
+  id: '/report/$id',
+  path: '/report/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
@@ -289,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/docs/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
   '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
+  '/report/$id': typeof ReportIdRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -331,6 +338,7 @@ export interface FileRoutesByTo {
   '/docs/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
   '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
+  '/report/$id': typeof ReportIdRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -374,6 +382,7 @@ export interface FileRoutesById {
   '/docs_/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
   '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
+  '/report/$id': typeof ReportIdRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -418,6 +427,7 @@ export interface FileRouteTypes {
     | '/docs/market-entry-maturity-frameworks'
     | '/market-entry/$'
     | '/readinessiq/$'
+    | '/report/$id'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
@@ -460,6 +470,7 @@ export interface FileRouteTypes {
     | '/docs/market-entry-maturity-frameworks'
     | '/market-entry/$'
     | '/readinessiq/$'
+    | '/report/$id'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
@@ -502,6 +513,7 @@ export interface FileRouteTypes {
     | '/docs_/market-entry-maturity-frameworks'
     | '/market-entry/$'
     | '/readinessiq/$'
+    | '/report/$id'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
@@ -543,6 +555,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DocsMarketEntryMaturityFrameworksRoute: typeof DocsMarketEntryMaturityFrameworksRoute
+  ReportIdRoute: typeof ReportIdRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
@@ -712,6 +725,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/readinessiq/$'
       preLoaderRoute: typeof ReadinessiqSplatRouteImport
       parentRoute: typeof ReadinessiqRoute
+    }
+    '/report/$id': {
+      id: '/report/$id'
+      path: '/report/$id'
+      fullPath: '/report/$id'
+      preLoaderRoute: typeof ReportIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/.lovable/oauth/consent': {
       id: '/.lovable/oauth/consent'
@@ -895,6 +915,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   DocsMarketEntryMaturityFrameworksRoute:
     DocsMarketEntryMaturityFrameworksRoute,
+  ReportIdRoute: ReportIdRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,

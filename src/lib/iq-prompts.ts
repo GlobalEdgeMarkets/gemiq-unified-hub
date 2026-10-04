@@ -41,3 +41,18 @@ ${syncPrompt(app, manifestVersion).split("\n").slice(2).join("\n")}
 8. PostHog: connect the workspace's existing PostHog connection (the same project as GEM Hub Central). Identify signed-in users by email, and send these events: ${["signup_completed", "signin_completed", "assessment_started", "assessment_submitted", "results_submitted", "checkout_started", "consultation_clicked"].join(", ")}. Tracking must never block the app.
 9. When finished, publish, then tell me the exact delete link and status link addresses.`;
 }
+
+export function reportPrompt(app: { key: string; name: string }, manifestVersion: string): string {
+  return `Connect ${app.name}'s report to GEM Hub Central's live report settings (manifest ${manifestVersion}). The IQ key for this app is "${app.key}".
+
+1. Read report settings from ${HUB}/api/public/manifest → report.apps["${app.key}"] (the same live settings you already load every 5 minutes). If report is null, keep the last copy you loaded.
+2. If mode is "hub": don't render your own report. After submitting, send the user to the report_url returned by the Hub's submit response (also returned for each past result in /api/public/submissions/history). Your "View report" buttons open that link.
+3. If mode is "app": render your report from these settings:
+   - sections: show only enabled sections, in the given order (summary, score_tier, dimensions, strengths, gaps, recommendations, next_steps, talk_to_gem).
+   - trial_access: when report_locked is true, show only score (score), score + tier (score_tier), or score + tier + dimensions (score_tier_dimensions); every other section shows "Unlocks when your plan starts" with an "Unlock the full report" button to the Hub.
+   - copy: title_pattern ({assessment}, {company}, {name}), intro, disclaimer, closing_message, closing_cta, closing_url. Hide anything that is empty.
+   - tiers: use these labels, score ranges (min) and colours for the tier badge.
+4. With every submit, include the report text you write in a "recommendations" field: { summary, strengths[], gaps[], recommendations[], next_steps[] } (any subset). The Hub uses it in Hub-built reports and writes the missing parts itself.
+5. Keep sign-in, checkout, the status link, purge-user link and PostHog exactly as they are. Add "report_mode": "<app or hub>" to the hub-status reply.
+6. When done, publish and tell me which mode you're showing.`;
+}

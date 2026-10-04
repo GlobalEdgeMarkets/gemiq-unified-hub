@@ -139,7 +139,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
 
         // Persist. `detail` is folded into metadata alongside anything the IQ sent.
         const entitlement = hasPaidSub ? "subscription" : trialSubId ? "trial" : creditId ? "single_credit" : "none";
-        const mergedMetadata = { ...(payload.metadata ?? {}), detail: payload.detail ?? {}, entitlement };
+        const mergedMetadata = { ...(payload.metadata ?? {}), detail: payload.detail ?? {}, entitlement, ...(payload.recommendations ? { recommendations: payload.recommendations } : {}) };
         const { data: inserted, error: insErr } = await svc
           .from("submissions")
           .insert({
@@ -295,6 +295,8 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           queued_for_retry: queuedForRetry,
           // Trial runs show score + tier; the full report unlocks when the plan starts.
           report_locked: entitlement === "trial",
+          // Hub-built report page (always available; IQs in "hub" report mode link here).
+          report_url: `https://gemiq.globaledgemarkets.com/report/${inserted.id}`,
         }, queuedForRetry ? { status: 202 } : undefined, request);
 
       },

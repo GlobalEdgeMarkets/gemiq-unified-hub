@@ -207,7 +207,9 @@ export const adminCheckHealth = createServerFn({ method: "POST" })
     const { listApps, checkApp, saveHealth } = await import("@/lib/hub/app-control.server");
     const manifest = (await import("@/lib/hub/manifest.json")).default;
     const apps = (await listApps()).filter((a) => a.lifecycle !== "retired");
-    const results = await Promise.all(apps.map((a) => checkApp(a, manifest.version)));
+    const { publishedVersions } = await import("@/lib/hub/content.server");
+    const pv = await publishedVersions().catch(() => ({} as Record<string, number>));
+    const results = await Promise.all(apps.map((a) => checkApp(a, manifest.version, pv[a.key] ?? null)));
     await Promise.all(results.map(saveHealth));
     return results;
   });

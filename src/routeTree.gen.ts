@@ -41,6 +41,7 @@ import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/em
 import { Route as ApiPublicSubmissionsSubmitRouteImport } from './routes/api/public/submissions/submit'
 import { Route as ApiPublicSubmissionsHistoryRouteImport } from './routes/api/public/submissions/history'
 import { Route as ApiPublicJobsRetryHubspotRouteImport } from './routes/api/public/jobs/retry-hubspot'
+import { Route as ApiPublicContentKeyRouteImport } from './routes/api/public/content.$key'
 import { Route as ApiPublicBillingPaymentsWebhookRouteImport } from './routes/api/public/billing/payments-webhook'
 import { Route as ApiPublicBillingCreatePortalSessionRouteImport } from './routes/api/public/billing/create-portal-session'
 import { Route as ApiPublicBillingCreateCheckoutRouteImport } from './routes/api/public/billing/create-checkout'
@@ -219,6 +220,11 @@ const ApiPublicJobsRetryHubspotRoute =
     path: '/api/public/jobs/retry-hubspot',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicContentKeyRoute = ApiPublicContentKeyRouteImport.update({
+  id: '/api/public/content/$key',
+  path: '/api/public/content/$key',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicBillingPaymentsWebhookRoute =
   ApiPublicBillingPaymentsWebhookRouteImport.update({
     id: '/api/public/billing/payments-webhook',
@@ -309,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
+  '/api/public/content/$key': typeof ApiPublicContentKeyRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
@@ -352,6 +359,7 @@ export interface FileRoutesByTo {
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
+  '/api/public/content/$key': typeof ApiPublicContentKeyRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
@@ -396,6 +404,7 @@ export interface FileRoutesById {
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
+  '/api/public/content/$key': typeof ApiPublicContentKeyRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
@@ -441,6 +450,7 @@ export interface FileRouteTypes {
     | '/api/public/billing/create-checkout'
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
+    | '/api/public/content/$key'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
@@ -484,6 +494,7 @@ export interface FileRouteTypes {
     | '/api/public/billing/create-checkout'
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
+    | '/api/public/content/$key'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
@@ -527,6 +538,7 @@ export interface FileRouteTypes {
     | '/api/public/billing/create-checkout'
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
+    | '/api/public/content/$key'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
@@ -569,6 +581,7 @@ export interface RootRouteChildren {
   ApiPublicBillingCreateCheckoutRoute: typeof ApiPublicBillingCreateCheckoutRoute
   ApiPublicBillingCreatePortalSessionRoute: typeof ApiPublicBillingCreatePortalSessionRoute
   ApiPublicBillingPaymentsWebhookRoute: typeof ApiPublicBillingPaymentsWebhookRoute
+  ApiPublicContentKeyRoute: typeof ApiPublicContentKeyRoute
   ApiPublicJobsRetryHubspotRoute: typeof ApiPublicJobsRetryHubspotRoute
   ApiPublicSubmissionsHistoryRoute: typeof ApiPublicSubmissionsHistoryRoute
   ApiPublicSubmissionsSubmitRoute: typeof ApiPublicSubmissionsSubmitRoute
@@ -803,6 +816,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsRetryHubspotRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/content/$key': {
+      id: '/api/public/content/$key'
+      path: '/api/public/content/$key'
+      fullPath: '/api/public/content/$key'
+      preLoaderRoute: typeof ApiPublicContentKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/billing/payments-webhook': {
       id: '/api/public/billing/payments-webhook'
       path: '/api/public/billing/payments-webhook'
@@ -933,6 +953,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBillingCreatePortalSessionRoute:
     ApiPublicBillingCreatePortalSessionRoute,
   ApiPublicBillingPaymentsWebhookRoute: ApiPublicBillingPaymentsWebhookRoute,
+  ApiPublicContentKeyRoute: ApiPublicContentKeyRoute,
   ApiPublicJobsRetryHubspotRoute: ApiPublicJobsRetryHubspotRoute,
   ApiPublicSubmissionsHistoryRoute: ApiPublicSubmissionsHistoryRoute,
   ApiPublicSubmissionsSubmitRoute: ApiPublicSubmissionsSubmitRoute,

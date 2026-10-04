@@ -47,3 +47,5 @@ restated by hand — a candidate for derivation on a future pass.
 - PostHog read-side (admin tracking audit) lives in src/lib/posthog-audit.server.ts using POSTHOG_PERSONAL_API_KEY (phx_, Query:Read); the connector's phc_ token is send-only.
 - The IQ app registry (addresses, purge/status links, lifecycle, pause/notice) lives in the `hub_iq_apps` table via `src/lib/hub/app-control.server.ts`; "Delete user", health checks and the public manifest's `control` block all read it — never re-hardcode app addresses.
 - Prompts handed to IQ apps (sync + onboarding) are generated from `src/lib/iq-prompts.ts`, so contract changes are made there once.
+- Report control lives in `hub_report_settings` (global row + per-app override rows) via `src/lib/hub/report-control.server.ts`; shapes/defaults/lock rule in client-safe `src/lib/report-settings.ts`. Report lock decisions everywhere (dashboard, history, report page) go through `isReportLocked` so admin overrides apply uniformly.
+- Hub-built report text is generated once per submission and stored in `submissions.report_content`; app-sent `recommendations` always win over AI, and only an admin "Regenerate" rewrites it.

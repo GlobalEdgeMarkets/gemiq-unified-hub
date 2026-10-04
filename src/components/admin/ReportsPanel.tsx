@@ -35,12 +35,76 @@ function Section({ title, description, children }: { title: string; description:
   );
 }
 
-export function ReportsPanel(props: { getSettings: Fn; saveSettings: Fn; listReports: Fn; reportAction: Fn }) {
+export function ReportsPanel(props: {
+  getSettings: Fn; saveSettings: Fn; listReports: Fn; reportAction: Fn;
+  resetPreview: Fn; resetBatch: Fn; resetFinish: Fn;
+}) {
   return (
     <div className="grid gap-6">
       <ReportSettingsCard getSettings={props.getSettings} saveSettings={props.saveSettings} />
       <ReportsTable listReports={props.listReports} reportAction={props.reportAction} />
+      <ResetCard preview={props.resetPreview} batch={props.resetBatch} finish={props.resetFinish} />
     </div>
+  );
+}
+
+function ResetCard({ preview, batch, finish }: { preview: Fn; batch: Fn; finish: Fn }) {
+  const [counts, setCounts] = useState<{ people: number; results: number } | null>(null);
+  const [typed, setTyped] = useState("");
+  const [running, setRunning] = useState(false);
+  const [progress, setProgress] = useState<string | null>(null);
+  const [problems, setProblems] = useState<string[]>([]);
+
+  const refresh = useCallback(async () => { try { setCounts(await preview()); } catch { /* shown on run */ } }, [preview]);
+  useEffect(() => { void refresh(); }, [refresh]);
+
+  const run = async () => {
+    setRunning(true); setProblems([]);
+    const issues: string[] = [];
+    try {
+      let offset = 0;
+      for (;;) {
+        const r = await batch({ data: { confirm: "RESET", offset } });
+        for (const st of r.steps) for (const f of st.failures) issues.push(`${st.email} — ${f}`);
+        setProgress(`Erasing in the assessments and HubSpot: ${r.next} of ${r.total} people…`);
+        if (r.done) break;
+        offset = r.next;
+      }
+      setProgress("Erasing results in GEM Hub Central…");
+      const f = await finish({ data: { confirm: "RESET" } });
+      issues.push(...f.warnings);
+      setProgress(`Done. ${f.results_deleted} results erased. Accounts and plans were kept, and everyone's free trial assessment is available again.`);
+    } catch (e) {
+      setProgress(`Stopped: ${e instanceof Error ? e.message : String(e)}. Nothing in GEM Hub Central was erased yet; you can run it again.`);
+    }
+    setProblems(issues); setTyped(""); setRunning(false); void refresh();
+  };
+
+  return (
+    <section className="rounded-2xl border border-destructive/40 bg-card/60 p-6">
+      <h2 className="font-heading text-xl text-foreground">Reset all reports</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Permanently erases every assessment result and report: in GEM Hub Central, inside all assessments (through their delete links),
+        and the assessment fields on HubSpot contacts. Accounts, plans and HubSpot contacts are kept, and trial usage is reset. This cannot be undone.
+      </p>
+      {counts && <p className="mt-3 text-sm text-foreground">Currently: {counts.results} results from {counts.people} people.</p>}
+      <div className="mt-4 flex flex-wrap items-end gap-3">
+        <div>
+          <Label htmlFor="reset-confirm" className="text-xs text-muted-foreground">Type RESET to confirm</Label>
+          <Input id="reset-confirm" className="h-9 w-40" value={typed} onChange={(e) => setTyped(e.target.value)} disabled={running} />
+        </div>
+        <Button variant="destructive" disabled={typed !== "RESET" || running} onClick={run}>
+          {running ? "Erasing…" : "Erase all reports"}
+        </Button>
+      </div>
+      {progress && <p className="mt-4 text-sm text-foreground">{progress}</p>}
+      {problems.length > 0 && (
+        <div className="mt-3 text-sm">
+          <p className="text-destructive">Some steps didn't go through. Fix them, then run the reset again (it is safe to repeat):</p>
+          <ul className="mt-1 max-h-48 list-disc overflow-auto pl-5 text-muted-foreground">{problems.map((p, i) => <li key={i}>{p}</li>)}</ul>
+        </div>
+      )}
+    </section>
   );
 }
 

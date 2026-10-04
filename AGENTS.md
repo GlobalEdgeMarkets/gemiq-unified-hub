@@ -49,3 +49,4 @@ restated by hand — a candidate for derivation on a future pass.
 - Prompts handed to IQ apps (sync + onboarding) are generated from `src/lib/iq-prompts.ts`, so contract changes are made there once.
 - Report control lives in `hub_report_settings` (global row + per-app override rows) via `src/lib/hub/report-control.server.ts`; shapes/defaults/lock rule in client-safe `src/lib/report-settings.ts`. Report lock decisions everywhere (dashboard, history, report page) go through `isReportLocked` so admin overrides apply uniformly.
 - Hub-built report text is generated once per submission and stored in `submissions.report_content`; app-sent `recommendations` always win over AI, and only an admin "Regenerate" rewrites it.
+- "Reset all reports" (`src/lib/hub/admin/reset-reports.server.ts`) runs in small client-driven batches (per-person IQ purge links + clearing gem_* HubSpot fields) and only wipes Hub results in the final step, so a failed run can be repeated safely.

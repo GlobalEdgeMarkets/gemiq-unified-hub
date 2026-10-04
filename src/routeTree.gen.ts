@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UxiqRouteImport } from './routes/uxiq'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TariffiqRouteImport } from './routes/tariffiq'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SalesiqRouteImport } from './routes/salesiq'
@@ -55,6 +56,11 @@ import { Route as ApiPublicAdminBootstrapHubspotSchemaRouteImport } from './rout
 const UxiqRoute = UxiqRouteImport.update({
   id: '/uxiq',
   path: '/uxiq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TariffiqRoute = TariffiqRouteImport.update({
@@ -295,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -339,6 +346,7 @@ export interface FileRoutesByTo {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -384,6 +392,7 @@ export interface FileRoutesById {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -430,6 +439,7 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
+    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -474,6 +484,7 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
+    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -518,6 +529,7 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
+    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -563,6 +575,7 @@ export interface RootRouteChildren {
   SalesiqRoute: typeof SalesiqRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TariffiqRoute: typeof TariffiqRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   UxiqRoute: typeof UxiqRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -597,6 +610,13 @@ declare module '@tanstack/react-router' {
       path: '/uxiq'
       fullPath: '/uxiq'
       preLoaderRoute: typeof UxiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tariffiq': {
@@ -929,6 +949,7 @@ const rootRouteChildren: RootRouteChildren = {
   SalesiqRoute: SalesiqRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TariffiqRoute: TariffiqRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   UxiqRoute: UxiqRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:

@@ -23,7 +23,14 @@ import {
   adminResetPreview,
   adminResetBatch,
   adminResetFinish,
+  adminGetFollowups,
+  adminSaveFollowups,
+  adminTestFollowup,
+  adminContentVersions,
+  adminContentAction,
 } from "@/lib/admin.functions";
+import { FollowupsPanel } from "@/components/admin/FollowupsPanel";
+import { ContentPanel } from "@/components/admin/ContentPanel";
 import { ReportsPanel } from "@/components/admin/ReportsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -112,6 +119,11 @@ function AdminConsole() {
   const resetPreview = useServerFn(adminResetPreview);
   const resetBatch = useServerFn(adminResetBatch);
   const resetFinish = useServerFn(adminResetFinish);
+  const getFollowups = useServerFn(adminGetFollowups);
+  const saveFollowups = useServerFn(adminSaveFollowups);
+  const testFollowup = useServerFn(adminTestFollowup);
+  const contentVersions = useServerFn(adminContentVersions);
+  const contentAction = useServerFn(adminContentAction);
   const control = useMemo(
     () => ({ listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding }),
     [listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding],
@@ -169,6 +181,7 @@ function AdminConsole() {
       <Tabs defaultValue="control">
         <TabsList className="mb-6">
           <TabsTrigger value="control">Control</TabsTrigger>
+          <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="tracking">Tracking</TabsTrigger>
           <TabsTrigger value="users">Users & data</TabsTrigger>
@@ -176,7 +189,11 @@ function AdminConsole() {
         <TabsContent value="control" className="grid gap-6">
           <ControlPanels {...(control as unknown as React.ComponentProps<typeof ControlPanels>)} />
         </TabsContent>
-        <TabsContent value="reports">
+        <TabsContent value="content">
+          <ContentPanel versions={contentVersions} action={contentAction} />
+        </TabsContent>
+        <TabsContent value="reports" className="grid gap-6">
+          <FollowupsPanel get={getFollowups} save={saveFollowups} test={testFollowup} />
           <ReportsPanel getSettings={getReportSettings} saveSettings={saveReportSettings} listReports={listReports} reportAction={reportAction}
             resetPreview={resetPreview} resetBatch={resetBatch} resetFinish={resetFinish} />
         </TabsContent>

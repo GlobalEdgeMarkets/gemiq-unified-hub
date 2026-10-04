@@ -49,3 +49,7 @@ Every GEM.IQ assessment scores each dimension on the same five tiers: reactive, 
 - Live report settings per IQ: manifest `report.apps[<key>]` — sections, trial_access, copy, tiers, mode (app | hub).
 - Every result has a Hub report page: https://gemiq.globaledgemarkets.com/report/<submission id> (owner or admin sign-in). Submit and history responses include `report_url`.
 - IQs may send optional `recommendations` with a submission; the Hub fills missing sections itself.
+
+## Assessment content (manifest 1.9.0)
+- Published questions, weights, tiers and tier recommendations per IQ: https://gemiq.globaledgemarkets.com/api/public/content/<key> (404 when the IQ still uses its built-in questions). Manifest `content[<key>]` gives the live version number.
+- Scoring rule: option points 0–100; section = weighted average of answered questions; overall = weighted average of sections, rounded; tier = highest tier whose min ≤ overall.

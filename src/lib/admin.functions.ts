@@ -240,3 +240,82 @@ export const adminVerifyOnboarding = createServerFn({ method: "POST" })
     const manifest = (await import("@/lib/hub/manifest.json")).default;
     return await verifyOnboarding(data.key, manifest.version);
   });
+
+// ---- Report control ----
+const sectionKey = z.enum(["summary", "score_tier", "dimensions", "strengths", "gaps", "recommendations", "next_steps", "talk_to_gem"]);
+const reportOverride = z.object({
+  sections: z.array(z.object({ key: sectionKey, enabled: z.boolean() })).max(8).optional(),
+  trial_access: z.enum(["score", "score_tier", "score_tier_dimensions"]).optional(),
+  copy: z.object({
+    title_pattern: z.string().max(120),
+    intro: z.string().max(400),
+    disclaimer: z.string().max(600),
+    closing_message: z.string().max(300),
+    closing_cta: z.string().max(60),
+    closing_url: z.string().url().or(z.literal("")),
+  }).partial().optional(),
+  tiers: z.array(z.object({
+    key: z.string().max(32),
+    label: z.string().min(1).max(32),
+    min: z.number().min(0).max(100),
+    color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
+  })).min(2).max(8).optional(),
+  mode: z.enum(["app", "hub"]).optional(),
+});
+
+export const adminGetReportSettings = createServerFn({ method: "GET" })
+  .middleware([requireHubAdmin])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { getAllSettings } = await import("@/lib/hub/report-control.server");
+    return await getAllSettings();
+  });
+
+export const adminSaveReportSettings = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({ scope: z.union([z.literal("global"), appKey]), settings: reportOverride.nullable() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const { saveSettings } = await import("@/lib/hub/report-control.server");
+    return await saveSettings(data.scope, data.settings, by);
+  });
+
+export const adminListReports = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      assessment_key: z.string().max(32).optional(),
+      email: z.string().max(200).optional(),
+      from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+      to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+      tier: z.string().max(32).optional(),
+      lock: z.enum(["locked", "unlocked", "all"]).optional(),
+      include_hidden: z.boolean().optional(),
+      limit: z.number().int().min(1).max(1000).optional(),
+    }).parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { listReports } = await import("@/lib/hub/report-control.server");
+    return await listReports(data);
+  });
+
+export const adminReportAction = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      id: z.string().uuid(),
+      action: z.enum(["unlock", "relock", "clear_override", "hide", "unhide", "regenerate", "resend"]),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const { reportAction } = await import("@/lib/hub/report-control.server");
+    return await reportAction(data.id, data.action, by);
+  });

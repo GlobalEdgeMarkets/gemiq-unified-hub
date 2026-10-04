@@ -49,6 +49,8 @@ export interface SubmissionPayload {
   metadata?: Record<string, unknown>;
   /** Public URL to a rendered PDF/HTML report. Shown in the internal notification email. */
   report_url?: string;
+  /** Optional report text written by the IQ (1.8.0); used by Hub-built reports. */
+  recommendations?: string[] | { summary?: string; strengths?: string[]; gaps?: string[]; recommendations?: string[]; next_steps?: string[] };
   submitted_at?: string;
 }
 export interface CheckStatus {

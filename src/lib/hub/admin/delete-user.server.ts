@@ -2,7 +2,7 @@
 // Each step is reported separately; one failing step never hides the others.
 import { createHubServiceClient } from "@/lib/hub/supabase-server";
 
-/** IQ apps exposing a purge endpoint. Add an entry when another IQ ships one. */
+/** Fallback only: the live list comes from the app registry (Admin → Assessments). */
 const IQ_PURGE_ENDPOINTS: { key: string; url: string }[] = [
   { key: "tariffiq", url: "https://pltvcqnknmukgpsipmec.supabase.co/functions/v1/purge-user" },
   { key: "salesiq", url: "https://salesiq.globaledgemarkets.com/api/public/purge-user" },
@@ -48,7 +48,15 @@ export async function runDeleteUser(rawEmail: string) {
 
   // 1. IQ apps
   const secret = process.env.HUB_PURGE_SECRET;
-  for (const iq of IQ_PURGE_ENDPOINTS) {
+  let targets = IQ_PURGE_ENDPOINTS;
+  try {
+    const { purgeTargets } = await import("@/lib/hub/app-control.server");
+    const fromRegistry = await purgeTargets();
+    if (fromRegistry.length) targets = fromRegistry;
+  } catch (e) {
+    console.error("[delete-user] registry unavailable, using fallback list", e);
+  }
+  for (const iq of targets) {
     if (!secret) { steps.push({ step: `purge ${iq.key}`, ok: false, detail: "HUB_PURGE_SECRET not set" }); continue; }
     try {
       const err = await purgeIq(iq.url, email, secret);

@@ -20,6 +20,9 @@ import {
   adminSaveReportSettings,
   adminListReports,
   adminReportAction,
+  adminResetPreview,
+  adminResetBatch,
+  adminResetFinish,
 } from "@/lib/admin.functions";
 import { ReportsPanel } from "@/components/admin/ReportsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -106,6 +109,9 @@ function AdminConsole() {
   const saveReportSettings = useServerFn(adminSaveReportSettings);
   const listReports = useServerFn(adminListReports);
   const reportAction = useServerFn(adminReportAction);
+  const resetPreview = useServerFn(adminResetPreview);
+  const resetBatch = useServerFn(adminResetBatch);
+  const resetFinish = useServerFn(adminResetFinish);
   const control = useMemo(
     () => ({ listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding }),
     [listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding],
@@ -171,7 +177,8 @@ function AdminConsole() {
           <ControlPanels {...(control as unknown as React.ComponentProps<typeof ControlPanels>)} />
         </TabsContent>
         <TabsContent value="reports">
-          <ReportsPanel getSettings={getReportSettings} saveSettings={saveReportSettings} listReports={listReports} reportAction={reportAction} />
+          <ReportsPanel getSettings={getReportSettings} saveSettings={saveReportSettings} listReports={listReports} reportAction={reportAction}
+            resetPreview={resetPreview} resetBatch={resetBatch} resetFinish={resetFinish} />
         </TabsContent>
         <TabsContent value="tracking" className="grid gap-6">
           <PostHogAuditCard run={phAudit} />

@@ -44,3 +44,4 @@ at call sites. Keep the spec in `REGISTRY` so historical submissions still map.
 them from `IQ_PRODUCTS`. Correct today, but it is another place the catalog is
 restated by hand — a candidate for derivation on a future pass.
 - HubSpot calls go through `src/lib/hub/hubspot-transport.ts` (direct with HUBSPOT_SERVICE_KEY, else connector gateway) — one place decides auth/base URL.
+- PostHog read-side (admin tracking audit) lives in src/lib/posthog-audit.server.ts using POSTHOG_PERSONAL_API_KEY (phx_, Query:Read); the connector's phc_ token is send-only.

@@ -41,7 +41,24 @@ export const Route = createFileRoute("/api/public/manifest")({
         new Response(null, { status: 204, headers: corsHeaders(request) }),
 
       GET: async ({ request }) => {
-        const body = JSON.stringify(manifest);
+        // Live control values (notices, pause switches, editable wording) are
+        // merged over the static manifest; static values win if the DB is down.
+        const { getPublicControl } = await import("@/lib/hub/app-control.server");
+        const control = await getPublicControl();
+        const pricing = { ...manifest.pricing, copy: { ...manifest.pricing.copy } };
+        if (control) {
+          for (const [k, v] of Object.entries(control.copy)) {
+            if (v) (pricing.copy as Record<string, string>)[k] = v;
+          }
+        }
+        const merged = {
+          ...manifest,
+          pricing,
+          control: control
+            ? { global: control.global, apps: control.apps }
+            : { global: { notice: null, notice_level: "info" }, apps: {} },
+        };
+        const body = JSON.stringify(merged);
         const hash = (await sha256Hex(body)).slice(0, 16);
         const etag = `"${manifest.version}-${hash}"`;
         const ifNoneMatch = request.headers.get("if-none-match");
@@ -50,7 +67,7 @@ export const Route = createFileRoute("/api/public/manifest")({
           ...corsHeaders(request),
           "content-type": "application/json; charset=utf-8",
           etag,
-          "cache-control": "public, max-age=60, stale-while-revalidate=600",
+          "cache-control": "public, max-age=60, stale-while-revalidate=300",
           "x-manifest-version": manifest.version,
         };
 
@@ -59,7 +76,7 @@ export const Route = createFileRoute("/api/public/manifest")({
         }
 
         const payload = JSON.stringify({
-          ...manifest,
+          ...merged,
           etag,
           served_at: new Date().toISOString(),
         });

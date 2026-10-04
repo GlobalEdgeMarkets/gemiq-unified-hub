@@ -113,6 +113,8 @@ export interface HubManifest {
     colors: Record<string, string>;
     logos: Record<string, string>;
     usage_rules: string[];
+    /** Added in 1.7.0. */
+    footer_links?: Array<{ label: string; url: string }>;
   };
   pricing: {
     currency: string;
@@ -125,6 +127,8 @@ export interface HubManifest {
     };
     /** 14-day money-back guarantee. Optional so older manifests still type-check. */
     guarantee?: { days: number; type: string };
+    /** Editable wording, added in 1.7.0. Hide the sentence when a value is missing. */
+    copy?: { checkout_cta?: string; guarantee_line?: string; trial_line?: string };
     /** Single-assessment purchase (gemiq_single_assessment, $179). */
     one_time?: {
       id: string;
@@ -144,7 +148,21 @@ export interface HubManifest {
   tracks?: Record<HubTrack, { label: string; blurb: string }>;
   assessments: Array<{ key: AssessmentKey; name: string; url: string; track?: HubTrack }>;
   deep_links: Record<string, string>;
+  /** Live control set in GEM Hub Central Admin, added in 1.7.0. */
+  control?: {
+    global: { notice: string | null; notice_level: HubNoticeLevel };
+    apps: Record<AssessmentKey, { paused: boolean; notice: string | null; notice_level: HubNoticeLevel; lifecycle: string }>;
+  };
+  /** Contracts each IQ app implements (status + purge links, PostHog events), added in 1.7.0. */
+  contracts?: {
+    status_endpoint: { method: string; path: string; auth_header: string; response: unknown };
+    purge_endpoint: { method: string; path: string; auth_header: string; body: unknown };
+    posthog_events: string[];
+    control_fields: string;
+  };
 }
+
+export type HubNoticeLevel = "info" | "warning" | "critical";
 
 
 export interface HubClientOptions {

@@ -152,6 +152,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             answers: payload.answers ?? null,
             metadata: mergedMetadata,
             submitted_at: payload.submitted_at ?? new Date().toISOString(),
+            content_version: payload.content_version ?? null,
           })
           .select("id,submitted_at")
           .single();
@@ -163,6 +164,13 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           await svc.from("subscriptions")
             .update({ trial_assessments_used: trialUsedBefore + 1 })
             .eq("id", trialSubId);
+        }
+
+        {
+          const { enqueueFollowups } = await import("@/lib/hub/followups.server");
+          await enqueueFollowups({ id: inserted.id, email, assessment_key: payload.assessment_key, entitlement, submitted_at: inserted.submitted_at });
+          const { checkScore } = await import("@/lib/hub/content.server");
+          await checkScore(inserted.id, payload.assessment_key, payload.content_version ?? null, payload.score ?? null, payload.answers ?? null);
         }
 
         // Consume a one-time credit only when nothing else covered this run

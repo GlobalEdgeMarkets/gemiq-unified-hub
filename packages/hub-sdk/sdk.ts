@@ -164,7 +164,13 @@ export interface HubManifest {
     /** Added in 1.8.0. */
     report_fields?: string;
     submit_extras?: Record<string, string>;
+    /** Added in 1.9.0. */
+    content_endpoint?: { method: string; path: string; response: string };
+    content_export?: { method: string; path: string; auth_header: string; response: string };
+    scoring_rule?: string;
   };
+  /** Published Hub content version per IQ (null = none), added in 1.9.0. */
+  content?: Record<AssessmentKey, number | null> | null;
   /** Live report settings set in GEM Hub Central Admin, added in 1.8.0. Null if unavailable. */
   report?: {
     global: HubReportSettings;

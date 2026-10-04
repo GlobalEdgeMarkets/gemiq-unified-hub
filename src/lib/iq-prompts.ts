@@ -56,3 +56,15 @@ export function reportPrompt(app: { key: string; name: string }, manifestVersion
 5. Keep sign-in, checkout, the status link, purge-user link and PostHog exactly as they are. Add "report_mode": "<app or hub>" to the hub-status reply.
 6. When done, publish and tell me which mode you're showing.`;
 }
+
+export function contentPrompt(app: { key: string; name: string }, manifestVersion: string): string {
+  return `Let GEM Hub Central control ${app.name}'s questions, scoring weights and tiers (manifest ${manifestVersion}). The IQ key for this app is "${app.key}".
+
+1. Content export (one-time import): add POST /api/public/hub-content-export next to your hub-status link, with the same x-hub-purge-secret check (wrong or missing secret → 401). It returns { "content": { intro, sections: [{ key, title, description, weight, questions: [{ key, text, help, weight, options: [{ key, label, points }] }] }], tiers: [{ key, label, min }], tier_recommendations: { <tierKey>: string[] } } } built from your CURRENT questions. points are 0–100 per option, weights are relative numbers (use 1 if you don't weight). Keep keys stable — they identify answers.
+2. Load Hub content: on start and every 5 minutes, read ${HUB}/api/public/manifest → content["${app.key}"]. If it's a number, fetch ${HUB}/api/public/content/${app.key} (send If-None-Match with the last ETag) and render the assessment from its content: sections in order, each question with its options, plus intro. If it's null, the request fails, or the content is invalid, keep using your built-in questions.
+3. Score with the Hub's rule exactly: question = chosen option's points; section = weighted average of answered questions (question.weight); overall = weighted average of answered sections (section.weight), rounded; tier = the highest tier whose min ≤ overall. Show tier labels and the tier_recommendations for the user's tier.
+4. On submit, send content_version (the Hub version you used; omit when on built-in questions), answers as { questionKey: optionKey }, dimensions as { sectionKey: sectionScore }, score and tier. The Hub re-checks the score and flags mismatches.
+5. Add "content_version" (the loaded Hub version, or null) to the hub-status reply.
+6. A user who started before a new version was published finishes on the version they started with.
+7. Keep sign-in, checkout, reports, purge-user and PostHog unchanged. Publish, then tell me the content export link.`;
+}

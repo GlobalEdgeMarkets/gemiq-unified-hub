@@ -33,5 +33,7 @@ export const SubmissionPayloadSchema = z.object({
     }),
   ]).optional(),
   submitted_at: z.string().datetime().optional(),
+  /** Hub content version (questions/weights/tiers) the IQ used for this run. */
+  content_version: z.number().int().positive().nullable().optional(),
 });
 export type SubmissionPayload = z.infer<typeof SubmissionPayloadSchema>;

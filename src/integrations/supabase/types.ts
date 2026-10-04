@@ -59,6 +59,89 @@ export type Database = {
         }
         Relationships: []
       }
+      email_unsubscribes: {
+        Row: {
+          created_at: string
+          email: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+        }
+        Relationships: []
+      }
+      hub_followup_queue: {
+        Row: {
+          assessment_key: string
+          created_at: string
+          email: string
+          error: string | null
+          id: string
+          send_at: string
+          sent_at: string | null
+          status: string
+          step: string
+          submission_id: string
+        }
+        Insert: {
+          assessment_key: string
+          created_at?: string
+          email: string
+          error?: string | null
+          id?: string
+          send_at: string
+          sent_at?: string | null
+          status?: string
+          step: string
+          submission_id: string
+        }
+        Update: {
+          assessment_key?: string
+          created_at?: string
+          email?: string
+          error?: string | null
+          id?: string
+          send_at?: string
+          sent_at?: string | null
+          status?: string
+          step?: string
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hub_followup_queue_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hub_followup_rules: {
+        Row: {
+          rules: Json
+          scope: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          rules?: Json
+          scope: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          rules?: Json
+          scope?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       hub_global_settings: {
         Row: {
           checkout_cta: string | null
@@ -149,6 +232,42 @@ export type Database = {
           track?: string
           updated_at?: string
           updated_by?: string | null
+        }
+        Relationships: []
+      }
+      hub_iq_content: {
+        Row: {
+          assessment_key: string
+          body: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          published_at: string | null
+          status: string
+          version: number
+        }
+        Insert: {
+          assessment_key: string
+          body: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          published_at?: string | null
+          status?: string
+          version: number
+        }
+        Update: {
+          assessment_key?: string
+          body?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          published_at?: string | null
+          status?: string
+          version?: number
         }
         Relationships: []
       }
@@ -273,6 +392,7 @@ export type Database = {
           admin_actions: Json
           answers: Json | null
           assessment_key: string
+          content_version: number | null
           created_at: string
           dimensions: Json
           email: string
@@ -286,6 +406,7 @@ export type Database = {
           report_hidden: boolean
           report_unlocked_override: boolean | null
           score: number | null
+          score_check: Json | null
           submitted_at: string
           tier: string | null
           updated_at: string
@@ -295,6 +416,7 @@ export type Database = {
           admin_actions?: Json
           answers?: Json | null
           assessment_key: string
+          content_version?: number | null
           created_at?: string
           dimensions?: Json
           email: string
@@ -308,6 +430,7 @@ export type Database = {
           report_hidden?: boolean
           report_unlocked_override?: boolean | null
           score?: number | null
+          score_check?: Json | null
           submitted_at?: string
           tier?: string | null
           updated_at?: string
@@ -317,6 +440,7 @@ export type Database = {
           admin_actions?: Json
           answers?: Json | null
           assessment_key?: string
+          content_version?: number | null
           created_at?: string
           dimensions?: Json
           email?: string
@@ -330,6 +454,7 @@ export type Database = {
           report_hidden?: boolean
           report_unlocked_override?: boolean | null
           score?: number | null
+          score_check?: Json | null
           submitted_at?: string
           tier?: string | null
           updated_at?: string

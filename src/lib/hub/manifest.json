@@ -1,6 +1,6 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "updated_at": "2026-10-04",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
@@ -23,14 +23,23 @@
     },
     "logos": {
       "standard": "https://gemiq.globaledgemarkets.com/brand/gem-logo-standard.png",
-      "dark":     "https://gemiq.globaledgemarkets.com/brand/gem-logo-dark.png",
-      "light":    "https://gemiq.globaledgemarkets.com/brand/gem-logo-light.png",
+      "dark": "https://gemiq.globaledgemarkets.com/brand/gem-logo-dark.png",
+      "light": "https://gemiq.globaledgemarkets.com/brand/gem-logo-light.png",
       "light_white_mint": "https://gemiq.globaledgemarkets.com/brand/gem-logo-light-white-mint.png"
     },
     "footer_links": [
-      { "label": "Global Edge Markets", "url": "https://globaledgemarkets.com" },
-      { "label": "GEM.IQ Hub", "url": "https://gemiq.globaledgemarkets.com" },
-      { "label": "Docs", "url": "https://gemiq.globaledgemarkets.com/docs" }
+      {
+        "label": "Global Edge Markets",
+        "url": "https://globaledgemarkets.com"
+      },
+      {
+        "label": "GEM.IQ Hub",
+        "url": "https://gemiq.globaledgemarkets.com"
+      },
+      {
+        "label": "Docs",
+        "url": "https://gemiq.globaledgemarkets.com/docs"
+      }
     ],
     "usage_rules": [
       "Use navy+mint standard logo on light surfaces.",
@@ -40,8 +49,16 @@
   },
   "pricing": {
     "currency": "USD",
-    "trial": { "days": 7, "assessments_included": 1, "card_required": true, "report_access": "score_and_tier" },
-    "guarantee": { "days": 14, "type": "money_back" },
+    "trial": {
+      "days": 7,
+      "assessments_included": 1,
+      "card_required": true,
+      "report_access": "score_and_tier"
+    },
+    "guarantee": {
+      "days": 14,
+      "type": "money_back"
+    },
     "copy": {
       "checkout_cta": "Start your 7-day trial",
       "guarantee_line": "14-day money-back guarantee.",
@@ -88,32 +105,102 @@
     }
   },
   "assessments": [
-    { "key": "gtmiq",         "name": "GTMIQ",         "url": "https://gtmiq.globaledgemarkets.com",         "track": "capability" },
-    { "key": "salesiq",       "name": "SalesIQ",       "url": "https://salesiq.globaledgemarkets.com",       "track": "capability" },
-    { "key": "productiq",     "name": "ProductIQ",     "url": "https://productiq.globaledgemarkets.com",     "track": "capability" },
-    { "key": "aitransformiq", "name": "AITransformIQ", "url": "https://aitransformiq.globaledgemarkets.com", "track": "capability" },
-    { "key": "uxiq",          "name": "UXIQ",          "url": "https://uxreadiness.globaledgemarkets.com",   "track": "capability" },
-    { "key": "tariffiq",      "name": "TariffIQ",      "url": "https://tariffiq.globaledgemarkets.com",      "track": "specialist" }
+    {
+      "key": "gtmiq",
+      "name": "GTMIQ",
+      "url": "https://gtmiq.globaledgemarkets.com",
+      "track": "capability"
+    },
+    {
+      "key": "salesiq",
+      "name": "SalesIQ",
+      "url": "https://salesiq.globaledgemarkets.com",
+      "track": "capability"
+    },
+    {
+      "key": "productiq",
+      "name": "ProductIQ",
+      "url": "https://productiq.globaledgemarkets.com",
+      "track": "capability"
+    },
+    {
+      "key": "aitransformiq",
+      "name": "AITransformIQ",
+      "url": "https://aitransformiq.globaledgemarkets.com",
+      "track": "capability"
+    },
+    {
+      "key": "uxiq",
+      "name": "UXIQ",
+      "url": "https://uxreadiness.globaledgemarkets.com",
+      "track": "capability"
+    },
+    {
+      "key": "tariffiq",
+      "name": "TariffIQ",
+      "url": "https://tariffiq.globaledgemarkets.com",
+      "track": "specialist"
+    }
   ],
   "deep_links": {
-    "signup_trial_monthly":   "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=monthly",
+    "signup_trial_monthly": "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=monthly",
     "signup_trial_quarterly": "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=quarterly",
-    "signup_trial_annual":  "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual",
+    "signup_trial_annual": "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual",
     "buy_single_assessment": "https://gemiq.globaledgemarkets.com/auth?mode=signup&buy=single",
-    "login":                "https://gemiq.globaledgemarkets.com/auth",
-    "portal":               "https://gemiq.globaledgemarkets.com/account"
+    "login": "https://gemiq.globaledgemarkets.com/auth",
+    "portal": "https://gemiq.globaledgemarkets.com/account"
   },
   "contracts": {
     "status_endpoint": {
       "method": "POST",
       "path": "/api/public/hub-status",
       "auth_header": "x-hub-purge-secret",
-      "response": { "manifest_version": "string", "app_version": "string", "checks": { "sign_in": "boolean", "checkout_link": "boolean", "purge": "boolean", "posthog": "boolean" } }
+      "response": {
+        "manifest_version": "string",
+        "app_version": "string",
+        "checks": {
+          "sign_in": "boolean",
+          "checkout_link": "boolean",
+          "purge": "boolean",
+          "posthog": "boolean"
+        },
+        "content_version": "integer | null — Hub content version currently loaded"
+      }
     },
-    "purge_endpoint": { "method": "POST", "path": "/api/public/purge-user", "auth_header": "x-hub-purge-secret", "body": { "email": "string" } },
-    "posthog_events": ["signup_completed", "signin_completed", "assessment_started", "assessment_submitted", "results_submitted", "checkout_started", "consultation_clicked"],
+    "purge_endpoint": {
+      "method": "POST",
+      "path": "/api/public/purge-user",
+      "auth_header": "x-hub-purge-secret",
+      "body": {
+        "email": "string"
+      }
+    },
+    "posthog_events": [
+      "signup_completed",
+      "signin_completed",
+      "assessment_started",
+      "assessment_submitted",
+      "results_submitted",
+      "checkout_started",
+      "consultation_clicked"
+    ],
     "control_fields": "control.global.notice, control.apps[<key>].paused/notice — read on boot and every 5 minutes",
     "report_fields": "report.apps[<key>]: sections (ordered, enabled), trial_access, copy (title_pattern, intro, disclaimer, closing_message, closing_cta, closing_url), tiers (key, label, min, color), mode (app | hub). When mode = hub, link users to the submit response's report_url instead of rendering a report.",
-    "submit_extras": { "recommendations": "string[] or { summary, strengths[], gaps[], recommendations[], next_steps[] } — optional; the Hub uses it in Hub-built reports" }
+    "submit_extras": {
+      "recommendations": "string[] or { summary, strengths[], gaps[], recommendations[], next_steps[] } — optional; the Hub uses it in Hub-built reports",
+      "content_version": "integer — the Hub content version used for this run (omit when using built-in questions); send answers as { questionKey: optionKey } so the Hub can re-check the score"
+    },
+    "content_endpoint": {
+      "method": "GET",
+      "path": "https://gemiq.globaledgemarkets.com/api/public/content/<key>",
+      "response": "{ key, version, published_at, content: { intro, sections[{key,title,description,weight,questions[{key,text,help,weight,options[{key,label,points}]}]}], tiers[{key,label,min}], tier_recommendations{tierKey: string[]} } } — 404 { version: null } when nothing is published"
+    },
+    "content_export": {
+      "method": "POST",
+      "path": "/api/public/hub-content-export (next to hub-status)",
+      "auth_header": "x-hub-purge-secret",
+      "response": "{ content: <same shape as content_endpoint.content> } — the app's current built-in questions"
+    },
+    "scoring_rule": "question = chosen option points (0-100); section = weighted average of answered questions (question.weight); overall = weighted average of answered sections (section.weight), rounded; tier = highest tier with min <= overall"
   }
 }

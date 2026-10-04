@@ -134,7 +134,7 @@ export type HealthResult = {
   checked_at: string;
 };
 
-export async function checkApp(app: IqAppRow, currentVersion: string): Promise<HealthResult> {
+export async function checkApp(app: IqAppRow, currentVersion: string, expectedContent: number | null = null): Promise<HealthResult> {
   const checked_at = new Date().toISOString();
   const base: HealthResult = {
     key: app.key, light: "red", reachable: false, manifest_version: null, app_version: null,
@@ -147,18 +147,23 @@ export async function checkApp(app: IqAppRow, currentVersion: string): Promise<H
     const res = await fetch(app.status_url, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-hub-purge-secret": secret },
-      body: JSON.stringify({ hub_manifest_version: currentVersion }),
+      body: JSON.stringify({ hub_manifest_version: currentVersion, hub_content_version: expectedContent }),
       signal: AbortSignal.timeout(8000),
     });
     if (res.status === 404) return { ...base, problems: ["Status link not added yet (404) — paste the sync prompt into this app"] };
     if (res.status === 401) return { ...base, problems: ["App refused the shared key (401) — HUB_PURGE_SECRET differs"] };
     if (!res.ok) return { ...base, problems: [`Status link error (${res.status})`] };
-    const j = (await res.json()) as { manifest_version?: string; app_version?: string; checks?: Record<string, boolean> };
+    const j = (await res.json()) as { manifest_version?: string; app_version?: string; checks?: Record<string, boolean>; content_version?: number | null };
     const checks = j.checks ?? {};
     const problems: string[] = [];
     for (const [k, v] of Object.entries(checks)) if (!v) problems.push(`${k} failing`);
     if (!j.manifest_version) problems.push("App did not report which settings version it uses");
     else if (j.manifest_version !== currentVersion) problems.push(`Using settings ${j.manifest_version}, current is ${currentVersion}`);
+    if (expectedContent != null && j.content_version !== expectedContent) {
+      problems.push(j.content_version == null
+        ? `Not loading Hub questions yet (published version ${expectedContent}) — paste the Content prompt`
+        : `Using questions version ${j.content_version}, published is ${expectedContent}`);
+    }
     const light = problems.length === 0 ? "green" : Object.values(checks).some((v) => !v) ? "red" : "yellow";
     const out: HealthResult = {
       ...base, reachable: true, light, manifest_version: j.manifest_version ?? null,
@@ -183,7 +188,8 @@ export async function verifyOnboarding(key: string, currentVersion: string) {
   const now = new Date().toISOString();
   const checks: IqAppRow["onboarding_checks"] = {};
 
-  const health = await checkApp(app, currentVersion);
+  const { publishedVersions } = await import("@/lib/hub/content.server");
+  const health = await checkApp(app, currentVersion, (await publishedVersions().catch(() => ({} as Record<string, number>)))[key] ?? null);
   checks.status_link = { ok: health.reachable, at: now, detail: health.problems[0] };
   checks.settings_current = { ok: health.manifest_version === currentVersion, at: now, detail: health.manifest_version ?? "not reported" };
 

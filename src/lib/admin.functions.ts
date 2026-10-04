@@ -207,7 +207,9 @@ export const adminCheckHealth = createServerFn({ method: "POST" })
     const { listApps, checkApp, saveHealth } = await import("@/lib/hub/app-control.server");
     const manifest = (await import("@/lib/hub/manifest.json")).default;
     const apps = (await listApps()).filter((a) => a.lifecycle !== "retired");
-    const results = await Promise.all(apps.map((a) => checkApp(a, manifest.version)));
+    const { publishedVersions } = await import("@/lib/hub/content.server");
+    const pv = await publishedVersions().catch(() => ({} as Record<string, number>));
+    const results = await Promise.all(apps.map((a) => checkApp(a, manifest.version, pv[a.key] ?? null)));
     await Promise.all(results.map(saveHealth));
     return results;
   });
@@ -350,4 +352,75 @@ export const adminResetFinish = createServerFn({ method: "POST" })
     const by = assertAdmin({ email: context.hubAdmin.email });
     const { resetFinish } = await import("@/lib/hub/admin/reset-reports.server");
     return await resetFinish(by);
+  });
+
+// ---- Follow-up emails ----
+const stepKey = z.enum(["tier_advice", "unlock", "retake"]);
+
+export const adminGetFollowups = createServerFn({ method: "GET" })
+  .middleware([requireHubAdmin])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { getAllRules, followupLog } = await import("@/lib/hub/followups.server");
+    const [rules, log] = await Promise.all([getAllRules(), followupLog(100)]);
+    return { ...rules, log };
+  });
+
+export const adminSaveFollowups = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({ scope: z.string().min(1).max(64), rules: z.record(z.string(), z.any()).nullable() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const { saveRules } = await import("@/lib/hub/followups.server");
+    await saveRules(data.scope, data.rules as never, by);
+    return { ok: true };
+  });
+
+export const adminTestFollowup = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) => z.object({ scope: z.string(), step: stepKey }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const { sendTest } = await import("@/lib/hub/followups.server");
+    return await sendTest(data.scope === "global" ? "gtmiq" : data.scope, data.step, by);
+  });
+
+// ---- Assessment content (questions, weights, tiers) ----
+export const adminContentVersions = createServerFn({ method: "GET" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) => z.object({ key: z.string().min(1).max(64) }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { listVersions, scoreMismatches } = await import("@/lib/hub/content.server");
+    const [versions, mismatches] = await Promise.all([listVersions(data.key), scoreMismatches(20)]);
+    return { versions, mismatches: mismatches.filter((m: { assessment_key: string }) => m.assessment_key === data.key) };
+  });
+
+export const adminContentAction = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      key: z.string().min(1).max(64),
+      action: z.enum(["save", "discard", "publish", "rollback", "import"]),
+      body: z.any().optional(),
+      version: z.number().int().optional(),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const c = await import("@/lib/hub/content.server");
+    switch (data.action) {
+      case "save": return await c.saveDraft(data.key, data.body, by);
+      case "discard": return await c.discardDraft(data.key);
+      case "publish": return await c.publishDraft(data.key, by);
+      case "rollback": return await c.rollbackTo(data.key, data.version ?? 0, by);
+      case "import": return await c.importFromApp(data.key, by);
+    }
   });

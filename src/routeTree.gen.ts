@@ -24,6 +24,7 @@ import { Route as ReadinessiqRouteImport } from './routes/readinessiq'
 import { Route as SalesiqRouteImport } from './routes/salesiq'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TariffiqRouteImport } from './routes/tariffiq'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as UxiqRouteImport } from './routes/uxiq'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -44,6 +45,7 @@ import { Route as ApiPublicBillingCheckSubscriptionRouteImport } from './routes/
 import { Route as ApiPublicBillingCreateCheckoutRouteImport } from './routes/api/public/billing/create-checkout'
 import { Route as ApiPublicBillingCreatePortalSessionRouteImport } from './routes/api/public/billing/create-portal-session'
 import { Route as ApiPublicBillingPaymentsWebhookRouteImport } from './routes/api/public/billing/payments-webhook'
+import { Route as ApiPublicContentKeyRouteImport } from './routes/api/public/content.$key'
 import { Route as ApiPublicJobsRetryHubspotRouteImport } from './routes/api/public/jobs/retry-hubspot'
 import { Route as ApiPublicSubmissionsHistoryRouteImport } from './routes/api/public/submissions/history'
 import { Route as ApiPublicSubmissionsSubmitRouteImport } from './routes/api/public/submissions/submit'
@@ -124,6 +126,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const TariffiqRoute = TariffiqRouteImport.update({
   id: '/tariffiq',
   path: '/tariffiq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UxiqRoute = UxiqRouteImport.update({
@@ -238,6 +245,11 @@ const ApiPublicBillingPaymentsWebhookRoute =
     path: '/api/public/billing/payments-webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicContentKeyRoute = ApiPublicContentKeyRouteImport.update({
+  id: '/api/public/content/$key',
+  path: '/api/public/content/$key',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicJobsRetryHubspotRoute =
   ApiPublicJobsRetryHubspotRouteImport.update({
     id: '/api/public/jobs/retry-hubspot',
@@ -289,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -309,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
+  '/api/public/content/$key': typeof ApiPublicContentKeyRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
@@ -332,6 +346,7 @@ export interface FileRoutesByTo {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -352,6 +367,7 @@ export interface FileRoutesByTo {
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
+  '/api/public/content/$key': typeof ApiPublicContentKeyRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
@@ -376,6 +392,7 @@ export interface FileRoutesById {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -396,6 +413,7 @@ export interface FileRoutesById {
   '/api/public/billing/create-checkout': typeof ApiPublicBillingCreateCheckoutRoute
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
+  '/api/public/content/$key': typeof ApiPublicContentKeyRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
@@ -421,6 +439,7 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
+    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -441,6 +460,7 @@ export interface FileRouteTypes {
     | '/api/public/billing/create-checkout'
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
+    | '/api/public/content/$key'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
@@ -464,6 +484,7 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
+    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -484,6 +505,7 @@ export interface FileRouteTypes {
     | '/api/public/billing/create-checkout'
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
+    | '/api/public/content/$key'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
@@ -507,6 +529,7 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
+    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -527,6 +550,7 @@ export interface FileRouteTypes {
     | '/api/public/billing/create-checkout'
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
+    | '/api/public/content/$key'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
@@ -551,6 +575,7 @@ export interface RootRouteChildren {
   SalesiqRoute: typeof SalesiqRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TariffiqRoute: typeof TariffiqRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   UxiqRoute: typeof UxiqRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -569,6 +594,7 @@ export interface RootRouteChildren {
   ApiPublicBillingCreateCheckoutRoute: typeof ApiPublicBillingCreateCheckoutRoute
   ApiPublicBillingCreatePortalSessionRoute: typeof ApiPublicBillingCreatePortalSessionRoute
   ApiPublicBillingPaymentsWebhookRoute: typeof ApiPublicBillingPaymentsWebhookRoute
+  ApiPublicContentKeyRoute: typeof ApiPublicContentKeyRoute
   ApiPublicJobsRetryHubspotRoute: typeof ApiPublicJobsRetryHubspotRoute
   ApiPublicSubmissionsHistoryRoute: typeof ApiPublicSubmissionsHistoryRoute
   ApiPublicSubmissionsSubmitRoute: typeof ApiPublicSubmissionsSubmitRoute
@@ -682,6 +708,13 @@ declare module '@tanstack/react-router' {
       path: '/tariffiq'
       fullPath: '/tariffiq'
       preLoaderRoute: typeof TariffiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/uxiq': {
@@ -824,6 +857,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBillingPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/content/$key': {
+      id: '/api/public/content/$key'
+      path: '/api/public/content/$key'
+      fullPath: '/api/public/content/$key'
+      preLoaderRoute: typeof ApiPublicContentKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/jobs/retry-hubspot': {
       id: '/api/public/jobs/retry-hubspot'
       path: '/api/public/jobs/retry-hubspot'
@@ -909,6 +949,7 @@ const rootRouteChildren: RootRouteChildren = {
   SalesiqRoute: SalesiqRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TariffiqRoute: TariffiqRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   UxiqRoute: UxiqRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
@@ -933,6 +974,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBillingCreatePortalSessionRoute:
     ApiPublicBillingCreatePortalSessionRoute,
   ApiPublicBillingPaymentsWebhookRoute: ApiPublicBillingPaymentsWebhookRoute,
+  ApiPublicContentKeyRoute: ApiPublicContentKeyRoute,
   ApiPublicJobsRetryHubspotRoute: ApiPublicJobsRetryHubspotRoute,
   ApiPublicSubmissionsHistoryRoute: ApiPublicSubmissionsHistoryRoute,
   ApiPublicSubmissionsSubmitRoute: ApiPublicSubmissionsSubmitRoute,

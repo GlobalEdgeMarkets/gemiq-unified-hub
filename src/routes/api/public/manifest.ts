@@ -45,9 +45,11 @@ export const Route = createFileRoute("/api/public/manifest")({
         // merged over the static manifest; static values win if the DB is down.
         const { getPublicControl } = await import("@/lib/hub/app-control.server");
         const { getPublicReport } = await import("@/lib/hub/report-control.server");
-        const [control, report] = await Promise.all([
+        const { publishedVersions } = await import("@/lib/hub/content.server");
+        const [control, report, contentVersions] = await Promise.all([
           getPublicControl(),
           getPublicReport(manifest.assessments.map((a) => a.key)),
+          publishedVersions().catch(() => null),
         ]);
         const pricing = { ...manifest.pricing, copy: { ...manifest.pricing.copy } };
         if (control) {
@@ -63,6 +65,10 @@ export const Route = createFileRoute("/api/public/manifest")({
             : { global: { notice: null, notice_level: "info" }, apps: {} },
           // Live report settings; null when the DB is unreachable (IQs keep their last copy).
           report,
+          // Published Hub content version per IQ (null = none published; keep built-in questions).
+          content: contentVersions
+            ? Object.fromEntries(manifest.assessments.map((a) => [a.key, contentVersions[a.key] ?? null]))
+            : null,
         };
         const body = JSON.stringify(merged);
         const hash = (await sha256Hex(body)).slice(0, 16);

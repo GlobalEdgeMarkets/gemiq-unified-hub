@@ -9,11 +9,18 @@ import {
   adminRegistryStatus,
   adminListSubmissions,
   adminPostHogAudit,
+  adminListApps,
+  adminUpdateApp,
+  adminUpdateGlobal,
+  adminCheckHealth,
+  adminRegisterApp,
+  adminVerifyOnboarding,
 } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { buildHead } from "@/lib/seo";
+import { ControlPanels } from "@/components/admin/ControlPanels";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -82,6 +89,16 @@ function AdminConsole() {
   const registryStatus = useServerFn(adminRegistryStatus);
   const listSubs = useServerFn(adminListSubmissions);
   const phAudit = useServerFn(adminPostHogAudit);
+  const listApps = useServerFn(adminListApps);
+  const updateApp = useServerFn(adminUpdateApp);
+  const updateGlobal = useServerFn(adminUpdateGlobal);
+  const checkHealth = useServerFn(adminCheckHealth);
+  const registerApp = useServerFn(adminRegisterApp);
+  const verifyOnboarding = useServerFn(adminVerifyOnboarding);
+  const control = useMemo(
+    () => ({ listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding }),
+    [listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding],
+  );
 
   const [gate, setGate] = useState<{ state: "loading" | "anon" | "denied" | "ok"; email?: string | null }>({
     state: "loading",
@@ -133,6 +150,7 @@ function AdminConsole() {
   return (
     <Shell email={gate.email}>
       <div className="grid gap-6">
+        <ControlPanels {...(control as never)} />
         <BootstrapCard run={bootstrap} />
         <ImportUsersCard run={importUser} />
         <DeleteUserCard run={deleteUser} />

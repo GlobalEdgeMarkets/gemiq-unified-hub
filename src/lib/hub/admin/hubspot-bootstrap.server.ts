@@ -18,6 +18,8 @@ export type PropDef = {
 };
 
 const GROUP = "gemiq";
+/** Follow-up workflow fields live with the older workflow fields in HubSpot. */
+const WORKFLOW_GROUP = "gem_iq_platform";
 
 export const CANONICAL_TIERS = ["reactive", "developing", "defined", "advanced", "optimized"] as const;
 
@@ -44,16 +46,16 @@ const PROPS: PropDef[] = [
   { name: "gem_score_tier", label: "GEM Score Tier", groupName: GROUP, type: "enumeration", fieldType: "select",
     options: CANONICAL_TIERS.map(v => ({ label: v[0].toUpperCase() + v.slice(1), value: v })) },
   // Follow-up email workflow fields (refreshed on every submit; HubSpot sends the emails)
-  { name: "gem_assessment_submitted_at", label: "GEM Assessment Submitted At", groupName: GROUP, type: "datetime", fieldType: "date",
+  { name: "gem_assessment_submitted_at", groupName: WORKFLOW_GROUP, label: "GEM Assessment Submitted At", type: "datetime", fieldType: "date",
     description: "Exact time of the newest result. Use as the enrollment trigger for follow-up workflows (re-enroll on change)." },
-  { name: "gem_assessment_label", label: "GEM Assessment Name", groupName: GROUP, type: "string", fieldType: "text" },
-  { name: "gem_submission_id", label: "GEM Submission ID", groupName: GROUP, type: "string", fieldType: "text" },
-  { name: "gem_report_url", label: "GEM Report Link", groupName: GROUP, type: "string", fieldType: "text",
+  { name: "gem_assessment_label", groupName: WORKFLOW_GROUP, label: "GEM Assessment Name", type: "string", fieldType: "text" },
+  { name: "gem_submission_id", groupName: WORKFLOW_GROUP, label: "GEM Submission ID", type: "string", fieldType: "text" },
+  { name: "gem_report_url", groupName: WORKFLOW_GROUP, label: "GEM Report Link", type: "string", fieldType: "text",
     description: "Link to the newest report on the Hub." },
-  { name: "gem_report_locked", label: "GEM Report Locked", groupName: GROUP, type: "bool", fieldType: "booleancheckbox",
+  { name: "gem_report_locked", groupName: WORKFLOW_GROUP, label: "GEM Report Locked", type: "bool", fieldType: "booleancheckbox",
     description: "Yes when the newest report shows only score and tier (trial, no plan).",
     options: [{ label: "Yes", value: "true" }, { label: "No", value: "false" }] },
-  { name: "gem_entitlement", label: "GEM Entitlement", groupName: GROUP, type: "enumeration", fieldType: "select",
+  { name: "gem_entitlement", groupName: WORKFLOW_GROUP, label: "GEM Entitlement", type: "enumeration", fieldType: "select",
     description: "How the newest result was covered.",
     options: [["subscription","Plan"],["trial","Trial"],["single_credit","Single assessment"],["none","None"]].map(([value,label]) => ({ label, value })) },
 ];

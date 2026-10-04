@@ -43,7 +43,7 @@ function LevelSelect({ value, onChange, id }: { value: Level; onChange: (v: Leve
 }
 
 function Light({ light }: { light?: Health["light"] }) {
-  const cls = light === "green" ? "bg-primary" : light === "yellow" ? "bg-accent" : light === "red" ? "bg-destructive" : "bg-muted-foreground/40";
+  const cls = light === "green" ? "bg-success" : light === "yellow" ? "bg-accent" : light === "red" ? "bg-destructive" : "bg-muted-foreground/40";
   return <span className={`inline-block h-3 w-3 shrink-0 rounded-full ${cls}`} aria-label={light ?? "unchecked"} />;
 }
 
@@ -182,7 +182,7 @@ function HealthPanel({ data, checkHealth, reload }: {
                   </Button>
                 )}
               </div>
-              {open === a.key && (
+              {open === a.key && h?.light !== "green" && (
                 <div className="mt-3">
                   <p className="mb-2 text-sm text-muted-foreground">Paste this into {a.name}, publish it, then press "Check all now".</p>
                   <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-lg bg-muted/60 p-3 text-xs text-foreground/80">{syncPrompt(a, data.manifest_version)}</pre>

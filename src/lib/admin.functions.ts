@@ -319,3 +319,35 @@ export const adminReportAction = createServerFn({ method: "POST" })
     const { reportAction } = await import("@/lib/hub/report-control.server");
     return await reportAction(data.id, data.action, by);
   });
+
+// ---- Reset all reports ----
+export const adminResetPreview = createServerFn({ method: "GET" })
+  .middleware([requireHubAdmin])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { resetPreview } = await import("@/lib/hub/admin/reset-reports.server");
+    return await resetPreview();
+  });
+
+export const adminResetBatch = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({ confirm: z.literal("RESET"), offset: z.number().int().min(0) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { resetBatch } = await import("@/lib/hub/admin/reset-reports.server");
+    return await resetBatch(data.offset);
+  });
+
+export const adminResetFinish = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) => z.object({ confirm: z.literal("RESET") }).parse(input))
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const { resetFinish } = await import("@/lib/hub/admin/reset-reports.server");
+    return await resetFinish(by);
+  });

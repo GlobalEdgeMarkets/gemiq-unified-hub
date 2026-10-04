@@ -4,6 +4,7 @@
 import { createHubServiceClient } from "./supabase-server";
 import { REGISTRY_BY_KEY } from "./assessments";
 import { normalizeTier } from "./assessments/tiers";
+import manifest from "./manifest.json";
 import {
   DEFAULT_REPORT_SETTINGS,
   mergeSettings,
@@ -301,7 +302,7 @@ export async function loadReport(
     }),
     assessment_key: row.assessment_key,
     assessment_name: displayName(row.assessment_key),
-    assessment_url: REGISTRY_BY_KEY[row.assessment_key]?.url ?? HUB,
+    assessment_url: manifest.assessments.find((a) => a.key === row.assessment_key)?.url ?? HUB,
     email: row.email,
     submitted_at: row.submitted_at,
     score: row.score == null ? null : Math.round(row.score),

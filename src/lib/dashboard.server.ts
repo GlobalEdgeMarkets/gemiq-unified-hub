@@ -168,7 +168,7 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
   const service = createHubServiceClient();
   const { data: rows, error: rowsError } = await service
     .from("submissions")
-    .select("assessment_key,score,tier,dimensions,metadata,submitted_at,user_id,email")
+    .select("id,assessment_key,score,tier,dimensions,metadata,submitted_at,user_id,email,report_unlocked_override,report_hidden")
     .or(`user_id.eq.${user.id},email.eq.${email}`)
     .order("submitted_at", { ascending: false })
     .limit(200);
@@ -178,7 +178,9 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
   }
 
 
-  const all = (rows ?? []) as Array<{
+  const all = ((rows ?? []) as Array<{ report_hidden?: boolean }>).filter((r) => !r.report_hidden) as Array<{
+    id: string;
+    report_unlocked_override: boolean | null;
     assessment_key: string;
     score: number | null;
     tier: string | null;
@@ -189,8 +191,11 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
 
   // Trial runs keep the full report locked until the plan is active.
   const planActive = subRes.data?.status === "active";
-  const isLocked = (m: unknown) =>
-    !planActive && !!m && typeof m === "object" && (m as { entitlement?: unknown }).entitlement === "trial";
+  const { isReportLocked, mergeSettings } = await import("@/lib/report-settings");
+  const { getAllSettings } = await import("@/lib/hub/report-control.server");
+  const reportCfg = await getAllSettings().catch(() => null);
+  const modeFor = (k: string) => (reportCfg ? mergeSettings(reportCfg.global, reportCfg.overrides[k]).mode : "app");
+  const hubReport = (id: string) => `https://gemiq.globaledgemarkets.com/report/${id}`;
 
   const byKey = new Map<string, typeof all>();
   for (const r of all) {
@@ -207,8 +212,12 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
       assessment_key: key,
       display_name: REGISTRY_BY_KEY[key]?.displayName ?? prettify(key),
       url: iqUrl(key),
-      report_url: isLocked(latest.metadata) ? null : pickReportUrl(latest),
-      report_locked: isLocked(latest.metadata),
+      report_url: isReportLocked(latest, planActive)
+        ? null
+        : modeFor(key) === "hub"
+          ? hubReport(latest.id)
+          : pickReportUrl(latest) ?? hubReport(latest.id),
+      report_locked: isReportLocked(latest, planActive),
       score: typeof latest.score === "number" ? Math.round(latest.score) : null,
       tier: normalizeTier(latest.tier) ?? tierFromScore(latest.score),
       submitted_at: latest.submitted_at,

@@ -155,7 +155,35 @@ export interface HubManifest {
     purge_endpoint: { method: string; path: string; auth_header: string; body: unknown };
     posthog_events: string[];
     control_fields: string;
+    /** Added in 1.8.0. */
+    report_fields?: string;
+    submit_extras?: Record<string, string>;
   };
+  /** Live report settings set in GEM Hub Central Admin, added in 1.8.0. Null if unavailable. */
+  report?: {
+    global: HubReportSettings;
+    apps: Record<AssessmentKey, HubReportSettings>;
+  } | null;
+}
+
+export type HubReportSectionKey =
+  | "summary" | "score_tier" | "dimensions" | "strengths" | "gaps" | "recommendations" | "next_steps" | "talk_to_gem";
+
+export interface HubReportSettings {
+  sections: Array<{ key: HubReportSectionKey; enabled: boolean }>;
+  /** What a locked (trial) viewer sees. */
+  trial_access: "score" | "score_tier" | "score_tier_dimensions";
+  copy: {
+    title_pattern: string;
+    intro: string;
+    disclaimer: string;
+    closing_message: string;
+    closing_cta: string;
+    closing_url: string;
+  };
+  tiers: Array<{ key: string; label: string; min: number; color: string }>;
+  /** "hub": link to the submit response's report_url instead of rendering a report. */
+  mode: "app" | "hub";
 }
 
 export type HubNoticeLevel = "info" | "warning" | "critical";

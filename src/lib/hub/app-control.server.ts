@@ -18,7 +18,7 @@ export type IqAppRow = {
   notice: string | null;
   notice_level: NoticeLevel;
   onboarding_checks: Record<string, { ok: boolean; at: string; detail?: string }>;
-  last_status: Record<string, unknown> | null;
+  last_status: HealthResult | null;
   last_checked_at: string | null;
 };
 

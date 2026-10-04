@@ -150,7 +150,7 @@ function AdminConsole() {
   return (
     <Shell email={gate.email}>
       <div className="grid gap-6">
-        <ControlPanels {...(control as never)} />
+        <ControlPanels {...(control as unknown as React.ComponentProps<typeof ControlPanels>)} />
         <BootstrapCard run={bootstrap} />
         <ImportUsersCard run={importUser} />
         <DeleteUserCard run={deleteUser} />

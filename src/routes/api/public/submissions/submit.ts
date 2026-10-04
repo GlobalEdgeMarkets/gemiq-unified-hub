@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createHubSupabaseSSR, createHubServiceClient, selectCurrentSubscription } from "@/lib/hub/supabase-server";
 import { SubmissionPayloadSchema } from "@/lib/hub/schemas";
 import { upsertContactByEmail, createLeadForContact, classifyLead } from "@/lib/hub/hubspot";
+import { isReportLocked } from "@/lib/report-settings";
 import { buildContactProperties, REGISTRY_BY_KEY } from "@/lib/hub/assessments";
 import type { SubmissionForMapping } from "@/lib/hub/assessments/types";
 import { json, corsHeaders } from "@/lib/hub/http";
@@ -167,8 +168,6 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
         }
 
         {
-          const { enqueueFollowups } = await import("@/lib/hub/followups.server");
-          await enqueueFollowups({ id: inserted.id, email, assessment_key: payload.assessment_key, entitlement, submitted_at: inserted.submitted_at });
           const { checkScore } = await import("@/lib/hub/content.server");
           await checkScore(inserted.id, payload.assessment_key, payload.content_version ?? null, payload.score ?? null, payload.answers ?? null);
         }
@@ -224,6 +223,12 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             last_name:  (payload.metadata?.last_name  as string | undefined),
             company:    (payload.metadata?.company    as string | undefined),
             phone:      (payload.metadata?.phone      as string | undefined),
+          },
+          workflow: {
+            submission_id: inserted.id,
+            report_url: `https://gemiq.globaledgemarkets.com/report/${inserted.id}`,
+            report_locked: isReportLocked({ report_unlocked_override: null, metadata: mergedMetadata }, hasPaidSub),
+            entitlement,
           },
         });
 

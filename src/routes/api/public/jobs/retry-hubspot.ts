@@ -15,9 +15,6 @@ export const Route = createFileRoute("/api/public/jobs/retry-hubspot")({
       POST: async ({ request }) => {
         if (!authorized(request)) return new Response("forbidden", { status: 403 });
         const svc = createHubServiceClient();
-        // Follow-up emails ride on this 5-minute job.
-        const { processDueFollowups } = await import("@/lib/hub/followups.server");
-        const followups = await processDueFollowups().catch((e) => ({ error: String(e) }));
         const nowIso = new Date().toISOString();
         const { data: jobs } = await svc
           .from("retry_queue")
@@ -27,7 +24,7 @@ export const Route = createFileRoute("/api/public/jobs/retry-hubspot")({
           .lte("next_attempt_at", nowIso)
           .order("next_attempt_at", { ascending: true })
           .limit(25);
-        if (!jobs?.length) return json({ processed: 0, followups }, undefined, request);
+        if (!jobs?.length) return json({ processed: 0 }, undefined, request);
 
         let ok = 0, dead = 0, requeued = 0;
         for (const j of jobs) {
@@ -69,7 +66,7 @@ export const Route = createFileRoute("/api/public/jobs/retry-hubspot")({
             }
           }
         }
-        return json({ processed: jobs.length, ok, dead, requeued, followups }, undefined, request);
+        return json({ processed: jobs.length, ok, dead, requeued }, undefined, request);
       },
     },
   },

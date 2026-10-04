@@ -43,7 +43,7 @@ function LevelSelect({ value, onChange, id }: { value: Level; onChange: (v: Leve
 }
 
 function Light({ light }: { light?: Health["light"] }) {
-  const cls = light === "green" ? "bg-success" : light === "yellow" ? "bg-accent" : light === "red" ? "bg-destructive" : "bg-muted-foreground/40";
+  const cls = light === "green" ? "bg-success" : light === "yellow" ? "bg-warning" : light === "red" ? "bg-destructive" : "bg-muted-foreground/40";
   return <span className={`inline-block h-3 w-3 shrink-0 rounded-full ${cls}`} aria-label={light ?? "unchecked"} />;
 }
 

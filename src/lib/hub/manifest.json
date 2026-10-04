@@ -1,6 +1,6 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "updated_at": "2026-10-04",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
@@ -112,6 +112,8 @@
     },
     "purge_endpoint": { "method": "POST", "path": "/api/public/purge-user", "auth_header": "x-hub-purge-secret", "body": { "email": "string" } },
     "posthog_events": ["signup_completed", "signin_completed", "assessment_started", "assessment_submitted", "results_submitted", "checkout_started", "consultation_clicked"],
-    "control_fields": "control.global.notice, control.apps[<key>].paused/notice — read on boot and every 5 minutes"
+    "control_fields": "control.global.notice, control.apps[<key>].paused/notice — read on boot and every 5 minutes",
+    "report_fields": "report.apps[<key>]: sections (ordered, enabled), trial_access, copy (title_pattern, intro, disclaimer, closing_message, closing_cta, closing_url), tiers (key, label, min, color), mode (app | hub). When mode = hub, link users to the submit response's report_url instead of rendering a report.",
+    "submit_extras": { "recommendations": "string[] or { summary, strengths[], gaps[], recommendations[], next_steps[] } — optional; the Hub uses it in Hub-built reports" }
   }
 }

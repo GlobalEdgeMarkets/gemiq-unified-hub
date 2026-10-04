@@ -44,7 +44,11 @@ export const Route = createFileRoute("/api/public/manifest")({
         // Live control values (notices, pause switches, editable wording) are
         // merged over the static manifest; static values win if the DB is down.
         const { getPublicControl } = await import("@/lib/hub/app-control.server");
-        const control = await getPublicControl();
+        const { getPublicReport } = await import("@/lib/hub/report-control.server");
+        const [control, report] = await Promise.all([
+          getPublicControl(),
+          getPublicReport(manifest.assessments.map((a) => a.key)),
+        ]);
         const pricing = { ...manifest.pricing, copy: { ...manifest.pricing.copy } };
         if (control) {
           for (const [k, v] of Object.entries(control.copy)) {
@@ -57,6 +61,8 @@ export const Route = createFileRoute("/api/public/manifest")({
           control: control
             ? { global: control.global, apps: control.apps }
             : { global: { notice: null, notice_level: "info" }, apps: {} },
+          // Live report settings; null when the DB is unreachable (IQs keep their last copy).
+          report,
         };
         const body = JSON.stringify(merged);
         const hash = (await sha256Hex(body)).slice(0, 16);

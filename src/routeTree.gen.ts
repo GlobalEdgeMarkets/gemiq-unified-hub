@@ -9,118 +9,52 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AitransformiqRouteImport } from './routes/aitransformiq'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as DocsRouteImport } from './routes/docs'
-import { Route as GtmiqRouteImport } from './routes/gtmiq'
-import { Route as MarketEntryRouteImport } from './routes/market-entry'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as OnboardRouteImport } from './routes/onboard'
-import { Route as ProductiqRouteImport } from './routes/productiq'
-import { Route as ReadinessiqRouteImport } from './routes/readinessiq'
-import { Route as SalesiqRouteImport } from './routes/salesiq'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as TariffiqRouteImport } from './routes/tariffiq'
-import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as UxiqRouteImport } from './routes/uxiq'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
-import { Route as DocsMarketEntryMaturityFrameworksRouteImport } from './routes/docs_.market-entry-maturity-frameworks'
-import { Route as MarketEntrySplatRouteImport } from './routes/market-entry.$'
-import { Route as ReadinessiqSplatRouteImport } from './routes/readinessiq.$'
+import { Route as TariffiqRouteImport } from './routes/tariffiq'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SalesiqRouteImport } from './routes/salesiq'
+import { Route as ReadinessiqRouteImport } from './routes/readinessiq'
+import { Route as ProductiqRouteImport } from './routes/productiq'
+import { Route as OnboardRouteImport } from './routes/onboard'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as MarketEntryRouteImport } from './routes/market-entry'
+import { Route as GtmiqRouteImport } from './routes/gtmiq'
+import { Route as DocsRouteImport } from './routes/docs'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AitransformiqRouteImport } from './routes/aitransformiq'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReportIdRouteImport } from './routes/report.$id'
-import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
-import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as ReadinessiqSplatRouteImport } from './routes/readinessiq.$'
+import { Route as MarketEntrySplatRouteImport } from './routes/market-entry.$'
+import { Route as DocsMarketEntryMaturityFrameworksRouteImport } from './routes/docs_.market-entry-maturity-frameworks'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ApiPublicProfileRouteImport } from './routes/api/public/profile'
-import { Route as ApiPublicAdminBootstrapHubspotSchemaRouteImport } from './routes/api/public/admin/bootstrap-hubspot-schema'
-import { Route as ApiPublicAdminImportLegacySubmissionsRouteImport } from './routes/api/public/admin/import-legacy-submissions'
-import { Route as ApiPublicAdminImportLegacyUsersRouteImport } from './routes/api/public/admin/import-legacy-users'
-import { Route as ApiPublicAdminMigrateReadinessiqRouteImport } from './routes/api/public/admin/migrate-readinessiq'
-import { Route as ApiPublicAuthSessionRouteImport } from './routes/api/public/auth/session'
-import { Route as ApiPublicBillingCheckSubscriptionRouteImport } from './routes/api/public/billing/check-subscription'
-import { Route as ApiPublicBillingCreateCheckoutRouteImport } from './routes/api/public/billing/create-checkout'
-import { Route as ApiPublicBillingCreatePortalSessionRouteImport } from './routes/api/public/billing/create-portal-session'
-import { Route as ApiPublicBillingPaymentsWebhookRouteImport } from './routes/api/public/billing/payments-webhook'
-import { Route as ApiPublicContentKeyRouteImport } from './routes/api/public/content.$key'
-import { Route as ApiPublicJobsRetryHubspotRouteImport } from './routes/api/public/jobs/retry-hubspot'
-import { Route as ApiPublicSubmissionsHistoryRouteImport } from './routes/api/public/submissions/history'
-import { Route as ApiPublicSubmissionsSubmitRouteImport } from './routes/api/public/submissions/submit'
-import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
-import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as ApiPublicSubmissionsSubmitRouteImport } from './routes/api/public/submissions/submit'
+import { Route as ApiPublicSubmissionsHistoryRouteImport } from './routes/api/public/submissions/history'
+import { Route as ApiPublicJobsRetryHubspotRouteImport } from './routes/api/public/jobs/retry-hubspot'
+import { Route as ApiPublicContentKeyRouteImport } from './routes/api/public/content.$key'
+import { Route as ApiPublicBillingPaymentsWebhookRouteImport } from './routes/api/public/billing/payments-webhook'
+import { Route as ApiPublicBillingCreatePortalSessionRouteImport } from './routes/api/public/billing/create-portal-session'
+import { Route as ApiPublicBillingCreateCheckoutRouteImport } from './routes/api/public/billing/create-checkout'
+import { Route as ApiPublicBillingCheckSubscriptionRouteImport } from './routes/api/public/billing/check-subscription'
+import { Route as ApiPublicAuthSessionRouteImport } from './routes/api/public/auth/session'
+import { Route as ApiPublicAdminMigrateReadinessiqRouteImport } from './routes/api/public/admin/migrate-readinessiq'
+import { Route as ApiPublicAdminImportLegacyUsersRouteImport } from './routes/api/public/admin/import-legacy-users'
+import { Route as ApiPublicAdminImportLegacySubmissionsRouteImport } from './routes/api/public/admin/import-legacy-submissions'
+import { Route as ApiPublicAdminBootstrapHubspotSchemaRouteImport } from './routes/api/public/admin/bootstrap-hubspot-schema'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AitransformiqRoute = AitransformiqRouteImport.update({
-  id: '/aitransformiq',
-  path: '/aitransformiq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DocsRoute = DocsRouteImport.update({
-  id: '/docs',
-  path: '/docs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GtmiqRoute = GtmiqRouteImport.update({
-  id: '/gtmiq',
-  path: '/gtmiq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MarketEntryRoute = MarketEntryRouteImport.update({
-  id: '/market-entry',
-  path: '/market-entry',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardRoute = OnboardRouteImport.update({
-  id: '/onboard',
-  path: '/onboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProductiqRoute = ProductiqRouteImport.update({
-  id: '/productiq',
-  path: '/productiq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReadinessiqRoute = ReadinessiqRouteImport.update({
-  id: '/readinessiq',
-  path: '/readinessiq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SalesiqRoute = SalesiqRouteImport.update({
-  id: '/salesiq',
-  path: '/salesiq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const UxiqRoute = UxiqRouteImport.update({
+  id: '/uxiq',
+  path: '/uxiq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TariffiqRoute = TariffiqRouteImport.update({
@@ -128,20 +62,95 @@ const TariffiqRoute = TariffiqRouteImport.update({
   path: '/tariffiq',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UnsubscribeRoute = UnsubscribeRouteImport.update({
-  id: '/unsubscribe',
-  path: '/unsubscribe',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UxiqRoute = UxiqRouteImport.update({
-  id: '/uxiq',
-  path: '/uxiq',
+const SalesiqRoute = SalesiqRouteImport.update({
+  id: '/salesiq',
+  path: '/salesiq',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
+const ReadinessiqRoute = ReadinessiqRouteImport.update({
+  id: '/readinessiq',
+  path: '/readinessiq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductiqRoute = ProductiqRouteImport.update({
+  id: '/productiq',
+  path: '/productiq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardRoute = OnboardRouteImport.update({
+  id: '/onboard',
+  path: '/onboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketEntryRoute = MarketEntryRouteImport.update({
+  id: '/market-entry',
+  path: '/market-entry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GtmiqRoute = GtmiqRouteImport.update({
+  id: '/gtmiq',
+  path: '/gtmiq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AitransformiqRoute = AitransformiqRouteImport.update({
+  id: '/aitransformiq',
+  path: '/aitransformiq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportIdRoute = ReportIdRouteImport.update({
+  id: '/report/$id',
+  path: '/report/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReadinessiqSplatRoute = ReadinessiqSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => ReadinessiqRoute,
+} as any)
+const MarketEntrySplatRoute = MarketEntrySplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => MarketEntryRoute,
+} as any)
+const DocsMarketEntryMaturityFrameworksRoute =
+  DocsMarketEntryMaturityFrameworksRouteImport.update({
+    id: '/docs_/market-entry-maturity-frameworks',
+    path: '/docs/market-entry-maturity-frameworks',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
@@ -150,30 +159,20 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
     path: '/.well-known/oauth-protected-resource',
     getParentRoute: () => rootRouteImport,
   } as any)
-const DocsMarketEntryMaturityFrameworksRoute =
-  DocsMarketEntryMaturityFrameworksRouteImport.update({
-    id: '/docs_/market-entry-maturity-frameworks',
-    path: '/docs/market-entry-maturity-frameworks',
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
     getParentRoute: () => rootRouteImport,
   } as any)
-const MarketEntrySplatRoute = MarketEntrySplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => MarketEntryRoute,
-} as any)
-const ReadinessiqSplatRoute = ReadinessiqSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => ReadinessiqRoute,
-} as any)
-const ReportIdRoute = ReportIdRouteImport.update({
-  id: '/report/$id',
-  path: '/report/$id',
+const ApiPublicProfileRoute = ApiPublicProfileRouteImport.update({
+  id: '/api/public/profile',
+  path: '/api/public/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
-  id: '/.lovable/oauth/consent',
-  path: '/.lovable/oauth/consent',
+const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
+  id: '/api/public/manifest',
+  path: '/api/public/manifest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
@@ -182,78 +181,31 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
-  id: '/api/public/manifest',
-  path: '/api/public/manifest',
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicProfileRoute = ApiPublicProfileRouteImport.update({
-  id: '/api/public/profile',
-  path: '/api/public/profile',
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicAdminBootstrapHubspotSchemaRoute =
-  ApiPublicAdminBootstrapHubspotSchemaRouteImport.update({
-    id: '/api/public/admin/bootstrap-hubspot-schema',
-    path: '/api/public/admin/bootstrap-hubspot-schema',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicAdminImportLegacySubmissionsRoute =
-  ApiPublicAdminImportLegacySubmissionsRouteImport.update({
-    id: '/api/public/admin/import-legacy-submissions',
-    path: '/api/public/admin/import-legacy-submissions',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicAdminImportLegacyUsersRoute =
-  ApiPublicAdminImportLegacyUsersRouteImport.update({
-    id: '/api/public/admin/import-legacy-users',
-    path: '/api/public/admin/import-legacy-users',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicAdminMigrateReadinessiqRoute =
-  ApiPublicAdminMigrateReadinessiqRouteImport.update({
-    id: '/api/public/admin/migrate-readinessiq',
-    path: '/api/public/admin/migrate-readinessiq',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicAuthSessionRoute = ApiPublicAuthSessionRouteImport.update({
-  id: '/api/public/auth/session',
-  path: '/api/public/auth/session',
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicBillingCheckSubscriptionRoute =
-  ApiPublicBillingCheckSubscriptionRouteImport.update({
-    id: '/api/public/billing/check-subscription',
-    path: '/api/public/billing/check-subscription',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicBillingCreateCheckoutRoute =
-  ApiPublicBillingCreateCheckoutRouteImport.update({
-    id: '/api/public/billing/create-checkout',
-    path: '/api/public/billing/create-checkout',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicBillingCreatePortalSessionRoute =
-  ApiPublicBillingCreatePortalSessionRouteImport.update({
-    id: '/api/public/billing/create-portal-session',
-    path: '/api/public/billing/create-portal-session',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicBillingPaymentsWebhookRoute =
-  ApiPublicBillingPaymentsWebhookRouteImport.update({
-    id: '/api/public/billing/payments-webhook',
-    path: '/api/public/billing/payments-webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicContentKeyRoute = ApiPublicContentKeyRouteImport.update({
-  id: '/api/public/content/$key',
-  path: '/api/public/content/$key',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicJobsRetryHubspotRoute =
-  ApiPublicJobsRetryHubspotRouteImport.update({
-    id: '/api/public/jobs/retry-hubspot',
-    path: '/api/public/jobs/retry-hubspot',
+const ApiPublicSubmissionsSubmitRoute =
+  ApiPublicSubmissionsSubmitRouteImport.update({
+    id: '/api/public/submissions/submit',
+    path: '/api/public/submissions/submit',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicSubmissionsHistoryRoute =
@@ -262,26 +214,68 @@ const ApiPublicSubmissionsHistoryRoute =
     path: '/api/public/submissions/history',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicSubmissionsSubmitRoute =
-  ApiPublicSubmissionsSubmitRouteImport.update({
-    id: '/api/public/submissions/submit',
-    path: '/api/public/submissions/submit',
+const ApiPublicJobsRetryHubspotRoute =
+  ApiPublicJobsRetryHubspotRouteImport.update({
+    id: '/api/public/jobs/retry-hubspot',
+    path: '/api/public/jobs/retry-hubspot',
     getParentRoute: () => rootRouteImport,
   } as any)
-const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
-  id: '/lovable/email/auth/preview',
-  path: '/lovable/email/auth/preview',
+const ApiPublicContentKeyRoute = ApiPublicContentKeyRouteImport.update({
+  id: '/api/public/content/$key',
+  path: '/api/public/content/$key',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
+const ApiPublicBillingPaymentsWebhookRoute =
+  ApiPublicBillingPaymentsWebhookRouteImport.update({
+    id: '/api/public/billing/payments-webhook',
+    path: '/api/public/billing/payments-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicBillingCreatePortalSessionRoute =
+  ApiPublicBillingCreatePortalSessionRouteImport.update({
+    id: '/api/public/billing/create-portal-session',
+    path: '/api/public/billing/create-portal-session',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicBillingCreateCheckoutRoute =
+  ApiPublicBillingCreateCheckoutRouteImport.update({
+    id: '/api/public/billing/create-checkout',
+    path: '/api/public/billing/create-checkout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicBillingCheckSubscriptionRoute =
+  ApiPublicBillingCheckSubscriptionRouteImport.update({
+    id: '/api/public/billing/check-subscription',
+    path: '/api/public/billing/check-subscription',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicAuthSessionRoute = ApiPublicAuthSessionRouteImport.update({
+  id: '/api/public/auth/session',
+  path: '/api/public/auth/session',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailTransactionalPreviewRoute =
-  LovableEmailTransactionalPreviewRouteImport.update({
-    id: '/lovable/email/transactional/preview',
-    path: '/lovable/email/transactional/preview',
+const ApiPublicAdminMigrateReadinessiqRoute =
+  ApiPublicAdminMigrateReadinessiqRouteImport.update({
+    id: '/api/public/admin/migrate-readinessiq',
+    path: '/api/public/admin/migrate-readinessiq',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicAdminImportLegacyUsersRoute =
+  ApiPublicAdminImportLegacyUsersRouteImport.update({
+    id: '/api/public/admin/import-legacy-users',
+    path: '/api/public/admin/import-legacy-users',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicAdminImportLegacySubmissionsRoute =
+  ApiPublicAdminImportLegacySubmissionsRouteImport.update({
+    id: '/api/public/admin/import-legacy-submissions',
+    path: '/api/public/admin/import-legacy-submissions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicAdminBootstrapHubspotSchemaRoute =
+  ApiPublicAdminBootstrapHubspotSchemaRouteImport.update({
+    id: '/api/public/admin/bootstrap-hubspot-schema',
+    path: '/api/public/admin/bootstrap-hubspot-schema',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -301,7 +295,6 @@ export interface FileRoutesByFullPath {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
-  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -346,7 +339,6 @@ export interface FileRoutesByTo {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
-  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -392,7 +384,6 @@ export interface FileRoutesById {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
-  '/unsubscribe': typeof UnsubscribeRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -439,7 +430,6 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
-    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -484,7 +474,6 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
-    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -529,7 +518,6 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
-    | '/unsubscribe'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -575,7 +563,6 @@ export interface RootRouteChildren {
   SalesiqRoute: typeof SalesiqRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TariffiqRoute: typeof TariffiqRoute
-  UnsubscribeRoute: typeof UnsubscribeRoute
   UxiqRoute: typeof UxiqRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -605,102 +592,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/aitransformiq': {
-      id: '/aitransformiq'
-      path: '/aitransformiq'
-      fullPath: '/aitransformiq'
-      preLoaderRoute: typeof AitransformiqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/docs': {
-      id: '/docs'
-      path: '/docs'
-      fullPath: '/docs'
-      preLoaderRoute: typeof DocsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gtmiq': {
-      id: '/gtmiq'
-      path: '/gtmiq'
-      fullPath: '/gtmiq'
-      preLoaderRoute: typeof GtmiqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/market-entry': {
-      id: '/market-entry'
-      path: '/market-entry'
-      fullPath: '/market-entry'
-      preLoaderRoute: typeof MarketEntryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboard': {
-      id: '/onboard'
-      path: '/onboard'
-      fullPath: '/onboard'
-      preLoaderRoute: typeof OnboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/productiq': {
-      id: '/productiq'
-      path: '/productiq'
-      fullPath: '/productiq'
-      preLoaderRoute: typeof ProductiqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/readinessiq': {
-      id: '/readinessiq'
-      path: '/readinessiq'
-      fullPath: '/readinessiq'
-      preLoaderRoute: typeof ReadinessiqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/salesiq': {
-      id: '/salesiq'
-      path: '/salesiq'
-      fullPath: '/salesiq'
-      preLoaderRoute: typeof SalesiqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/uxiq': {
+      id: '/uxiq'
+      path: '/uxiq'
+      fullPath: '/uxiq'
+      preLoaderRoute: typeof UxiqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tariffiq': {
@@ -710,25 +606,130 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TariffiqRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/unsubscribe': {
-      id: '/unsubscribe'
-      path: '/unsubscribe'
-      fullPath: '/unsubscribe'
-      preLoaderRoute: typeof UnsubscribeRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/uxiq': {
-      id: '/uxiq'
-      path: '/uxiq'
-      fullPath: '/uxiq'
-      preLoaderRoute: typeof UxiqRouteImport
+    '/salesiq': {
+      id: '/salesiq'
+      path: '/salesiq'
+      fullPath: '/salesiq'
+      preLoaderRoute: typeof SalesiqRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+    '/readinessiq': {
+      id: '/readinessiq'
+      path: '/readinessiq'
+      fullPath: '/readinessiq'
+      preLoaderRoute: typeof ReadinessiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/productiq': {
+      id: '/productiq'
+      path: '/productiq'
+      fullPath: '/productiq'
+      preLoaderRoute: typeof ProductiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboard': {
+      id: '/onboard'
+      path: '/onboard'
+      fullPath: '/onboard'
+      preLoaderRoute: typeof OnboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/market-entry': {
+      id: '/market-entry'
+      path: '/market-entry'
+      fullPath: '/market-entry'
+      preLoaderRoute: typeof MarketEntryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gtmiq': {
+      id: '/gtmiq'
+      path: '/gtmiq'
+      fullPath: '/gtmiq'
+      preLoaderRoute: typeof GtmiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aitransformiq': {
+      id: '/aitransformiq'
+      path: '/aitransformiq'
+      fullPath: '/aitransformiq'
+      preLoaderRoute: typeof AitransformiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report/$id': {
+      id: '/report/$id'
+      path: '/report/$id'
+      fullPath: '/report/$id'
+      preLoaderRoute: typeof ReportIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/readinessiq/$': {
+      id: '/readinessiq/$'
+      path: '/$'
+      fullPath: '/readinessiq/$'
+      preLoaderRoute: typeof ReadinessiqSplatRouteImport
+      parentRoute: typeof ReadinessiqRoute
+    }
+    '/market-entry/$': {
+      id: '/market-entry/$'
+      path: '/$'
+      fullPath: '/market-entry/$'
+      preLoaderRoute: typeof MarketEntrySplatRouteImport
+      parentRoute: typeof MarketEntryRoute
+    }
+    '/docs_/market-entry-maturity-frameworks': {
+      id: '/docs_/market-entry-maturity-frameworks'
+      path: '/docs/market-entry-maturity-frameworks'
+      fullPath: '/docs/market-entry-maturity-frameworks'
+      preLoaderRoute: typeof DocsMarketEntryMaturityFrameworksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/oauth-protected-resource': {
@@ -738,53 +739,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/docs_/market-entry-maturity-frameworks': {
-      id: '/docs_/market-entry-maturity-frameworks'
-      path: '/docs/market-entry-maturity-frameworks'
-      fullPath: '/docs/market-entry-maturity-frameworks'
-      preLoaderRoute: typeof DocsMarketEntryMaturityFrameworksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/market-entry/$': {
-      id: '/market-entry/$'
-      path: '/$'
-      fullPath: '/market-entry/$'
-      preLoaderRoute: typeof MarketEntrySplatRouteImport
-      parentRoute: typeof MarketEntryRoute
-    }
-    '/readinessiq/$': {
-      id: '/readinessiq/$'
-      path: '/$'
-      fullPath: '/readinessiq/$'
-      preLoaderRoute: typeof ReadinessiqSplatRouteImport
-      parentRoute: typeof ReadinessiqRoute
-    }
-    '/report/$id': {
-      id: '/report/$id'
-      path: '/report/$id'
-      fullPath: '/report/$id'
-      preLoaderRoute: typeof ReportIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.lovable/oauth/consent': {
-      id: '/.lovable/oauth/consent'
-      path: '/.lovable/oauth/consent'
-      fullPath: '/.lovable/oauth/consent'
-      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/manifest': {
-      id: '/api/public/manifest'
-      path: '/api/public/manifest'
-      fullPath: '/api/public/manifest'
-      preLoaderRoute: typeof ApiPublicManifestRouteImport
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/profile': {
@@ -794,102 +753,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/admin/bootstrap-hubspot-schema': {
-      id: '/api/public/admin/bootstrap-hubspot-schema'
-      path: '/api/public/admin/bootstrap-hubspot-schema'
-      fullPath: '/api/public/admin/bootstrap-hubspot-schema'
-      preLoaderRoute: typeof ApiPublicAdminBootstrapHubspotSchemaRouteImport
+    '/api/public/manifest': {
+      id: '/api/public/manifest'
+      path: '/api/public/manifest'
+      fullPath: '/api/public/manifest'
+      preLoaderRoute: typeof ApiPublicManifestRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/admin/import-legacy-submissions': {
-      id: '/api/public/admin/import-legacy-submissions'
-      path: '/api/public/admin/import-legacy-submissions'
-      fullPath: '/api/public/admin/import-legacy-submissions'
-      preLoaderRoute: typeof ApiPublicAdminImportLegacySubmissionsRouteImport
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/admin/import-legacy-users': {
-      id: '/api/public/admin/import-legacy-users'
-      path: '/api/public/admin/import-legacy-users'
-      fullPath: '/api/public/admin/import-legacy-users'
-      preLoaderRoute: typeof ApiPublicAdminImportLegacyUsersRouteImport
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/admin/migrate-readinessiq': {
-      id: '/api/public/admin/migrate-readinessiq'
-      path: '/api/public/admin/migrate-readinessiq'
-      fullPath: '/api/public/admin/migrate-readinessiq'
-      preLoaderRoute: typeof ApiPublicAdminMigrateReadinessiqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/auth/session': {
-      id: '/api/public/auth/session'
-      path: '/api/public/auth/session'
-      fullPath: '/api/public/auth/session'
-      preLoaderRoute: typeof ApiPublicAuthSessionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/billing/check-subscription': {
-      id: '/api/public/billing/check-subscription'
-      path: '/api/public/billing/check-subscription'
-      fullPath: '/api/public/billing/check-subscription'
-      preLoaderRoute: typeof ApiPublicBillingCheckSubscriptionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/billing/create-checkout': {
-      id: '/api/public/billing/create-checkout'
-      path: '/api/public/billing/create-checkout'
-      fullPath: '/api/public/billing/create-checkout'
-      preLoaderRoute: typeof ApiPublicBillingCreateCheckoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/billing/create-portal-session': {
-      id: '/api/public/billing/create-portal-session'
-      path: '/api/public/billing/create-portal-session'
-      fullPath: '/api/public/billing/create-portal-session'
-      preLoaderRoute: typeof ApiPublicBillingCreatePortalSessionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/billing/payments-webhook': {
-      id: '/api/public/billing/payments-webhook'
-      path: '/api/public/billing/payments-webhook'
-      fullPath: '/api/public/billing/payments-webhook'
-      preLoaderRoute: typeof ApiPublicBillingPaymentsWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/content/$key': {
-      id: '/api/public/content/$key'
-      path: '/api/public/content/$key'
-      fullPath: '/api/public/content/$key'
-      preLoaderRoute: typeof ApiPublicContentKeyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/jobs/retry-hubspot': {
-      id: '/api/public/jobs/retry-hubspot'
-      path: '/api/public/jobs/retry-hubspot'
-      fullPath: '/api/public/jobs/retry-hubspot'
-      preLoaderRoute: typeof ApiPublicJobsRetryHubspotRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/submissions/history': {
-      id: '/api/public/submissions/history'
-      path: '/api/public/submissions/history'
-      fullPath: '/api/public/submissions/history'
-      preLoaderRoute: typeof ApiPublicSubmissionsHistoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/submissions/submit': {
-      id: '/api/public/submissions/submit'
-      path: '/api/public/submissions/submit'
-      fullPath: '/api/public/submissions/submit'
-      preLoaderRoute: typeof ApiPublicSubmissionsSubmitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/auth/preview': {
-      id: '/lovable/email/auth/preview'
-      path: '/lovable/email/auth/preview'
-      fullPath: '/lovable/email/auth/preview'
-      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/auth/webhook': {
@@ -899,11 +788,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/transactional/preview': {
-      id: '/lovable/email/transactional/preview'
-      path: '/lovable/email/transactional/preview'
-      fullPath: '/lovable/email/transactional/preview'
-      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/submissions/submit': {
+      id: '/api/public/submissions/submit'
+      path: '/api/public/submissions/submit'
+      fullPath: '/api/public/submissions/submit'
+      preLoaderRoute: typeof ApiPublicSubmissionsSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/submissions/history': {
+      id: '/api/public/submissions/history'
+      path: '/api/public/submissions/history'
+      fullPath: '/api/public/submissions/history'
+      preLoaderRoute: typeof ApiPublicSubmissionsHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/retry-hubspot': {
+      id: '/api/public/jobs/retry-hubspot'
+      path: '/api/public/jobs/retry-hubspot'
+      fullPath: '/api/public/jobs/retry-hubspot'
+      preLoaderRoute: typeof ApiPublicJobsRetryHubspotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/content/$key': {
+      id: '/api/public/content/$key'
+      path: '/api/public/content/$key'
+      fullPath: '/api/public/content/$key'
+      preLoaderRoute: typeof ApiPublicContentKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/billing/payments-webhook': {
+      id: '/api/public/billing/payments-webhook'
+      path: '/api/public/billing/payments-webhook'
+      fullPath: '/api/public/billing/payments-webhook'
+      preLoaderRoute: typeof ApiPublicBillingPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/billing/create-portal-session': {
+      id: '/api/public/billing/create-portal-session'
+      path: '/api/public/billing/create-portal-session'
+      fullPath: '/api/public/billing/create-portal-session'
+      preLoaderRoute: typeof ApiPublicBillingCreatePortalSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/billing/create-checkout': {
+      id: '/api/public/billing/create-checkout'
+      path: '/api/public/billing/create-checkout'
+      fullPath: '/api/public/billing/create-checkout'
+      preLoaderRoute: typeof ApiPublicBillingCreateCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/billing/check-subscription': {
+      id: '/api/public/billing/check-subscription'
+      path: '/api/public/billing/check-subscription'
+      fullPath: '/api/public/billing/check-subscription'
+      preLoaderRoute: typeof ApiPublicBillingCheckSubscriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/auth/session': {
+      id: '/api/public/auth/session'
+      path: '/api/public/auth/session'
+      fullPath: '/api/public/auth/session'
+      preLoaderRoute: typeof ApiPublicAuthSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/admin/migrate-readinessiq': {
+      id: '/api/public/admin/migrate-readinessiq'
+      path: '/api/public/admin/migrate-readinessiq'
+      fullPath: '/api/public/admin/migrate-readinessiq'
+      preLoaderRoute: typeof ApiPublicAdminMigrateReadinessiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/admin/import-legacy-users': {
+      id: '/api/public/admin/import-legacy-users'
+      path: '/api/public/admin/import-legacy-users'
+      fullPath: '/api/public/admin/import-legacy-users'
+      preLoaderRoute: typeof ApiPublicAdminImportLegacyUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/admin/import-legacy-submissions': {
+      id: '/api/public/admin/import-legacy-submissions'
+      path: '/api/public/admin/import-legacy-submissions'
+      fullPath: '/api/public/admin/import-legacy-submissions'
+      preLoaderRoute: typeof ApiPublicAdminImportLegacySubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/admin/bootstrap-hubspot-schema': {
+      id: '/api/public/admin/bootstrap-hubspot-schema'
+      path: '/api/public/admin/bootstrap-hubspot-schema'
+      fullPath: '/api/public/admin/bootstrap-hubspot-schema'
+      preLoaderRoute: typeof ApiPublicAdminBootstrapHubspotSchemaRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -949,7 +929,6 @@ const rootRouteChildren: RootRouteChildren = {
   SalesiqRoute: SalesiqRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TariffiqRoute: TariffiqRoute,
-  UnsubscribeRoute: UnsubscribeRoute,
   UxiqRoute: UxiqRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:

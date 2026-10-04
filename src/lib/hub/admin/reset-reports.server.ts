@@ -10,6 +10,7 @@ const ROLLUP_PROPS = [
   "gem_assessment_tool", "gem_assessment_date", "gem_assessment_score", "gem_score_tier",
   "gem_customer", "gem_last_assessment", "gem_last_score", "gem_last_tier", "gem_last_completed_at",
   "gem_assessments_count", "gem_assessments_taken", "gem_high_score", "gem_low_score", "gem_high_score_tool",
+  "gem_assessment_submitted_at", "gem_assessment_label", "gem_submission_id", "gem_report_url", "gem_report_locked", "gem_entitlement",
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

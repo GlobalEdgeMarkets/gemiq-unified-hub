@@ -16,11 +16,13 @@ export type AuditSite = keyof typeof AUDIT_SITES;
 const EXPECTED_EVENTS = [
   "$pageview",
   "$identify",
+  "signup_completed",
+  "signin_completed",
   "assessment_started",
-  "assessment_completed",
+  "assessment_submitted",
+  "results_submitted",
   "checkout_started",
   "consultation_clicked",
-  "submission_sent",
 ];
 
 export type AuditRow = { site: string; host: string; event: string; count: number };
@@ -69,7 +71,7 @@ async function analyze(input: string): Promise<string> {
         "You audit analytics tracking for GEM.IQ, a hub site plus several assessment sites. " +
         "Given per-site event counts for a date range, write a short plain-language report for a non-technical owner. " +
         "List each selected site that sent nothing, then expected events that are missing or suspiciously low per site " +
-        "(e.g. pageviews but no assessment_started, completions but no submission_sent). Suggest a concrete fix for each. " +
+        "(e.g. pageviews but no assessment_started, or assessment_submitted with no results_submitted). Suggest a concrete fix for each. " +
         "Note the hub (gemiq) does not run assessments, so assessment events are not expected there. Keep it under 300 words, use short bullet lists, no tables.",
       input,
     }),

@@ -121,3 +121,25 @@ export const adminMigrateReadinessIQ = createServerFn({ method: "POST" })
     const { runMigrateReadinessIQ } = await import("@/lib/hub/admin/readiness-migrate.server");
     return await runMigrateReadinessIQ({ ...data, email: data.email?.trim() || undefined });
   });
+
+const AUDIT_SITE_KEYS = ["gemiq", "tariffiq", "gtmiq", "salesiq", "productiq", "aitransformiq", "uxiq"] as const;
+
+export const adminPostHogAudit = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        sites: z.array(z.enum(AUDIT_SITE_KEYS)).min(1),
+      })
+      .refine((d) => d.from <= d.to, "Start date must be before end date")
+      .refine((d) => (Date.parse(d.to) - Date.parse(d.from)) / 86_400_000 <= 90, "Range can be at most 90 days")
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { runPostHogAudit } = await import("@/lib/posthog-audit.server");
+    return await runPostHogAudit(data);
+  });

@@ -181,7 +181,17 @@ function HealthPanel({ data, checkHealth, reload }: {
                     {open === a.key ? "Hide prompt" : "Get prompt"}
                   </Button>
                 )}
+                <Button size="sm" variant="ghost" onClick={() => setOpen(open === `r:${a.key}` ? null : `r:${a.key}`)}>
+                  {open === `r:${a.key}` ? "Hide report prompt" : "Report prompt"}
+                </Button>
               </div>
+              {open === `r:${a.key}` && (
+                <div className="mt-3">
+                  <p className="mb-2 text-sm text-muted-foreground">Paste this into {a.name} so its report follows the Hub's report settings, then publish it.</p>
+                  <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-lg bg-muted/60 p-3 text-xs text-foreground/80">{reportPrompt(a, data.manifest_version)}</pre>
+                  <div className="mt-2"><CopyButton text={reportPrompt(a, data.manifest_version)} /></div>
+                </div>
+              )}
               {open === a.key && h?.light !== "green" && (
                 <div className="mt-3">
                   <p className="mb-2 text-sm text-muted-foreground">Paste this into {a.name}, publish it, then press "Check all now".</p>

@@ -8,6 +8,7 @@ import {
   adminDeleteUser,
   adminRegistryStatus,
   adminListSubmissions,
+  adminPostHogAudit,
 } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,6 +81,7 @@ function AdminConsole() {
   const deleteUser = useServerFn(adminDeleteUser);
   const registryStatus = useServerFn(adminRegistryStatus);
   const listSubs = useServerFn(adminListSubmissions);
+  const phAudit = useServerFn(adminPostHogAudit);
 
   const [gate, setGate] = useState<{ state: "loading" | "anon" | "denied" | "ok"; email?: string | null }>({
     state: "loading",
@@ -136,6 +138,7 @@ function AdminConsole() {
         <DeleteUserCard run={deleteUser} />
         <RegistryCard run={registryStatus} />
         <SubmissionsCard run={listSubs} />
+        <PostHogAuditCard run={phAudit} />
       </div>
     </Shell>
   );
@@ -383,6 +386,109 @@ function SubmissionsCard({ run }: { run: (a: { data: unknown }) => Promise<unkno
         </div>
       ) : (
         <Panel data={a.result} />
+      )}
+    </Card>
+  );
+}
+
+const AUDIT_SITES = [
+  ["gemiq", "GEM.IQ"],
+  ["tariffiq", "TariffIQ"],
+  ["gtmiq", "GTMIQ"],
+  ["salesiq", "SalesIQ"],
+  ["productiq", "ProductIQ"],
+  ["aitransformiq", "AITransformIQ"],
+  ["uxiq", "UXIQ"],
+] as const;
+
+type AuditOut = {
+  rows: { site: string; event: string; count: number }[];
+  lastSeen: Record<string, string | null>;
+  report: string;
+};
+
+function PostHogAuditCard({ run }: { run: (a: { data: unknown }) => Promise<unknown> }) {
+  const a = useAction(run as never);
+  const today = new Date().toISOString().slice(0, 10);
+  const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
+  const [from, setFrom] = useState(weekAgo);
+  const [to, setTo] = useState(today);
+  const [sites, setSites] = useState<string[]>(AUDIT_SITES.map(([k]) => k));
+  const out = a.result as (AuditOut & { error?: string }) | undefined;
+  const events = out?.rows ? Array.from(new Set(out.rows.map((r) => r.event))) : [];
+  const picked = out?.rows ? Array.from(new Set(out.rows.map((r) => r.site))) : [];
+  const label = (k: string) => AUDIT_SITES.find(([s]) => s === k)?.[1] ?? k;
+
+  return (
+    <Card
+      title="Check PostHog tracking"
+      description="Counts the key events each live site sent to PostHog in a date range, then AI points out what looks missing or low and how to fix it."
+    >
+      <div className="flex flex-wrap gap-4">
+        <div>
+          <Label htmlFor="ph-from">From</Label>
+          <Input id="ph-from" type="date" value={from} max={to} onChange={(e) => setFrom(e.target.value)} />
+        </div>
+        <div>
+          <Label htmlFor="ph-to">To</Label>
+          <Input id="ph-to" type="date" value={to} min={from} max={today} onChange={(e) => setTo(e.target.value)} />
+        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-3">
+        {AUDIT_SITES.map(([k, name]) => (
+          <label key={k} className="flex items-center gap-2 text-sm text-foreground">
+            <input
+              type="checkbox"
+              checked={sites.includes(k)}
+              onChange={(e) => setSites((s) => (e.target.checked ? [...s, k] : s.filter((x) => x !== k)))}
+            />
+            {name}
+          </label>
+        ))}
+      </div>
+      <Button
+        className="mt-4"
+        disabled={a.loading || sites.length === 0 || !from || !to}
+        onClick={() => a.run({ data: { from, to, sites } })}
+      >
+        {a.loading ? "Analyzing… (up to a minute)" : "Analyze tracking"}
+      </Button>
+      {out?.error && <p className="mt-4 text-sm text-destructive">{out.error}</p>}
+      {out?.report && (
+        <>
+          <div className="mt-4 whitespace-pre-wrap rounded-lg bg-muted/60 p-4 text-sm leading-relaxed text-foreground">
+            {out.report}
+          </div>
+          <div className="mt-4 overflow-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-border text-muted-foreground">
+                  <th className="py-2 pr-3">Site</th>
+                  <th className="py-2 pr-3">Last activity</th>
+                  {events.map((e) => (
+                    <th key={e} className="py-2 pr-3">{e}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {picked.map((s) => (
+                  <tr key={s} className="border-b border-border/40">
+                    <td className="py-2 pr-3 font-medium text-foreground">{label(s)}</td>
+                    <td className="py-2 pr-3 text-muted-foreground">
+                      {out.lastSeen[s] ? new Date(out.lastSeen[s]!).toLocaleString() : "None"}
+                    </td>
+                    {events.map((e) => {
+                      const c = out.rows.find((r) => r.site === s && r.event === e)?.count ?? 0;
+                      return (
+                        <td key={e} className={`py-2 pr-3 ${c === 0 ? "text-destructive" : "text-foreground"}`}>{c}</td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </Card>
   );

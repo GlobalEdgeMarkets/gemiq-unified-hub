@@ -15,6 +15,13 @@
       "when": 1791081340228,
       "tag": "0001_hub_report_control",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791082975899,
+      "tag": "0002_hub_followups_and_content",
+      "breakpoints": true
     }
   ]
 }

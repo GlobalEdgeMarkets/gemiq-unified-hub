@@ -11,11 +11,11 @@ export function ReportCover(props: { kicker: string; title: string; company: str
     <section className="report-cover relative overflow-hidden rounded-3xl bg-report-cover p-8 text-report-cover-foreground md:p-12">
       <img src="/brand/gem-logo-light-white-mint.png" alt="GEM — Global Edge Markets" className="h-10 w-auto" />
       <p className="mt-12 text-xs uppercase tracking-[0.25em] text-report-cover-foreground/60">{props.kicker}</p>
-      <h1 className="mt-3 max-w-2xl font-heading text-3xl leading-tight md:text-5xl">{props.title}</h1>
+      <h1 className="mt-3 max-w-2xl font-display text-3xl leading-tight md:text-5xl">{props.title}</h1>
       {props.company && <p className="mt-3 text-lg text-report-cover-foreground/80">Prepared for {props.company}</p>}
       <div className="mt-10 flex flex-wrap items-end gap-8">
         <div>
-          <div className="font-heading text-6xl md:text-7xl">{props.score ?? "—"}</div>
+          <div className="font-display text-6xl md:text-7xl">{props.score ?? "—"}</div>
           <div className="text-xs uppercase tracking-wider text-report-cover-foreground/60">Score out of 100</div>
         </div>
         {props.tier && (
@@ -37,9 +37,9 @@ export function ReportSection({ n, title, children, kicker }: { n?: number; titl
   return (
     <section className="report-section break-inside-avoid rounded-2xl border border-border/60 bg-card/70 p-6 md:p-8">
       <div className="mb-4 flex items-baseline gap-3">
-        {n != null && <span className="font-heading text-sm text-success">{String(n).padStart(2, "0")}</span>}
+        {n != null && <span className="font-display text-sm text-success">{String(n).padStart(2, "0")}</span>}
         <div>
-          <h2 className="font-heading text-xl text-foreground">{title}</h2>
+          <h2 className="font-display text-xl text-foreground">{title}</h2>
           {kicker && <p className="text-sm text-muted-foreground">{kicker}</p>}
         </div>
       </div>
@@ -139,7 +139,7 @@ export function HeatMap({ items }: { items: { key: string; label: string; score:
       {items.map((d) => (
         <div key={d.key} className="break-inside-avoid rounded-lg border border-border/60 p-3">
           <div className="flex items-center gap-3">
-            <div className={`flex h-10 w-12 shrink-0 items-center justify-center rounded-md font-heading text-foreground ${heat(d.score)}`}>{d.score}</div>
+            <div className={`flex h-10 w-12 shrink-0 items-center justify-center rounded-md font-display text-foreground ${heat(d.score)}`}>{d.score}</div>
             <div className="min-w-0">
               <div className="truncate text-sm font-medium text-foreground">{d.label}</div>
               {d.peer != null && (
@@ -168,12 +168,12 @@ export function Roadmap({ items }: { items: RoadmapLite[] }) {
       <div className="grid gap-4 md:grid-cols-3">
         {horizons.map((h) => (
           <div key={h} className="break-inside-avoid">
-            <div className="mb-2 font-heading text-sm text-foreground">Next {h} days</div>
+            <div className="mb-2 font-display text-sm text-foreground">Next {h} days</div>
             <ol className="space-y-2">
               {items.map((x, i) => ({ x, i })).filter(({ x }) => x.horizon === h).map(({ x, i }) => (
                 <li key={i} className="rounded-lg border border-border/60 p-3 text-sm">
                   <div className="flex items-start gap-2">
-                    <span className="font-heading text-xs text-success">{i + 1}</span>
+                    <span className="font-display text-xs text-success">{i + 1}</span>
                     <span className="text-foreground/90">{x.action}</span>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
@@ -189,7 +189,7 @@ export function Roadmap({ items }: { items: RoadmapLite[] }) {
       </div>
 
       <div className="break-inside-avoid">
-        <div className="mb-2 font-heading text-sm text-foreground">Impact vs effort</div>
+        <div className="mb-2 font-display text-sm text-foreground">Impact vs effort</div>
         <div className="relative grid aspect-[2/1] max-w-xl grid-cols-2 grid-rows-2 overflow-hidden rounded-lg border border-border/60 text-[11px] text-muted-foreground">
           <div className="border-b border-r border-border/60 bg-success/10 p-2">Quick wins</div>
           <div className="border-b border-border/60 p-2 text-right">Big bets</div>
@@ -199,7 +199,7 @@ export function Roadmap({ items }: { items: RoadmapLite[] }) {
             const left = 12 + lvlN[x.effort] * 38 + (i % 3) * 4;
             const top = 82 - lvlN[x.impact] * 34 - (i % 2) * 6;
             return (
-              <span key={i} className="absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary font-heading text-[11px] text-primary-foreground" style={{ left: `${left}%`, top: `${top}%` }}>
+              <span key={i} className="absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary font-display text-[11px] text-primary-foreground" style={{ left: `${left}%`, top: `${top}%` }}>
                 {i + 1}
               </span>
             );

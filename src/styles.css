@@ -53,6 +53,8 @@
   --color-destructive: var(--destructive);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-report-cover: var(--report-cover);
+  --color-report-cover-foreground: var(--report-cover-foreground);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -92,6 +94,8 @@
   --destructive: oklch(0.577 0.245 27.325);
   --success: #05cfab;
   --warning: #f5a524;
+  --report-cover: #172864;
+  --report-cover-foreground: #ffffff;
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(0.929 0.013 255.508);
   --input: oklch(0.929 0.013 255.508);
@@ -129,6 +133,8 @@
   --destructive: oklch(0.704 0.191 22.216);
   --success: #05cfab;
   --warning: #f5a524;
+  --report-cover: #172864;
+  --report-cover-foreground: #ffffff;
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
@@ -172,4 +178,18 @@
     font-family: var(--font-display);
     letter-spacing: -0.01em;
   }
+}
+
+/* Report PDF layout (browser "Save as PDF"). */
+@page {
+  size: A4;
+  margin: 16mm 14mm 18mm;
+  @bottom-right { content: "Page " counter(page) " of " counter(pages); font-size: 9pt; color: #6b7280; }
+  @bottom-left { content: "GEM.IQ · Confidential"; font-size: 9pt; color: #6b7280; }
+}
+@media print {
+  html, body { background: #ffffff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .report-cover { min-height: 250mm; display: flex; flex-direction: column; justify-content: center; break-after: page; border-radius: 0; }
+  .report-section { background: #ffffff !important; border-color: #e5e7eb !important; break-inside: avoid; page-break-inside: avoid; }
+  .report-break { break-before: page; }
 }

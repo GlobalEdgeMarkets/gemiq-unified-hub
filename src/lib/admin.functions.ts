@@ -451,3 +451,89 @@ export const adminE2eSaveSettings = createServerFn({ method: "POST" })
     const { saveSettings } = await import("@/lib/hub/e2e/e2e.server");
     return await saveSettings(data, by);
   });
+
+// ---- Overview (read-only): one-screen "is anything wrong?" ----
+export const adminOverview = createServerFn({ method: "GET" })
+  .middleware([requireHubAdmin])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { listApps } = await import("@/lib/hub/app-control.server");
+    const { listRuns } = await import("@/lib/hub/e2e/e2e.server");
+    const { scoreMismatches } = await import("@/lib/hub/content.server");
+    const { createHubServiceClient } = await import("@/lib/hub/supabase-server");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db: any = createHubServiceClient();
+    const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
+    const [apps, runs, mismatches, subs, retry] = await Promise.all([
+      listApps(),
+      listRuns(60).catch(() => []),
+      scoreMismatches(50).catch(() => []),
+      db.from("submissions").select("assessment_key,metadata,email").gte("submitted_at", weekAgo).limit(2000),
+      db.from("retry_queue").select("status").in("status", ["pending", "dead"]).limit(1000),
+    ]);
+    const results = ((subs.data ?? []) as { assessment_key: string; metadata: { entitlement?: string } | null; email: string }[])
+      .filter((r) => !/\+(gemtest|checkly)-/i.test(r.email ?? ""));
+    const byEnt: Record<string, number> = {};
+    for (const r of results) { const e = r.metadata?.entitlement ?? "none"; byEnt[e] = (byEnt[e] ?? 0) + 1; }
+    const latest: Record<string, { status: string; at: string }> = {};
+    for (const r of runs) if (!latest[r.assessment_key]) latest[r.assessment_key] = { status: r.status, at: r.started_at };
+    const rq = (retry.data ?? []) as { status: string }[];
+    return {
+      apps: apps.filter((a) => a.lifecycle !== "retired").map((a) => ({
+        key: a.key, name: a.name, paused: a.paused, lifecycle: a.lifecycle,
+        light: (a.last_status as { light?: string } | null)?.light ?? null,
+        problems: (a.last_status as { problems?: string[] } | null)?.problems ?? [],
+        checked_at: a.last_checked_at,
+      })),
+      week: { total: results.length, by_entitlement: byEnt },
+      tests: latest,
+      mismatches: mismatches.length,
+      retry: { pending: rq.filter((x) => x.status === "pending").length, failed: rq.filter((x) => x.status === "dead").length },
+    };
+  });
+
+// ---- Find a person (read-only) ----
+export const adminPersonLookup = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) => z.object({ email: z.string().email().max(200) }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const email = data.email.trim().toLowerCase();
+    const { createHubServiceClient } = await import("@/lib/hub/supabase-server");
+    const { listReports } = await import("@/lib/hub/report-control.server");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db: any = createHubServiceClient();
+    const { data: prof } = await db.from("profiles")
+      .select("id,email,full_name,company,title,created_at").ilike("email", email).maybeSingle();
+    const { data: subs } = prof
+      ? await db.from("subscriptions").select("status,lookup_key,trial_ends_at,trial_assessments_used,trial_assessment_limit,current_period_end,cancel_at_period_end,updated_at")
+          .eq("user_id", prof.id).order("updated_at", { ascending: false }).limit(5)
+      : { data: [] };
+    const reports = await listReports({ email, include_hidden: true, limit: 100 }).catch(() => null);
+    const items = ((reports as { items?: { email: string }[] } | null)?.items ?? [])
+      .filter((r) => (r.email ?? "").toLowerCase() === email);
+
+    let hubspot: { found: boolean; marketing?: boolean; tier?: string | null; assessment?: string | null; entitlement?: string | null; locked?: string | null; error?: string } = { found: false };
+    try {
+      const { hsBase, hsAuthHeaders } = await import("@/lib/hub/hubspot-transport");
+      const res = await fetch(`${hsBase()}/crm/v3/objects/contacts/search`, {
+        method: "POST", headers: hsAuthHeaders(),
+        body: JSON.stringify({
+          filterGroups: [{ filters: [{ propertyName: "email", operator: "EQ", value: email }] }],
+          properties: ["hs_marketable_status", "gem_score_tier", "gem_assessment_label", "gem_entitlement", "gem_report_locked"], limit: 1,
+        }),
+      });
+      if (res.ok) {
+        const j = (await res.json()) as { results?: { properties: Record<string, string | null> }[] };
+        const p = j.results?.[0]?.properties;
+        if (p) hubspot = {
+          found: true, marketing: p.hs_marketable_status === "true", tier: p.gem_score_tier,
+          assessment: p.gem_assessment_label, entitlement: p.gem_entitlement, locked: p.gem_report_locked,
+        };
+      } else hubspot = { found: false, error: `HubSpot said ${res.status}` };
+    } catch (e) { hubspot = { found: false, error: (e as Error).message }; }
+
+    return { email, profile: prof ?? null, subscriptions: subs ?? [], reports: items, hubspot };
+  });

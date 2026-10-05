@@ -111,7 +111,7 @@ export function TestsPanel({ overview, action, saveSettings }: {
                   <div className="flex items-center gap-3">
                     <span className="font-heading text-foreground">{a.name}</span>
                     {r ? <Badge s={r.status} /> : <span className="text-xs text-muted-foreground">Not tested yet</span>}
-                    {r ? <span className="text-xs text-muted-foreground">{r.source === "checkly" ? "Browser" : "Quick"} · {new Date(r.started_at).toLocaleString()}</span> : null}
+                    {r ? <span className="text-xs text-muted-foreground">{new Date(r.started_at).toLocaleString()}</span> : null}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button size="sm" disabled={!!busy} onClick={() => act(`q-${a.key}`, { action: "quick", key: a.key })}>
@@ -150,14 +150,13 @@ export function TestsPanel({ overview, action, saveSettings }: {
       <Section title="Test history" description="Every run, newest first.">
         <div className="max-h-[480px] overflow-auto">
           <table className="w-full text-left text-xs">
-            <thead className="text-muted-foreground"><tr><th className="py-1">When</th><th>Assessment</th><th>Type</th><th>Result</th><th>Failing</th></tr></thead>
+            <thead className="text-muted-foreground"><tr><th className="py-1">When</th><th>Assessment</th><th>Result</th><th>Failing</th></tr></thead>
             <tbody>
               {data.runs.map((r) => (
                 <tr key={r.id} className="border-t border-border/50 align-top">
                   <td className="py-1.5">{new Date(r.started_at).toLocaleString()}</td>
                   <td>{data.assessments.find((a) => a.key === r.assessment_key)?.name ?? r.assessment_key}</td>
-                  <td>{r.source === "checkly" ? "Browser" : "Quick"}</td>
-                  <td><Badge s={r.status} /></td>
+                                    <td><Badge s={r.status} /></td>
                   <td className="text-muted-foreground">{(r.checks ?? []).filter((c) => c.status === "fail" || c.status === "pending").map((c) => c.label).join(", ") || "—"}</td>
                 </tr>
               ))}
@@ -184,15 +183,11 @@ function SettingsCard({ settings, assessments, save, onSaved }: {
   return (
     <Section title="Test settings" description="The inbox test emails go to, and which HubSpot workflows each test contact must join.">
       <div className="grid gap-4">
-        <label className="flex items-center gap-2 text-sm text-foreground">
-          <input type="checkbox" checked={s.enabled} onChange={(e) => setS({ ...s, enabled: e.target.checked })} />
-          Testing switched on (when off, Checkly tests are refused)
-        </label>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <Label htmlFor="e2e-base">Inbox for test emails</Label>
             <Input id="e2e-base" value={s.base_email} onChange={(e) => setS({ ...s, base_email: e.target.value.trim() })} />
-            <p className="mt-1 text-xs text-muted-foreground">Test addresses look like {local}+checkly-tariffiq-…@{domain}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Test addresses look like {local}+gemtest-tariffiq-…@{domain}</p>
           </div>
           <div>
             <Label htmlFor="e2e-keep">Keep test contacts for (days)</Label>

@@ -34,12 +34,12 @@ function splitBase(base: string) {
   return { local, domain };
 }
 
-/** True only for <local>+checkly-…@<domain> built from the configured base address. */
+/** True only for <local>+gemtest-…@<domain> built from the configured base address (older runs used another tag). */
 export function matchesTestPattern(email: string, base: string): boolean {
   const { local, domain } = splitBase(base);
   if (!local || !domain) return false;
   const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`^${esc(local)}\\+checkly-[a-z0-9-]+@${esc(domain)}$`).test(email.toLowerCase());
+  return new RegExp(`^${esc(local)}\\+(?:gemtest|checkly)-[a-z0-9-]+@${esc(domain)}$`).test(email.toLowerCase());
 }
 
 export async function isTestEmail(email: string): Promise<boolean> {
@@ -54,7 +54,7 @@ function makeEmail(base: string, key: string) {
   const { local, domain } = splitBase(base);
   const stamp = new Date().toISOString().replace(/\D/g, "").slice(2, 12); // yymmddhhmm
   const rand = Math.random().toString(36).slice(2, 6);
-  return `${local}+checkly-${key}-${stamp}${rand}@${domain}`;
+  return `${local}+gemtest-${key}-${stamp}${rand}@${domain}`;
 }
 
 async function liveApp(key: string) {
@@ -145,7 +145,7 @@ export async function checkRun(runId: string): Promise<E2eRun> {
     add("content_version", "Questions version", { status: "pass", detail: sub.content_version != null ? `Hub questions v${sub.content_version}` : "Assessment's built-in questions" });
     const ent = (sub.metadata as { entitlement?: string } | null)?.entitlement ?? "none";
     const locked = isReportLocked(sub, false);
-    const wantTrial = r.source === "checkly";
+    const wantTrial = false;
     add("entitlement", "Covered by", wantTrial
       ? (ent === "trial" ? { status: "pass", detail: "Free trial" } : { status: "fail", detail: `Expected the free trial, got "${ent}"` })
       : { status: "pass", detail: ent });

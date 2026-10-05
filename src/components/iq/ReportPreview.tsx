@@ -8,7 +8,7 @@ function ScoreRing({ score, color }: { score: number; color: string }) {
   const circ = 2 * Math.PI * r;
   return (
     <svg viewBox="0 0 110 110" className="h-28 w-28">
-      <circle cx="55" cy="55" r={r} fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="9" />
+      <circle cx="55" cy="55" r={r} fill="none" stroke="rgba(44,54,91,0.10)" strokeWidth="9" />
       <circle
         cx="55"
         cy="55"
@@ -20,10 +20,10 @@ function ScoreRing({ score, color }: { score: number; color: string }) {
         strokeDasharray={`${(circ * score) / 100} ${circ}`}
         transform="rotate(-90 55 55)"
       />
-      <text x="55" y="58" textAnchor="middle" fill="white" fontSize="26" fontWeight="700" style={DISPLAY}>
+      <text x="55" y="58" textAnchor="middle" fill="#2C365B" fontSize="26" fontWeight="700" style={DISPLAY}>
         {score}
       </text>
-      <text x="55" y="74" textAnchor="middle" fill="rgba(255,255,255,0.45)" fontSize="9">
+      <text x="55" y="74" textAnchor="middle" fill="rgba(44,54,91,0.45)" fontSize="9">
         / 100
       </text>
     </svg>

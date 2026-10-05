@@ -152,7 +152,7 @@ function Index() {
 
 function TrialBanner() {
   return (
-    <div className="relative z-40 border-b border-[#05CFAB]/25 bg-gradient-to-r from-[#05CFAB]/15 via-[#7fe6d0]/15 to-[#05CFAB]/15 backdrop-blur-xl">
+    <div className="relative z-40 border-b border-white/10 bg-gem-navy">
       <Link
         to="/auth"
         search={{ mode: "signup", trial: "1" }}

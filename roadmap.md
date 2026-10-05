@@ -5,4 +5,4 @@
 - [x] HubSpot fields: combined score, stage, next suggested assessment
 - [x] Methodology: Hub-wide (Admin → Combined score) + per assessment (Questions & scoring) + public /methodology page
 - [x] Content prompt updated to show methodology / "why we ask this"
-- [ ] Pricing Option B (Starter $179 / Growth $149 mo / Complete $249 mo or $2,490 yr) in billing + site
+- [x] Pricing Option B (Starter $179 / Growth $149 mo / Complete $249 mo or $2,490 yr) in billing + site

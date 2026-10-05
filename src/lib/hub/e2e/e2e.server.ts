@@ -1,6 +1,5 @@
 // End-to-end tests: test accounts, run records, post-submit checks (Hub + HubSpot)
 // and cleanup. Only addresses matching the test pattern are ever touched.
-import { timingSafeEqual } from "crypto";
 import { createHubServiceClient } from "@/lib/hub/supabase-server";
 import { REGISTRY_BY_KEY, LIVE_REGISTRY } from "@/lib/hub/assessments";
 import { isReportLocked } from "@/lib/report-settings";
@@ -13,14 +12,6 @@ const PENDING_WINDOW_MIN = 10;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function db(): any {
   return createHubServiceClient();
-}
-
-export function secretOk(req: Request): boolean {
-  const expected = process.env.GEM_E2E_SECRET;
-  const got = req.headers.get("x-gem-e2e-secret");
-  if (!expected || !got) return false;
-  const a = Buffer.from(got), b = Buffer.from(expected);
-  return a.length === b.length && timingSafeEqual(a, b);
 }
 
 export async function getSettings(): Promise<E2eSettings> {
@@ -71,37 +62,6 @@ async function liveApp(key: string) {
   const { listApps } = await import("@/lib/hub/app-control.server");
   const app = (await listApps()).find((a) => a.key === key);
   return { key, name: REGISTRY_BY_KEY[key]?.displayName ?? key, site_url: app?.site_url ?? null };
-}
-
-/** Checkly run: a fresh, confirmed account on a trial, ready to sign in. */
-export async function startCheckly(key: string) {
-  const settings = await getSettings();
-  if (!settings.enabled) throw new Error("Testing is switched off in Admin → Tests");
-  if (settings.assessments.length && !settings.assessments.includes(key)) throw new Error(`${key} is not selected for testing`);
-  const app = await liveApp(key);
-  const email = makeEmail(settings.base_email, key);
-  const password = `T-${crypto.randomUUID()}`;
-  const svc = db();
-  const { data: created, error } = await svc.auth.admin.createUser({
-    email, password, email_confirm: true,
-    user_metadata: { first_name: "GEM", last_name: "Test", company: "GEM E2E test", full_name: "GEM Test" },
-  });
-  if (error || !created?.user) throw new Error(`Could not create test account: ${error?.message ?? "unknown"}`);
-  const userId = created.user.id;
-  await svc.from("profiles").upsert({ id: userId, email }, { onConflict: "id" });
-  const { error: subErr } = await svc.from("subscriptions").insert({
-    user_id: userId, status: "trialing", trial_assessment_limit: 1, trial_assessments_used: 0,
-    trial_ends_at: new Date(Date.now() + 7 * 86_400_000).toISOString(),
-  });
-  if (subErr) console.error("[e2e] trial row", subErr);
-  const { data: run, error: runErr } = await svc.from("hub_e2e_runs")
-    .insert({ assessment_key: key, email, source: "checkly", status: "started", user_id: userId })
-    .select("id").single();
-  if (runErr) throw new Error(runErr.message);
-  return {
-    run_id: run.id as string, email, password, assessment_key: key, site_url: app.site_url,
-    login_url: app.site_url ? `${HUB}/auth?mode=signin&redirect=${encodeURIComponent(app.site_url)}` : `${HUB}/auth?mode=signin`,
-  };
 }
 
 /** Quick run: sends an anonymous result straight to the Hub's submit link. */

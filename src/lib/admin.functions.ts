@@ -403,7 +403,6 @@ export const adminE2eOverview = createServerFn({ method: "GET" })
     return {
       settings, runs,
       assessments: LIVE_REGISTRY.map((s) => ({ key: s.key, name: s.displayName })),
-      secret_set: !!process.env.GEM_E2E_SECRET,
     };
   });
 
@@ -411,7 +410,7 @@ export const adminE2eAction = createServerFn({ method: "POST" })
   .middleware([requireHubAdmin])
   .inputValidator((input: unknown) =>
     z.object({
-      action: z.enum(["quick", "check", "cleanup", "cleanup_all", "secret"]),
+      action: z.enum(["quick", "check", "cleanup", "cleanup_all"]),
       key: appKey.optional(),
       id: z.string().uuid().optional(),
     }).parse(input),
@@ -432,7 +431,6 @@ export const adminE2eAction = createServerFn({ method: "POST" })
         return await e.checkRun(data.id);
       case "cleanup": return await e.cleanup({ max: 10 });
       case "cleanup_all": return await e.cleanup({ force: true, max: 10 });
-      case "secret": return { secret: process.env.GEM_E2E_SECRET ?? null };
     }
   });
 

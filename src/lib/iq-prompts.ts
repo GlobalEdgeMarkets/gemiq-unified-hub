@@ -109,7 +109,7 @@ const headers = { 'x-gem-e2e-secret': process.env.GEM_E2E_SECRET || '' };
 const T = (name: string) => \`[data-gem-test="\${name}"]\`;
 
 test('${app.name}: sign in, take assessment, Hub + HubSpot checks', async ({ page, request }) => {
-  test.setTimeout(290_000);
+  test.setTimeout(235_000); // Checkly browser checks stop at 240s
 
   // 1. Hub creates a fresh test account on a free trial
   const start = await request.post(\`\${HUB}/api/public/e2e/start\`, { headers, data: { assessment_key: KEY } });
@@ -161,7 +161,7 @@ test('${app.name}: sign in, take assessment, Hub + HubSpot checks', async ({ pag
 
   // 5. Hub checks its own records, HubSpot fields, marketing status and workflows
   let out: any = null;
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 12; i++) {
     const r = await request.get(\`\${HUB}/api/public/e2e/check/\${run.run_id}\`, { headers });
     out = await r.json();
     if (out.status !== 'running' && out.status !== 'started') break;

@@ -29,7 +29,10 @@ import {
   adminE2eSaveSettings,
   adminOverview,
   adminPersonLookup,
+  adminGetComposite,
+  adminSaveComposite,
 } from "@/lib/admin.functions";
+import { CompositePanel } from "@/components/admin/CompositePanel";
 import { ContentPanel } from "@/components/admin/ContentPanel";
 import { ReportsPanel } from "@/components/admin/ReportsPanel";
 import { TestsPanel } from "@/components/admin/TestsPanel";
@@ -144,6 +147,8 @@ function AdminConsole() {
   const e2eOverview = useServerFn(adminE2eOverview);
   const e2eAction = useServerFn(adminE2eAction);
   const e2eSave = useServerFn(adminE2eSaveSettings);
+  const getComposite = useServerFn(adminGetComposite);
+  const saveComposite = useServerFn(adminSaveComposite);
   const control = useMemo(
     () => ({ listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding }),
     [listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding],
@@ -201,6 +206,7 @@ function AdminConsole() {
     switch (section) {
       case "health": return <><PageIntro title="Health & settings" text="Is every assessment up and on the latest settings? Change banners and shared wording for all of them here." /><div className="grid gap-6"><ControlPanels {...ctrl} show="settings" /></div></>;
       case "content": return <><PageIntro title="Questions & scoring" text="Edit each assessment's questions, points and tiers. Save a draft, preview it, then publish." /><ContentPanel versions={contentVersions} action={contentAction} /></>;
+      case "composite": return <><PageIntro title="Combined score" text="How the overall GEM.IQ score is built from every assessment, and the methodology shown to customers." /><CompositePanel load={getComposite as never} save={saveComposite as never} /></>;
       case "onboard": return <><PageIntro title="Add an assessment" text="Connect a new assessment to the Hub step by step." /><div className="grid gap-6"><ControlPanels {...ctrl} show="onboarding" /></div></>;
       case "reports": return <><PageIntro title="Reports" text="Every result from all assessments, and how reports look and lock." /><ReportsPanel getSettings={getReportSettings} saveSettings={saveReportSettings} listReports={listReports} reportAction={reportAction} /></>;
       case "people": return <><PageIntro title="Find a person" text="Everything about one customer in one place." /><PersonLookup lookup={personLookup as never} reportAction={reportAction as never} onDelete={(e) => { setDeleteEmail(e); go("danger"); }} /></>;
@@ -253,7 +259,7 @@ function AdminConsole() {
 
 const NAV: { group: string; items: { key: string; label: string }[] }[] = [
   { group: "", items: [{ key: "overview", label: "Overview" }] },
-  { group: "Assessments", items: [{ key: "health", label: "Health & settings" }, { key: "content", label: "Questions & scoring" }, { key: "onboard", label: "Add an assessment" }] },
+  { group: "Assessments", items: [{ key: "health", label: "Health & settings" }, { key: "content", label: "Questions & scoring" }, { key: "composite", label: "Combined score" }, { key: "onboard", label: "Add an assessment" }] },
   { group: "Results", items: [{ key: "reports", label: "Reports" }] },
   { group: "Customers", items: [{ key: "people", label: "Find a person" }] },
   { group: "Quality", items: [{ key: "tests", label: "Tests" }, { key: "tracking", label: "Tracking" }] },

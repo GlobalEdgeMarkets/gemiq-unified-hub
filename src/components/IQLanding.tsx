@@ -25,7 +25,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
   return (
     <div className="min-h-screen w-full bg-background font-sans text-foreground antialiased">
       {/* Nav */}
-      <header className="border-b border-white/10 bg-gem-navy-deep backdrop-blur-xl">
+      <header className="border-b border-white/10 bg-gem-navy-deep text-white backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
           <div className="flex items-center gap-3">
             <a
@@ -279,7 +279,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
         </section>
       </main>
 
-      <footer className="border-t border-white/10 py-10">
+      <footer className="border-t border-white/10 bg-gem-navy-deep py-10 text-white">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 text-xs text-white/45 md:flex-row md:px-10">
           <span>© {new Date().getFullYear()} GlobalEdgeMarkets · GEM.IQ</span>
           <div className="flex items-center gap-5">

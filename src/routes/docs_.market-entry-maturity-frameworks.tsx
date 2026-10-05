@@ -77,7 +77,7 @@ const LEVELS = [
 function Page() {
   return (
     <div className="min-h-screen w-full bg-background font-sans text-foreground antialiased">
-      <header className="border-b border-white/10 bg-gem-navy-deep backdrop-blur-xl">
+      <header className="border-b border-white/10 bg-gem-navy-deep text-white backdrop-blur-xl">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
           <a
             href="https://globaledgemarkets.com"
@@ -248,7 +248,7 @@ function Page() {
         </section>
       </main>
 
-      <footer className="border-t border-white/10 py-10">
+      <footer className="border-t border-white/10 bg-gem-navy-deep py-10 text-white">
         <div className="mx-auto max-w-4xl px-6 text-xs text-white/45">
           © {new Date().getFullYear()} GlobalEdgeMarkets · GEM.IQ
         </div>

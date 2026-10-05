@@ -50,6 +50,13 @@
       "when": 1791168946265,
       "tag": "0006_growth_plan_picks",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791169614815,
+      "tag": "0007_restrict_composite_settings_read",
+      "breakpoints": true
     }
   ]
 }

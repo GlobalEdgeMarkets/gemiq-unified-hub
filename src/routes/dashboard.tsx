@@ -264,13 +264,19 @@ function DashboardPage() {
                       <h2 className="font-heading text-xl text-foreground">Composite GEM.IQ report</h2>
                       {data.composite.tier && (
                         <span className={`rounded-full border px-2.5 py-0.5 text-xs ${tierStyle(data.composite.tier)}`}>
-                          {TIER_LABEL[data.composite.tier] ?? data.composite.tier}
+                          {data.composite.tier_label ?? TIER_LABEL[data.composite.tier] ?? data.composite.tier}
                         </span>
                       )}
+                      <span className="rounded-full border border-border/60 px-2.5 py-0.5 text-xs text-muted-foreground">
+                        {data.composite.coverage.completed} of {data.composite.coverage.total} complete
+                      </span>
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Your overall maturity across {data.composite.coverage.completed} of{" "}
+                      Your overall business health across {data.composite.coverage.completed} of{" "}
                       {data.composite.coverage.total} GEM.IQ assessments.
+                      {data.composite.needed_for_tier > 0 &&
+                        ` Complete ${data.composite.needed_for_tier} more to see your overall maturity stage.`}{" "}
+                      <Link to="/methodology" className="underline underline-offset-4 hover:text-foreground">How this is scored</Link>
                     </p>
                     {data.composite.contributions.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-2">
@@ -286,6 +292,23 @@ function DashboardPage() {
                     )}
                   </div>
                 </div>
+
+                {data.composite.missing.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-xs uppercase tracking-wide text-muted-foreground">Complete your picture</h3>
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {data.composite.missing.map((m) => (
+                        <a key={m.assessment_key} href={m.url} target="_blank" rel="noreferrer"
+                          className={`rounded-xl border border-dashed p-4 text-sm transition-colors hover:bg-muted/40 ${data.composite.next?.assessment_key === m.assessment_key ? "border-gem-mint" : "border-border"}`}>
+                          <span className="block font-heading text-foreground">🔒 {m.display_name}</span>
+                          <span className="mt-1 block text-xs text-muted-foreground">
+                            {data.composite.next?.assessment_key === m.assessment_key ? "Suggested next — adds the most to your score" : "Not taken yet"}
+                          </span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {(data.composite.strengths.length > 0 || data.composite.gaps.length > 0) && (
                   <div className="mt-6 grid gap-6 sm:grid-cols-2">

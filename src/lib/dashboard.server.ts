@@ -3,7 +3,7 @@
 // their subscription state, and cross-IQ recommendations.
 import { getRequest } from "@tanstack/react-start/server";
 import { createHubSupabaseSSR, createHubServiceClient, selectCurrentSubscription } from "@/lib/hub/supabase-server";
-import { LIVE_REGISTRY, REGISTRY_BY_KEY, RETIRED_KEYS } from "@/lib/hub/assessments";
+import { LIVE_REGISTRY, REGISTRY_BY_KEY } from "@/lib/hub/assessments";
 import { normalizeTier, tierFromScore } from "@/lib/hub/assessments/tiers";
 import manifest from "@/lib/hub/manifest.json";
 

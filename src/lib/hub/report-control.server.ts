@@ -24,7 +24,22 @@ function db(): any {
   return createHubServiceClient();
 }
 
+export type RoadmapItem = {
+  horizon: "30" | "60" | "90";
+  action: string;
+  priority: "high" | "medium" | "low";
+  effort: "low" | "medium" | "high";
+  impact: "low" | "medium" | "high";
+  owner: string;
+};
+
+export type ExecutiveSummary = { headline: string; so_what: string; findings: string[]; priorities: string[] };
+
 export type ReportContent = {
+  executive_summary?: ExecutiveSummary;
+  dimension_insights?: Record<string, string>;
+  risks?: string[];
+  roadmap?: RoadmapItem[];
   summary?: string;
   strengths?: string[];
   gaps?: string[];
@@ -152,7 +167,56 @@ function appSentContent(meta: Record<string, unknown> | null): ReportContent {
 }
 
 // ---------- AI ----------
-async function aiWrite(row: SubRow, missing: string[]): Promise<Partial<ReportContent>> {
+type AiContext = {
+  benchmark: Benchmark | null;
+  tierRecommendations: string[];
+  methodology: string | null;
+  roadmapItems: number;
+};
+
+const LVL = ["low", "medium", "high"] as const;
+const pickLvl = (v: unknown, d: (typeof LVL)[number]) => (LVL.includes(v as never) ? (v as (typeof LVL)[number]) : d);
+const strArr = (v: unknown, max = 6) =>
+  Array.isArray(v) ? v.filter((x): x is string => typeof x === "string" && !!x.trim()).slice(0, max) : undefined;
+
+function cleanAi(parsed: Record<string, unknown>, missing: string[]): Partial<ReportContent> {
+  const out: Partial<ReportContent> = {};
+  for (const k of missing) {
+    const v = parsed[k];
+    if (k === "summary" && typeof v === "string") out.summary = v;
+    else if (k === "executive_summary" && v && typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      out.executive_summary = {
+        headline: typeof o.headline === "string" ? o.headline : "",
+        so_what: typeof o.so_what === "string" ? o.so_what : "",
+        findings: strArr(o.findings, 3) ?? [],
+        priorities: strArr(o.priorities, 3) ?? [],
+      };
+    } else if (k === "dimension_insights" && v && typeof v === "object" && !Array.isArray(v)) {
+      out.dimension_insights = Object.fromEntries(
+        Object.entries(v as Record<string, unknown>).filter(([, x]) => typeof x === "string") as [string, string][],
+      );
+    } else if (k === "roadmap" && Array.isArray(v)) {
+      out.roadmap = v
+        .filter((x): x is Record<string, unknown> => !!x && typeof x === "object" && typeof (x as { action?: unknown }).action === "string")
+        .slice(0, 12)
+        .map((x) => ({
+          horizon: (["30", "60", "90"].includes(String(x.horizon)) ? String(x.horizon) : "30") as RoadmapItem["horizon"],
+          action: String(x.action),
+          priority: pickLvl(x.priority, "medium") as RoadmapItem["priority"],
+          effort: pickLvl(x.effort, "medium"),
+          impact: pickLvl(x.impact, "medium"),
+          owner: typeof x.owner === "string" ? x.owner : "Leadership",
+        }));
+    } else {
+      const a = strArr(v);
+      if (a) (out as Record<string, unknown>)[k] = a;
+    }
+  }
+  return out;
+}
+
+async function aiWrite(row: SubRow, missing: string[], ctx: AiContext): Promise<Partial<ReportContent>> {
   const key = process.env.LOVABLE_API_KEY;
   if (!key) throw new Error("AI is not configured for this project.");
   const d = dims(row.dimensions);
@@ -160,8 +224,14 @@ async function aiWrite(row: SubRow, missing: string[]): Promise<Partial<ReportCo
     assessment: displayName(row.assessment_key),
     score: row.score,
     tier: normalizeTier(row.tier) ?? row.tier,
-    dimensions: d.map((x) => ({ name: x.label, score: x.score })),
+    dimensions: d.map((x) => ({ key: x.key, name: x.label, score: x.score })),
     company: row.metadata?.company ?? null,
+    benchmark: ctx.benchmark
+      ? { peer_median: ctx.benchmark.median, top_quartile: ctx.benchmark.top, basis: ctx.benchmark.label }
+      : null,
+    tier_guidance: ctx.tierRecommendations,
+    methodology: ctx.methodology,
+    roadmap_items: ctx.roadmapItems,
     write: missing,
   });
   const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
@@ -173,12 +243,19 @@ async function aiWrite(row: SubRow, missing: string[]): Promise<Partial<ReportCo
       reasoning: { effort: "low" },
       text: { format: { type: "json_object" } },
       instructions:
-        "You write sections of a GEM.IQ maturity assessment report for a business owner. " +
-        "Use only the scores given; never invent facts, numbers or benchmarks. Plain, direct language. " +
-        "Return a JSON object containing only the keys listed in `write`: summary (2-3 sentences), " +
-        "strengths (3 short bullets, from the highest dimensions), gaps (3 short bullets, from the lowest dimensions), " +
-        "recommendations (4 concrete actions tied to the gaps), next_steps (3 actions for the next 30 days). " +
-        "Arrays contain strings of at most 30 words each.",
+        "You are a senior strategy consultant writing sections of a GEM.IQ maturity assessment report for a business leader, " +
+        "in the style of a top-tier consulting firm: insight first, specific, prioritised, no filler. " +
+        "Use only the scores, benchmark, tier guidance and methodology given; never invent facts, statistics, clients or numbers. " +
+        "Return a JSON object containing only the keys listed in `write`:\n" +
+        "executive_summary: { headline (one sentence, the single most important conclusion), so_what (one sentence on business consequence), " +
+        "findings (3 bullets), priorities (3 bullets) };\n" +
+        "summary (2-3 sentences); strengths (3 bullets from the highest dimensions); gaps (3 bullets from the lowest dimensions); " +
+        "risks (3 bullets: what happens if the gaps are not addressed);\n" +
+        "dimension_insights: object keyed by each dimension `key`, value one sentence interpreting that score;\n" +
+        "recommendations (4 concrete actions tied to the gaps); next_steps (3 actions for the next 30 days);\n" +
+        "roadmap: array of exactly `roadmap_items` objects { horizon: \"30\"|\"60\"|\"90\", action, priority: low|medium|high, " +
+        "effort: low|medium|high, impact: low|medium|high, owner (a role such as CEO, Head of Sales) }, spread across all three horizons. " +
+        "All strings at most 30 words.",
       input: `Assessment data (json):\n${input}`,
     }),
   });
@@ -196,37 +273,66 @@ async function aiWrite(row: SubRow, missing: string[]): Promise<Partial<ReportCo
     .map((c) => c.text ?? "")
     .join("");
   try {
-    const parsed = JSON.parse(text) as Partial<ReportContent>;
-    const out: Partial<ReportContent> = {};
-    for (const k of missing) {
-      const v = (parsed as Record<string, unknown>)[k];
-      if (k === "summary" && typeof v === "string") out.summary = v;
-      else if (Array.isArray(v)) (out as Record<string, unknown>)[k] = v.filter((x) => typeof x === "string").slice(0, 6);
-    }
-    return out;
+    return cleanAi(JSON.parse(text) as Record<string, unknown>, missing);
   } catch {
     throw new Error("The AI returned an unreadable report. Try Regenerate.");
   }
 }
 
-const TEXT_SECTIONS = ["summary", "strengths", "gaps", "recommendations", "next_steps"] as const;
+/** Content keys each section needs. */
+const SECTION_CONTENT: Partial<Record<SectionKey, (keyof ReportContent)[]>> = {
+  executive_summary: ["executive_summary"],
+  summary: ["summary"],
+  dimensions: ["dimension_insights"],
+  strengths: ["strengths"],
+  gaps: ["gaps", "risks"],
+  recommendations: ["recommendations"],
+  roadmap: ["roadmap"],
+  next_steps: ["next_steps"],
+};
 
-/** Builds and stores content once. App-sent text always wins; AI fills missing enabled sections. */
-async function ensureContent(row: SubRow, settings: ReportSettings, force = false): Promise<ReportContent> {
-  if (row.report_content && !force) return row.report_content;
-  const enabled = new Set(settings.sections.filter((s) => s.enabled).map((s) => s.key));
+function hasValue(v: unknown) {
+  if (v == null) return false;
+  if (typeof v === "string") return !!v.trim();
+  if (Array.isArray(v)) return v.length > 0;
+  if (typeof v === "object") return Object.keys(v).length > 0;
+  return true;
+}
+
+async function aiContext(row: SubRow, settings: ReportSettings, benchmark: Benchmark | null): Promise<AiContext> {
+  let tierRecommendations: string[] = [];
+  let methodology: string | null = null;
+  try {
+    const { publishedFor } = await import("./content.server");
+    const pub = (await publishedFor(row.assessment_key)) as { body?: { tier_recommendations?: Record<string, string[]>; methodology?: { summary?: string } } } | null;
+    const t = normalizeTier(row.tier) ?? tierFor(row.score, settings.tiers)?.key ?? "";
+    tierRecommendations = pub?.body?.tier_recommendations?.[t] ?? [];
+    methodology = pub?.body?.methodology?.summary ?? null;
+  } catch { /* content optional */ }
+  return { benchmark, tierRecommendations, methodology, roadmapItems: settings.roadmap_items };
+}
+
+/**
+ * Builds and stores content once. App-sent text always wins; AI fills enabled sections
+ * that have no text yet. Existing text is never rewritten unless `force` (admin Regenerate).
+ */
+async function ensureContent(row: SubRow, settings: ReportSettings, benchmark: Benchmark | null, force = false): Promise<ReportContent> {
+  const stored: ReportContent = force ? {} : { ...(row.report_content ?? {}) };
+  const content: ReportContent = { ...stored, source: { ...(stored.source ?? {}) } };
   const app = appSentContent(row.metadata);
-  const content: ReportContent = { source: {} };
-  const missing: string[] = [];
-  for (const k of TEXT_SECTIONS) {
-    const v = app[k];
-    if (v && (typeof v === "string" ? v.trim() : v.length)) {
+  for (const [k, v] of Object.entries(app)) {
+    if (hasValue(v) && !hasValue((content as Record<string, unknown>)[k])) {
       (content as Record<string, unknown>)[k] = v;
       content.source![k] = "app";
-    } else if (enabled.has(k)) missing.push(k);
+    }
   }
+  const enabled = settings.sections.filter((s) => s.enabled).map((s) => s.key);
+  const missing = [...new Set(enabled.flatMap((k) => SECTION_CONTENT[k] ?? []))].filter(
+    (k) => !hasValue((content as Record<string, unknown>)[k]),
+  );
+  if (!missing.length && row.report_content && !force) return row.report_content;
   if (missing.length && row.score != null) {
-    const ai = await aiWrite(row, missing);
+    const ai = await aiWrite(row, missing, await aiContext(row, settings, benchmark));
     for (const [k, v] of Object.entries(ai)) {
       (content as Record<string, unknown>)[k] = v;
       content.source![k] = "ai";
@@ -237,6 +343,78 @@ async function ensureContent(row: SubRow, settings: ReportSettings, force = fals
     .update({ report_content: content, report_generated_at: new Date().toISOString() })
     .eq("id", row.id);
   return content;
+}
+
+// ---------- benchmarks ----------
+export type Benchmark = {
+  source: "industry" | "all" | "reference";
+  label: string;
+  n: number;
+  median: number;
+  top: number;
+  /** Share of peers scoring below this result (real data only). */
+  percentile: number | null;
+  dimensions: Record<string, number>;
+};
+
+const quant = (xs: number[], q: number) => {
+  if (!xs.length) return 0;
+  const s = [...xs].sort((a, b) => a - b);
+  const i = (s.length - 1) * q;
+  const lo = Math.floor(i);
+  const hi = Math.ceil(i);
+  return Math.round(s[lo] + (s[hi] - s[lo]) * (i - lo));
+};
+
+export async function computeBenchmark(
+  assessmentKey: string,
+  industry: string | null,
+  score: number | null,
+  settings: ReportSettings,
+): Promise<Benchmark> {
+  type R = { email: string; user_id: string | null; score: number | null; dimensions: unknown; submitted_at: string };
+  const { data } = await db()
+    .from("submissions")
+    .select("email,user_id,score,dimensions,submitted_at")
+    .eq("assessment_key", assessmentKey)
+    .not("score", "is", null)
+    .order("submitted_at", { ascending: false })
+    .limit(5000);
+  const latest = new Map<string, R>();
+  for (const r of (data ?? []) as R[]) {
+    const e = r.email.toLowerCase();
+    if (/\+(gemtest|checkly)-/.test(e)) continue;
+    if (!latest.has(e)) latest.set(e, r);
+  }
+  const rows = [...latest.values()];
+  const ids = [...new Set(rows.map((r) => r.user_id).filter((x): x is string => !!x))];
+  const ind = new Map<string, string | null>();
+  if (industry && ids.length) {
+    const { data: profs } = await db().from("profiles").select("id,industry").in("id", ids);
+    for (const p of (profs ?? []) as { id: string; industry: string | null }[]) ind.set(p.id, p.industry);
+  }
+  const build = (src: Benchmark["source"], label: string, group: R[]): Benchmark => {
+    const scores = group.map((r) => Number(r.score)).filter(Number.isFinite);
+    const dimVals: Record<string, number[]> = {};
+    for (const r of group) for (const d of dims(r.dimensions)) (dimVals[d.key] ??= []).push(d.score);
+    return {
+      source: src,
+      label,
+      n: scores.length,
+      median: quant(scores, 0.5),
+      top: quant(scores, 0.75),
+      percentile: score == null ? null : Math.round((scores.filter((x) => x < score).length / scores.length) * 100),
+      dimensions: Object.fromEntries(Object.entries(dimVals).map(([k, v]) => [k, quant(v, 0.5)])),
+    };
+  };
+  const min = settings.benchmark.min_group;
+  if (industry) {
+    const group = rows.filter((r) => r.user_id && (ind.get(r.user_id) ?? "").toLowerCase() === industry.toLowerCase());
+    if (group.length >= min) return build("industry", `${industry} companies`, group);
+  }
+  if (rows.length >= min) return build("all", "All companies assessed", rows);
+  const ref = settings.benchmark.reference[assessmentKey] ?? settings.benchmark.reference.default ?? { median: 52, top: 68 };
+  return { source: "reference", label: "GEM reference values", n: rows.length, median: ref.median, top: ref.top, percentile: null, dimensions: {} };
 }
 
 // ---------- report view ----------
@@ -258,7 +436,49 @@ export type ReportView = {
   content: ReportContent;
   copy: ReportSettings["copy"];
   unlock_url: string;
+  company: string | null;
+  industry: string | null;
+  report_ref: string;
+  tiers: { key: string; label: string; min: number; color: string }[];
+  tier_key: string | null;
+  benchmark: Benchmark | null;
+  methodology: {
+    scoring: string;
+    maturity_model: string;
+    how_to_read: string;
+    summary: string | null;
+    frameworks: string[];
+    rationale: { title: string; text: string }[];
+  };
 };
+
+async function industryFor(userId: string | null): Promise<string | null> {
+  if (!userId) return null;
+  const { data } = await db().from("profiles").select("industry").eq("id", userId).maybeSingle();
+  return (data as { industry: string | null } | null)?.industry ?? null;
+}
+
+async function methodologyFor(key: string): Promise<ReportView["methodology"]> {
+  const { DEFAULT_METHODOLOGY } = await import("@/lib/composite");
+  let general = DEFAULT_METHODOLOGY;
+  try {
+    const { getCompositeConfig } = await import("./composite.server");
+    general = (await getCompositeConfig()).methodology;
+  } catch { /* defaults */ }
+  let summary: string | null = null;
+  let frameworks: string[] = [];
+  let rationale: { title: string; text: string }[] = [];
+  try {
+    const { publishedFor } = await import("./content.server");
+    const pub = (await publishedFor(key)) as {
+      body?: { methodology?: { summary?: string; frameworks?: string[] }; sections?: { title: string; rationale?: string }[] };
+    } | null;
+    summary = pub?.body?.methodology?.summary ?? null;
+    frameworks = pub?.body?.methodology?.frameworks ?? [];
+    rationale = (pub?.body?.sections ?? []).filter((x) => x.rationale).map((x) => ({ title: x.title, text: x.rationale! }));
+  } catch { /* content optional */ }
+  return { scoring: general.scoring, maturity_model: general.maturity_model, how_to_read: general.how_to_read, summary, frameworks, rationale };
+}
 
 export async function loadReport(
   id: string,
@@ -280,8 +500,16 @@ export async function loadReport(
     .filter((s) => s.enabled)
     .map((s) => ({ key: s.key, locked: locked && !allowed.has(s.key) && s.key !== "talk_to_gem" }));
 
+  const industry = await industryFor(row.user_id).catch(() => null);
+  const enabledKeys = new Set(settings.sections.filter((s) => s.enabled).map((s) => s.key));
+  const benchmark = await computeBenchmark(row.assessment_key, industry, row.score, settings).catch((e) => {
+    console.error("[report-control] benchmark failed", e);
+    return null;
+  });
+  const methodology = await methodologyFor(row.assessment_key);
+
   // Locked viewers never see (or trigger generation of) the full text.
-  const content = locked && !viewer.isAdmin ? {} : await ensureContent(row, settings).catch((e) => {
+  const content = locked && !viewer.isAdmin ? {} : await ensureContent(row, settings, benchmark).catch((e) => {
     console.error("[report-control] content failed", e);
     return row.report_content ?? {};
   });
@@ -314,7 +542,109 @@ export async function loadReport(
     dimensions: settings.trial_access === "score" && locked ? [] : dims(row.dimensions),
     content: locked && !viewer.isAdmin ? {} : content,
     copy: settings.copy,
-    unlock_url: `${HUB}/auth?mode=signup&trial=1&plan=quarterly`,
+    unlock_url: `${HUB}/auth?mode=signup&plan=complete`,
+    company: typeof meta.company === "string" ? meta.company : null,
+    industry,
+    report_ref: `GEM-${row.assessment_key.toUpperCase()}-${row.id.slice(0, 8).toUpperCase()}`,
+    tiers: settings.tiers,
+    tier_key: tier ? tier.key : null,
+    benchmark: enabledKeys.has("benchmark") || enabledKeys.has("dimensions") ? (locked && !viewer.isAdmin ? benchmarkTeaser(benchmark) : benchmark) : null,
+    methodology,
+  };
+}
+
+function benchmarkTeaser(b: Benchmark | null): Benchmark | null {
+  return b ? { ...b, dimensions: {} } : null;
+}
+
+// ---------- combined report ----------
+export type CombinedReportView = {
+  company: string | null;
+  email: string;
+  generated_at: string;
+  score: number | null;
+  tier_label: string | null;
+  tier_key: string | null;
+  tiers: { key: string; label: string; min: number; color: string }[];
+  needed_for_tier: number;
+  coverage: { completed: number; total: number };
+  locked: boolean;
+  contributions: { assessment_key: string; display_name: string; score: number | null; tier: string | null; report_id: string | null }[];
+  missing: { assessment_key: string; display_name: string; url: string }[];
+  next: { assessment_key: string; display_name: string; url: string } | null;
+  strengths: { label: string; score: number; sources: string[] }[];
+  gaps: { label: string; score: number; sources: string[] }[];
+  insights: string[];
+  roadmap: (RoadmapItem & { assessment: string })[];
+  methodology: { overview: string; scoring: string; maturity_model: string; how_to_read: string };
+  unlock_url: string;
+};
+
+/** Combined GEM.IQ report for the signed-in user, built from the dashboard composite. */
+export async function loadCombinedReport(): Promise<CombinedReportView | null> {
+  const { loadDashboard } = await import("@/lib/dashboard.server");
+  const dash = await loadDashboard();
+  if (!dash) return null;
+  const { getCompositeConfig } = await import("./composite.server");
+  const { DEFAULT_COMPOSITE, DEFAULT_METHODOLOGY } = await import("@/lib/composite");
+  const cfg = await getCompositeConfig().catch(() => ({ settings: DEFAULT_COMPOSITE, methodology: DEFAULT_METHODOLOGY }));
+  const c = dash.composite;
+  const sub = dash.subscription;
+  const locked = !(sub && (sub.status === "active" || sub.status === "trialing") && !sub.trialing);
+
+  // Latest stored content per assessment for the roadmap roll-up.
+  const { data } = await db()
+    .from("submissions")
+    .select("id,assessment_key,report_content,submitted_at")
+    .ilike("email", dash.user.email)
+    .eq("report_hidden", false)
+    .order("submitted_at", { ascending: false });
+  const latest = new Map<string, { id: string; report_content: ReportContent | null }>();
+  for (const r of (data ?? []) as { id: string; assessment_key: string; report_content: ReportContent | null }[]) {
+    if (!latest.has(r.assessment_key)) latest.set(r.assessment_key, r);
+  }
+  const rank = { high: 0, medium: 1, low: 2 } as const;
+  const roadmap = [...latest.entries()]
+    .flatMap(([k, r]) => (r.report_content?.roadmap ?? []).map((x) => ({ ...x, assessment: displayName(k) })))
+    .sort((a, b) => Number(a.horizon) - Number(b.horizon) || rank[a.priority] - rank[b.priority] || rank[b.impact] - rank[a.impact])
+    .slice(0, 12);
+
+  // Rule-based cross-assessment insights (no invented facts).
+  const scored = c.contributions.filter((x) => x.score != null) as { display_name: string; score: number }[];
+  const insights: string[] = [];
+  if (scored.length >= 2) {
+    const hi = scored[0];
+    const lo = scored[scored.length - 1];
+    if (hi.score - lo.score >= 15)
+      insights.push(`${hi.display_name} (${hi.score}) is well ahead of ${lo.display_name} (${lo.score}). Imbalances like this usually cap growth at the weakest discipline, so ${lo.display_name} is where effort pays back fastest.`);
+    else insights.push(`Your disciplines are evenly matched (${lo.score}–${hi.score}). Progress now comes from lifting all of them together rather than fixing one outlier.`);
+  }
+  if (c.gaps[0]) insights.push(`Your weakest area across assessments is ${c.gaps[0].label} (${c.gaps[0].score}), seen in ${c.gaps[0].sources.join(", ")}.`);
+  if (c.strengths[0]) insights.push(`Your strongest area is ${c.strengths[0].label} (${c.strengths[0].score}), a foundation to build the roadmap on.`);
+  if (c.next) insights.push(`Completing ${c.next.display_name} next adds the most weight to your combined picture.`);
+
+  return {
+    company: dash.user.company,
+    email: dash.user.email,
+    generated_at: new Date().toISOString(),
+    score: c.score,
+    tier_label: c.tier_label,
+    tier_key: c.tier,
+    tiers: cfg.settings.tiers.map((t: { key: string; label: string; min: number; color?: string }, i: number) => ({
+      key: t.key, label: t.label, min: t.min, color: t.color ?? DEFAULT_REPORT_SETTINGS.tiers[i]?.color ?? "#2C365B",
+    })),
+    needed_for_tier: c.needed_for_tier,
+    coverage: c.coverage,
+    locked,
+    contributions: c.contributions.map((x) => ({ ...x, report_id: latest.get(x.assessment_key)?.id ?? null })),
+    missing: c.missing,
+    next: c.next,
+    strengths: c.strengths.slice(0, 3),
+    gaps: c.gaps.slice(0, 3),
+    insights: locked ? insights.slice(0, 1) : insights,
+    roadmap: locked ? [] : roadmap,
+    methodology: cfg.methodology,
+    unlock_url: `${HUB}/auth?mode=signup&plan=complete`,
   };
 }
 
@@ -406,7 +736,9 @@ export async function reportAction(id: string, action: ReportAction, by: string)
 
   if (action === "regenerate") {
     const settings = await effectiveSettings(row.assessment_key);
-    await ensureContent(row, settings, true);
+    const industry = await industryFor(row.user_id);
+    const bench = await computeBenchmark(row.assessment_key, industry, row.score, settings).catch(() => null);
+    await ensureContent(row, settings, bench, true);
   }
   if (action === "resend") {
     const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");

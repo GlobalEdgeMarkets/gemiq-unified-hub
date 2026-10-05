@@ -13,3 +13,9 @@ export const getReport = createServerFn({ method: "GET" })
     if (!report) return { state: "missing" as const };
     return { state: "ok" as const, report };
   });
+
+export const getCombinedReport = createServerFn({ method: "GET" }).handler(async () => {
+  const { loadCombinedReport } = await import("@/lib/hub/report-control.server");
+  const r = await loadCombinedReport();
+  return r ? { state: "ok" as const, report: r } : { state: "anon" as const };
+});

@@ -32,6 +32,7 @@ import { Route as DocsMarketEntryMaturityFrameworksRouteImport } from './routes/
 import { Route as MarketEntrySplatRouteImport } from './routes/market-entry.$'
 import { Route as ReadinessiqSplatRouteImport } from './routes/readinessiq.$'
 import { Route as ReportIdRouteImport } from './routes/report.$id'
+import { Route as ReportCombinedRouteImport } from './routes/report.combined'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
@@ -169,6 +170,11 @@ const ReadinessiqSplatRoute = ReadinessiqSplatRouteImport.update({
 const ReportIdRoute = ReportIdRouteImport.update({
   id: '/report/$id',
   path: '/report/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportCombinedRoute = ReportCombinedRouteImport.update({
+  id: '/report/combined',
+  path: '/report/combined',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
@@ -309,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/report/$id': typeof ReportIdRoute
+  '/report/combined': typeof ReportCombinedRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -354,6 +361,7 @@ export interface FileRoutesByTo {
   '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/report/$id': typeof ReportIdRoute
+  '/report/combined': typeof ReportCombinedRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -400,6 +408,7 @@ export interface FileRoutesById {
   '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
   '/report/$id': typeof ReportIdRoute
+  '/report/combined': typeof ReportCombinedRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -447,6 +456,7 @@ export interface FileRouteTypes {
     | '/market-entry/$'
     | '/readinessiq/$'
     | '/report/$id'
+    | '/report/combined'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
@@ -492,6 +502,7 @@ export interface FileRouteTypes {
     | '/market-entry/$'
     | '/readinessiq/$'
     | '/report/$id'
+    | '/report/combined'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
@@ -537,6 +548,7 @@ export interface FileRouteTypes {
     | '/market-entry/$'
     | '/readinessiq/$'
     | '/report/$id'
+    | '/report/combined'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
@@ -581,6 +593,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DocsMarketEntryMaturityFrameworksRoute: typeof DocsMarketEntryMaturityFrameworksRoute
   ReportIdRoute: typeof ReportIdRoute
+  ReportCombinedRoute: typeof ReportCombinedRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
@@ -764,6 +777,13 @@ declare module '@tanstack/react-router' {
       path: '/report/$id'
       fullPath: '/report/$id'
       preLoaderRoute: typeof ReportIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report/combined': {
+      id: '/report/combined'
+      path: '/report/combined'
+      fullPath: '/report/combined'
+      preLoaderRoute: typeof ReportCombinedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.lovable/oauth/consent': {
@@ -957,6 +977,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocsMarketEntryMaturityFrameworksRoute:
     DocsMarketEntryMaturityFrameworksRoute,
   ReportIdRoute: ReportIdRoute,
+  ReportCombinedRoute: ReportCombinedRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,

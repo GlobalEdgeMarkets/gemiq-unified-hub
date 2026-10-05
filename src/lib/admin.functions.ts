@@ -1,3 +1,4 @@
+import { SECTION_KEYS } from "@/lib/report-settings";
 // Thin server-function wrappers for the admin console.
 // Module scope holds imports and server-fn declarations only (tss-serverfn-split).
 // JOB_SECRET is never involved here: these call the shared handler bodies
@@ -244,9 +245,9 @@ export const adminVerifyOnboarding = createServerFn({ method: "POST" })
   });
 
 // ---- Report control ----
-const sectionKey = z.enum(["summary", "score_tier", "dimensions", "strengths", "gaps", "recommendations", "next_steps", "talk_to_gem"]);
+const sectionKey = z.enum(SECTION_KEYS);
 const reportOverride = z.object({
-  sections: z.array(z.object({ key: sectionKey, enabled: z.boolean() })).max(8).optional(),
+  sections: z.array(z.object({ key: sectionKey, enabled: z.boolean() })).max(20).optional(),
   trial_access: z.enum(["score", "score_tier", "score_tier_dimensions"]).optional(),
   copy: z.object({
     title_pattern: z.string().max(120),
@@ -263,6 +264,11 @@ const reportOverride = z.object({
     color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
   })).min(2).max(8).optional(),
   mode: z.enum(["app", "hub"]).optional(),
+  benchmark: z.object({
+    min_group: z.number().int().min(3).max(500),
+    reference: z.record(z.string().max(32), z.object({ median: z.number().min(0).max(100), top: z.number().min(0).max(100) })),
+  }).partial().optional(),
+  roadmap_items: z.number().int().min(3).max(12).optional(),
 });
 
 export const adminGetReportSettings = createServerFn({ method: "GET" })

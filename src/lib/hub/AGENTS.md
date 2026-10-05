@@ -1,0 +1,7 @@
+## Hub server notes
+
+- Report control lives in `hub_report_settings` (global row + per-app override rows) via `src/lib/hub/report-control.server.ts`; shapes/defaults/lock rule in client-safe `src/lib/report-settings.ts`. Report lock decisions everywhere (dashboard, history, report page) go through `isReportLocked` so admin overrides apply uniformly.
+- Hub-built report text is generated once per submission and stored in `submissions.report_content`; app-sent `recommendations` always win over AI, and only an admin "Regenerate" rewrites it.
+- "Reset all reports" (`src/lib/hub/admin/reset-reports.server.ts`) runs in small client-driven batches (per-person IQ purge links + clearing gem_* HubSpot fields) and only wipes Hub results in the final step, so a failed run can be repeated safely.
+- End-to-end tests live in `src/lib/hub/e2e/e2e.server.ts` (runs in `hub_e2e_runs`, settings in `hub_e2e_settings`), started only from Admin → Tests (no public endpoints); they only ever create or delete addresses matching the configured `<local>+gemtest-…@<domain>` pattern.
+- Hub report pages (`/report/$id`, `/report/combined`) share section components in `src/components/report/ReportParts.tsx`; peer benchmarks come from `computeBenchmark` (real data only above the configured minimum group, else Admin reference values) and AI fills only content keys that are still empty, so stored text is never rewritten outside admin Regenerate.

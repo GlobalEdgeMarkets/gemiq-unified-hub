@@ -193,7 +193,7 @@
       "consultation_clicked"
     ],
     "control_fields": "control.global.notice, control.apps[<key>].paused/notice — read on boot and every 5 minutes",
-    "report_fields": "report.apps[<key>]: sections (ordered, enabled), trial_access, copy (title_pattern, intro, disclaimer, closing_message, closing_cta, closing_url), tiers (key, label, min, color), mode (app | hub). When mode = hub, link users to the submit response's report_url instead of rendering a report.",
+    "report_fields": "report.apps[<key>]: sections (ordered, enabled), trial_access, copy (title_pattern, intro, disclaimer, closing_message, closing_cta, closing_url), tiers (key, label, min, color), mode (app | hub), benchmark (min_group, reference), roadmap_items. Section keys may grow (e.g. executive_summary, maturity, benchmark, roadmap, methodology); ignore keys you do not render. When mode = hub, link users to the submit response's report_url instead of rendering a report.",
     "submit_extras": {
       "recommendations": "string[] or { summary, strengths[], gaps[], recommendations[], next_steps[] } — optional; the Hub uses it in Hub-built reports",
       "content_version": "integer — the Hub content version used for this run (omit when using built-in questions); send answers as { questionKey: optionKey } so the Hub can re-check the score"

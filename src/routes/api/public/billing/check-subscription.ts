@@ -14,7 +14,7 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
         if (!user) return json({ active: false, authenticated: false }, undefined, request);
 
         const svc = createHubServiceClient();
-        const COLUMNS = "status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id,trial_ends_at,trial_assessments_used,trial_assessment_limit";
+        const COLUMNS = "status,lookup_key,current_period_end,cancel_at_period_end,stripe_subscription_id,trial_ends_at,trial_assessments_used,trial_assessment_limit,selected_assessments";
         type SubRow = {
           status: string;
           lookup_key: string | null;
@@ -24,6 +24,7 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
           trial_ends_at: string | null;
           trial_assessments_used: number | null;
           trial_assessment_limit: number | null;
+          selected_assessments: string[] | null;
         };
         let { data, error } = await selectCurrentSubscription<SubRow>(svc, user.id, COLUMNS);
         if (error) return json({ error: "subscription_lookup_failed" }, { status: 500 }, request);
@@ -54,8 +55,15 @@ export const Route = createFileRoute("/api/public/billing/check-subscription")({
           .is("consumed_at", null)
           .or(`user_id.eq.${user.id},email.eq.${(user.email ?? "").toLowerCase()}`);
 
+        const { planByLookupKey } = await import("@/lib/hub/stripe");
+        const plan = planByLookupKey(data?.lookup_key);
+        const planLimit = plan?.tier === "growth" ? (plan.assessments_included ?? 3) : null;
+
         return json({
           authenticated: true,
+          plan_tier: active ? (plan?.tier ?? "complete") : null,
+          selected_assessments: data?.selected_assessments ?? [],
+          plan_assessment_limit: planLimit,
           active,
           trialing,
           trial_exhausted: trialExhausted,

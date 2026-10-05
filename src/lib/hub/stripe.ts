@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import manifest from "./manifest.json";
 
 let _stripe: Stripe | null = null;
 export function stripe(): Stripe {
@@ -19,8 +20,6 @@ export async function priceByLookupKey(lookupKey: string): Promise<Stripe.Price>
  * Recurring plans (Growth / Complete) come from the manifest. Prices are
  * created on first use so the catalog self-heals across Stripe environments.
  */
-import manifest from "./manifest.json";
-
 type ManifestPlan = (typeof manifest.pricing.plans)[number];
 
 export const PLAN_LOOKUP_KEYS = new Set(manifest.pricing.plans.map((p) => p.lookup_key));

@@ -100,9 +100,43 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             status: string;
             trial_assessments_used: number | null;
             trial_assessment_limit: number | null;
-          }>(svc, user.id, "id,status,trial_assessments_used,trial_assessment_limit");
+            lookup_key: string | null;
+            selected_assessments: string[] | null;
+          }>(svc, user.id, "id,status,trial_assessments_used,trial_assessment_limit,lookup_key,selected_assessments");
 
           hasPaidSub = sub?.status === "active";
+
+          // Growth plan: covers a fixed number of different assessments, picked
+          // once — the first ones taken. Retakes of a picked assessment are free;
+          // a new one beyond the limit needs an upgrade (or a single credit).
+          if (sub && hasPaidSub) {
+            const { planByLookupKey } = await import("@/lib/hub/stripe");
+            const plan = planByLookupKey(sub.lookup_key);
+            const limit = plan?.tier === "growth" ? (plan.assessments_included ?? 3) : null;
+            if (limit != null) {
+              const picks = sub.selected_assessments ?? [];
+              if (!picks.includes(payload.assessment_key)) {
+                if (picks.length >= limit) {
+                  if (!creditId) {
+                    await captureServer("plan_limit_reached", user.id, {
+                      assessment_key: payload.assessment_key, source: sourceFromRequest(request), picks, limit,
+                    });
+                    return json({
+                      error: "plan_limit_reached",
+                      selected_assessments: picks,
+                      plan_assessment_limit: limit,
+                      message: `Your Growth plan covers ${limit} assessments (${picks.join(", ")}). Upgrade to Complete to add more.`,
+                    }, { status: 402 }, request);
+                  }
+                  hasPaidSub = false; // fall through to the single credit
+                } else {
+                  await svc.from("subscriptions")
+                    .update({ selected_assessments: [...picks, payload.assessment_key] })
+                    .eq("id", sub.id);
+                }
+              }
+            }
+          }
           if (sub && sub.status === "trialing") {
             const used = sub.trial_assessments_used ?? 0;
             const limit = sub.trial_assessment_limit ?? 1;

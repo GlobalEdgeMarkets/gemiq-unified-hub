@@ -59,7 +59,9 @@ function CopyButton({ text, label = "Copy prompt" }: { text: string; label?: str
 
 export function ControlPanels(props: {
   listApps: Fn; updateApp: Fn; updateGlobal: Fn; checkHealth: Fn; registerApp: Fn; verifyOnboarding: Fn;
+  show?: "settings" | "onboarding";
 }) {
+  const show = props.show ?? "settings";
   const [data, setData] = useState<{ apps: App[]; global: Global | null; manifest_version: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const reload = useCallback(async () => {
@@ -73,9 +75,9 @@ export function ControlPanels(props: {
 
   return (
     <>
-      <SharedSettings data={data} updateGlobal={props.updateGlobal} updateApp={props.updateApp} reload={reload} />
-      <HealthPanel data={data} checkHealth={props.checkHealth} reload={reload} />
-      <Onboarding data={data} registerApp={props.registerApp} verify={props.verifyOnboarding} updateApp={props.updateApp} reload={reload} />
+      {show === "settings" && <HealthPanel data={data} checkHealth={props.checkHealth} reload={reload} />}
+      {show === "settings" && <SharedSettings data={data} updateGlobal={props.updateGlobal} updateApp={props.updateApp} reload={reload} />}
+      {show === "onboarding" && <Onboarding data={data} registerApp={props.registerApp} verify={props.verifyOnboarding} updateApp={props.updateApp} reload={reload} />}
     </>
   );
 }

@@ -8,7 +8,6 @@ import {
   adminImportLegacyUser,
   adminDeleteUser,
   adminRegistryStatus,
-  adminListSubmissions,
   adminPostHogAudit,
   adminListApps,
   adminUpdateApp,
@@ -28,11 +27,17 @@ import {
   adminE2eOverview,
   adminE2eAction,
   adminE2eSaveSettings,
+  adminOverview,
+  adminPersonLookup,
 } from "@/lib/admin.functions";
 import { ContentPanel } from "@/components/admin/ContentPanel";
 import { ReportsPanel } from "@/components/admin/ReportsPanel";
 import { TestsPanel } from "@/components/admin/TestsPanel";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { z } from "zod";
+import { AdminOverview } from "@/components/admin/AdminOverview";
+import { PersonLookup } from "@/components/admin/PersonLookup";
+import { ResetCard } from "@/components/admin/ReportsPanel";
+import { PageIntro } from "@/components/admin/ui";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,6 +46,7 @@ import { ControlPanels } from "@/components/admin/ControlPanels";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
+  validateSearch: (s: Record<string, unknown>) => z.object({ section: z.string().optional() }).parse({ section: typeof s.section === "string" ? s.section : undefined }),
   component: AdminConsole,
   head: () =>
     buildHead({
@@ -57,10 +63,18 @@ type Json = unknown;
 
 function Panel({ data }: { data: Json }) {
   if (data === undefined) return null;
+  if (data && typeof data === "object" && "error" in (data as object)) {
+    return <p className="mt-4 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">✗ {String((data as { error: unknown }).error)}</p>;
+  }
+  if (typeof data === "string") return <p className="mt-4 rounded-lg bg-muted/60 p-3 text-sm text-foreground/80">{data}</p>;
+  const lines = Object.entries((data ?? {}) as Record<string, unknown>)
+    .filter(([, v]) => v !== null && v !== undefined && typeof v !== "object")
+    .map(([k, v]) => `${k.replace(/_/g, " ")}: ${v === true ? "yes" : v === false ? "no" : String(v)}`);
   return (
-    <pre className="mt-4 max-h-80 overflow-auto rounded-lg bg-muted/60 p-3 text-xs leading-relaxed text-foreground/80">
-      {typeof data === "string" ? data : JSON.stringify(data, null, 2)}
-    </pre>
+    <div className="mt-4 rounded-lg bg-muted/60 p-3 text-sm">
+      <p className="font-medium text-primary">✓ Done</p>
+      {lines.length ? <ul className="mt-2 grid gap-1 text-foreground/80">{lines.map((l) => <li key={l}>{l}</li>)}</ul> : null}
+    </div>
   );
 }
 
@@ -104,7 +118,13 @@ function AdminConsole() {
   const importUser = useServerFn(adminImportLegacyUser);
   const deleteUser = useServerFn(adminDeleteUser);
   const registryStatus = useServerFn(adminRegistryStatus);
-  const listSubs = useServerFn(adminListSubmissions);
+  const overview = useServerFn(adminOverview);
+  const personLookup = useServerFn(adminPersonLookup);
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const section = NAV.flatMap((g) => g.items).some((i) => i.key === search.section) ? search.section! : "overview";
+  const go = (k: string) => navigate({ search: { section: k } });
+  const [deleteEmail, setDeleteEmail] = useState("");
   const phAudit = useServerFn(adminPostHogAudit);
   const listApps = useServerFn(adminListApps);
   const updateApp = useServerFn(adminUpdateApp);
@@ -176,57 +196,78 @@ function AdminConsole() {
     );
   }
 
-  return (
-    <Shell email={gate.email}>
-      <Tabs defaultValue="control">
-        <TabsList className="mb-6">
-          <TabsTrigger value="control">Control</TabsTrigger>
-          <TabsTrigger value="content">Content</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-          <TabsTrigger value="tests">Tests</TabsTrigger>
-          <TabsTrigger value="tracking">Tracking</TabsTrigger>
-          <TabsTrigger value="users">Users & data</TabsTrigger>
-        </TabsList>
-        <TabsContent value="control" className="grid gap-6">
-          <ControlPanels {...(control as unknown as React.ComponentProps<typeof ControlPanels>)} />
-        </TabsContent>
-        <TabsContent value="content">
-          <ContentPanel versions={contentVersions} action={contentAction} />
-        </TabsContent>
-        <TabsContent value="reports" className="grid gap-6">
-          <ReportsPanel getSettings={getReportSettings} saveSettings={saveReportSettings} listReports={listReports} reportAction={reportAction}
-            resetPreview={resetPreview} resetBatch={resetBatch} resetFinish={resetFinish} />
-        </TabsContent>
-        <TabsContent value="tests">
-          <TestsPanel
+  const ctrl = control as unknown as React.ComponentProps<typeof ControlPanels>;
+  const page = (() => {
+    switch (section) {
+      case "health": return <><PageIntro title="Health & settings" text="Is every assessment up and on the latest settings? Change banners and shared wording for all of them here." /><div className="grid gap-6"><ControlPanels {...ctrl} show="settings" /></div></>;
+      case "content": return <><PageIntro title="Questions & scoring" text="Edit each assessment's questions, points and tiers. Save a draft, preview it, then publish." /><ContentPanel versions={contentVersions} action={contentAction} /></>;
+      case "onboard": return <><PageIntro title="Add an assessment" text="Connect a new assessment to the Hub step by step." /><div className="grid gap-6"><ControlPanels {...ctrl} show="onboarding" /></div></>;
+      case "reports": return <><PageIntro title="Reports" text="Every result from all assessments, and how reports look and lock." /><ReportsPanel getSettings={getReportSettings} saveSettings={saveReportSettings} listReports={listReports} reportAction={reportAction} /></>;
+      case "people": return <><PageIntro title="Find a person" text="Everything about one customer in one place." /><PersonLookup lookup={personLookup as never} reportAction={reportAction as never} onDelete={(e) => { setDeleteEmail(e); go("danger"); }} /></>;
+      case "tests": return <><PageIntro title="Tests" text="Send a test result through the Hub and confirm HubSpot picks it up." /><TestsPanel
             overview={e2eOverview as unknown as React.ComponentProps<typeof TestsPanel>["overview"]}
             action={e2eAction as unknown as React.ComponentProps<typeof TestsPanel>["action"]}
             saveSettings={e2eSave as unknown as React.ComponentProps<typeof TestsPanel>["saveSettings"]}
-          />
-        </TabsContent>
-        <TabsContent value="tracking" className="grid gap-6">
-          <PostHogAuditCard run={phAudit} />
-        </TabsContent>
-        <TabsContent value="users" className="grid gap-6">
-          <DeleteUserCard run={deleteUser} />
-          <ImportUsersCard run={importUser} />
-          <SubmissionsCard run={listSubs} />
-          <RegistryCard run={registryStatus} />
-          <BootstrapCard run={bootstrap} />
-        </TabsContent>
-      </Tabs>
+          /></>;
+      case "tracking": return <><PageIntro title="Tracking" text="Check that every site sends its key events to PostHog." /><PostHogAuditCard run={phAudit} /></>;
+      case "system": return <><PageIntro title="HubSpot & system" text="One-off setup and checks. Safe to run any time." /><div className="grid gap-6"><BootstrapCard run={bootstrap} /><RegistryCard run={registryStatus} /><ImportUsersCard run={importUser} /></div></>;
+      case "danger": return <><PageIntro title="Danger zone" text="Permanent actions. Each one asks you to confirm first." /><div className="grid gap-6 rounded-2xl border border-destructive/40 p-4"><DeleteUserCard key={deleteEmail} run={deleteUser} initial={deleteEmail} /><ResetCard preview={resetPreview} batch={resetBatch} finish={resetFinish} /></div></>;
+      default: return <><PageIntro title="Overview" text="Is anything wrong today? Start here." /><AdminOverview load={overview} checkHealth={checkHealth as never} quickTest={e2eAction as never} go={go} /></>;
+    }
+  })();
+
+  return (
+    <Shell email={gate.email}>
+      <div className="grid gap-8 md:grid-cols-[220px_1fr]">
+        <nav className="md:sticky md:top-6 md:self-start">
+          <select className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground md:hidden" value={section} onChange={(e) => go(e.target.value)}>
+            {NAV.map((g) => (
+              <optgroup key={g.group} label={g.group || "Start"}>
+                {g.items.map((i) => <option key={i.key} value={i.key}>{i.label}</option>)}
+              </optgroup>
+            ))}
+          </select>
+          <div className="hidden gap-5 md:grid">
+            {NAV.map((g) => (
+              <div key={g.group}>
+                {g.group ? <p className="mb-1.5 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">{g.group}</p> : null}
+                <ul className="grid gap-0.5">
+                  {g.items.map((i) => (
+                    <li key={i.key}>
+                      <button onClick={() => go(i.key)}
+                        className={`w-full rounded-lg px-3 py-1.5 text-left text-sm transition-colors ${section === i.key ? "bg-primary/15 font-medium text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"} ${i.key === "danger" ? "text-destructive" : ""}`}>
+                        {i.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </nav>
+        <div className="min-w-0">{page}</div>
+      </div>
     </Shell>
   );
 }
 
+const NAV: { group: string; items: { key: string; label: string }[] }[] = [
+  { group: "", items: [{ key: "overview", label: "Overview" }] },
+  { group: "Assessments", items: [{ key: "health", label: "Health & settings" }, { key: "content", label: "Questions & scoring" }, { key: "onboard", label: "Add an assessment" }] },
+  { group: "Results", items: [{ key: "reports", label: "Reports" }] },
+  { group: "Customers", items: [{ key: "people", label: "Find a person" }] },
+  { group: "Quality", items: [{ key: "tests", label: "Tests" }, { key: "tracking", label: "Tracking" }] },
+  { group: "Setup", items: [{ key: "system", label: "HubSpot & system" }, { key: "danger", label: "Danger zone" }] },
+];
+
 function Shell({ children, email }: { children: React.ReactNode; email?: string | null }) {
   return (
-    <main className="mx-auto w-full max-w-4xl px-6 py-14">
-      <header className="mb-10 flex items-start justify-between gap-4">
+    <main className="mx-auto w-full max-w-6xl px-6 py-10">
+      <header className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl text-foreground">Hub Admin Console</h1>
+          <p className="font-heading text-2xl text-foreground">Hub Admin</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Every maintenance action as a button. Nothing here exposes server secrets to the browser.
+            GEM Hub Central: run every assessment from one place.
             {email ? <> Signed in as <span className="text-foreground">{email}</span>.</> : null}
           </p>
         </div>
@@ -296,9 +337,9 @@ function BootstrapSummary({ result }: { result: unknown }) {
   );
 }
 
-function DeleteUserCard({ run }: { run: (a: { data: unknown }) => Promise<unknown> }) {
+function DeleteUserCard({ run, initial = "" }: { run: (a: { data: unknown }) => Promise<unknown>; initial?: string }) {
   const a = useAction(run as never);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initial);
   return (
     <Card
       title="Delete user"
@@ -435,64 +476,6 @@ function RegistryCard({ run }: { run: () => Promise<unknown> }) {
                   <td className="py-1.5"><code>{r.key}</code></td>
                   <td>{r.display_name}</td>
                   <td className="text-right">{r.contact_properties}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <Panel data={a.result} />
-      )}
-    </Card>
-  );
-}
-
-function SubmissionsCard({ run }: { run: (a: { data: unknown }) => Promise<unknown> }) {
-  const a = useAction(run as never);
-  const [email, setEmail] = useState("");
-  const [key, setKey] = useState("");
-  const data = a.result as { rows?: Record<string, string | number | null>[]; count?: number | null } | undefined;
-  const search = () =>
-    a.run({ data: { email: email || undefined, assessment_key: key || undefined, limit: 50 } });
-  useEffect(() => { search(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
-  return (
-    <Card
-      title="Submission browser"
-      description="Verification surface for imports and syncs: score, tier, submitted date, HubSpot contact and sync time."
-    >
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div>
-          <Label htmlFor="sb-email">Email contains</Label>
-          <Input id="sb-email" value={email} onChange={e => setEmail(e.target.value)} />
-        </div>
-        <div>
-          <Label htmlFor="sb-key">Assessment key</Label>
-          <Input id="sb-key" value={key} onChange={e => setKey(e.target.value)} placeholder="tariffiq" />
-        </div>
-        <div className="flex items-end">
-          <Button onClick={search} disabled={a.loading}>{a.loading ? "Loading…" : "Search"}</Button>
-        </div>
-      </div>
-      {data?.rows ? (
-        <div className="mt-4 overflow-x-auto">
-          <p className="text-sm text-muted-foreground">{data.rows.length} shown{typeof data.count === "number" ? ` of ${data.count}` : ""}</p>
-          <table className="mt-2 w-full text-left text-xs">
-            <thead className="text-muted-foreground">
-              <tr>
-                <th className="py-1">Email</th><th>Key</th><th>Score</th><th>Tier</th>
-                <th>Submitted</th><th>HubSpot ID</th><th>Synced</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.rows.map(r => (
-                <tr key={String(r.id)} className="border-t border-border/50">
-                  <td className="py-1.5">{String(r.email)}</td>
-                  <td><code>{String(r.assessment_key)}</code></td>
-                  <td>{r.score ?? "—"}</td>
-                  <td>{r.tier ?? "—"}</td>
-                  <td>{r.submitted_at ? String(r.submitted_at).slice(0, 10) : "—"}</td>
-                  <td>{r.hubspot_contact_id ?? "—"}</td>
-                  <td>{r.hubspot_synced_at ? String(r.hubspot_synced_at).slice(0, 10) : "—"}</td>
                 </tr>
               ))}
             </tbody>

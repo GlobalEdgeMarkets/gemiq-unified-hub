@@ -4,9 +4,10 @@ import { IQ_PRODUCTS, TIER_SCALE, TRACK_META, CAPABILITY_IQS, SPECIALIST_IQS } f
 import manifest from "@/lib/hub/manifest.json";
 import { buildHead } from "@/lib/seo";
 import {
-  MONTHLY_PRICE,
-  QUARTERLY_PRICE,
-  ANNUAL_PRICE,
+  GROWTH_PRICE,
+  GROWTH_PICKS,
+  COMPLETE_MONTHLY_PRICE,
+  COMPLETE_ANNUAL_PRICE,
   ONE_TIME,
   ONE_TIME_PRICE,
   TRIAL_DAYS,
@@ -184,7 +185,7 @@ if (!status.active) {
   trial: true,
 });`}</Code>
           <p>
-            Use <code>gemiq_professional_quarterly</code> or <code>gemiq_professional_annual</code> for the other terms. Card is required
+            Use <code>gemiq_growth_monthly</code> or <code>gemiq_complete_annual</code> for the other plans. Card is required
             up-front
             {TRIAL_DAYS ? `; the subscription auto-converts on day ${TRIAL_DAYS}` : "; the subscription auto-converts when the trial ends"}
             . Stripe sends the reminder email 3 days before conversion automatically.
@@ -368,7 +369,7 @@ const stop = hub.manifest.watch(
     trial:     { days${TRIAL_DAYS ? `: ${TRIAL_DAYS}` : ""}, assessments_included, card_required },
     guarantee: { days${GUARANTEE_DAYS ? `: ${GUARANTEE_DAYS}` : ""}, type: "money_back" },
     one_time:  { id, name, amount${ONE_TIME ? `: ${ONE_TIME.amount}` : ""}, lookup_key },
-    plans: [{ id, name, amount, interval, lookup_key }]   // interval: "month" | "quarter" | "year"
+    plans: [{ id, name, tier, amount, interval, assessments_included, lookup_key }]   // tier: "growth" | "complete"
   },
   tracks: {
     capability: { label, blurb },
@@ -425,14 +426,14 @@ const stop = hub.manifest.watch(
 
           <h3 className="mt-6 font-display text-lg font-semibold text-white">Stripe lookup keys</h3>
           <ul className="list-disc space-y-1 pl-5">
-            {MONTHLY_PRICE && (
-              <li><code>gemiq_complete_monthly</code> — {MONTHLY_PRICE}/mo</li>
+            {GROWTH_PRICE && (
+              <li><code>gemiq_growth_monthly</code> — Growth, {GROWTH_PRICE}/mo, {GROWTH_PICKS} assessments (the first {GROWTH_PICKS} different ones taken); a 4th returns 402 <code>plan_limit_reached</code></li>
             )}
-            {QUARTERLY_PRICE && (
-              <li><code>gemiq_professional_quarterly</code> — {QUARTERLY_PRICE} / 3 months (default)</li>
+            {COMPLETE_MONTHLY_PRICE && (
+              <li><code>gemiq_complete_monthly</code> — Complete, {COMPLETE_MONTHLY_PRICE}/mo (default)</li>
             )}
-            {ANNUAL_PRICE && (
-              <li><code>gemiq_professional_annual</code> — {ANNUAL_PRICE}/yr</li>
+            {COMPLETE_ANNUAL_PRICE && (
+              <li><code>gemiq_complete_annual</code> — Complete, {COMPLETE_ANNUAL_PRICE}/yr</li>
             )}
             {ONE_TIME_PRICE && (
               <li>

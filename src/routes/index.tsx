@@ -23,17 +23,16 @@ import {
 } from "@/lib/iq-catalog";
 import {
   ONE_TIME_PRICE,
-  MONTHLY_PRICE,
-  QUARTERLY_PRICE,
-  ANNUAL_PRICE,
+  GROWTH_PRICE,
+  GROWTH_PICKS,
+  COMPLETE_MONTHLY_PRICE,
+  COMPLETE_ANNUAL_PRICE,
   GUARANTEE_LABEL,
   TRIAL_LABEL,
   TRIAL_DAYS,
 
   effectiveMonthly,
-  hasPlan,
   savingsLabel,
-  type PlanInterval,
 } from "@/lib/pricing";
 import { buildHead } from "@/lib/seo";
 import { SampleReportShowcase } from "@/components/home/SampleReportShowcase";
@@ -172,8 +171,8 @@ function TrialBanner() {
             </>
           )}
           <span>
-            {MONTHLY_PRICE
-              ? `or all ${IQ_PRODUCTS.length} IQs — both tracks — for ${MONTHLY_PRICE}/mo`
+            {COMPLETE_MONTHLY_PRICE
+              ? `or all ${IQ_PRODUCTS.length} IQs plus the combined GEM.IQ score for ${COMPLETE_MONTHLY_PRICE}/mo`
               : `all ${IQ_PRODUCTS.length} IQs — both tracks — in one subscription`}
           </span>
           {GUARANTEE_LABEL && (
@@ -431,15 +430,15 @@ function HeroTile() {
               )}
               {!ONE_TIME_PRICE && <>All </>}
               {IQ_PRODUCTS.length}
-              {MONTHLY_PRICE ? (
-                <> for <span className="text-[#4ade80]">{MONTHLY_PRICE}/mo.</span></>
+              {COMPLETE_MONTHLY_PRICE ? (
+                <> for <span className="text-[#4ade80]">{COMPLETE_MONTHLY_PRICE}/mo.</span></>
               ) : (
                 <> IQs in one subscription.</>
               )}
             </div>
 
             <p className="mt-1.5 text-sm text-white/70">
-              Buy a single IQ when you need one answer — {IQ_NAME_LIST}. Subscribe for all {IQ_PRODUCTS.length} across both tracks, plus the composite GEM.IQ report and quarterly re-assessment.
+              Buy a single IQ when you need one answer — {IQ_NAME_LIST}. Or pick three with Growth, or take all {IQ_PRODUCTS.length} with Complete — both include the combined GEM.IQ report.
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Link
@@ -791,192 +790,139 @@ function TrustMarquee() {
     </section>
   );
 }
-type PlanTerm = "monthly" | "quarterly" | "annual";
+type CompleteTerm = "complete" | "complete_annual";
 
-const TERM_INTERVAL: Record<PlanTerm, PlanInterval> = {
-  monthly: "month",
-  quarterly: "quarter",
-  annual: "year",
-};
+const CHECK = (
+  <svg className="mt-0.5 h-4 w-4 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 10l4 4 8-8" />
+  </svg>
+);
 
-/** Prices, savings labels and effective rates all derive from the manifest. */
-const PLAN_TERM_MAP: Record<PlanTerm, { price?: string; unit: string; effective?: string; note: string }> = {
-  monthly: {
-    price: MONTHLY_PRICE,
-    unit: "/ month",
-    note: "No minimum term — cancel anytime from the billing portal.",
-  },
-  quarterly: {
-    price: QUARTERLY_PRICE,
-    unit: "/ quarter",
-    effective: effectiveMonthly("quarter"),
-    note: "Matches the re-assessment cadence — re-test at 90 days to see whether you moved a tier.",
-  },
-  annual: {
-    price: ANNUAL_PRICE,
-    unit: "/ year",
-    effective: effectiveMonthly("year"),
-    note: "Track progress for a full year — best for teams benchmarking every quarter.",
-  },
-};
+function Features({ lines }: { lines: string[] }) {
+  return (
+    <ul className="mt-6 space-y-3 text-sm text-white/70">
+      {lines.map((line) => (
+        <li key={line} className="flex items-start gap-3">{CHECK}<span>{line}</span></li>
+      ))}
+    </ul>
+  );
+}
 
-/** Only offer terms the manifest actually ships; savings text is computed, not typed. */
-const PLAN_TERMS: { key: PlanTerm; label: string }[] = (
-  ["monthly", "quarterly", "annual"] as PlanTerm[]
-)
-  .filter((key) => hasPlan(TERM_INTERVAL[key]))
-  .map((key) => {
-    const base = key === "monthly" ? "Monthly" : key === "quarterly" ? "Quarterly" : "Annual";
-    const saving = savingsLabel(TERM_INTERVAL[key]);
-    return { key, label: saving ? `${base} · ${saving}` : base };
-  });
+function PriceLine({ price, unit, extra }: { price?: string; unit: string; extra?: string }) {
+  if (!price) return null;
+  return (
+    <div className="mt-6 flex items-baseline gap-2 flex-wrap">
+      <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>{price}</div>
+      <div className="text-white/50">{unit}</div>
+      {extra && <div className="text-xs text-white/40">{extra}</div>}
+    </div>
+  );
+}
 
-const DEFAULT_PLAN_TERM: PlanTerm =
-  PLAN_TERMS.find((t) => t.key === "quarterly")?.key ?? PLAN_TERMS[0]?.key ?? "monthly";
-
+const TRIAL_NOTE = `Card required.${TRIAL_DAYS ? ` Cancel before day ${TRIAL_DAYS} and you're not charged.` : ""} The trial assessment shows your score and tier; the full report unlocks when your plan starts.`;
 
 function Pricing() {
-  const [interval, setInterval] = useState<PlanTerm>(DEFAULT_PLAN_TERM);
+  const hasAnnual = !!COMPLETE_ANNUAL_PRICE;
+  const [term, setTerm] = useState<CompleteTerm>("complete");
+  const annual = term === "complete_annual" && hasAnnual;
+  const saving = savingsLabel("complete", "year");
+  const cardTitle = "font-display text-xl font-bold";
+  const font = { fontFamily: "'League Spartan', sans-serif" };
   return (
     <section id="pricing" className="mt-20 md:mt-28">
       <div className="text-center max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 backdrop-blur px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-white/60" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+        <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 backdrop-blur px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-white/60" style={font}>
           <span className="h-1.5 w-1.5 rounded-full bg-[#4ade80]" />
           Pricing
         </div>
-        <h2 className="mt-6 font-display text-4xl md:text-5xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+        <h2 className="mt-6 font-display text-4xl md:text-5xl font-bold tracking-tight" style={font}>
           One answer, or <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">the whole picture.</span>
         </h2>
         <p className="mt-4 text-white/55">
-          Buy a single assessment when you need one number. Subscribe when you want all {IQ_PRODUCTS.length} IQs — capability and specialist — the composite GEM.IQ report, and re-assessment over time.
+          Start with one assessment, build a picture with three, or see your whole business with all {IQ_PRODUCTS.length} and the combined GEM.IQ score.
         </p>
       </div>
 
-
-      <div className="mt-10 grid gap-4 md:grid-cols-2 max-w-4xl mx-auto items-stretch">
-        {/* Single assessment */}
+      <div className="mt-10 grid gap-4 md:grid-cols-3 max-w-6xl mx-auto items-stretch">
+        {/* Starter */}
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl flex flex-col">
-          <div className="font-display text-xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            Single assessment
-          </div>
+          <div className={cardTitle} style={font}>Starter</div>
           <p className="mt-1 text-sm text-white/50">One IQ, one report, no subscription.</p>
-          {ONE_TIME_PRICE && (
-            <div className="mt-6 flex items-baseline gap-2">
-              <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                {ONE_TIME_PRICE}
-              </div>
-              <div className="text-white/50">one-time</div>
-            </div>
-          )}
-
-          <ul className="mt-6 space-y-3 text-sm text-white/70">
-            {[
-              "Any one IQ of your choice",
-              "Full dimension-level scoring and tier",
-              "Executive-ready PDF report",
-              "Credit applies to your first month if you upgrade",
-            ].map((line) => (
-              <li key={line} className="flex items-start gap-3">
-                <svg className="mt-0.5 h-4 w-4 shrink-0 text-white/40" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 10l4 4 8-8" />
-                </svg>
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
+          <PriceLine price={ONE_TIME_PRICE} unit="one-time" />
+          <Features lines={[
+            "Any one IQ of your choice",
+            "Full dimension-level scoring and tier",
+            "Executive-ready PDF report",
+            "Methodology and “why we ask this” for every question",
+          ]} />
           <div className="mt-auto pt-8">
-            <Link
-              to="/auth"
-              search={{ mode: "signup", buy: "single" }}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-white/20"
-              style={{ fontFamily: "'League Spartan', sans-serif" }}
-            >
-              Buy one assessment
-              <ArrowIcon className="h-4 w-4" />
+            <Link to="/auth" search={{ mode: "signup", buy: "single" }}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-white/20" style={font}>
+              Buy one assessment <ArrowIcon className="h-4 w-4" />
             </Link>
-            <p className="mt-4 text-xs text-white/40">Pick your IQ at checkout. No recurring charge.</p>
+            <p className="mt-4 text-xs text-white/40">No recurring charge.</p>
           </div>
         </div>
 
-        {/* Full suite subscription */}
+        {/* Growth */}
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl flex flex-col">
+          <div className={cardTitle} style={font}>Growth</div>
+          <p className="mt-1 text-sm text-white/50">Any {GROWTH_PICKS} IQs plus the combined report.</p>
+          <PriceLine price={GROWTH_PRICE} unit="/ month" />
+          <Features lines={[
+            `${GROWTH_PICKS} assessments you choose — the first ${GROWTH_PICKS} you take are yours`,
+            "Retake your assessments any time",
+            "Combined GEM.IQ score across your three",
+            "Upgrade to Complete whenever you want more",
+          ]} />
+          <div className="mt-auto pt-8">
+            <Link to="/auth" search={{ mode: "signup", trial: "1", plan: "growth" }}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#4ade80]/50 bg-[#4ade80]/10 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-[#4ade80]/20" style={font}>
+              Start {TRIAL_LABEL} <ArrowIcon className="h-4 w-4" />
+            </Link>
+            <p className="mt-4 text-xs text-white/40">{TRIAL_NOTE}</p>
+          </div>
+        </div>
+
+        {/* Complete */}
         <div className="relative overflow-hidden rounded-3xl border border-[#4ade80]/40 bg-gradient-to-br from-[#16213e]/80 to-[#0a0a16]/60 p-8 backdrop-blur-xl shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)] flex flex-col">
           <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#4ade80]/20 blur-3xl" />
           <div className="relative z-10 flex items-center justify-between gap-3">
             <div>
-              <div className="font-display text-xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                Full suite
-              </div>
-              <p className="mt-1 text-sm text-white/50">All {IQ_PRODUCTS.length} IQs plus the composite report.</p>
+              <div className={cardTitle} style={font}>Complete</div>
+              <p className="mt-1 text-sm text-white/50">All {IQ_PRODUCTS.length} IQs, the full picture.</p>
             </div>
-            <span className="shrink-0 rounded-full bg-[#4ade80] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              Best value
-            </span>
+            <span className="shrink-0 rounded-full bg-[#4ade80] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a0a16]" style={font}>Best value</span>
           </div>
-
-          <div className="relative z-10 mt-5 inline-flex flex-wrap rounded-full border border-white/10 bg-white/5 p-1 text-xs font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            {PLAN_TERMS.map((t) => (
-              <button
-                key={t.key}
-                type="button"
-                onClick={() => setInterval(t.key)}
-                className={`rounded-full px-4 py-1.5 transition-colors ${
-                  interval === t.key ? "bg-[#4ade80] text-[#0a0a16]" : "text-white/60 hover:text-white"
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-
-          {PLAN_TERM_MAP[interval].price && (
-            <div className="relative z-10 mt-5 flex items-baseline gap-2">
-              <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                {PLAN_TERM_MAP[interval].price}
-              </div>
-              <div className="text-white/50">{PLAN_TERM_MAP[interval].unit}</div>
-              {PLAN_TERM_MAP[interval].effective && (
-                <div className="text-xs text-white/40">{PLAN_TERM_MAP[interval].effective}</div>
-              )}
+          {hasAnnual && (
+            <div className="relative z-10 mt-5 inline-flex flex-wrap self-start rounded-full border border-white/10 bg-white/5 p-1 text-xs font-bold" style={font}>
+              {([["complete", "Monthly"], ["complete_annual", saving ? `Annual · ${saving}` : "Annual"]] as [CompleteTerm, string][]).map(([k, label]) => (
+                <button key={k} type="button" onClick={() => setTerm(k)}
+                  className={`rounded-full px-4 py-1.5 transition-colors ${term === k ? "bg-[#4ade80] text-[#0a0a16]" : "text-white/60 hover:text-white"}`}>
+                  {label}
+                </button>
+              ))}
             </div>
           )}
-
-          <p className="relative z-10 mt-2 text-xs text-white/45">
-            {PLAN_TERM_MAP[interval].note}
-          </p>
-
-
-          <ul className="relative z-10 mt-6 space-y-3 text-sm text-white/70">
-            {[
-              `Unlimited access to all ${IQ_PRODUCTS.length} GEM.IQ assessments — capability and specialist`,
-              "Composite GEM.IQ report across every discipline",
-              "Re-assess quarterly with score-over-time tracking",
-              "Dimension-level benchmarks and executive PDFs",
-            ].map((line) => (
-              <li key={line} className="flex items-start gap-3">
-                <svg className="mt-0.5 h-4 w-4 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 10l4 4 8-8" />
-                </svg>
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
-
+          <div className="relative z-10">
+            <PriceLine
+              price={annual ? COMPLETE_ANNUAL_PRICE : COMPLETE_MONTHLY_PRICE}
+              unit={annual ? "/ year" : "/ month"}
+              extra={annual ? effectiveMonthly("complete", "year") : undefined}
+            />
+            <Features lines={[
+              `All ${IQ_PRODUCTS.length} GEM.IQ assessments — capability and specialist`,
+              "Combined GEM.IQ Business Health score and report",
+              "Quarterly retakes with progress tracking",
+              "Dimension-level detail and executive PDFs",
+            ]} />
+          </div>
           <div className="relative z-10 mt-auto pt-8">
-            <Link
-              to="/auth"
-              search={{ mode: "signup", trial: "1", plan: interval }}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-5 py-3 text-sm font-bold text-[#0a0a16] transition-all hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]"
-              style={{ fontFamily: "'League Spartan', sans-serif" }}
-            >
-              Start {TRIAL_LABEL}
-              <ArrowIcon className="h-4 w-4" />
+            <Link to="/auth" search={{ mode: "signup", trial: "1", plan: annual ? "complete_annual" : "complete" }}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-5 py-3 text-sm font-bold text-[#0a0a16] transition-all hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]" style={font}>
+              Start {TRIAL_LABEL} <ArrowIcon className="h-4 w-4" />
             </Link>
-            <p className="mt-4 text-xs text-white/40">
-              Card required so access continues uninterrupted.
-              {TRIAL_DAYS ? ` Cancel before day ${TRIAL_DAYS} and you're not charged.` : " Cancel before the trial ends and you're not charged."}
-              {" "}The trial assessment shows your score and tier; the full report unlocks when your plan starts.
-            </p>
-
+            <p className="mt-4 text-xs text-white/40">{TRIAL_NOTE}</p>
           </div>
         </div>
       </div>

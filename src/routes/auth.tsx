@@ -307,8 +307,10 @@ function AuthPage() {
             </>
           )}
           <input required type="email" placeholder="Email" autoComplete="email" className={inputCls}
+            data-gem-test="auth-email"
             value={email} onChange={e => setEmail(e.target.value)} />
           <input required type="password" placeholder="Password"
+            data-gem-test="auth-password"
             autoComplete={mode === "signin" ? "current-password" : "new-password"} className={inputCls}
             value={password} onChange={e => setPassword(e.target.value)} />
           {err && (
@@ -316,6 +318,7 @@ function AuthPage() {
           )}
           <button
             disabled={busy}
+            data-gem-test="auth-submit"
             className="w-full rounded-md bg-gem-mint px-4 py-3 text-sm font-semibold text-gem-navy shadow-sm shadow-gem-mint/20 transition hover:brightness-105 disabled:opacity-60"
           >
             {busy ? "…" : mode === "signin" ? "Sign in" : "Create account"}

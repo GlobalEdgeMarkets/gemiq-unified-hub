@@ -390,3 +390,66 @@ export const adminContentAction = createServerFn({ method: "POST" })
       case "import": return await c.importFromApp(data.key, by);
     }
   });
+
+// ---- End-to-end tests ----
+export const adminE2eOverview = createServerFn({ method: "GET" })
+  .middleware([requireHubAdmin])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const e = await import("@/lib/hub/e2e/e2e.server");
+    const { LIVE_REGISTRY } = await import("@/lib/hub/assessments");
+    const [settings, runs] = await Promise.all([e.getSettings(), e.listRuns(150)]);
+    return {
+      settings, runs,
+      assessments: LIVE_REGISTRY.map((s) => ({ key: s.key, name: s.displayName })),
+      secret_set: !!process.env.GEM_E2E_SECRET,
+    };
+  });
+
+export const adminE2eAction = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      action: z.enum(["quick", "check", "cleanup", "cleanup_all", "secret"]),
+      key: appKey.optional(),
+      id: z.string().uuid().optional(),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const e = await import("@/lib/hub/e2e/e2e.server");
+    switch (data.action) {
+      case "quick": {
+        if (!data.key) throw new Error("Pick an assessment");
+        const { getRequest } = await import("@tanstack/react-start/server");
+        const origin = new URL(getRequest().url).origin;
+        return await e.startQuick(data.key, origin);
+      }
+      case "check":
+        if (!data.id) throw new Error("Missing run");
+        return await e.checkRun(data.id);
+      case "cleanup": return await e.cleanup({ max: 10 });
+      case "cleanup_all": return await e.cleanup({ force: true, max: 10 });
+      case "secret": return { secret: process.env.GEM_E2E_SECRET ?? null };
+    }
+  });
+
+export const adminE2eSaveSettings = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      enabled: z.boolean(),
+      base_email: z.string().email(),
+      keep_days: z.number().int().min(0).max(60),
+      assessments: z.array(appKey).max(20),
+      workflows: z.array(z.object({ name: z.string().min(1).max(120), when: z.enum(["always", "trial"]) })).max(20),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const { saveSettings } = await import("@/lib/hub/e2e/e2e.server");
+    return await saveSettings(data, by);
+  });

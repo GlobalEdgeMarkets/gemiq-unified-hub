@@ -26,7 +26,11 @@ const searchSchema = z.object({
   /** "1" when arriving from the "Start 7-day trial" CTA. Kicks off trial checkout after signup. */
   trial: z.string().optional(),
   /** Which plan the trial should convert to. Defaults to Complete monthly. */
-  plan: z.enum(["growth", "complete", "complete_annual"]).optional(),
+  /** Legacy names (monthly/quarterly/annual) from older links map to the current plans; unknown values are ignored. */
+  plan: z.preprocess(
+    (v) => ({ monthly: "complete", quarterly: "complete", annual: "complete_annual" } as Record<string, string>)[String(v)] ?? v,
+    z.enum(["growth", "complete", "complete_annual"]).optional().catch(undefined),
+  ),
   /** "single" when arriving from the one-time $179 CTA. Starts payment checkout. */
   buy: z.enum(["single"]).optional(),
 });
@@ -138,7 +142,8 @@ function AuthPage() {
       }
       // Trial intent from landing: start Stripe checkout with a 7-day trial.
       // Only when there's no IQ redirect — an IQ handles its own checkout.
-      if (search.trial === "1" && !safeReturn) {
+      // A plan without trial=1 (e.g. "Unlock the full report") starts a paid checkout.
+      if ((search.trial === "1" || search.plan) && !safeReturn) {
         try {
           const co = await fetch("/api/public/billing/create-checkout", {
             method: "POST",
@@ -148,7 +153,7 @@ function AuthPage() {
               lookup_key: { growth: "gemiq_growth_monthly", complete: "gemiq_complete_monthly", complete_annual: "gemiq_complete_annual" }[search.plan ?? "complete"],
               success_url: `${window.location.origin}/?welcome=1`,
               cancel_url: window.location.href,
-              trial: true,
+              trial: search.trial === "1",
             }),
           });
           const cob = await co.json();

@@ -24,6 +24,10 @@ export const Route = createFileRoute("/api/public/jobs/retry-hubspot")({
           .lte("next_attempt_at", nowIso)
           .order("next_attempt_at", { ascending: true })
           .limit(25);
+        // Once a day: remove old end-to-end test contacts (test addresses only).
+        await import("@/lib/hub/e2e/e2e.server")
+          .then((m) => m.maybeDailyCleanup())
+          .catch((e) => console.error("[retry] e2e cleanup failed", e));
         if (!jobs?.length) return json({ processed: 0 }, undefined, request);
 
         let ok = 0, dead = 0, requeued = 0;

@@ -287,8 +287,10 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           queued_for_retry: queuedForRetry,
         });
 
-        // Always send the internal notification, regardless of HubSpot outcome.
-        await sendSubmissionNotification({
+        // Always send the internal notification, regardless of HubSpot outcome —
+        // except for automated end-to-end test addresses.
+        const { isTestEmail } = await import("@/lib/hub/e2e/e2e.server");
+        if (!(await isTestEmail(email))) await sendSubmissionNotification({
           submissionId: inserted.id,
           email,
           payload,

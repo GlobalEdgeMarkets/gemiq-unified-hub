@@ -196,6 +196,31 @@ function ReportSettingsCard({ getSettings, saveSettings }: { getSettings: Fn; sa
             <option value="app">The assessment (its own report page)</option>
             <option value="hub">GEM Hub Central (one report page for all)</option>
           </select>
+
+          <h3 className="mb-2 mt-6 text-sm font-semibold text-foreground">Peer benchmarks</h3>
+          <Label htmlFor="rs-min" className="text-xs text-muted-foreground">Smallest peer group shown as real data</Label>
+          <Input id="rs-min" type="number" min={3} max={500} className="mt-1 h-8 w-24" value={draft.benchmark.min_group}
+            onChange={(e) => setDraft({ ...draft, benchmark: { ...draft.benchmark, min_group: Number(e.target.value) } })} />
+          <p className="mt-3 text-xs text-muted-foreground">Starting values until enough real results exist (peer median · top quartile)</p>
+          <div className="mt-1 space-y-1.5">
+            {[{ key: "default", name: "All other assessments" }, ...APPS].map((a) => {
+              const ref = draft.benchmark.reference[a.key] ?? draft.benchmark.reference.default ?? { median: 52, top: 68 };
+              const setRef = (k: "median" | "top", v: number) =>
+                setDraft({ ...draft, benchmark: { ...draft.benchmark, reference: { ...draft.benchmark.reference, [a.key]: { ...ref, [k]: v } } } });
+              return (
+                <div key={a.key} className="flex items-center gap-2">
+                  <span className="flex-1 text-sm text-foreground">{a.name}</span>
+                  <Input aria-label={`${a.name} peer median`} type="number" min={0} max={100} className="h-8 w-20" value={ref.median} onChange={(e) => setRef("median", Number(e.target.value))} />
+                  <Input aria-label={`${a.name} top quartile`} type="number" min={0} max={100} className="h-8 w-20" value={ref.top} onChange={(e) => setRef("top", Number(e.target.value))} />
+                </div>
+              );
+            })}
+          </div>
+
+          <h3 className="mb-2 mt-6 text-sm font-semibold text-foreground">Action roadmap</h3>
+          <Label htmlFor="rs-road" className="text-xs text-muted-foreground">Number of actions over 30/60/90 days</Label>
+          <Input id="rs-road" type="number" min={3} max={12} className="mt-1 h-8 w-24" value={draft.roadmap_items}
+            onChange={(e) => setDraft({ ...draft, roadmap_items: Number(e.target.value) })} />
         </div>
 
         <div className="space-y-3">

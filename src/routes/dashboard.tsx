@@ -276,6 +276,8 @@ function DashboardPage() {
                       {data.composite.coverage.total} GEM.IQ assessments.
                       {data.composite.needed_for_tier > 0 &&
                         ` Complete ${data.composite.needed_for_tier} more to see your overall maturity stage.`}{" "}
+                      <Link to="/report/combined" className="font-medium text-foreground underline underline-offset-4">Open your combined report</Link>
+                      {" · "}
                       <Link to="/methodology" className="underline underline-offset-4 hover:text-foreground">How this is scored</Link>
                     </p>
                     {data.composite.contributions.length > 0 && (

@@ -214,7 +214,19 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           submitted_at: inserted.submitted_at,
         };
 
+        let composite: { score: number | null; tier: string | null; next: string | null } | undefined;
+        try {
+          const { computeComposite } = await import("@/lib/composite");
+          const { getCompositeConfig } = await import("@/lib/hub/composite.server");
+          const { LIVE_REGISTRY } = await import("@/lib/hub/assessments");
+          const seen = new Set<string>();
+          const latest = history.filter((h) => !seen.has(h.assessment_key) && seen.add(h.assessment_key));
+          const c = computeComposite(latest, LIVE_REGISTRY.map((x) => x.key), (await getCompositeConfig()).settings);
+          composite = { score: c.score, tier: c.tier, next: c.next };
+        } catch (e) { console.error("[submit] composite failed", e); }
+
         const props = buildContactProperties({
+          composite,
           email,
           history,
           current,

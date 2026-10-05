@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHubSupabaseSSR } from "@/lib/hub/supabase-server";
 import { stripe, priceByLookupKey, ensureSingleAssessmentPrice, ensurePlanPrice, PLAN_LOOKUP_KEYS, SINGLE_ASSESSMENT_LOOKUP_KEY } from "@/lib/hub/stripe";
-import { json, corsHeaders } from "@/lib/hub/http";
+import { json, corsHeaders, isAllowedRedirect } from "@/lib/hub/http";
 import { z } from "zod";
 
 const Body = z.object({
   lookup_key: z.string().min(1),
-  success_url: z.string().url(),
-  cancel_url: z.string().url(),
+  success_url: z.string().url().refine(isAllowedRedirect, "success_url not allowed"),
+  cancel_url: z.string().url().refine(isAllowedRedirect, "cancel_url not allowed"),
   /** Enable a 7-day trial with 1 free assessment across any IQ. Card is still required. */
   trial: z.boolean().optional(),
   /** Optional: which IQ the one-time purchase is intended for (recorded on the session). */

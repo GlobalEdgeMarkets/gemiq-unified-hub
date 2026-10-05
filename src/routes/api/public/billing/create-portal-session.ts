@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHubSupabaseSSR } from "@/lib/hub/supabase-server";
 import { stripe } from "@/lib/hub/stripe";
-import { json, corsHeaders } from "@/lib/hub/http";
+import { json, corsHeaders, isAllowedRedirect } from "@/lib/hub/http";
 import { z } from "zod";
 
-const Body = z.object({ return_url: z.string().url() });
+const Body = z.object({ return_url: z.string().url().refine(isAllowedRedirect, "return_url not allowed") });
 
 export const Route = createFileRoute("/api/public/billing/create-portal-session")({
   server: {

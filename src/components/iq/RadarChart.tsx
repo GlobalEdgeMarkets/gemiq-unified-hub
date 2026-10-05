@@ -33,18 +33,18 @@ export function RadarChart({ labels, values, benchmark, color, size = 460 }: Pro
   return (
     <svg viewBox={`-80 10 ${size + 160} ${size - 20}`} className="h-auto w-full" role="img" aria-label="Dimension score radar chart">
       {[0.2, 0.4, 0.6, 0.8, 1].map((f) => (
-        <polygon key={f} points={ring(f)} fill="none" stroke="rgba(44,54,91,0.10)" strokeWidth="1" />
+        <polygon key={f} points={ring(f)} fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1" />
       ))}
       {labels.map((_, i) => {
         const [x, y] = polar(cx, cy, radius, start + i * step);
-        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(44,54,91,0.10)" strokeWidth="1" />;
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(255,255,255,0.10)" strokeWidth="1" />;
       })}
 
       {benchmark && (
         <polygon
           points={series(benchmark)}
-          fill="rgba(44,54,91,0.06)"
-          stroke="rgba(44,54,91,0.35)"
+          fill="rgba(255,255,255,0.06)"
+          stroke="rgba(255,255,255,0.35)"
           strokeWidth="1.25"
           strokeDasharray="4 4"
         />
@@ -71,7 +71,7 @@ export function RadarChart({ labels, values, benchmark, color, size = 460 }: Pro
         }
         if (cur.trim()) lines.push(cur.trim());
         return (
-          <text key={l} x={x} y={y - (lines.length - 1) * 5} textAnchor={anchor} fill="rgba(44,54,91,0.55)" fontSize="10.5">
+          <text key={l} x={x} y={y - (lines.length - 1) * 5} textAnchor={anchor} fill="rgba(255,255,255,0.55)" fontSize="10.5">
             {lines.map((line, li) => (
               <tspan key={line} x={x} dy={li === 0 ? 0 : 11}>
                 {line}

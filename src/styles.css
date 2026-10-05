@@ -26,7 +26,6 @@
   --color-gem-purple: #2D1594;
   --color-gem-mint: #05CFAB;
   --color-gem-mint-soft: #7fe6d0;
-  --color-gem-teal: #04A688;
   --color-gem-cream: #f5f4ef;
   --color-gem-ink: #2C365B;
 
@@ -79,17 +78,17 @@
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
-  --foreground: #2C365B;
+  --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
   --primary: oklch(0.208 0.042 265.755);
   --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: #f3f5f9;
+  --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: #5f6884;
+  --muted-foreground: oklch(0.554 0.046 257.417);
   --accent: oklch(0.968 0.007 247.896);
   --accent-foreground: oklch(0.208 0.042 265.755);
   --destructive: oklch(0.577 0.245 27.325);

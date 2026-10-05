@@ -23,9 +23,9 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
   const others = IQ_PRODUCTS.filter((p) => p.key !== product.key);
 
   return (
-    <div className="min-h-screen w-full bg-background font-sans text-foreground antialiased">
+    <div className="min-h-screen w-full bg-[#0a0a16] font-sans text-white antialiased">
       {/* Nav */}
-      <header className="border-b border-white/10 bg-gem-navy-deep text-white backdrop-blur-xl">
+      <header className="border-b border-white/10 bg-[#0a0a16]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
           <div className="flex items-center gap-3">
             <a
@@ -62,14 +62,14 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <img src={product.image} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-30" />
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-background/90 via-background/70 to-secondary/70" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-[#0a0a16]/90 via-[#0a0a16]/70 to-[#16213e]/70" />
         <div
           aria-hidden
           className="absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl opacity-25"
           style={{ background: c.hex }}
         />
         <div className="relative z-10 mx-auto max-w-7xl px-6 py-20 md:px-10 md:py-28">
-          <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground" style={DISPLAY}>
+          <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/50" style={DISPLAY}>
             <span className={`rounded-full px-2.5 py-1 ${c.chip}`}>
               {TRACK_META[product.track].label}
             </span>
@@ -78,12 +78,12 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
           <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-[0.95] tracking-tight md:text-6xl" style={DISPLAY}>
             {product.name} — <span className={c.text}>{product.tagline}</span>
           </h1>
-          <p className="mt-5 max-w-2xl text-base text-foreground/80 md:text-lg">{product.intro}</p>
+          <p className="mt-5 max-w-2xl text-base text-white/70 md:text-lg">{product.intro}</p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               to="/auth"
               search={{ mode: "signup", trial: "1", redirect: product.url }}
-              className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-gem-navy-deep transition-transform hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-[#0a0a16] transition-transform hover:-translate-y-0.5"
               style={{ ...DISPLAY, background: c.hex }}
             >
               Start {product.name} free
@@ -93,13 +93,13 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
               href={product.url}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition-colors hover:bg-secondary"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-white/10"
               style={DISPLAY}
             >
               Open the assessment
               <ArrowIcon className="h-4 w-4" />
             </a>
-            <span className="text-[11px] text-muted-foreground">{TRIAL_LABEL} · 1 assessment scored · Cancel anytime</span>
+            <span className="text-[11px] text-white/50">{TRIAL_LABEL} · 1 assessment scored · Cancel anytime</span>
           </div>
         </div>
       </section>
@@ -115,26 +115,26 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
               {product.overview.map((para, i) => (
                 <p
                   key={para.slice(0, 24)}
-                  className={i === 0 ? "text-base leading-relaxed text-foreground md:text-[17px]" : "text-[15px] leading-relaxed text-foreground/80"}
+                  className={i === 0 ? "text-base leading-relaxed text-white/80 md:text-[17px]" : "text-[15px] leading-relaxed text-white/60"}
                 >
                   {para}
                 </p>
               ))}
             </div>
           </div>
-          <aside className="h-fit rounded-3xl bg-card shadow-sm p-6 ring-1 ring-inset ring-border backdrop-blur-xl">
+          <aside className="h-fit rounded-3xl bg-white/[0.04] p-6 ring-1 ring-inset ring-white/[0.06] backdrop-blur-xl">
             <div className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ ...DISPLAY, color: c.hex }}>
               Built for
             </div>
             <ul className="mt-4 space-y-3">
               {product.audience.map((a) => (
-                <li key={a} className="flex gap-3 text-sm text-foreground/80">
+                <li key={a} className="flex gap-3 text-sm text-white/75">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: c.hex }} />
                   {a}
                 </li>
               ))}
             </ul>
-            <div className="mt-6 border-t border-border pt-5 text-xs text-muted-foreground">
+            <div className="mt-6 border-t border-white/10 pt-5 text-xs text-white/50">
               ~10 minutes · {product.dimensions.length} scored dimensions · report delivered immediately
             </div>
           </aside>
@@ -145,7 +145,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl" style={DISPLAY}>
             Inside the {product.name} report
           </h2>
-          <p className="mt-2 max-w-2xl text-sm text-foreground/80">
+          <p className="mt-2 max-w-2xl text-sm text-white/60">
             A composite maturity score, every dimension ranked, and a spiderweb profile plotted against the
             peer median — the same layout your own report uses.
           </p>
@@ -160,7 +160,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl" style={DISPLAY}>
             What {product.name} scores
           </h2>
-          <p className="mt-2 max-w-2xl text-sm text-foreground/80">
+          <p className="mt-2 max-w-2xl text-sm text-white/60">
             Every dimension is scored independently and mapped to the GEM.IQ maturity scale —
             reactive, developing, defined, advanced, optimized.
           </p>
@@ -168,7 +168,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
             {product.dimensions.map((d, i) => (
               <div
                 key={d}
-                className="group flex items-start gap-3 rounded-2xl bg-card shadow-sm p-5 ring-1 ring-inset ring-border backdrop-blur-xl transition-colors hover:bg-secondary"
+                className="group flex items-start gap-3 rounded-2xl bg-white/[0.04] p-5 ring-1 ring-inset ring-white/[0.06] backdrop-blur-xl transition-colors hover:bg-white/[0.07]"
               >
                 <span
                   className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold"
@@ -176,7 +176,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="text-sm font-medium text-foreground">{d}</span>
+                <span className="text-sm font-medium text-white/85">{d}</span>
               </div>
             ))}
           </div>
@@ -186,7 +186,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
         <section className="mt-16 md:mt-20">
           <div className="grid gap-4 md:grid-cols-3">
             {product.outcomes.map((o) => (
-              <div key={o} className="rounded-3xl bg-gradient-to-br from-secondary/60 to-background/40 p-7 ring-1 ring-inset ring-border">
+              <div key={o} className="rounded-3xl bg-gradient-to-br from-[#16213e]/60 to-[#0a0a16]/40 p-7 ring-1 ring-inset ring-white/[0.06]">
                 <div className="h-1.5 w-10 rounded-full" style={{ background: c.hex }} />
                 <p className="mt-4 text-lg font-bold leading-snug tracking-tight" style={DISPLAY}>
                   {o}
@@ -208,12 +208,12 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
               { t: "Get your tiered report", d: "Dimension scores, maturity tier, and prioritized actions." },
               { t: "Compare across the suite", d: "Your Hub dashboard rolls every IQ into one composite view." },
             ].map((s, i) => (
-              <div key={s.t} className="rounded-3xl bg-card shadow-sm p-6 ring-1 ring-inset ring-border">
+              <div key={s.t} className="rounded-3xl bg-white/[0.04] p-6 ring-1 ring-inset ring-white/[0.06]">
                 <div className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ ...DISPLAY, color: c.hex }}>
                   Step {i + 1}
                 </div>
                 <p className="mt-2 text-base font-bold tracking-tight" style={DISPLAY}>{s.t}</p>
-                <p className="mt-1.5 text-sm text-foreground/80">{s.d}</p>
+                <p className="mt-1.5 text-sm text-white/60">{s.d}</p>
               </div>
             ))}
           </div>
@@ -231,14 +231,14 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
                 <Link
                   key={p.key}
                   to={p.path}
-                  className="group rounded-3xl bg-card shadow-sm p-6 ring-1 ring-inset ring-border backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-secondary"
+                  className="group rounded-3xl bg-white/[0.04] p-6 ring-1 ring-inset ring-white/[0.06] backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-white/[0.07]"
                 >
-                  <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground" style={DISPLAY}>
+                  <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40" style={DISPLAY}>
                     {p.domain}
                   </div>
                   <div className="mt-1 flex items-center justify-between">
                     <h3 className="text-xl font-bold tracking-tight" style={DISPLAY}>{p.name}</h3>
-                    <ArrowIcon className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+                    <ArrowIcon className="h-4 w-4 text-white/30 transition-transform group-hover:translate-x-0.5 group-hover:text-white" />
                   </div>
                   <p className={`mt-1 text-sm font-medium ${oc.text}`}>{p.tagline}</p>
                 </Link>
@@ -249,20 +249,20 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
 
 
         {/* CTA */}
-        <section className="mt-6 rounded-3xl bg-gradient-to-br from-secondary/70 to-background/50 p-8 text-center ring-1 ring-inset ring-border md:p-14">
+        <section className="mt-6 rounded-3xl bg-gradient-to-br from-[#16213e]/70 to-[#0a0a16]/50 p-8 text-center ring-1 ring-inset ring-white/[0.06] md:p-14">
 
 
           <h2 className="text-2xl font-bold tracking-tight md:text-4xl" style={DISPLAY}>
             Start {product.name} free{TRIAL_DAYS ? ` for ${TRIAL_DAYS} days` : ""}.
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-foreground/80">
+          <p className="mx-auto mt-3 max-w-xl text-sm text-white/65">
             One GEM.IQ subscription unlocks every assessment in the suite and a unified dashboard of your results.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/auth"
               search={{ mode: "signup", trial: "1", redirect: product.url }}
-              className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-gem-navy-deep"
+              className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-[#0a0a16]"
               style={{ ...DISPLAY, background: c.hex }}
             >
               Start free trial
@@ -270,7 +270,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
             </Link>
             <Link
               to="/"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground hover:bg-secondary"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
               style={DISPLAY}
             >
               Back to the Hub
@@ -279,7 +279,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
         </section>
       </main>
 
-      <footer className="border-t border-white/10 bg-gem-navy-deep py-10 text-white">
+      <footer className="border-t border-white/10 py-10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 text-xs text-white/45 md:flex-row md:px-10">
           <span>© {new Date().getFullYear()} GlobalEdgeMarkets · GEM.IQ</span>
           <div className="flex items-center gap-5">

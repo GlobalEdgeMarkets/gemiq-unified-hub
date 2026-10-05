@@ -1,6 +1,6 @@
 # GEM.IQ Playbook — v1.6
 
-**Status:** current as of 2026-10-04 (manifest v1.9.0: Hub-controlled questions/weights/tiers (/api/public/content/<key>, content export, scoring rule); follow-up emails moved to HubSpot workflows (Hub writes trigger fields only); v1.8.0: live report settings (sections, trial access, wording, tiers, app/hub mode), Hub-built reports at /report/<id>; v1.7.0 live control — notices, pause switch, editable wording, status-link contract). Supersedes v1.4 (6 undifferentiated
+**Status:** current as of 2026-10-05 (manifest v1.10.0: three-tier pricing Starter/Growth/Complete; v1.9.0: Hub-controlled questions/weights/tiers (/api/public/content/<key>, content export, scoring rule); follow-up emails moved to HubSpot workflows (Hub writes trigger fields only); v1.8.0: live report settings (sections, trial access, wording, tiers, app/hub mode), Hub-built reports at /report/<id>; v1.7.0 live control — notices, pause switch, editable wording, status-link contract). Supersedes v1.4 (6 undifferentiated
 "capability" IQs, manifest v1.4.0). If a doc, prompt, or GitHub knowledge file
 disagrees with this file, this file wins.
 
@@ -127,23 +127,21 @@ Automated testing: Admin → Tests runs a quick test per IQ (result → Hub → 
 fields, marketing status, workflows). Test contacts use `<inbox>+gemtest-…` addresses
 only and are deleted everywhere after the configured keep period.
 
-## 5. Pricing (v1.5)
+## 5. Pricing (v1.10)
 
-Two choices only — never present a third path:
+Three plans:
 
-- **Single assessment — $179 one-time** (`gemiq_single_assessment`): one credit,
-  full dashboard access, upgradeable.
-- **Full suite — GEM.IQ Professional**: $99/mo (`gemiq_professional_monthly`),
-  **$279/quarter (default)** (`gemiq_professional_quarterly`), $990/yr
-  (`gemiq_professional_annual`).
+- **Starter — $179 one-time** (`gemiq_single_assessment`): one credit.
+- **Growth — $149/mo** (`gemiq_growth_monthly`): three assessments plus the
+  combined score. Picks are fixed once — the first three different assessments
+  taken (`subscriptions.selected_assessments`); retakes are free; a fourth returns
+  402 `plan_limit_reached` (a Starter credit still covers it). More = upgrade.
+- **Complete — $249/mo** (`gemiq_complete_monthly`, default) **or $2,490/yr**
+  (`gemiq_complete_annual`): everything, combined report, quarterly retakes.
 
-7-day trial includes **one** assessment across any discipline. The trial run is
-scored — score and tier are shown — but the full report is locked until the plan
-starts (manifest `pricing.trial.report_access: "score_and_tier"`; the Hub returns
-`report_locked` on submit and history, and unlocks automatically on conversion).
-This keeps the trial from replacing the $179 single assessment. 14-day money-back
-guarantee. Monthly is cancel-anytime with no minimum term — quarterly is the
-commitment play and the default.
+7-day trial (Growth or Complete) includes **one** assessment; score and tier
+shown, full report locked until the plan starts. 14-day money-back guarantee.
+
 
 ## 6. Data integrity invariants
 

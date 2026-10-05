@@ -37,18 +37,18 @@ function Section({ title, description, children }: { title: string; description:
 
 export function ReportsPanel(props: {
   getSettings: Fn; saveSettings: Fn; listReports: Fn; reportAction: Fn;
-  resetPreview: Fn; resetBatch: Fn; resetFinish: Fn;
+  resetPreview?: Fn; resetBatch?: Fn; resetFinish?: Fn;
 }) {
   return (
     <div className="grid gap-6">
       <ReportSettingsCard getSettings={props.getSettings} saveSettings={props.saveSettings} />
       <ReportsTable listReports={props.listReports} reportAction={props.reportAction} />
-      <ResetCard preview={props.resetPreview} batch={props.resetBatch} finish={props.resetFinish} />
+      {props.resetPreview && props.resetBatch && props.resetFinish ? <ResetCard preview={props.resetPreview} batch={props.resetBatch} finish={props.resetFinish} /> : null}
     </div>
   );
 }
 
-function ResetCard({ preview, batch, finish }: { preview: Fn; batch: Fn; finish: Fn }) {
+export function ResetCard({ preview, batch, finish }: { preview: Fn; batch: Fn; finish: Fn }) {
   const [counts, setCounts] = useState<{ people: number; results: number } | null>(null);
   const [typed, setTyped] = useState("");
   const [running, setRunning] = useState(false);

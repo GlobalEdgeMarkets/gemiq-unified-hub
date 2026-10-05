@@ -304,7 +304,12 @@ function ReportsTable({ listReports, reportAction }: { listReports: Fn; reportAc
   const csv = useMemo(() => {
     if (!data) return "";
     const head = ["id", "email", "assessment", "score", "tier", "submitted_at", "plan", "entitlement", "locked", "hidden"];
-    const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const esc = (v: unknown) => {
+      let s = String(v ?? "");
+      // Neutralize spreadsheet formulas (CSV injection).
+      if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
+      return `"${s.replace(/"/g, '""')}"`;
+    };
     return [head.join(","), ...data.items.map((i) => [i.id, i.email, i.assessment_name, i.score, i.tier, i.submitted_at, i.plan, i.entitlement, i.locked, i.hidden].map(esc).join(","))].join("\n");
   }, [data]);
 

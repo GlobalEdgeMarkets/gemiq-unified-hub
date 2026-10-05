@@ -61,7 +61,10 @@ export const Route = createFileRoute("/api/public/profile")({
           .eq("id", user.id)
           .select(PROFILE_COLS)
           .maybeSingle();
-        if (error) return json({ error: error.message }, { status: 400 }, request);
+        if (error) {
+          console.error("[profile] update failed", error);
+          return json({ error: "update_failed" }, { status: 400 }, request);
+        }
         return json({ profile: data }, undefined, request);
       },
     },

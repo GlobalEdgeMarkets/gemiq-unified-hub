@@ -77,15 +77,24 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
 
         // Entitlement: an unconsumed one-time assessment credit ($179 purchase)
         // covers exactly one submission, whether or not a trial is in play.
-        const { data: credit } = await svc
-          .from("assessment_credits")
-          .select("id")
-          .is("consumed_at", null)
-          .or(user?.id ? `user_id.eq.${user.id},email.eq.${email}` : `email.eq.${email}`)
-          .order("created_at", { ascending: true })
-          .limit(1)
-          .maybeSingle();
-        const creditId = credit?.id ?? null;
+        // Only the signed-in owner can spend a credit: match their user id, or
+        // their own verified account email — never the email in the request body.
+        const ownEmail = user?.email?.toLowerCase() ?? null;
+        let creditId: string | null = null;
+        if (user?.id) {
+          const filter = ownEmail
+            ? `user_id.eq.${user.id},email.eq.${ownEmail}`
+            : `user_id.eq.${user.id}`;
+          const { data: credit } = await svc
+            .from("assessment_credits")
+            .select("id")
+            .is("consumed_at", null)
+            .or(filter)
+            .order("created_at", { ascending: true })
+            .limit(1)
+            .maybeSingle();
+          creditId = credit?.id ?? null;
+        }
 
         // Trial enforcement: signed-in users on a `trialing` subscription get
         // `trial_assessment_limit` free submissions (default 1) across any IQ.

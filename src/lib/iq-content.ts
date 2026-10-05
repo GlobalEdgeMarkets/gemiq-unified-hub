@@ -4,14 +4,14 @@ import { z } from "zod";
 
 export const OptionSchema = z.object({
   key: z.string().min(1).max(64),
-  label: z.string().min(1).max(300),
+  label: z.string().min(1).max(1000),
   /** 0–100 points awarded when this option is chosen. */
   points: z.number().min(0).max(100),
 });
 export const QuestionSchema = z.object({
   key: z.string().min(1).max(64),
-  text: z.string().min(1).max(600),
-  help: z.string().max(600).optional(),
+  text: z.string().min(1).max(1500),
+  help: z.string().max(1500).optional(),
   /** "Why we ask this" — shown next to the question. */
   rationale: z.string().max(1200).optional(),
   weight: z.number().min(0).max(100).default(1),

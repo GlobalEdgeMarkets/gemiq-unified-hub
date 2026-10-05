@@ -300,7 +300,7 @@ function DashboardPage() {
                       {data.composite.missing.map((m) => (
                         <a key={m.assessment_key} href={m.url} target="_blank" rel="noreferrer"
                           className={`rounded-xl border border-dashed p-4 text-sm transition-colors hover:bg-muted/40 ${data.composite.next?.assessment_key === m.assessment_key ? "border-gem-mint" : "border-border"}`}>
-                          <span className="block font-heading text-foreground">🔒 {m.display_name}</span>
+                          <span className="block font-heading text-foreground">{m.display_name}</span>
                           <span className="mt-1 block text-xs text-muted-foreground">
                             {data.composite.next?.assessment_key === m.assessment_key ? "Suggested next — adds the most to your score" : "Not taken yet"}
                           </span>

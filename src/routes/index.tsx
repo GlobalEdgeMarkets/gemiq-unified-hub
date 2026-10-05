@@ -106,12 +106,12 @@ const ASSESSMENTS: Assessment[] = IQ_PRODUCTS;
 
 function Index() {
   return (
-    <div className="min-h-screen w-full bg-[#0a0a16] font-sans text-white antialiased relative overflow-hidden">
+    <div className="min-h-screen w-full bg-background font-sans text-foreground antialiased relative overflow-hidden">
       {/* Global aurora background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute top-[-15%] left-[-10%] h-[55%] w-[55%] rounded-full bg-[#4ade80]/10 blur-[140px] animate-aurora-slow" />
-        <div className="absolute bottom-[-15%] right-[-10%] h-[55%] w-[55%] rounded-full bg-[#a78bfa]/12 blur-[140px] animate-aurora-slow-alt" />
-        <div className="absolute top-[35%] left-[40%] h-[35%] w-[35%] rounded-full bg-[#67e8f9]/8 blur-[120px] animate-aurora-drift" />
+        <div className="absolute top-[-15%] left-[-10%] h-[55%] w-[55%] rounded-full bg-[#05CFAB]/10 blur-[140px] animate-aurora-slow" />
+        <div className="absolute bottom-[-15%] right-[-10%] h-[55%] w-[55%] rounded-full bg-[#2D1594]/12 blur-[140px] animate-aurora-slow-alt" />
+        <div className="absolute top-[35%] left-[40%] h-[35%] w-[35%] rounded-full bg-[#05CFAB]/8 blur-[120px] animate-aurora-drift" />
       </div>
 
       <div className="relative z-10">
@@ -152,21 +152,21 @@ function Index() {
 
 function TrialBanner() {
   return (
-    <div className="relative z-40 border-b border-[#4ade80]/25 bg-gradient-to-r from-[#4ade80]/15 via-[#a78bfa]/15 to-[#4ade80]/15 backdrop-blur-xl">
+    <div className="relative z-40 border-b border-white/10 bg-gem-navy">
       <Link
         to="/auth"
         search={{ mode: "signup", trial: "1" }}
         className="group mx-auto flex max-w-7xl items-center justify-center gap-3 px-6 py-2.5 md:gap-4 md:py-3 text-center"
         style={{ fontFamily: "'League Spartan', sans-serif" }}
       >
-        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#4ade80] px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.15em] text-[#0a0a16]">
+        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#05CFAB] px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.15em] text-[#0a0a16]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#0a0a16] animate-pulse" />
           New
         </span>
         <span className="text-xs md:text-sm font-semibold text-white/95">
           {ONE_TIME_PRICE && (
             <>
-              <span className="text-[#4ade80] font-bold">{ONE_TIME_PRICE} single assessment</span>
+              <span className="text-[#05CFAB] font-bold">{ONE_TIME_PRICE} single assessment</span>
               <span className="mx-2 text-white/40">·</span>
             </>
           )}
@@ -195,7 +195,7 @@ function TrialBanner() {
 
 function TopNav() {
   return (
-    <nav className="sticky top-0 z-30 backdrop-blur-xl bg-[#0a0a16]/70 border-b border-white/5">
+    <nav className="sticky top-0 z-30 backdrop-blur-xl bg-gem-navy-deep text-white border-b border-white/5">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
         <div className="flex items-center gap-3">
           <a
@@ -252,7 +252,7 @@ function TrackHeading({ track }: { track: Track }) {
       >
         {meta.label}
       </h2>
-      <p className="max-w-xl text-sm text-white/50 md:text-right">{meta.blurb}</p>
+      <p className="max-w-xl text-sm text-muted-foreground md:text-right">{meta.blurb}</p>
     </div>
   );
 }
@@ -327,7 +327,7 @@ function HeroTile() {
         muted
         playsInline
         poster={themeTariff}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 mix-blend-screen"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 "
       >
         <source src={heroVideo.url} type="video/mp4" />
       </video>
@@ -350,16 +350,16 @@ function HeroTile() {
 
 
 
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-[#0a0a16]/85 via-[#0a0a16]/60 to-[#16213e]/70" />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-background/85 via-background/60 to-secondary/70" />
       {/* Ambient glow */}
-      <div aria-hidden className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-gradient-to-br from-[#4ade80]/20 to-[#a78bfa]/20 blur-3xl" />
-      <div aria-hidden className="absolute -bottom-32 -left-10 h-64 w-64 rounded-full bg-[#a78bfa]/10 blur-3xl" />
+      <div aria-hidden className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-gradient-to-br from-[#05CFAB]/20 to-[#2D1594]/20 blur-3xl" />
+      <div aria-hidden className="absolute -bottom-32 -left-10 h-64 w-64 rounded-full bg-[#2D1594]/10 blur-3xl" />
 
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-12 md:px-10 md:py-16 flex flex-col justify-between">
         <div className="flex items-start justify-between">
           <span
-            className="text-[#4ade80] text-xs font-bold uppercase tracking-[0.25em]"
+            className="text-gem-teal text-xs font-bold uppercase tracking-[0.25em]"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
             GEM.IQ by GlobalEdgeMarkets · {IQ_PRODUCTS.length} Executive Readiness Diagnostics
@@ -371,7 +371,7 @@ function HeroTile() {
                 onClick={() => setI(idx)}
                 aria-label={`Show ${a.name}`}
                 className={`h-1.5 rounded-full transition-all ${
-                  idx === i ? "w-8 bg-white" : "w-4 bg-white/25 hover:bg-white/50"
+                  idx === i ? "w-8 bg-foreground" : "w-4 bg-foreground/25 hover:bg-foreground/50"
                 }`}
               />
             ))}
@@ -384,11 +384,11 @@ function HeroTile() {
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
             Make-or-break calls deserve more than{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gem-teal to-gem-purple">
               a gut feel.
             </span>
           </h1>
-          <p className="mt-5 text-base md:text-lg text-white/60 max-w-xl leading-relaxed">
+          <p className="mt-5 text-base md:text-lg text-foreground/80 max-w-xl leading-relaxed">
             Market entry, tariff exposure, go-to-market, delivery capacity, AI spend — these are risk-based
             bets that decide whether a company compounds or stalls. GEM.IQ, the diagnostic suite from
             GlobalEdgeMarkets, scores each one across weighted,
@@ -400,51 +400,51 @@ function HeroTile() {
 
           {/* Rotating showcase */}
           <div key={current.key} className="mt-8 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-            <div className={`h-10 w-10 shrink-0 rounded-xl border border-white/10 flex items-center justify-center ${accent.chip}`}>
+            <div className={`h-10 w-10 shrink-0 rounded-xl border border-border flex items-center justify-center ${accent.chip}`}>
               <span className={`h-2 w-2 rounded-full ${accent.dot} shadow-[0_0_12px_currentColor]`} />
             </div>
             <div className="min-w-0">
-              <div className="text-xs uppercase tracking-[0.2em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground" style={{ fontFamily: "'League Spartan', sans-serif" }}>
                 Now featuring
               </div>
               <div className="mt-0.5 flex items-baseline gap-2 flex-wrap">
                 <span className={`font-display text-xl font-bold ${accent.text}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
                   {current.name}
                 </span>
-                <span className="text-sm text-white/60">— {current.domain}</span>
+                <span className="text-sm text-foreground/80">— {current.domain}</span>
               </div>
             </div>
           </div>
 
           {/* Trial offer card — primary CTA */}
-          <div className="mt-8 rounded-2xl border border-[#4ade80]/40 bg-gradient-to-br from-[#4ade80]/12 via-[#0a0a16]/40 to-[#a78bfa]/10 backdrop-blur-xl p-5 md:p-6 shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)]">
+          <div className="mt-8 rounded-2xl border border-[#05CFAB]/40 bg-gradient-to-br from-[#05CFAB]/12 via-background/40 to-[#2D1594]/10 backdrop-blur-xl p-5 md:p-6 shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)]">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#4ade80] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                <span className="h-1.5 w-1.5 rounded-full bg-[#0a0a16] animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#05CFAB] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-gem-navy-deep" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                <span className="h-1.5 w-1.5 rounded-full bg-background animate-pulse" />
                 Limited launch offer
               </span>
             </div>
             <div className="mt-3 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
               {ONE_TIME_PRICE && (
-                <>One assessment for <span className="text-[#4ade80]">{ONE_TIME_PRICE}</span>, or all </>
+                <>One assessment for <span className="text-gem-teal">{ONE_TIME_PRICE}</span>, or all </>
               )}
               {!ONE_TIME_PRICE && <>All </>}
               {IQ_PRODUCTS.length}
               {COMPLETE_MONTHLY_PRICE ? (
-                <> for <span className="text-[#4ade80]">{COMPLETE_MONTHLY_PRICE}/mo.</span></>
+                <> for <span className="text-gem-teal">{COMPLETE_MONTHLY_PRICE}/mo.</span></>
               ) : (
                 <> IQs in one subscription.</>
               )}
             </div>
 
-            <p className="mt-1.5 text-sm text-white/70">
+            <p className="mt-1.5 text-sm text-foreground/80">
               Buy a single IQ when you need one answer — {IQ_NAME_LIST}. Or pick three with Growth, or take all {IQ_PRODUCTS.length} with Complete — both include the combined GEM.IQ report.
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Link
                 to="/auth"
                 search={{ mode: "signup", trial: "1" }}
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-6 py-3 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
+                className="inline-flex items-center gap-2 rounded-full bg-gem-mint px-6 py-3 text-sm font-bold text-gem-navy-deep shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)] hover:shadow-[0_0_40px_-4px_rgba(74,222,128,0.7)] transition-shadow"
                 style={{ fontFamily: "'League Spartan', sans-serif" }}
               >
                 Start {TRIAL_LABEL}
@@ -453,12 +453,12 @@ function HeroTile() {
               <Link
                 to="/auth"
                 search={{ mode: "signup", buy: "single" }}
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card backdrop-blur px-5 py-3 text-sm font-semibold text-foreground hover:bg-secondary transition-colors"
                 style={{ fontFamily: "'League Spartan', sans-serif" }}
               >
                 Buy one assessment
               </Link>
-              <span className="text-[11px] text-white/50">
+              <span className="text-[11px] text-muted-foreground">
                 {GUARANTEE_LABEL ? `${GUARANTEE_LABEL} · Cancel anytime` : "Cancel anytime"}
               </span>
 
@@ -512,17 +512,17 @@ function IntelligenceStrip() {
   }, []);
 
   const stats = [
-    { label: "Assessment dimensions", target: TOTAL_DIMENSIONS, suffix: "", accent: "text-[#4ade80]" },
-    { label: "Global markets analyzed", target: 180, suffix: "", accent: "text-[#a78bfa]" },
-    { label: "Executive benchmarks", target: 2600, suffix: "+", accent: "text-[#67e8f9]" },
-    { label: "Median time to insight", target: 9, suffix: " min", accent: "text-[#4ade80]" },
+    { label: "Assessment dimensions", target: TOTAL_DIMENSIONS, suffix: "", accent: "text-gem-teal" },
+    { label: "Global markets analyzed", target: 180, suffix: "", accent: "text-gem-purple" },
+    { label: "Executive benchmarks", target: 2600, suffix: "+", accent: "text-gem-teal" },
+    { label: "Median time to insight", target: 9, suffix: " min", accent: "text-gem-teal" },
   ];
 
   return (
     <section ref={ref} className="mt-20 md:mt-28">
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Rotating photo banner */}
-        <div className="lg:col-span-3 relative overflow-hidden rounded-3xl bg-[#16213e]/30 ring-1 ring-inset ring-white/[0.06] min-h-[360px] md:min-h-[440px]">
+        <div className="lg:col-span-3 relative overflow-hidden rounded-3xl bg-secondary/30 ring-1 ring-inset ring-border min-h-[360px] md:min-h-[440px]">
           {ASSESSMENTS.map((a, idx) => (
             <img
               key={a.key}
@@ -536,24 +536,24 @@ function IntelligenceStrip() {
               }`}
             />
           ))}
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0a0a16] via-[#0a0a16]/50 to-transparent" />
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-[#0a0a16]/70 to-transparent" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-background/70 to-transparent" />
 
           <div className="relative z-10 flex h-full flex-col justify-between p-6 md:p-10">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/80" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                <span className="h-1.5 w-1.5 rounded-full bg-[#4ade80] animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary backdrop-blur px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-foreground" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#05CFAB] animate-pulse" />
                 Live intelligence
               </span>
             </div>
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+              <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground" style={{ fontFamily: "'League Spartan', sans-serif" }}>
                 {ASSESSMENTS[imgIdx].domain}
               </div>
               <h3 className="mt-2 font-display text-3xl md:text-5xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
                 {ASSESSMENTS[imgIdx].name}
               </h3>
-              <p className="mt-2 text-sm md:text-base text-white/70 max-w-md">
+              <p className="mt-2 text-sm md:text-base text-foreground/80 max-w-md">
                 {ASSESSMENTS[imgIdx].tagline}
               </p>
               <div className="mt-5 flex items-center gap-2">
@@ -563,7 +563,7 @@ function IntelligenceStrip() {
                     onClick={() => setImgIdx(idx)}
                     aria-label={`Show ${a.name}`}
                     className={`h-1.5 rounded-full transition-all ${
-                      idx === imgIdx ? "w-10 bg-white" : "w-4 bg-white/30 hover:bg-white/60"
+                      idx === imgIdx ? "w-10 bg-foreground" : "w-4 bg-foreground/30 hover:bg-foreground/60"
                     }`}
                   />
                 ))}
@@ -574,9 +574,9 @@ function IntelligenceStrip() {
 
         {/* Stats + rotating globe */}
         <div className="lg:col-span-2 grid gap-6">
-          <div className="relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-6 md:p-8">
-            <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#4ade80]/15 blur-3xl" />
-            <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          <div className="relative overflow-hidden rounded-3xl bg-card shadow-sm backdrop-blur-xl ring-1 ring-inset ring-border p-6 md:p-8">
+            <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#05CFAB]/15 blur-3xl" />
+            <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground" style={{ fontFamily: "'League Spartan', sans-serif" }}>
               GEM.IQ · By the numbers
             </div>
             <div className="mt-5 grid grid-cols-2 gap-5">
@@ -586,14 +586,14 @@ function IntelligenceStrip() {
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0a0a16] to-[#16213e]/60 ring-1 ring-inset ring-white/[0.06] p-6 md:p-8 min-h-[180px]">
-            <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#4ade80]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-background to-secondary/60 ring-1 ring-inset ring-border p-6 md:p-8 min-h-[180px]">
+            <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-gem-teal" style={{ fontFamily: "'League Spartan', sans-serif" }}>
               One planet, one platform
             </div>
             <h4 className="mt-1 font-display text-xl md:text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
               Benchmark against global peers.
             </h4>
-            <p className="mt-2 text-sm text-white/60">
+            <p className="mt-2 text-sm text-foreground/80">
               Country, industry, and stage-weighted percentiles — updated continuously.
             </p>
           </div>
@@ -623,9 +623,9 @@ function StatCounter({
     <div>
       <div className={`font-display text-3xl md:text-4xl font-bold tracking-tight ${accent}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
         {display}
-        <span className="text-white/70">{suffix}</span>
+        <span className="text-foreground/80">{suffix}</span>
       </div>
-      <div className="mt-1 text-xs text-white/55 leading-snug">{label}</div>
+      <div className="mt-1 text-xs text-foreground/80 leading-snug">{label}</div>
     </div>
   );
 }
@@ -633,21 +633,21 @@ function StatCounter({
 
 function SpecialistPanel() {
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-dashed border-white/15 bg-white/[0.03] p-6 flex flex-col justify-between">
-      <div aria-hidden className="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-[#67e8f9] opacity-10 blur-3xl" />
+    <div className="relative overflow-hidden rounded-3xl border border-dashed border-border bg-card shadow-sm p-6 flex flex-col justify-between">
+      <div aria-hidden className="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-[#05CFAB] opacity-10 blur-3xl" />
       <div className="relative z-10">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white/60" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-          <span className="h-1.5 w-1.5 rounded-full bg-[#67e8f9]" />
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-card shadow-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground/80" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          <span className="h-1.5 w-1.5 rounded-full bg-[#05CFAB]" />
           Who this is for
         </div>
-        <p className="mt-4 text-[15px] leading-relaxed text-white/65">
+        <p className="mt-4 text-[15px] leading-relaxed text-foreground/80">
           A specialist diagnostic only applies if you carry that exposure. If you
           import, manufacture abroad, or pay duty, TariffIQ is scored the same way
           as the capability IQs — but the output is a recoverable dollar figure.
           No exposure, no need to run it.
         </p>
       </div>
-      <p className="relative z-10 mt-5 text-xs text-white/40">
+      <p className="relative z-10 mt-5 text-xs text-muted-foreground">
         Included in the suite plan alongside every capability diagnostic. More
         specialist diagnostics are in development.
       </p>
@@ -662,7 +662,7 @@ function AssessmentTile({ a }: { a: Assessment }) {
   return (
     <Wrapper
       {...wrapperProps}
-      className={`md:col-span-1 group relative rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-6 flex flex-col justify-between overflow-hidden transition-all ${c.ring} ${
+      className={`md:col-span-1 group relative rounded-3xl bg-card shadow-sm backdrop-blur-xl ring-1 ring-inset ring-border p-6 flex flex-col justify-between overflow-hidden transition-all ${c.ring} ${
         a.live ? "cursor-pointer hover:-translate-y-0.5" : "opacity-90"
       }`}
     >
@@ -670,20 +670,20 @@ function AssessmentTile({ a }: { a: Assessment }) {
       <div aria-hidden className={`pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full ${c.dot} opacity-0 blur-3xl group-hover:opacity-20 transition-opacity`} />
 
       <div className="relative z-10 flex items-start justify-between">
-        <div className={`h-11 w-11 rounded-2xl border border-white/10 flex items-center justify-center ${c.chip}`}>
+        <div className={`h-11 w-11 rounded-2xl border border-border flex items-center justify-center ${c.chip}`}>
           <AssessmentGlyph accent={a.accent} />
         </div>
         {!a.live ? (
-          <span className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/50">
+          <span className="rounded-full border border-border bg-card px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             Soon
           </span>
         ) : (
-          <ArrowIcon className={`h-5 w-5 text-white/30 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all`} />
+          <ArrowIcon className={`h-5 w-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all`} />
         )}
       </div>
 
       <div className="relative z-10 mt-6">
-        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground" style={{ fontFamily: "'League Spartan', sans-serif" }}>
           {a.domain}
         </div>
         <h3
@@ -693,7 +693,7 @@ function AssessmentTile({ a }: { a: Assessment }) {
           {a.name}
         </h3>
         <p className={`mt-1 text-sm font-medium ${c.text}`}>{a.tagline}</p>
-        <p className="mt-3 text-sm text-white/55 leading-relaxed line-clamp-3">{a.body}</p>
+        <p className="mt-3 text-sm text-foreground/80 leading-relaxed line-clamp-3">{a.body}</p>
       </div>
     </Wrapper>
   );
@@ -712,20 +712,20 @@ function AssessmentGlyph({ accent }: { accent: Accent }) {
 
 function MethodologyTile() {
   return (
-    <div className="md:col-span-2 md:row-span-1 rounded-3xl bg-gradient-to-br from-[#16213e]/60 to-[#0a0a16]/40 backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
-      <div className="shrink-0 h-14 w-14 rounded-2xl border border-white/10 bg-white/5 flex items-center justify-center">
-        <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#4ade80]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <div className="md:col-span-2 md:row-span-1 rounded-3xl bg-gradient-to-br from-secondary/60 to-background/40 backdrop-blur-xl ring-1 ring-inset ring-border p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+      <div className="shrink-0 h-14 w-14 rounded-2xl border border-border bg-card flex items-center justify-center">
+        <svg viewBox="0 0 24 24" className="h-6 w-6 text-gem-teal" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM9 12l2 2 4-4" />
         </svg>
       </div>
       <div>
-        <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+        <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground" style={{ fontFamily: "'League Spartan', sans-serif" }}>
           Executive-grade methodologies
         </div>
         <h3 className="mt-1 font-display text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
           CMMI · TRL/MRL · WCAG · Tariff engineering doctrine
         </h3>
-        <p className="mt-2 text-sm text-white/55 leading-relaxed max-w-2xl">
+        <p className="mt-2 text-sm text-foreground/80 leading-relaxed max-w-2xl">
           Every IQ is built on a peer-reviewed framework — so scores map to language your board already speaks.
         </p>
       </div>
@@ -735,17 +735,17 @@ function MethodologyTile() {
 
 function BenchmarkTile() {
   return (
-    <div className="md:col-span-1 md:row-span-1 rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-8 relative overflow-hidden">
-      <div aria-hidden className="absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-[#a78bfa]/15 blur-3xl" />
+    <div className="md:col-span-1 md:row-span-1 rounded-3xl bg-card shadow-sm backdrop-blur-xl ring-1 ring-inset ring-border p-8 relative overflow-hidden">
+      <div aria-hidden className="absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-[#2D1594]/15 blur-3xl" />
       <div className="relative z-10 flex items-start justify-between gap-6">
         <div>
-          <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#a78bfa]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+          <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-gem-purple" style={{ fontFamily: "'League Spartan', sans-serif" }}>
             Unified benchmarking
           </div>
           <h3 className="mt-1 font-display text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
             One dashboard. Every dimension.
           </h3>
-          <p className="mt-2 text-sm text-white/55 leading-relaxed max-w-md">
+          <p className="mt-2 text-sm text-foreground/80 leading-relaxed max-w-md">
             Compare your organization across assessments, retakes, and industry peers — all from one view.
           </p>
         </div>
@@ -754,7 +754,7 @@ function BenchmarkTile() {
           {[38, 62, 51, 78, 44, 82, 66, 90].map((h, idx) => (
             <div
               key={idx}
-              className="w-2 rounded-t bg-gradient-to-t from-[#4ade80]/40 to-[#a78bfa]"
+              className="w-2 rounded-t bg-gradient-to-t from-[#05CFAB]/40 to-[#2D1594]"
               style={{ height: `${h}%` }}
             />
           ))}
@@ -774,11 +774,11 @@ function TrustMarquee() {
     "Tariff Engineering",
   ];
   return (
-    <section className="mt-16 border-y border-white/5 py-6 overflow-hidden">
+    <section className="mt-16 border-y border-border py-6 overflow-hidden">
       <div className="flex animate-marquee whitespace-nowrap gap-12">
         {[...items, ...items].map((it, i) => (
-          <span key={i} className="text-sm uppercase tracking-[0.25em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            <span className="mr-3 inline-block h-1.5 w-1.5 rounded-full bg-[#4ade80] align-middle" />
+          <span key={i} className="text-sm uppercase tracking-[0.25em] text-muted-foreground" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+            <span className="mr-3 inline-block h-1.5 w-1.5 rounded-full bg-[#05CFAB] align-middle" />
             {it}
           </span>
         ))}
@@ -793,14 +793,14 @@ function TrustMarquee() {
 type CompleteTerm = "complete" | "complete_annual";
 
 const CHECK = (
-  <svg className="mt-0.5 h-4 w-4 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5">
+  <svg className="mt-0.5 h-4 w-4 shrink-0 text-gem-teal" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5">
     <path strokeLinecap="round" strokeLinejoin="round" d="M4 10l4 4 8-8" />
   </svg>
 );
 
 function Features({ lines }: { lines: string[] }) {
   return (
-    <ul className="mt-6 space-y-3 text-sm text-white/70">
+    <ul className="mt-6 space-y-3 text-sm text-foreground/80">
       {lines.map((line) => (
         <li key={line} className="flex items-start gap-3">{CHECK}<span>{line}</span></li>
       ))}
@@ -813,8 +813,8 @@ function PriceLine({ price, unit, extra }: { price?: string; unit: string; extra
   return (
     <div className="mt-6 flex items-baseline gap-2 flex-wrap">
       <div className="font-display text-5xl font-bold" style={{ fontFamily: "'League Spartan', sans-serif" }}>{price}</div>
-      <div className="text-white/50">{unit}</div>
-      {extra && <div className="text-xs text-white/40">{extra}</div>}
+      <div className="text-muted-foreground">{unit}</div>
+      {extra && <div className="text-xs text-muted-foreground">{extra}</div>}
     </div>
   );
 }
@@ -831,23 +831,23 @@ function Pricing() {
   return (
     <section id="pricing" className="mt-20 md:mt-28">
       <div className="text-center max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 backdrop-blur px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-white/60" style={font}>
-          <span className="h-1.5 w-1.5 rounded-full bg-[#4ade80]" />
+        <div className="inline-flex items-center gap-2 rounded-full bg-card border border-border backdrop-blur px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-foreground/80" style={font}>
+          <span className="h-1.5 w-1.5 rounded-full bg-[#05CFAB]" />
           Pricing
         </div>
         <h2 className="mt-6 font-display text-4xl md:text-5xl font-bold tracking-tight" style={font}>
-          One answer, or <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">the whole picture.</span>
+          One answer, or <span className="text-transparent bg-clip-text bg-gradient-to-r from-gem-teal to-gem-purple">the whole picture.</span>
         </h2>
-        <p className="mt-4 text-white/55">
+        <p className="mt-4 text-foreground/80">
           Start with one assessment, build a picture with three, or see your whole business with all {IQ_PRODUCTS.length} and the combined GEM.IQ score.
         </p>
       </div>
 
       <div className="mt-10 grid gap-4 md:grid-cols-3 max-w-6xl mx-auto items-stretch">
         {/* Starter */}
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl flex flex-col">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 backdrop-blur-xl flex flex-col">
           <div className={cardTitle} style={font}>Starter</div>
-          <p className="mt-1 text-sm text-white/50">One IQ, one report, no subscription.</p>
+          <p className="mt-1 text-sm text-muted-foreground">One IQ, one report, no subscription.</p>
           <PriceLine price={ONE_TIME_PRICE} unit="one-time" />
           <Features lines={[
             "Any one IQ of your choice",
@@ -857,17 +857,17 @@ function Pricing() {
           ]} />
           <div className="mt-auto pt-8">
             <Link to="/auth" search={{ mode: "signup", buy: "single" }}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-white/20" style={font}>
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-secondary px-5 py-3 text-sm font-bold text-foreground transition-all hover:bg-secondary" style={font}>
               Buy one assessment <ArrowIcon className="h-4 w-4" />
             </Link>
-            <p className="mt-4 text-xs text-white/40">No recurring charge.</p>
+            <p className="mt-4 text-xs text-muted-foreground">No recurring charge.</p>
           </div>
         </div>
 
         {/* Growth */}
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl flex flex-col">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 backdrop-blur-xl flex flex-col">
           <div className={cardTitle} style={font}>Growth</div>
-          <p className="mt-1 text-sm text-white/50">Any {GROWTH_PICKS} IQs plus the combined report.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Any {GROWTH_PICKS} IQs plus the combined report.</p>
           <PriceLine price={GROWTH_PRICE} unit="/ month" />
           <Features lines={[
             `${GROWTH_PICKS} assessments you choose — the first ${GROWTH_PICKS} you take are yours`,
@@ -877,28 +877,28 @@ function Pricing() {
           ]} />
           <div className="mt-auto pt-8">
             <Link to="/auth" search={{ mode: "signup", trial: "1", plan: "growth" }}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#4ade80]/50 bg-[#4ade80]/10 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-[#4ade80]/20" style={font}>
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#05CFAB]/50 bg-[#05CFAB]/10 px-5 py-3 text-sm font-bold text-foreground transition-all hover:bg-[#05CFAB]/20" style={font}>
               Start {TRIAL_LABEL} <ArrowIcon className="h-4 w-4" />
             </Link>
-            <p className="mt-4 text-xs text-white/40">{TRIAL_NOTE}</p>
+            <p className="mt-4 text-xs text-muted-foreground">{TRIAL_NOTE}</p>
           </div>
         </div>
 
         {/* Complete */}
-        <div className="relative overflow-hidden rounded-3xl border border-[#4ade80]/40 bg-gradient-to-br from-[#16213e]/80 to-[#0a0a16]/60 p-8 backdrop-blur-xl shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)] flex flex-col">
-          <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#4ade80]/20 blur-3xl" />
+        <div className="relative overflow-hidden rounded-3xl border border-[#05CFAB]/40 bg-gradient-to-br from-secondary/80 to-background/60 p-8 backdrop-blur-xl shadow-[0_0_50px_-12px_rgba(74,222,128,0.35)] flex flex-col">
+          <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#05CFAB]/20 blur-3xl" />
           <div className="relative z-10 flex items-center justify-between gap-3">
             <div>
               <div className={cardTitle} style={font}>Complete</div>
-              <p className="mt-1 text-sm text-white/50">All {IQ_PRODUCTS.length} IQs, the full picture.</p>
+              <p className="mt-1 text-sm text-muted-foreground">All {IQ_PRODUCTS.length} IQs, the full picture.</p>
             </div>
-            <span className="shrink-0 rounded-full bg-[#4ade80] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a0a16]" style={font}>Best value</span>
+            <span className="shrink-0 rounded-full bg-[#05CFAB] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gem-navy-deep" style={font}>Best value</span>
           </div>
           {hasAnnual && (
-            <div className="relative z-10 mt-5 inline-flex flex-wrap self-start rounded-full border border-white/10 bg-white/5 p-1 text-xs font-bold" style={font}>
+            <div className="relative z-10 mt-5 inline-flex flex-wrap self-start rounded-full border border-border bg-card p-1 text-xs font-bold" style={font}>
               {([["complete", "Monthly"], ["complete_annual", saving ? `Annual · ${saving}` : "Annual"]] as [CompleteTerm, string][]).map(([k, label]) => (
                 <button key={k} type="button" onClick={() => setTerm(k)}
-                  className={`rounded-full px-4 py-1.5 transition-colors ${term === k ? "bg-[#4ade80] text-[#0a0a16]" : "text-white/60 hover:text-white"}`}>
+                  className={`rounded-full px-4 py-1.5 transition-colors ${term === k ? "bg-[#05CFAB] text-gem-navy-deep" : "text-foreground/80 hover:text-foreground"}`}>
                   {label}
                 </button>
               ))}
@@ -919,22 +919,22 @@ function Pricing() {
           </div>
           <div className="relative z-10 mt-auto pt-8">
             <Link to="/auth" search={{ mode: "signup", trial: "1", plan: annual ? "complete_annual" : "complete" }}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-5 py-3 text-sm font-bold text-[#0a0a16] transition-all hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]" style={font}>
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gem-mint px-5 py-3 text-sm font-bold text-gem-navy-deep transition-all hover:shadow-[0_0_30px_-6px_rgba(167,139,250,0.7)]" style={font}>
               Start {TRIAL_LABEL} <ArrowIcon className="h-4 w-4" />
             </Link>
-            <p className="mt-4 text-xs text-white/40">{TRIAL_NOTE}</p>
+            <p className="mt-4 text-xs text-muted-foreground">{TRIAL_NOTE}</p>
           </div>
         </div>
       </div>
 
       {/* Guarantee trust line under both */}
       {GUARANTEE_LABEL && (
-        <div className="mx-auto mt-6 flex max-w-4xl items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center">
-          <svg className="h-5 w-5 shrink-0 text-[#4ade80]" viewBox="0 0 20 20" fill="currentColor">
+        <div className="mx-auto mt-6 flex max-w-4xl items-center justify-center gap-3 rounded-2xl border border-border bg-card shadow-sm px-5 py-4 text-center">
+          <svg className="h-5 w-5 shrink-0 text-gem-teal" viewBox="0 0 20 20" fill="currentColor">
             <path d="M10 1.5l6.5 2.6v5.2c0 4-2.8 7.6-6.5 8.7-3.7-1.1-6.5-4.7-6.5-8.7V4.1L10 1.5zm3.7 6.8a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z" />
           </svg>
-          <p className="text-sm text-white/70">
-            <span className="font-bold text-white">{GUARANTEE_LABEL}</span> on both options — no questions asked.
+          <p className="text-sm text-foreground/80">
+            <span className="font-bold text-foreground">{GUARANTEE_LABEL}</span> on both options — no questions asked.
           </p>
         </div>
       )}
@@ -947,21 +947,21 @@ function Pricing() {
 function FinalCTA() {
   return (
     <section className="mt-20 md:mt-28">
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#16213e]/80 via-[#0a0a16] to-[#16213e]/80 ring-1 ring-inset ring-white/[0.06] p-10 md:p-16 text-center">
-        <div aria-hidden className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[#4ade80]/20 blur-3xl" />
-        <div aria-hidden className="absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-[#a78bfa]/20 blur-3xl" />
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-secondary/80 via-background to-secondary/80 ring-1 ring-inset ring-border p-10 md:p-16 text-center">
+        <div aria-hidden className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[#05CFAB]/20 blur-3xl" />
+        <div aria-hidden className="absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-[#2D1594]/20 blur-3xl" />
         <div className="relative z-10 max-w-2xl mx-auto">
           <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            Ready to quantify your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">global readiness?</span>
+            Ready to quantify your <span className="text-transparent bg-clip-text bg-gradient-to-r from-gem-teal to-gem-purple">global readiness?</span>
           </h2>
-          <p className="mt-4 text-white/60">
+          <p className="mt-4 text-foreground/80">
             Sign up once. Take any assessment in under 10 minutes. Get executive-ready benchmarks in your inbox.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               to="/auth"
               search={{ mode: "signup" }}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-7 py-3.5 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)]"
+              className="inline-flex items-center gap-2 rounded-full bg-gem-mint px-7 py-3.5 text-sm font-bold text-gem-navy-deep shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)]"
               style={{ fontFamily: "'League Spartan', sans-serif" }}
             >
               Create your account
@@ -970,7 +970,7 @@ function FinalCTA() {
             <Link
               to="/auth"
               search={{ mode: "signin" }}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-7 py-3.5 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-card backdrop-blur px-7 py-3.5 text-sm font-semibold text-foreground hover:bg-secondary transition-colors"
               style={{ fontFamily: "'League Spartan', sans-serif" }}
             >
               I already have an account
@@ -985,7 +985,7 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="relative z-10 border-t border-white/5 mt-8 py-10 text-white/60">
+    <footer className="relative z-10 mt-8 bg-gem-navy-deep py-10 text-white/80">
       <div className="mx-auto max-w-7xl px-6 md:px-10">
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
           <div className="flex flex-col items-center gap-2 md:items-start">

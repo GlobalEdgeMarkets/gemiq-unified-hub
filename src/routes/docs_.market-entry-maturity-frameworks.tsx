@@ -76,8 +76,8 @@ const LEVELS = [
 
 function Page() {
   return (
-    <div className="min-h-screen w-full bg-[#0a0a16] font-sans text-white antialiased">
-      <header className="border-b border-white/10 bg-[#0a0a16]/80 backdrop-blur-xl">
+    <div className="min-h-screen w-full bg-background font-sans text-foreground antialiased">
+      <header className="border-b border-white/10 bg-gem-navy-deep text-white backdrop-blur-xl">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
           <a
             href="https://globaledgemarkets.com"
@@ -94,14 +94,14 @@ function Page() {
       </header>
 
       <main className="mx-auto max-w-4xl px-6 py-16">
-        <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50" style={DISPLAY}>
+        <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground" style={DISPLAY}>
           Guide · Executive readiness benchmarking
         </p>
         <h1 className="mt-3 text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl" style={DISPLAY}>
           Market entry maturity assessment: applying <span className="text-[#05CFAB]">CMMI</span> and{" "}
           <span className="text-[#05CFAB]">TRL/MRL</span> to global expansion
         </h1>
-        <p className="mt-5 text-lg text-white/70">
+        <p className="mt-5 text-lg text-foreground/80">
           Maturity models were built for software process and hardware readiness — but the same logic
           explains why one company enters a new market predictably and another burns two years learning
           the same lessons twice. This guide maps CMMI and TRL/MRL onto market entry, then shows how the
@@ -112,21 +112,21 @@ function Page() {
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl" style={DISPLAY}>
             The three frameworks in one paragraph each
           </h2>
-          <div className="mt-6 space-y-5 text-white/75">
+          <div className="mt-6 space-y-5 text-foreground/80">
             <p>
-              <strong className="text-white">CMMI (Capability Maturity Model Integration)</strong> grades an
+              <strong className="text-foreground">CMMI (Capability Maturity Model Integration)</strong> grades an
               organization on how repeatable and measurable its processes are, across five levels from
               initial to optimizing. It answers: if the person who ran the last launch left tomorrow, could
               you run the next one as well?
             </p>
             <p>
-              <strong className="text-white">TRL (Technology Readiness Levels)</strong> grades a technology
+              <strong className="text-foreground">TRL (Technology Readiness Levels)</strong> grades a technology
               from basic principles (TRL 1) to proven in operational use (TRL 9). In an expansion context,
               it grades whether the offering itself — localized, compliant, supportable — is actually ready
               for the target market, not just ready in the home market.
             </p>
             <p>
-              <strong className="text-white">MRL (Manufacturing Readiness Levels)</strong> extends the same
+              <strong className="text-foreground">MRL (Manufacturing Readiness Levels)</strong> extends the same
               scale to the ability to produce, source and deliver at rate and cost. For market entry this is
               the supply chain, tariff, landed-cost and fulfillment layer that most entry plans underweight.
             </p>
@@ -137,7 +137,7 @@ function Page() {
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl" style={DISPLAY}>
             The market entry maturity scale
           </h2>
-          <p className="mt-2 text-sm text-white/60">
+          <p className="mt-2 text-sm text-foreground/80">
             GEM.IQ scores every dimension on five tiers — reactive, developing, defined, advanced,
             optimized — which align to CMMI levels and to bands of TRL/MRL readiness.
           </p>
@@ -145,7 +145,7 @@ function Page() {
             {LEVELS.map((l) => (
               <article
                 key={l.n}
-                className="rounded-3xl bg-white/[0.04] p-6 ring-1 ring-inset ring-white/[0.06] backdrop-blur-xl"
+                className="rounded-3xl bg-card shadow-sm p-6 ring-1 ring-inset ring-border backdrop-blur-xl"
               >
                 <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                   <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#05CFAB]" style={DISPLAY}>
@@ -154,9 +154,9 @@ function Page() {
                   <h3 className="text-xl font-bold tracking-tight" style={DISPLAY}>
                     {l.cmmi}
                   </h3>
-                  <span className="text-xs text-white/45">{l.trl}</span>
+                  <span className="text-xs text-muted-foreground">{l.trl}</span>
                 </div>
-                <p className="mt-2 text-sm text-white/70">{l.entry}</p>
+                <p className="mt-2 text-sm text-foreground/80">{l.entry}</p>
               </article>
             ))}
           </div>
@@ -166,24 +166,24 @@ function Page() {
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl" style={DISPLAY}>
             How to run the benchmark
           </h2>
-          <ol className="mt-6 space-y-4 text-white/75">
+          <ol className="mt-6 space-y-4 text-foreground/80">
             <li>
-              <strong className="text-white">1. Pick the unit of analysis.</strong> Score a specific
+              <strong className="text-foreground">1. Pick the unit of analysis.</strong> Score a specific
               market–offering pair, not the company in the abstract. "Us in Germany with the enterprise
               tier" produces an actionable number; "us, globally" does not.
             </li>
             <li>
-              <strong className="text-white">2. Score process separately from readiness.</strong> A CMMI
+              <strong className="text-foreground">2. Score process separately from readiness.</strong> A CMMI
               Level 4 organization can still be TRL 5 in a new market. Conflating them hides the real
               constraint.
             </li>
             <li>
-              <strong className="text-white">3. Weight the gating dimensions.</strong> Regulatory,
+              <strong className="text-foreground">3. Weight the gating dimensions.</strong> Regulatory,
               tariff/landed cost and support coverage are gates, not averages — a reactive score in any one
               of them caps the whole entry regardless of how strong go-to-market looks.
             </li>
             <li>
-              <strong className="text-white">4. Re-score quarterly.</strong> Maturity is a trend line. A
+              <strong className="text-foreground">4. Re-score quarterly.</strong> Maturity is a trend line. A
               single score tells you where you are; the delta tells you whether the investment is working.
             </li>
           </ol>
@@ -193,7 +193,7 @@ function Page() {
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl" style={DISPLAY}>
             Where GEM.IQ fits
           </h2>
-          <p className="mt-3 text-white/75">
+          <p className="mt-3 text-foreground/80">
             Each GEM.IQ assessment scores one discipline against this same five-tier scale, and the Hub
             rolls them into a single composite view so you can see which dimension is actually gating
             expansion.
@@ -210,36 +210,36 @@ function Page() {
               <Link
                 key={p.n}
                 to={p.to}
-                className="rounded-2xl bg-white/[0.04] p-5 ring-1 ring-inset ring-white/[0.06] transition-colors hover:bg-white/[0.07]"
+                className="rounded-2xl bg-card shadow-sm p-5 ring-1 ring-inset ring-border transition-colors hover:bg-secondary"
               >
                 <div className="text-base font-bold tracking-tight" style={DISPLAY}>
                   {p.n}
                 </div>
-                <p className="mt-1 text-sm text-white/60">{p.d}</p>
+                <p className="mt-1 text-sm text-foreground/80">{p.d}</p>
               </Link>
             ))}
           </div>
         </section>
 
-        <section className="mt-14 rounded-3xl bg-gradient-to-br from-[#16213e]/70 to-[#0a0a16]/50 p-8 ring-1 ring-inset ring-white/[0.06] md:p-12">
+        <section className="mt-14 rounded-3xl bg-gradient-to-br from-secondary/70 to-background/50 p-8 ring-1 ring-inset ring-border md:p-12">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl" style={DISPLAY}>
             Benchmark your entry readiness
           </h2>
-          <p className="mt-3 max-w-xl text-sm text-white/65">
+          <p className="mt-3 max-w-xl text-sm text-foreground/80">
             Run a single assessment or unlock the full suite and track maturity quarterly.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/auth"
               search={{ mode: "signup", trial: "1" }}
-              className="rounded-full bg-[#05CFAB] px-6 py-3 text-sm font-bold text-[#0a0a16]"
+              className="rounded-full bg-[#05CFAB] px-6 py-3 text-sm font-bold text-gem-navy-deep"
               style={DISPLAY}
             >
               Start free trial
             </Link>
             <Link
               to="/"
-              className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
+              className="rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground hover:bg-secondary"
               style={DISPLAY}
             >
               Back to the Hub
@@ -248,7 +248,7 @@ function Page() {
         </section>
       </main>
 
-      <footer className="border-t border-white/10 py-10">
+      <footer className="border-t border-white/10 bg-gem-navy-deep py-10 text-white">
         <div className="mx-auto max-w-4xl px-6 text-xs text-white/45">
           © {new Date().getFullYear()} GlobalEdgeMarkets · GEM.IQ
         </div>

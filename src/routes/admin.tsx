@@ -308,8 +308,38 @@ function DeleteUserCard({ run }: { run: (a: { data: unknown }) => Promise<unknow
       >
         {a.loading ? "Deleting…" : "Delete user"}
       </Button>
-      <Panel data={a.result} />
+      <DeleteResult data={a.result} />
     </Card>
+  );
+}
+
+const IQ_NAMES: Record<string, string> = {
+  gtmiq: "GTMIQ", salesiq: "SalesIQ", productiq: "ProductIQ", aitransformiq: "AITransformIQ", uxiq: "UXIQ", tariffiq: "TariffIQ",
+};
+function stepLabel(step: string): string {
+  if (step.startsWith("purge ")) { const k = step.slice(6); return `Removed from ${IQ_NAMES[k] ?? k}`; }
+  const map: Record<string, string> = {
+    "hubspot contact": "Deleted HubSpot contact", "stripe customer": "Stripe customer", "auth account": "Deleted Hub account",
+  };
+  return map[step] ?? `Deleted Hub ${step}`;
+}
+
+function DeleteResult({ data }: { data: Json }) {
+  const d = data as { email?: string; ok?: boolean; steps?: { step: string; ok: boolean; detail?: string }[] } | undefined;
+  if (!d || !Array.isArray(d.steps)) return <Panel data={data} />;
+  return (
+    <div className="mt-4 rounded-lg bg-muted/60 p-3 text-sm">
+      <p className={`font-medium ${d.ok ? "text-primary" : "text-destructive"}`}>
+        {d.ok ? `${d.email} deleted everywhere` : `${d.email}: some steps failed`}
+      </p>
+      <ul className="mt-2 grid gap-1">
+        {d.steps.map((s, i) => (
+          <li key={i} className={s.ok ? "text-foreground/80" : "text-destructive"}>
+            {s.ok ? "✓" : "✗"} {stepLabel(s.step)}{s.detail ? ` — ${s.detail}` : ""}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

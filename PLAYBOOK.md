@@ -123,11 +123,9 @@ Automatic central sync: the SDK polls the Hub manifest every 5 minutes (and on t
 focus) and applies brand tokens/logos. `/onboard` exposes a **Sync now** button and
 a live next-sync countdown.
 
-Automated testing: every new IQ also pastes the **test markers prompt** (Admin →
-Tests) so its start, question, answer, next, submit and result elements carry
-`data-gem-test` markers. Admin → Tests then provides a ready-to-paste Checkly script
-for that IQ. Test contacts use `<inbox>+checkly-…` addresses only and are deleted
-everywhere after the configured keep period.
+Automated testing: Admin → Tests runs a quick test per IQ (result → Hub → HubSpot
+fields, marketing status, workflows). Test contacts use `<inbox>+checkly-…` addresses
+only and are deleted everywhere after the configured keep period.
 
 ## 5. Pricing (v1.5)
 

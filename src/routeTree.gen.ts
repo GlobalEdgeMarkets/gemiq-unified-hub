@@ -45,15 +45,12 @@ import { Route as ApiPublicBillingCreateCheckoutRouteImport } from './routes/api
 import { Route as ApiPublicBillingCreatePortalSessionRouteImport } from './routes/api/public/billing/create-portal-session'
 import { Route as ApiPublicBillingPaymentsWebhookRouteImport } from './routes/api/public/billing/payments-webhook'
 import { Route as ApiPublicContentKeyRouteImport } from './routes/api/public/content.$key'
-import { Route as ApiPublicE2eCleanupRouteImport } from './routes/api/public/e2e/cleanup'
-import { Route as ApiPublicE2eStartRouteImport } from './routes/api/public/e2e/start'
 import { Route as ApiPublicJobsRetryHubspotRouteImport } from './routes/api/public/jobs/retry-hubspot'
 import { Route as ApiPublicSubmissionsHistoryRouteImport } from './routes/api/public/submissions/history'
 import { Route as ApiPublicSubmissionsSubmitRouteImport } from './routes/api/public/submissions/submit'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as ApiPublicE2eCheckIdRouteImport } from './routes/api/public/e2e/check.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -247,16 +244,6 @@ const ApiPublicContentKeyRoute = ApiPublicContentKeyRouteImport.update({
   path: '/api/public/content/$key',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicE2eCleanupRoute = ApiPublicE2eCleanupRouteImport.update({
-  id: '/api/public/e2e/cleanup',
-  path: '/api/public/e2e/cleanup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicE2eStartRoute = ApiPublicE2eStartRouteImport.update({
-  id: '/api/public/e2e/start',
-  path: '/api/public/e2e/start',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicJobsRetryHubspotRoute =
   ApiPublicJobsRetryHubspotRouteImport.update({
     id: '/api/public/jobs/retry-hubspot',
@@ -291,11 +278,6 @@ const LovableEmailTransactionalPreviewRoute =
     path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicE2eCheckIdRoute = ApiPublicE2eCheckIdRouteImport.update({
-  id: '/api/public/e2e/check/$id',
-  path: '/api/public/e2e/check/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -334,15 +316,12 @@ export interface FileRoutesByFullPath {
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
   '/api/public/content/$key': typeof ApiPublicContentKeyRoute
-  '/api/public/e2e/cleanup': typeof ApiPublicE2eCleanupRoute
-  '/api/public/e2e/start': typeof ApiPublicE2eStartRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/api/public/e2e/check/$id': typeof ApiPublicE2eCheckIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -381,15 +360,12 @@ export interface FileRoutesByTo {
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
   '/api/public/content/$key': typeof ApiPublicContentKeyRoute
-  '/api/public/e2e/cleanup': typeof ApiPublicE2eCleanupRoute
-  '/api/public/e2e/start': typeof ApiPublicE2eStartRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/api/public/e2e/check/$id': typeof ApiPublicE2eCheckIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -429,15 +405,12 @@ export interface FileRoutesById {
   '/api/public/billing/create-portal-session': typeof ApiPublicBillingCreatePortalSessionRoute
   '/api/public/billing/payments-webhook': typeof ApiPublicBillingPaymentsWebhookRoute
   '/api/public/content/$key': typeof ApiPublicContentKeyRoute
-  '/api/public/e2e/cleanup': typeof ApiPublicE2eCleanupRoute
-  '/api/public/e2e/start': typeof ApiPublicE2eStartRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/api/public/e2e/check/$id': typeof ApiPublicE2eCheckIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -478,15 +451,12 @@ export interface FileRouteTypes {
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
     | '/api/public/content/$key'
-    | '/api/public/e2e/cleanup'
-    | '/api/public/e2e/start'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
-    | '/api/public/e2e/check/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -525,15 +495,12 @@ export interface FileRouteTypes {
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
     | '/api/public/content/$key'
-    | '/api/public/e2e/cleanup'
-    | '/api/public/e2e/start'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
-    | '/api/public/e2e/check/$id'
   id:
     | '__root__'
     | '/'
@@ -572,15 +539,12 @@ export interface FileRouteTypes {
     | '/api/public/billing/create-portal-session'
     | '/api/public/billing/payments-webhook'
     | '/api/public/content/$key'
-    | '/api/public/e2e/cleanup'
-    | '/api/public/e2e/start'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
     | '/api/public/submissions/submit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
-    | '/api/public/e2e/check/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -618,15 +582,12 @@ export interface RootRouteChildren {
   ApiPublicBillingCreatePortalSessionRoute: typeof ApiPublicBillingCreatePortalSessionRoute
   ApiPublicBillingPaymentsWebhookRoute: typeof ApiPublicBillingPaymentsWebhookRoute
   ApiPublicContentKeyRoute: typeof ApiPublicContentKeyRoute
-  ApiPublicE2eCleanupRoute: typeof ApiPublicE2eCleanupRoute
-  ApiPublicE2eStartRoute: typeof ApiPublicE2eStartRoute
   ApiPublicJobsRetryHubspotRoute: typeof ApiPublicJobsRetryHubspotRoute
   ApiPublicSubmissionsHistoryRoute: typeof ApiPublicSubmissionsHistoryRoute
   ApiPublicSubmissionsSubmitRoute: typeof ApiPublicSubmissionsSubmitRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
-  ApiPublicE2eCheckIdRoute: typeof ApiPublicE2eCheckIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -883,20 +844,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicContentKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/e2e/cleanup': {
-      id: '/api/public/e2e/cleanup'
-      path: '/api/public/e2e/cleanup'
-      fullPath: '/api/public/e2e/cleanup'
-      preLoaderRoute: typeof ApiPublicE2eCleanupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/e2e/start': {
-      id: '/api/public/e2e/start'
-      path: '/api/public/e2e/start'
-      fullPath: '/api/public/e2e/start'
-      preLoaderRoute: typeof ApiPublicE2eStartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/jobs/retry-hubspot': {
       id: '/api/public/jobs/retry-hubspot'
       path: '/api/public/jobs/retry-hubspot'
@@ -937,13 +884,6 @@ declare module '@tanstack/react-router' {
       path: '/lovable/email/transactional/preview'
       fullPath: '/lovable/email/transactional/preview'
       preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/e2e/check/$id': {
-      id: '/api/public/e2e/check/$id'
-      path: '/api/public/e2e/check/$id'
-      fullPath: '/api/public/e2e/check/$id'
-      preLoaderRoute: typeof ApiPublicE2eCheckIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -1014,15 +954,12 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicBillingCreatePortalSessionRoute,
   ApiPublicBillingPaymentsWebhookRoute: ApiPublicBillingPaymentsWebhookRoute,
   ApiPublicContentKeyRoute: ApiPublicContentKeyRoute,
-  ApiPublicE2eCleanupRoute: ApiPublicE2eCleanupRoute,
-  ApiPublicE2eStartRoute: ApiPublicE2eStartRoute,
   ApiPublicJobsRetryHubspotRoute: ApiPublicJobsRetryHubspotRoute,
   ApiPublicSubmissionsHistoryRoute: ApiPublicSubmissionsHistoryRoute,
   ApiPublicSubmissionsSubmitRoute: ApiPublicSubmissionsSubmitRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
-  ApiPublicE2eCheckIdRoute: ApiPublicE2eCheckIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -3,14 +3,12 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { checklyScript, testMarkersPrompt } from "@/lib/iq-prompts";
 import type { E2eCheck, E2eRun, E2eSettings, E2eWorkflow } from "@/lib/e2e";
 
 type Overview = {
   settings: E2eSettings;
   runs: E2eRun[];
   assessments: { key: string; name: string }[];
-  secret_set: boolean;
 };
 type Fn<I, O> = (a: { data: I }) => Promise<O>;
 
@@ -90,9 +88,6 @@ export function TestsPanel({ overview, action, saveSettings }: {
         setTimeout(async () => { await action({ data: { action: "check", id: out.run_id as string } }).catch(() => {}); load(); }, 20_000);
       } else if (input.action.startsWith("cleanup")) {
         toast.success(`Removed ${out.cleaned} test contact(s). ${out.remaining ? `${out.remaining} left — press again.` : ""}`);
-      } else if (input.action === "secret") {
-        if (out.secret) await copy(out.secret as string, "Checkly key");
-        else toast.error("The key isn't set yet");
       }
       await load();
     } catch (e) {
@@ -106,7 +101,7 @@ export function TestsPanel({ overview, action, saveSettings }: {
 
   return (
     <div className="grid gap-6">
-      <Section title="Assessment tests" description="Latest test per assessment. A quick test sends a result straight to the Hub; Checkly tests take the real assessment on a schedule.">
+      <Section title="Assessment tests" description="Latest test per assessment. A quick test sends a result straight to the Hub and checks HubSpot.">
         <div className="grid gap-3">
           {data.assessments.map((a) => {
             const r = latest.get(a.key);
@@ -116,7 +111,7 @@ export function TestsPanel({ overview, action, saveSettings }: {
                   <div className="flex items-center gap-3">
                     <span className="font-heading text-foreground">{a.name}</span>
                     {r ? <Badge s={r.status} /> : <span className="text-xs text-muted-foreground">Not tested yet</span>}
-                    {r ? <span className="text-xs text-muted-foreground">{r.source === "checkly" ? "Checkly" : "Quick"} · {new Date(r.started_at).toLocaleString()}</span> : null}
+                    {r ? <span className="text-xs text-muted-foreground">{r.source === "checkly" ? "Browser" : "Quick"} · {new Date(r.started_at).toLocaleString()}</span> : null}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button size="sm" disabled={!!busy} onClick={() => act(`q-${a.key}`, { action: "quick", key: a.key })}>
@@ -125,8 +120,6 @@ export function TestsPanel({ overview, action, saveSettings }: {
                     {r && (r.status === "running" || r.status === "started") ? (
                       <Button size="sm" variant="outline" disabled={!!busy} onClick={() => act(`c-${r.id}`, { action: "check", id: r.id })}>Check again</Button>
                     ) : null}
-                    <Button size="sm" variant="outline" onClick={() => copy(checklyScript(a), "Checkly test")}>Copy Checkly test</Button>
-                    <Button size="sm" variant="outline" onClick={() => copy(testMarkersPrompt(a), "Test markers prompt")}>Copy test markers prompt</Button>
                     {r ? <Button size="sm" variant="ghost" onClick={() => setOpen(open === a.key ? null : a.key)}>{open === a.key ? "Hide" : "Details"}</Button> : null}
                   </div>
                 </div>
@@ -142,9 +135,6 @@ export function TestsPanel({ overview, action, saveSettings }: {
         </div>
       </Section>
 
-      <Section title="Checkly key" description="Checkly needs this key to start tests and read results. Paste it into Checkly → Environment variables as GEM_E2E_SECRET. Keep it private.">
-        <Button variant="outline" disabled={!data.secret_set || !!busy} onClick={() => act("secret", { action: "secret" })}>Copy Checkly key</Button>
-      </Section>
 
       <SettingsCard settings={data.settings} assessments={data.assessments} save={saveSettings} onSaved={load} />
 
@@ -166,7 +156,7 @@ export function TestsPanel({ overview, action, saveSettings }: {
                 <tr key={r.id} className="border-t border-border/50 align-top">
                   <td className="py-1.5">{new Date(r.started_at).toLocaleString()}</td>
                   <td>{data.assessments.find((a) => a.key === r.assessment_key)?.name ?? r.assessment_key}</td>
-                  <td>{r.source === "checkly" ? "Checkly" : "Quick"}</td>
+                  <td>{r.source === "checkly" ? "Browser" : "Quick"}</td>
                   <td><Badge s={r.status} /></td>
                   <td className="text-muted-foreground">{(r.checks ?? []).filter((c) => c.status === "fail" || c.status === "pending").map((c) => c.label).join(", ") || "—"}</td>
                 </tr>
@@ -192,7 +182,7 @@ function SettingsCard({ settings, assessments, save, onSaved }: {
   const [local, domain] = s.base_email.split("@");
 
   return (
-    <Section title="Test settings" description="Which assessments Checkly may test, the inbox test emails go to, and which HubSpot workflows each test contact must join.">
+    <Section title="Test settings" description="The inbox test emails go to, and which HubSpot workflows each test contact must join.">
       <div className="grid gap-4">
         <label className="flex items-center gap-2 text-sm text-foreground">
           <input type="checkbox" checked={s.enabled} onChange={(e) => setS({ ...s, enabled: e.target.checked })} />
@@ -210,7 +200,7 @@ function SettingsCard({ settings, assessments, save, onSaved }: {
           </div>
         </div>
         <div>
-          <Label>Assessments Checkly may test (none ticked = all)</Label>
+          <Label>Assessments to test (none ticked = all)</Label>
           <div className="mt-2 flex flex-wrap gap-3">
             {assessments.map((a) => (
               <label key={a.key} className="flex items-center gap-2 text-sm text-foreground">

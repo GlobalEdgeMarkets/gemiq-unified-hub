@@ -8,7 +8,7 @@
 
 import { IQ_PRODUCTS } from "@/lib/iq-catalog";
 import manifest from "@/lib/hub/manifest.json";
-import { planFor, money } from "@/lib/pricing";
+import { ONE_TIME_PRICE, GROWTH_PRICE, COMPLETE_MONTHLY_PRICE } from "@/lib/pricing";
 
 export interface IqContext {
   key: string;
@@ -20,16 +20,13 @@ export interface IqContext {
   legacy?: boolean;
 }
 
-/**
- * One shared price line, derived from the manifest's default (quarterly) plan.
- * Degrades to a price-free line rather than throwing if the manifest ships no plans.
- */
-const DEFAULT_PLAN = planFor("quarter");
+/** One shared price line, derived from the manifest; missing plans drop out. */
 const TRIAL = manifest.pricing.trial?.days;
-
-const PRICE_LINE = DEFAULT_PLAN
-  ? `${money(DEFAULT_PLAN.amount)}/${DEFAULT_PLAN.interval} — ${TRIAL ?? 7}-day trial, cancel anytime.`
-  : `${TRIAL ?? 7}-day trial, cancel anytime.`;
+const PRICE_LINE = [
+  ONE_TIME_PRICE && `${ONE_TIME_PRICE} one assessment`,
+  GROWTH_PRICE && `${GROWTH_PRICE}/mo for three`,
+  COMPLETE_MONTHLY_PRICE && `${COMPLETE_MONTHLY_PRICE}/mo for all`,
+].filter(Boolean).join(" · ") + ` — ${TRIAL ?? 7}-day trial, cancel anytime.`;
 
 function hostOf(url: string): string {
   try {

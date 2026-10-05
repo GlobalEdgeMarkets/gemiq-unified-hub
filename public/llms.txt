@@ -34,8 +34,9 @@ Every GEM.IQ assessment scores each dimension on the same five tiers: reactive, 
 
 ## Pricing
 
-- Single assessment: $179 one-time.
-- Suite subscription — covers both tracks, all six assessments: $99/month, $279/quarter (the default plan), or $990/year.
+- Starter: $179 one-time, one assessment.
+- Growth: $149/month, three assessments (the first three different ones taken), plus the combined GEM.IQ score. Upgrade to Complete for more.
+- Complete: $249/month or $2,490/year, all six assessments, combined score and report, quarterly retakes.
 - Trial: 7 days, one assessment included (score and tier shown; the full report unlocks when the plan starts), card required.
 - Monthly has no minimum term; cancel anytime.
 - Guarantee: 14-day money-back.

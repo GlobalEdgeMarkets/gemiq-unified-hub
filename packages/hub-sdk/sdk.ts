@@ -16,7 +16,7 @@
  *     return;
  *   }
  *   if (!status.active) {
- *     await hub.subscription.startCheckout("gemiq_professional_monthly", {
+ *     await hub.subscription.startCheckout("gemiq_complete_monthly", {
  *       successUrl: window.location.origin + "/resume?sid={CHECKOUT_SESSION_ID}",
  *       cancelUrl:  window.location.href,
  *     });
@@ -130,7 +130,7 @@ export interface HubManifest {
     /** 14-day money-back guarantee. Optional so older manifests still type-check. */
     guarantee?: { days: number; type: string };
     /** Editable wording, added in 1.7.0. Hide the sentence when a value is missing. */
-    copy?: { checkout_cta?: string; guarantee_line?: string; trial_line?: string };
+    copy?: { checkout_cta?: string; guarantee_line?: string; trial_line?: string; plans_line?: string; growth_rule?: string };
     /** Single-assessment purchase (gemiq_single_assessment, $179). */
     one_time?: {
       id: string;
@@ -144,6 +144,10 @@ export interface HubManifest {
       amount: number;
       interval: "month" | "quarter" | "year";
       lookup_key: string;
+      /** Plan tier, added in 1.10.0: "growth" (limited picks) or "complete" (everything). */
+      tier?: "growth" | "complete";
+      /** How many different assessments the plan covers; null = all. Added in 1.10.0. */
+      assessments_included?: number | null;
     }>;
   };
   /** Track metadata, added in manifest 1.5.0. Optional for older manifests. */
@@ -386,7 +390,7 @@ export function createHubClient(opts: HubClientOptions) {
        *
        * Example:
        *   const r = await hub.results.submitOrUpgrade(payload, {
-       *     upgradeLookupKey: "gemiq_professional_monthly",
+       *     upgradeLookupKey: "gemiq_complete_monthly",
        *     successUrl: window.location.origin + "/resume?sid={CHECKOUT_SESSION_ID}",
        *     cancelUrl:  window.location.href,
        *   });
@@ -413,7 +417,7 @@ export function createHubClient(opts: HubClientOptions) {
           const { url } = await req("/api/public/billing/create-checkout", {
             method: "POST",
             body: JSON.stringify({
-              lookup_key: opts.upgradeLookupKey ?? "gemiq_professional_monthly",
+              lookup_key: opts.upgradeLookupKey ?? "gemiq_complete_monthly",
               success_url: opts.successUrl,
               cancel_url: opts.cancelUrl,
             }),

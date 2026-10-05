@@ -25,8 +25,8 @@ const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional(),
   /** "1" when arriving from the "Start 7-day trial" CTA. Kicks off trial checkout after signup. */
   trial: z.string().optional(),
-  /** Which plan the trial should convert to. Defaults to monthly. */
-  plan: z.enum(["monthly", "quarterly", "annual"]).optional(),
+  /** Which plan the trial should convert to. Defaults to Complete monthly. */
+  plan: z.enum(["growth", "complete", "complete_annual"]).optional(),
   /** "single" when arriving from the one-time $179 CTA. Starts payment checkout. */
   buy: z.enum(["single"]).optional(),
 });
@@ -117,7 +117,7 @@ function AuthPage() {
       }
       if (body.user.id) identifyUser(body.user.id, { email: body.user.email ?? email, company: company || undefined });
       track(mode === "signup" ? "signup_completed" : "signin_completed", {
-        intent, source_iq: source, plan: search.trial === "1" ? (search.plan ?? "monthly") : undefined,
+        intent, source_iq: source, plan: search.trial === "1" ? (search.plan ?? "complete") : undefined,
       });
       // One-time purchase intent from landing: $179 single assessment.
       if (search.buy === "single" && !safeReturn) {
@@ -145,7 +145,7 @@ function AuthPage() {
             credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              lookup_key: `gemiq_professional_${search.plan ?? "monthly"}`,
+              lookup_key: { growth: "gemiq_growth_monthly", complete: "gemiq_complete_monthly", complete_annual: "gemiq_complete_annual" }[search.plan ?? "complete"],
               success_url: `${window.location.origin}/?welcome=1`,
               cancel_url: window.location.href,
               trial: true,

@@ -1,12 +1,8 @@
 import type Stripe from "stripe";
 import { createHubServiceClient } from "./supabase-server";
-import { stripe } from "./stripe";
+import { stripe, PLAN_LOOKUP_KEYS } from "./stripe";
 
-export const HUB_LOOKUP_KEYS = new Set([
-  "gemiq_professional_monthly",
-  "gemiq_professional_quarterly",
-  "gemiq_professional_annual",
-]);
+export const HUB_LOOKUP_KEYS = PLAN_LOOKUP_KEYS;
 
 export function isHubSubscription(sub: Stripe.Subscription): boolean {
   if (sub.metadata?.source === "gemiq_hub") return true;

@@ -295,7 +295,7 @@ jobs:
 const status = await hub.subscription.check();
 if (!status.authenticated) hub.redirectToLogin(window.location.href);
 else if (!status.active) {
-  await hub.subscription.startCheckout("gemiq_professional_monthly", {
+  await hub.subscription.startCheckout("gemiq_complete_monthly", {
     successUrl: window.location.origin + "/resume?sid={CHECKOUT_SESSION_ID}",
     cancelUrl: window.location.href,
   });

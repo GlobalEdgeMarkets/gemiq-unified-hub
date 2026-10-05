@@ -1,6 +1,6 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "updated_at": "2026-10-05",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
@@ -62,35 +62,43 @@
     "copy": {
       "checkout_cta": "Start your 7-day trial",
       "guarantee_line": "14-day money-back guarantee.",
-      "trial_line": "Your trial includes one assessment. You'll see your score and tier; the full report unlocks when your plan starts."
+      "trial_line": "Your trial includes one assessment. You'll see your score and tier; the full report unlocks when your plan starts.",
+      "plans_line": "Starter: one assessment. Growth: three assessments you choose, plus the combined report. Complete: all assessments, combined report and quarterly retakes.",
+      "growth_rule": "Growth covers the first three different assessments you take; to add more, upgrade to Complete."
     },
     "one_time": {
       "id": "gemiq_single_assessment",
-      "name": "GEM.IQ Single Assessment",
+      "name": "GEM.IQ Starter — Single Assessment",
       "amount": 179,
       "lookup_key": "gemiq_single_assessment"
     },
     "plans": [
       {
-        "id": "gemiq_professional_monthly",
-        "name": "GEM.IQ Professional — Monthly",
-        "amount": 99,
+        "id": "gemiq_growth_monthly",
+        "name": "GEM.IQ Growth — Monthly",
+        "tier": "growth",
+        "amount": 149,
         "interval": "month",
-        "lookup_key": "gemiq_professional_monthly"
+        "assessments_included": 3,
+        "lookup_key": "gemiq_growth_monthly"
       },
       {
-        "id": "gemiq_professional_quarterly",
-        "name": "GEM.IQ Professional — Quarterly",
-        "amount": 279,
-        "interval": "quarter",
-        "lookup_key": "gemiq_professional_quarterly"
+        "id": "gemiq_complete_monthly",
+        "name": "GEM.IQ Complete — Monthly",
+        "tier": "complete",
+        "amount": 249,
+        "interval": "month",
+        "assessments_included": null,
+        "lookup_key": "gemiq_complete_monthly"
       },
       {
-        "id": "gemiq_professional_annual",
-        "name": "GEM.IQ Professional — Annual",
-        "amount": 990,
+        "id": "gemiq_complete_annual",
+        "name": "GEM.IQ Complete — Annual",
+        "tier": "complete",
+        "amount": 2490,
         "interval": "year",
-        "lookup_key": "gemiq_professional_annual"
+        "assessments_included": null,
+        "lookup_key": "gemiq_complete_annual"
       }
     ]
   },

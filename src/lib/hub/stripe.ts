@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import manifest from "./manifest.json";
 
 let _stripe: Stripe | null = null;
 export function stripe(): Stripe {
@@ -16,50 +17,49 @@ export async function priceByLookupKey(lookupKey: string): Promise<Stripe.Price>
 }
 
 /**
- * Quarterly subscription: $279 every 3 months. Created on first use so the
- * catalog self-heals across Stripe environments (same pattern as the
- * single-assessment price below).
+ * Recurring plans (Growth / Complete) come from the manifest. Prices are
+ * created on first use so the catalog self-heals across Stripe environments.
  */
-export const QUARTERLY_LOOKUP_KEY = "gemiq_professional_quarterly";
-export const QUARTERLY_AMOUNT = 27900; // $279.00 USD / 3 months
+type ManifestPlan = (typeof manifest.pricing.plans)[number];
 
-export async function ensureQuarterlyPrice(): Promise<Stripe.Price> {
-  const s = stripe();
-  const existing = await s.prices.list({
-    lookup_keys: [QUARTERLY_LOOKUP_KEY], active: true, limit: 1,
-  });
-  if (existing.data[0]) return existing.data[0];
+export const PLAN_LOOKUP_KEYS = new Set(manifest.pricing.plans.map((p) => p.lookup_key));
 
-  // Reuse the existing GEM.IQ Professional product when it is already there.
-  const monthly = await s.prices.list({
-    lookup_keys: ["gemiq_professional_monthly"], active: true, limit: 1,
-  });
-  const productId =
-    typeof monthly.data[0]?.product === "string"
-      ? monthly.data[0].product
-      : (monthly.data[0]?.product as Stripe.Product | undefined)?.id;
-
-  const product =
-    productId ??
-    (
-      await s.products.create({
-        name: "GEM.IQ Professional",
-        description: "All GEM.IQ assessments, the composite report, and score-over-time tracking.",
-        metadata: { gemiq_sku: "professional", source: "gemiq_hub" },
-      })
-    ).id;
-
-  return s.prices.create({
-    product,
-    currency: "usd",
-    unit_amount: QUARTERLY_AMOUNT,
-    recurring: { interval: "month", interval_count: 3 },
-    lookup_key: QUARTERLY_LOOKUP_KEY,
-    transfer_lookup_key: true,
-    metadata: { source: "gemiq_hub", kind: "professional_quarterly" },
-  });
+export function planByLookupKey(lookupKey: string | null | undefined): ManifestPlan | undefined {
+  return manifest.pricing.plans.find((p) => p.lookup_key === lookupKey);
 }
 
+const PRODUCT_COPY: Record<string, { name: string; description: string }> = {
+  growth: { name: "GEM.IQ Growth", description: "Three GEM.IQ assessments of your choice plus the combined GEM.IQ report." },
+  complete: { name: "GEM.IQ Complete", description: "Every GEM.IQ assessment, the combined report and quarterly retakes with progress tracking." },
+};
+
+export async function ensurePlanPrice(lookupKey: string): Promise<Stripe.Price> {
+  const plan = planByLookupKey(lookupKey);
+  if (!plan) throw new Error(`Unknown plan ${lookupKey}`);
+  const s = stripe();
+  const existing = await s.prices.list({ lookup_keys: [lookupKey], active: true, limit: 1 });
+  if (existing.data[0] && existing.data[0].unit_amount === plan.amount * 100) return existing.data[0];
+
+  const tier = plan.tier ?? "complete";
+  const found = await s.products.search({
+    query: `active:'true' AND metadata['gemiq_sku']:'${tier}'`, limit: 1,
+  }).catch(() => ({ data: [] as Stripe.Product[] }));
+  const product = found.data[0] ?? await s.products.create({
+    ...PRODUCT_COPY[tier],
+    metadata: { gemiq_sku: tier, source: "gemiq_hub" },
+  });
+
+  const yearly = plan.interval === "year";
+  return s.prices.create({
+    product: product.id,
+    currency: "usd",
+    unit_amount: plan.amount * 100,
+    recurring: { interval: yearly ? "year" : "month", interval_count: plan.interval === "quarter" ? 3 : 1 },
+    lookup_key: lookupKey,
+    transfer_lookup_key: true,
+    metadata: { source: "gemiq_hub", kind: lookupKey, tier },
+  });
+}
 
 /** One-time purchase: a single assessment, any IQ. */
 export const SINGLE_ASSESSMENT_LOOKUP_KEY = "gemiq_single_assessment";

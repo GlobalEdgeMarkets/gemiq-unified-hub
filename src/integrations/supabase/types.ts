@@ -571,6 +571,7 @@ export type Database = {
           current_period_end: string | null
           id: string
           lookup_key: string | null
+          selected_assessments: string[]
           status: string
           stripe_customer_id: string | null
           stripe_price_id: string | null
@@ -587,6 +588,7 @@ export type Database = {
           current_period_end?: string | null
           id?: string
           lookup_key?: string | null
+          selected_assessments?: string[]
           status?: string
           stripe_customer_id?: string | null
           stripe_price_id?: string | null
@@ -603,6 +605,7 @@ export type Database = {
           current_period_end?: string | null
           id?: string
           lookup_key?: string | null
+          selected_assessments?: string[]
           status?: string
           stripe_customer_id?: string | null
           stripe_price_id?: string | null

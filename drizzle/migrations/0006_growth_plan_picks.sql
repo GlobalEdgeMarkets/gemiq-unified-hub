@@ -1,0 +1,1 @@
+ALTER TABLE public.subscriptions ADD COLUMN IF NOT EXISTS selected_assessments text[] NOT NULL DEFAULT '{}';

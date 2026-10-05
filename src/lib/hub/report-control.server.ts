@@ -436,7 +436,49 @@ export type ReportView = {
   content: ReportContent;
   copy: ReportSettings["copy"];
   unlock_url: string;
+  company: string | null;
+  industry: string | null;
+  report_ref: string;
+  tiers: { key: string; label: string; min: number; color: string }[];
+  tier_key: string | null;
+  benchmark: Benchmark | null;
+  methodology: {
+    scoring: string;
+    maturity_model: string;
+    how_to_read: string;
+    summary: string | null;
+    frameworks: string[];
+    rationale: { title: string; text: string }[];
+  };
 };
+
+async function industryFor(userId: string | null): Promise<string | null> {
+  if (!userId) return null;
+  const { data } = await db().from("profiles").select("industry").eq("id", userId).maybeSingle();
+  return (data as { industry: string | null } | null)?.industry ?? null;
+}
+
+async function methodologyFor(key: string): Promise<ReportView["methodology"]> {
+  const { DEFAULT_METHODOLOGY } = await import("@/lib/composite");
+  let general = DEFAULT_METHODOLOGY;
+  try {
+    const { getCompositeConfig } = await import("./composite.server");
+    general = (await getCompositeConfig()).methodology;
+  } catch { /* defaults */ }
+  let summary: string | null = null;
+  let frameworks: string[] = [];
+  let rationale: { title: string; text: string }[] = [];
+  try {
+    const { publishedFor } = await import("./content.server");
+    const pub = (await publishedFor(key)) as {
+      body?: { methodology?: { summary?: string; frameworks?: string[] }; sections?: { title: string; rationale?: string }[] };
+    } | null;
+    summary = pub?.body?.methodology?.summary ?? null;
+    frameworks = pub?.body?.methodology?.frameworks ?? [];
+    rationale = (pub?.body?.sections ?? []).filter((x) => x.rationale).map((x) => ({ title: x.title, text: x.rationale! }));
+  } catch { /* content optional */ }
+  return { scoring: general.scoring, maturity_model: general.maturity_model, how_to_read: general.how_to_read, summary, frameworks, rationale };
+}
 
 export async function loadReport(
   id: string,
@@ -458,8 +500,16 @@ export async function loadReport(
     .filter((s) => s.enabled)
     .map((s) => ({ key: s.key, locked: locked && !allowed.has(s.key) && s.key !== "talk_to_gem" }));
 
+  const industry = await industryFor(row.user_id).catch(() => null);
+  const enabledKeys = new Set(settings.sections.filter((s) => s.enabled).map((s) => s.key));
+  const benchmark = await computeBenchmark(row.assessment_key, industry, row.score, settings).catch((e) => {
+    console.error("[report-control] benchmark failed", e);
+    return null;
+  });
+  const methodology = await methodologyFor(row.assessment_key);
+
   // Locked viewers never see (or trigger generation of) the full text.
-  const content = locked && !viewer.isAdmin ? {} : await ensureContent(row, settings).catch((e) => {
+  const content = locked && !viewer.isAdmin ? {} : await ensureContent(row, settings, benchmark).catch((e) => {
     console.error("[report-control] content failed", e);
     return row.report_content ?? {};
   });
@@ -492,7 +542,109 @@ export async function loadReport(
     dimensions: settings.trial_access === "score" && locked ? [] : dims(row.dimensions),
     content: locked && !viewer.isAdmin ? {} : content,
     copy: settings.copy,
-    unlock_url: `${HUB}/auth?mode=signup&trial=1&plan=quarterly`,
+    unlock_url: `${HUB}/auth?mode=signup&plan=complete`,
+    company: typeof meta.company === "string" ? meta.company : null,
+    industry,
+    report_ref: `GEM-${row.assessment_key.toUpperCase()}-${row.id.slice(0, 8).toUpperCase()}`,
+    tiers: settings.tiers,
+    tier_key: tier ? tier.key : null,
+    benchmark: enabledKeys.has("benchmark") || enabledKeys.has("dimensions") ? (locked && !viewer.isAdmin ? benchmarkTeaser(benchmark) : benchmark) : null,
+    methodology,
+  };
+}
+
+function benchmarkTeaser(b: Benchmark | null): Benchmark | null {
+  return b ? { ...b, dimensions: {} } : null;
+}
+
+// ---------- combined report ----------
+export type CombinedReportView = {
+  company: string | null;
+  email: string;
+  generated_at: string;
+  score: number | null;
+  tier_label: string | null;
+  tier_key: string | null;
+  tiers: { key: string; label: string; min: number; color: string }[];
+  needed_for_tier: number;
+  coverage: { completed: number; total: number };
+  locked: boolean;
+  contributions: { assessment_key: string; display_name: string; score: number | null; tier: string | null; report_id: string | null }[];
+  missing: { assessment_key: string; display_name: string; url: string }[];
+  next: { assessment_key: string; display_name: string; url: string } | null;
+  strengths: { label: string; score: number; sources: string[] }[];
+  gaps: { label: string; score: number; sources: string[] }[];
+  insights: string[];
+  roadmap: (RoadmapItem & { assessment: string })[];
+  methodology: { overview: string; scoring: string; maturity_model: string; how_to_read: string };
+  unlock_url: string;
+};
+
+/** Combined GEM.IQ report for the signed-in user, built from the dashboard composite. */
+export async function loadCombinedReport(): Promise<CombinedReportView | null> {
+  const { loadDashboard } = await import("@/lib/dashboard.server");
+  const dash = await loadDashboard();
+  if (!dash) return null;
+  const { getCompositeConfig } = await import("./composite.server");
+  const { DEFAULT_COMPOSITE, DEFAULT_METHODOLOGY } = await import("@/lib/composite");
+  const cfg = await getCompositeConfig().catch(() => ({ settings: DEFAULT_COMPOSITE, methodology: DEFAULT_METHODOLOGY }));
+  const c = dash.composite;
+  const sub = dash.subscription;
+  const locked = !(sub && (sub.status === "active" || sub.status === "trialing") && !sub.trialing);
+
+  // Latest stored content per assessment for the roadmap roll-up.
+  const { data } = await db()
+    .from("submissions")
+    .select("id,assessment_key,report_content,submitted_at")
+    .ilike("email", dash.user.email)
+    .eq("report_hidden", false)
+    .order("submitted_at", { ascending: false });
+  const latest = new Map<string, { id: string; report_content: ReportContent | null }>();
+  for (const r of (data ?? []) as { id: string; assessment_key: string; report_content: ReportContent | null }[]) {
+    if (!latest.has(r.assessment_key)) latest.set(r.assessment_key, r);
+  }
+  const rank = { high: 0, medium: 1, low: 2 } as const;
+  const roadmap = [...latest.entries()]
+    .flatMap(([k, r]) => (r.report_content?.roadmap ?? []).map((x) => ({ ...x, assessment: displayName(k) })))
+    .sort((a, b) => Number(a.horizon) - Number(b.horizon) || rank[a.priority] - rank[b.priority] || rank[b.impact] - rank[a.impact])
+    .slice(0, 12);
+
+  // Rule-based cross-assessment insights (no invented facts).
+  const scored = c.contributions.filter((x) => x.score != null) as { display_name: string; score: number }[];
+  const insights: string[] = [];
+  if (scored.length >= 2) {
+    const hi = scored[0];
+    const lo = scored[scored.length - 1];
+    if (hi.score - lo.score >= 15)
+      insights.push(`${hi.display_name} (${hi.score}) is well ahead of ${lo.display_name} (${lo.score}). Imbalances like this usually cap growth at the weakest discipline, so ${lo.display_name} is where effort pays back fastest.`);
+    else insights.push(`Your disciplines are evenly matched (${lo.score}–${hi.score}). Progress now comes from lifting all of them together rather than fixing one outlier.`);
+  }
+  if (c.gaps[0]) insights.push(`Your weakest area across assessments is ${c.gaps[0].label} (${c.gaps[0].score}), seen in ${c.gaps[0].sources.join(", ")}.`);
+  if (c.strengths[0]) insights.push(`Your strongest area is ${c.strengths[0].label} (${c.strengths[0].score}), a foundation to build the roadmap on.`);
+  if (c.next) insights.push(`Completing ${c.next.display_name} next adds the most weight to your combined picture.`);
+
+  return {
+    company: dash.user.company,
+    email: dash.user.email,
+    generated_at: new Date().toISOString(),
+    score: c.score,
+    tier_label: c.tier_label,
+    tier_key: c.tier,
+    tiers: cfg.settings.tiers.map((t: { key: string; label: string; min: number; color?: string }, i: number) => ({
+      key: t.key, label: t.label, min: t.min, color: t.color ?? DEFAULT_REPORT_SETTINGS.tiers[i]?.color ?? "#2C365B",
+    })),
+    needed_for_tier: c.needed_for_tier,
+    coverage: c.coverage,
+    locked,
+    contributions: c.contributions.map((x) => ({ ...x, report_id: latest.get(x.assessment_key)?.id ?? null })),
+    missing: c.missing,
+    next: c.next,
+    strengths: c.strengths.slice(0, 3),
+    gaps: c.gaps.slice(0, 3),
+    insights: locked ? insights.slice(0, 1) : insights,
+    roadmap: locked ? [] : roadmap,
+    methodology: cfg.methodology,
+    unlock_url: `${HUB}/auth?mode=signup&plan=complete`,
   };
 }
 
@@ -584,7 +736,9 @@ export async function reportAction(id: string, action: ReportAction, by: string)
 
   if (action === "regenerate") {
     const settings = await effectiveSettings(row.assessment_key);
-    await ensureContent(row, settings, true);
+    const industry = await industryFor(row.user_id);
+    const bench = await computeBenchmark(row.assessment_key, industry, row.score, settings).catch(() => null);
+    await ensureContent(row, settings, bench, true);
   }
   if (action === "resend") {
     const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");

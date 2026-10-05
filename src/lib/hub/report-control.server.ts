@@ -24,7 +24,22 @@ function db(): any {
   return createHubServiceClient();
 }
 
+export type RoadmapItem = {
+  horizon: "30" | "60" | "90";
+  action: string;
+  priority: "high" | "medium" | "low";
+  effort: "low" | "medium" | "high";
+  impact: "low" | "medium" | "high";
+  owner: string;
+};
+
+export type ExecutiveSummary = { headline: string; so_what: string; findings: string[]; priorities: string[] };
+
 export type ReportContent = {
+  executive_summary?: ExecutiveSummary;
+  dimension_insights?: Record<string, string>;
+  risks?: string[];
+  roadmap?: RoadmapItem[];
   summary?: string;
   strengths?: string[];
   gaps?: string[];
@@ -152,7 +167,56 @@ function appSentContent(meta: Record<string, unknown> | null): ReportContent {
 }
 
 // ---------- AI ----------
-async function aiWrite(row: SubRow, missing: string[]): Promise<Partial<ReportContent>> {
+type AiContext = {
+  benchmark: Benchmark | null;
+  tierRecommendations: string[];
+  methodology: string | null;
+  roadmapItems: number;
+};
+
+const LVL = ["low", "medium", "high"] as const;
+const pickLvl = (v: unknown, d: (typeof LVL)[number]) => (LVL.includes(v as never) ? (v as (typeof LVL)[number]) : d);
+const strArr = (v: unknown, max = 6) =>
+  Array.isArray(v) ? v.filter((x): x is string => typeof x === "string" && !!x.trim()).slice(0, max) : undefined;
+
+function cleanAi(parsed: Record<string, unknown>, missing: string[]): Partial<ReportContent> {
+  const out: Partial<ReportContent> = {};
+  for (const k of missing) {
+    const v = parsed[k];
+    if (k === "summary" && typeof v === "string") out.summary = v;
+    else if (k === "executive_summary" && v && typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      out.executive_summary = {
+        headline: typeof o.headline === "string" ? o.headline : "",
+        so_what: typeof o.so_what === "string" ? o.so_what : "",
+        findings: strArr(o.findings, 3) ?? [],
+        priorities: strArr(o.priorities, 3) ?? [],
+      };
+    } else if (k === "dimension_insights" && v && typeof v === "object" && !Array.isArray(v)) {
+      out.dimension_insights = Object.fromEntries(
+        Object.entries(v as Record<string, unknown>).filter(([, x]) => typeof x === "string") as [string, string][],
+      );
+    } else if (k === "roadmap" && Array.isArray(v)) {
+      out.roadmap = v
+        .filter((x): x is Record<string, unknown> => !!x && typeof x === "object" && typeof (x as { action?: unknown }).action === "string")
+        .slice(0, 12)
+        .map((x) => ({
+          horizon: (["30", "60", "90"].includes(String(x.horizon)) ? String(x.horizon) : "30") as RoadmapItem["horizon"],
+          action: String(x.action),
+          priority: pickLvl(x.priority, "medium") as RoadmapItem["priority"],
+          effort: pickLvl(x.effort, "medium"),
+          impact: pickLvl(x.impact, "medium"),
+          owner: typeof x.owner === "string" ? x.owner : "Leadership",
+        }));
+    } else {
+      const a = strArr(v);
+      if (a) (out as Record<string, unknown>)[k] = a;
+    }
+  }
+  return out;
+}
+
+async function aiWrite(row: SubRow, missing: string[], ctx: AiContext): Promise<Partial<ReportContent>> {
   const key = process.env.LOVABLE_API_KEY;
   if (!key) throw new Error("AI is not configured for this project.");
   const d = dims(row.dimensions);
@@ -160,8 +224,14 @@ async function aiWrite(row: SubRow, missing: string[]): Promise<Partial<ReportCo
     assessment: displayName(row.assessment_key),
     score: row.score,
     tier: normalizeTier(row.tier) ?? row.tier,
-    dimensions: d.map((x) => ({ name: x.label, score: x.score })),
+    dimensions: d.map((x) => ({ key: x.key, name: x.label, score: x.score })),
     company: row.metadata?.company ?? null,
+    benchmark: ctx.benchmark
+      ? { peer_median: ctx.benchmark.median, top_quartile: ctx.benchmark.top, basis: ctx.benchmark.label }
+      : null,
+    tier_guidance: ctx.tierRecommendations,
+    methodology: ctx.methodology,
+    roadmap_items: ctx.roadmapItems,
     write: missing,
   });
   const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
@@ -173,12 +243,19 @@ async function aiWrite(row: SubRow, missing: string[]): Promise<Partial<ReportCo
       reasoning: { effort: "low" },
       text: { format: { type: "json_object" } },
       instructions:
-        "You write sections of a GEM.IQ maturity assessment report for a business owner. " +
-        "Use only the scores given; never invent facts, numbers or benchmarks. Plain, direct language. " +
-        "Return a JSON object containing only the keys listed in `write`: summary (2-3 sentences), " +
-        "strengths (3 short bullets, from the highest dimensions), gaps (3 short bullets, from the lowest dimensions), " +
-        "recommendations (4 concrete actions tied to the gaps), next_steps (3 actions for the next 30 days). " +
-        "Arrays contain strings of at most 30 words each.",
+        "You are a senior strategy consultant writing sections of a GEM.IQ maturity assessment report for a business leader, " +
+        "in the style of a top-tier consulting firm: insight first, specific, prioritised, no filler. " +
+        "Use only the scores, benchmark, tier guidance and methodology given; never invent facts, statistics, clients or numbers. " +
+        "Return a JSON object containing only the keys listed in `write`:\n" +
+        "executive_summary: { headline (one sentence, the single most important conclusion), so_what (one sentence on business consequence), " +
+        "findings (3 bullets), priorities (3 bullets) };\n" +
+        "summary (2-3 sentences); strengths (3 bullets from the highest dimensions); gaps (3 bullets from the lowest dimensions); " +
+        "risks (3 bullets: what happens if the gaps are not addressed);\n" +
+        "dimension_insights: object keyed by each dimension `key`, value one sentence interpreting that score;\n" +
+        "recommendations (4 concrete actions tied to the gaps); next_steps (3 actions for the next 30 days);\n" +
+        "roadmap: array of exactly `roadmap_items` objects { horizon: \"30\"|\"60\"|\"90\", action, priority: low|medium|high, " +
+        "effort: low|medium|high, impact: low|medium|high, owner (a role such as CEO, Head of Sales) }, spread across all three horizons. " +
+        "All strings at most 30 words.",
       input: `Assessment data (json):\n${input}`,
     }),
   });
@@ -196,37 +273,66 @@ async function aiWrite(row: SubRow, missing: string[]): Promise<Partial<ReportCo
     .map((c) => c.text ?? "")
     .join("");
   try {
-    const parsed = JSON.parse(text) as Partial<ReportContent>;
-    const out: Partial<ReportContent> = {};
-    for (const k of missing) {
-      const v = (parsed as Record<string, unknown>)[k];
-      if (k === "summary" && typeof v === "string") out.summary = v;
-      else if (Array.isArray(v)) (out as Record<string, unknown>)[k] = v.filter((x) => typeof x === "string").slice(0, 6);
-    }
-    return out;
+    return cleanAi(JSON.parse(text) as Record<string, unknown>, missing);
   } catch {
     throw new Error("The AI returned an unreadable report. Try Regenerate.");
   }
 }
 
-const TEXT_SECTIONS = ["summary", "strengths", "gaps", "recommendations", "next_steps"] as const;
+/** Content keys each section needs. */
+const SECTION_CONTENT: Partial<Record<SectionKey, (keyof ReportContent)[]>> = {
+  executive_summary: ["executive_summary"],
+  summary: ["summary"],
+  dimensions: ["dimension_insights"],
+  strengths: ["strengths"],
+  gaps: ["gaps", "risks"],
+  recommendations: ["recommendations"],
+  roadmap: ["roadmap"],
+  next_steps: ["next_steps"],
+};
 
-/** Builds and stores content once. App-sent text always wins; AI fills missing enabled sections. */
-async function ensureContent(row: SubRow, settings: ReportSettings, force = false): Promise<ReportContent> {
-  if (row.report_content && !force) return row.report_content;
-  const enabled = new Set(settings.sections.filter((s) => s.enabled).map((s) => s.key));
+function hasValue(v: unknown) {
+  if (v == null) return false;
+  if (typeof v === "string") return !!v.trim();
+  if (Array.isArray(v)) return v.length > 0;
+  if (typeof v === "object") return Object.keys(v).length > 0;
+  return true;
+}
+
+async function aiContext(row: SubRow, settings: ReportSettings, benchmark: Benchmark | null): Promise<AiContext> {
+  let tierRecommendations: string[] = [];
+  let methodology: string | null = null;
+  try {
+    const { publishedFor } = await import("./content.server");
+    const pub = (await publishedFor(row.assessment_key)) as { body?: { tier_recommendations?: Record<string, string[]>; methodology?: { summary?: string } } } | null;
+    const t = normalizeTier(row.tier) ?? tierFor(row.score, settings.tiers)?.key ?? "";
+    tierRecommendations = pub?.body?.tier_recommendations?.[t] ?? [];
+    methodology = pub?.body?.methodology?.summary ?? null;
+  } catch { /* content optional */ }
+  return { benchmark, tierRecommendations, methodology, roadmapItems: settings.roadmap_items };
+}
+
+/**
+ * Builds and stores content once. App-sent text always wins; AI fills enabled sections
+ * that have no text yet. Existing text is never rewritten unless `force` (admin Regenerate).
+ */
+async function ensureContent(row: SubRow, settings: ReportSettings, benchmark: Benchmark | null, force = false): Promise<ReportContent> {
+  const stored: ReportContent = force ? {} : { ...(row.report_content ?? {}) };
+  const content: ReportContent = { ...stored, source: { ...(stored.source ?? {}) } };
   const app = appSentContent(row.metadata);
-  const content: ReportContent = { source: {} };
-  const missing: string[] = [];
-  for (const k of TEXT_SECTIONS) {
-    const v = app[k];
-    if (v && (typeof v === "string" ? v.trim() : v.length)) {
+  for (const [k, v] of Object.entries(app)) {
+    if (hasValue(v) && !hasValue((content as Record<string, unknown>)[k])) {
       (content as Record<string, unknown>)[k] = v;
       content.source![k] = "app";
-    } else if (enabled.has(k)) missing.push(k);
+    }
   }
+  const enabled = settings.sections.filter((s) => s.enabled).map((s) => s.key);
+  const missing = [...new Set(enabled.flatMap((k) => SECTION_CONTENT[k] ?? []))].filter(
+    (k) => !hasValue((content as Record<string, unknown>)[k]),
+  );
+  if (!missing.length && row.report_content && !force) return row.report_content;
   if (missing.length && row.score != null) {
-    const ai = await aiWrite(row, missing);
+    const ai = await aiWrite(row, missing, await aiContext(row, settings, benchmark));
     for (const [k, v] of Object.entries(ai)) {
       (content as Record<string, unknown>)[k] = v;
       content.source![k] = "ai";
@@ -237,6 +343,78 @@ async function ensureContent(row: SubRow, settings: ReportSettings, force = fals
     .update({ report_content: content, report_generated_at: new Date().toISOString() })
     .eq("id", row.id);
   return content;
+}
+
+// ---------- benchmarks ----------
+export type Benchmark = {
+  source: "industry" | "all" | "reference";
+  label: string;
+  n: number;
+  median: number;
+  top: number;
+  /** Share of peers scoring below this result (real data only). */
+  percentile: number | null;
+  dimensions: Record<string, number>;
+};
+
+const quant = (xs: number[], q: number) => {
+  if (!xs.length) return 0;
+  const s = [...xs].sort((a, b) => a - b);
+  const i = (s.length - 1) * q;
+  const lo = Math.floor(i);
+  const hi = Math.ceil(i);
+  return Math.round(s[lo] + (s[hi] - s[lo]) * (i - lo));
+};
+
+export async function computeBenchmark(
+  assessmentKey: string,
+  industry: string | null,
+  score: number | null,
+  settings: ReportSettings,
+): Promise<Benchmark> {
+  type R = { email: string; user_id: string | null; score: number | null; dimensions: unknown; submitted_at: string };
+  const { data } = await db()
+    .from("submissions")
+    .select("email,user_id,score,dimensions,submitted_at")
+    .eq("assessment_key", assessmentKey)
+    .not("score", "is", null)
+    .order("submitted_at", { ascending: false })
+    .limit(5000);
+  const latest = new Map<string, R>();
+  for (const r of (data ?? []) as R[]) {
+    const e = r.email.toLowerCase();
+    if (/\+(gemtest|checkly)-/.test(e)) continue;
+    if (!latest.has(e)) latest.set(e, r);
+  }
+  const rows = [...latest.values()];
+  const ids = [...new Set(rows.map((r) => r.user_id).filter((x): x is string => !!x))];
+  const ind = new Map<string, string | null>();
+  if (industry && ids.length) {
+    const { data: profs } = await db().from("profiles").select("id,industry").in("id", ids);
+    for (const p of (profs ?? []) as { id: string; industry: string | null }[]) ind.set(p.id, p.industry);
+  }
+  const build = (src: Benchmark["source"], label: string, group: R[]): Benchmark => {
+    const scores = group.map((r) => Number(r.score)).filter(Number.isFinite);
+    const dimVals: Record<string, number[]> = {};
+    for (const r of group) for (const d of dims(r.dimensions)) (dimVals[d.key] ??= []).push(d.score);
+    return {
+      source: src,
+      label,
+      n: scores.length,
+      median: quant(scores, 0.5),
+      top: quant(scores, 0.75),
+      percentile: score == null ? null : Math.round((scores.filter((x) => x < score).length / scores.length) * 100),
+      dimensions: Object.fromEntries(Object.entries(dimVals).map(([k, v]) => [k, quant(v, 0.5)])),
+    };
+  };
+  const min = settings.benchmark.min_group;
+  if (industry) {
+    const group = rows.filter((r) => r.user_id && (ind.get(r.user_id) ?? "").toLowerCase() === industry.toLowerCase());
+    if (group.length >= min) return build("industry", `${industry} companies`, group);
+  }
+  if (rows.length >= min) return build("all", "All companies assessed", rows);
+  const ref = settings.benchmark.reference[assessmentKey] ?? settings.benchmark.reference.default ?? { median: 52, top: 68 };
+  return { source: "reference", label: "GEM reference values", n: rows.length, median: ref.median, top: ref.top, percentile: null, dimensions: {} };
 }
 
 // ---------- report view ----------

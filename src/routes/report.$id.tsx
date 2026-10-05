@@ -7,6 +7,8 @@ import { HubHeader } from "@/components/HubHeader";
 import { Button } from "@/components/ui/button";
 import { buildHead } from "@/lib/seo";
 import { SECTION_LABELS, type SectionKey } from "@/lib/report-settings";
+import { RadarChart } from "@/components/iq/RadarChart";
+import { BenchmarkBar, Bullets, HeatMap, Locked, MaturityLadder, ReportCover, ReportSection, Roadmap } from "@/components/report/ReportParts";
 
 export const Route = createFileRoute("/report/$id")({
   ssr: false,
@@ -39,7 +41,7 @@ function ReportPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="print:hidden"><HubHeader /></div>
-      <main className="mx-auto max-w-3xl px-6 py-10 print:max-w-none print:px-0 print:py-0">
+      <main className="mx-auto max-w-4xl px-6 py-10 print:max-w-none print:px-0 print:py-0">
         {s.state === "loading" && <p className="text-muted-foreground">Loading your report…</p>}
         {s.state === "anon" && (
           <Notice title="Sign in to see this report" body="Reports are private. Sign in with the email address you used for the assessment.">
@@ -63,56 +65,112 @@ function ReportPage() {
 function Notice({ title, body, children }: { title: string; body: string; children?: React.ReactNode }) {
   return (
     <section className="rounded-2xl border border-border/60 bg-card/70 p-8 text-center">
-      <h1 className="font-heading text-2xl text-foreground">{title}</h1>
+      <h1 className="font-display text-2xl text-foreground">{title}</h1>
       <p className="mx-auto mt-2 max-w-md text-muted-foreground">{body}</p>
       {children}
     </section>
   );
 }
 
-function List({ items }: { items?: string[] }) {
-  if (!items?.length) return <p className="text-sm text-muted-foreground">Nothing to show yet.</p>;
-  return (
-    <ul className="list-disc space-y-1.5 pl-5 text-foreground/90">
-      {items.map((x, i) => <li key={i}>{x}</li>)}
-    </ul>
-  );
-}
-
 function Report({ r }: { r: ReportView }) {
+  const tier = r.tiers.find((t) => t.key === r.tier_key) ?? null;
+  const date = new Date(r.submitted_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+  const c = r.content;
+  const b = r.benchmark;
+  const show = (s: { locked: boolean }) => !s.locked || r.is_admin_view;
+
   const body = (key: SectionKey) => {
     switch (key) {
+      case "executive_summary": {
+        const e = c.executive_summary;
+        if (!e) return <p className="text-muted-foreground">Your executive summary is being prepared.</p>;
+        return (
+          <div className="space-y-5">
+            <p className="font-display text-xl leading-snug text-foreground">{e.headline}</p>
+            {e.so_what && <p className="border-l-2 border-success pl-4 text-foreground/90">{e.so_what}</p>}
+            <div className="grid gap-6 md:grid-cols-2">
+              <div><h3 className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">Key findings</h3><Bullets items={e.findings} /></div>
+              <div><h3 className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">Top priorities</h3><Bullets items={e.priorities} /></div>
+            </div>
+          </div>
+        );
+      }
       case "summary":
-        return <p className="leading-relaxed text-foreground/90">{r.content.summary ?? "Your summary is being prepared."}</p>;
+        return <p className="leading-relaxed text-foreground/90">{c.summary ?? "Your summary is being prepared."}</p>;
       case "score_tier":
         return (
           <div className="flex flex-wrap items-end gap-6">
             <div>
-              <div className="font-heading text-6xl text-foreground">{r.score ?? "—"}</div>
+              <div className="font-display text-6xl text-foreground">{r.score ?? "—"}</div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground">Score out of 100</div>
             </div>
-            {r.tier && (
-              <span className="rounded-full px-4 py-1.5 text-sm font-semibold text-primary-foreground" style={{ backgroundColor: r.tier.color }}>
-                {r.tier.label}
-              </span>
-            )}
+            {tier && <span className="rounded-full px-4 py-1.5 text-sm font-semibold text-primary-foreground" style={{ backgroundColor: tier.color }}>{tier.label}</span>}
+            {b?.percentile != null && <p className="text-sm text-muted-foreground">Higher than {b.percentile}% of {b.label.toLowerCase()}.</p>}
+          </div>
+        );
+      case "maturity":
+        return <MaturityLadder tiers={r.tiers} score={r.score} current={r.tier_key} />;
+      case "benchmark":
+        if (!b) return <p className="text-sm text-muted-foreground">Benchmark not available yet.</p>;
+        return (
+          <div className="space-y-4">
+            <BenchmarkBar score={r.score} median={b.median} top={b.top} />
+            <p className="text-sm text-muted-foreground">
+              {b.source === "reference"
+                ? `Benchmark building: there are not yet enough results to compare against real peers, so this uses GEM reference values. It switches to real peer data automatically once enough companies have taken ${r.assessment_name}.`
+                : `Compared with ${b.n} ${b.label.toLowerCase()} (latest result per company).`}
+            </p>
           </div>
         );
       case "dimensions":
-        return r.dimensions.length ? (
-          <div className="space-y-2.5">
-            {r.dimensions.map((d) => (
-              <div key={d.key}>
-                <div className="flex justify-between text-sm"><span className="text-foreground">{d.label}</span><span className="text-muted-foreground">{d.score}</span></div>
-                <div className="mt-1 h-2 rounded-full bg-muted"><div className="h-2 rounded-full bg-success" style={{ width: `${d.score}%` }} /></div>
+        if (!r.dimensions.length) return <p className="text-sm text-muted-foreground">No dimension scores for this assessment.</p>;
+        return (
+          <div className="space-y-6">
+            {r.dimensions.length >= 3 && (
+              <div className="mx-auto max-w-md">
+                <RadarChart
+                  labels={r.dimensions.map((d) => d.label)}
+                  values={r.dimensions.map((d) => d.score)}
+                  benchmark={b && Object.keys(b.dimensions).length ? r.dimensions.map((d) => b.dimensions[d.key] ?? b.median) : undefined}
+                  color="var(--success)"
+                />
               </div>
-            ))}
+            )}
+            <HeatMap items={r.dimensions.map((d) => ({ ...d, peer: b?.dimensions[d.key], insight: c.dimension_insights?.[d.key] }))} />
           </div>
-        ) : <p className="text-sm text-muted-foreground">No dimension scores for this assessment.</p>;
-      case "strengths": return <List items={r.content.strengths} />;
-      case "gaps": return <List items={r.content.gaps} />;
-      case "recommendations": return <List items={r.content.recommendations} />;
-      case "next_steps": return <List items={r.content.next_steps} />;
+        );
+      case "strengths": return <Bullets items={c.strengths} />;
+      case "gaps":
+        return (
+          <div className="space-y-5">
+            <Bullets items={c.gaps} />
+            {!!c.risks?.length && (
+              <div><h3 className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">Risks if nothing changes</h3><Bullets items={c.risks} /></div>
+            )}
+          </div>
+        );
+      case "recommendations": return <Bullets items={c.recommendations} />;
+      case "roadmap": return <Roadmap items={c.roadmap ?? []} />;
+      case "next_steps": return <Bullets items={c.next_steps} />;
+      case "methodology": {
+        const m = r.methodology;
+        return (
+          <div className="space-y-4 text-sm text-foreground/90">
+            {m.summary && <p>{m.summary}</p>}
+            <p><strong>How the score is built.</strong> {m.scoring}</p>
+            <p><strong>Maturity model.</strong> {m.maturity_model}</p>
+            {!!m.frameworks.length && <p><strong>Frameworks used.</strong> {m.frameworks.join(" · ")}</p>}
+            {!!m.rationale.length && (
+              <div>
+                <strong>Why we ask these questions</strong>
+                <ul className="mt-2 space-y-1.5">{m.rationale.map((x) => <li key={x.title}><span className="text-foreground">{x.title}:</span> <span className="text-muted-foreground">{x.text}</span></li>)}</ul>
+              </div>
+            )}
+            {b && <p><strong>Benchmark basis.</strong> {b.source === "reference" ? "GEM reference values (not enough peer results yet)." : `${b.label}, ${b.n} companies, latest result each.`}</p>}
+            <p className="text-muted-foreground">{m.how_to_read}</p>
+          </div>
+        );
+      }
       case "talk_to_gem":
         return (
           <div>
@@ -132,26 +190,18 @@ function Report({ r }: { r: ReportView }) {
           Admin preview of {r.email}'s report{r.locked ? " — the user currently sees the locked version" : ""}{r.hidden ? " — hidden from the user" : ""}.
         </p>
       )}
-      <header>
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">{r.assessment_name} · {new Date(r.submitted_at).toLocaleDateString()}</p>
-        <h1 className="mt-1 font-heading text-3xl text-foreground">{r.title}</h1>
-        {r.copy.intro && <p className="mt-2 text-muted-foreground">{r.copy.intro}</p>}
-        <div className="mt-4 flex gap-2 print:hidden">
-          <Button variant="outline" size="sm" onClick={() => window.print()}>Download PDF</Button>
-          <Button variant="ghost" size="sm" asChild><Link to="/dashboard">Back to dashboard</Link></Button>
-        </div>
-      </header>
+      <div className="flex gap-2 print:hidden">
+        <Button variant="outline" size="sm" onClick={() => window.print()}>Download PDF</Button>
+        <Button variant="ghost" size="sm" asChild><Link to="/report/combined">Combined GEM.IQ report</Link></Button>
+        <Button variant="ghost" size="sm" asChild><Link to="/dashboard">Back to dashboard</Link></Button>
+      </div>
+      <ReportCover kicker={`${r.assessment_name} · Maturity assessment`} title={r.title} company={r.company} date={date} refId={r.report_ref} score={r.score} tier={tier} />
+      {r.copy.intro && <p className="text-lg text-muted-foreground">{r.copy.intro}</p>}
 
-      {r.sections.map((s) => (
-        <section key={s.key} className="break-inside-avoid rounded-2xl border border-border/60 bg-card/70 p-6">
-          <h2 className="mb-3 font-heading text-lg text-foreground">{SECTION_LABELS[s.key]}</h2>
-          {s.locked && !r.is_admin_view ? (
-            <div className="text-sm text-muted-foreground">
-              Unlocks when your plan starts.
-              <Button asChild size="sm" className="ml-3 print:hidden"><a href={r.unlock_url}>Unlock the full report</a></Button>
-            </div>
-          ) : body(s.key)}
-        </section>
+      {r.sections.map((s, i) => (
+        <ReportSection key={s.key} n={i + 1} title={SECTION_LABELS[s.key]}>
+          {show(s) ? body(s.key) : <Locked url={r.unlock_url} />}
+        </ReportSection>
       ))}
 
       {r.copy.disclaimer && <p className="text-xs text-muted-foreground">{r.copy.disclaimer}</p>}

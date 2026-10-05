@@ -46,7 +46,7 @@ export function SampleReportShowcase() {
               onClick={() => setActive(i)}
               aria-pressed={on}
               className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] ring-1 ring-inset transition-colors ${
-                on ? `${a.chip} ring-border` : "bg-white/[0.04] text-foreground/80 ring-border hover:text-foreground"
+                on ? `${a.chip} ring-border` : "bg-card shadow-sm text-foreground/80 ring-border hover:text-foreground"
               }`}
               style={DISPLAY}
             >

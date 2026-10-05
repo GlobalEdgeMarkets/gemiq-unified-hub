@@ -122,7 +122,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
               ))}
             </div>
           </div>
-          <aside className="h-fit rounded-3xl bg-white/[0.04] p-6 ring-1 ring-inset ring-border backdrop-blur-xl">
+          <aside className="h-fit rounded-3xl bg-card shadow-sm p-6 ring-1 ring-inset ring-border backdrop-blur-xl">
             <div className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ ...DISPLAY, color: c.hex }}>
               Built for
             </div>
@@ -168,7 +168,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
             {product.dimensions.map((d, i) => (
               <div
                 key={d}
-                className="group flex items-start gap-3 rounded-2xl bg-white/[0.04] p-5 ring-1 ring-inset ring-border backdrop-blur-xl transition-colors hover:bg-white/[0.07]"
+                className="group flex items-start gap-3 rounded-2xl bg-card shadow-sm p-5 ring-1 ring-inset ring-border backdrop-blur-xl transition-colors hover:bg-secondary"
               >
                 <span
                   className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold"
@@ -208,7 +208,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
               { t: "Get your tiered report", d: "Dimension scores, maturity tier, and prioritized actions." },
               { t: "Compare across the suite", d: "Your Hub dashboard rolls every IQ into one composite view." },
             ].map((s, i) => (
-              <div key={s.t} className="rounded-3xl bg-white/[0.04] p-6 ring-1 ring-inset ring-border">
+              <div key={s.t} className="rounded-3xl bg-card shadow-sm p-6 ring-1 ring-inset ring-border">
                 <div className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ ...DISPLAY, color: c.hex }}>
                   Step {i + 1}
                 </div>
@@ -231,7 +231,7 @@ export function IQLanding({ product }: { product: TrackedIQProduct }) {
                 <Link
                   key={p.key}
                   to={p.path}
-                  className="group rounded-3xl bg-white/[0.04] p-6 ring-1 ring-inset ring-border backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-white/[0.07]"
+                  className="group rounded-3xl bg-card shadow-sm p-6 ring-1 ring-inset ring-border backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:bg-secondary"
                 >
                   <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground" style={DISPLAY}>
                     {p.domain}

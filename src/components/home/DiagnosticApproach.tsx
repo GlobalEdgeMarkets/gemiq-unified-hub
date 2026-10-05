@@ -71,8 +71,8 @@ export function DiagnosticApproach() {
       </div>
 
       {/* Contrast table */}
-      <div className="mt-10 overflow-hidden rounded-3xl bg-white/[0.04] ring-1 ring-inset ring-border backdrop-blur-xl">
-        <div className="grid grid-cols-1 gap-px bg-white/[0.06] md:grid-cols-[1fr_1.2fr_1.4fr]">
+      <div className="mt-10 overflow-hidden rounded-3xl bg-card shadow-sm ring-1 ring-inset ring-border backdrop-blur-xl">
+        <div className="grid grid-cols-1 gap-px bg-card shadow-sm md:grid-cols-[1fr_1.2fr_1.4fr]">
           <div className="bg-background/60 px-6 py-4 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground" style={DISPLAY}>
             Dimension
           </div>
@@ -112,7 +112,7 @@ export function DiagnosticApproach() {
             never a substitute for it.
           </p>
         </div>
-        <div className="rounded-3xl bg-white/[0.04] p-8 ring-1 ring-inset ring-border">
+        <div className="rounded-3xl bg-card shadow-sm p-8 ring-1 ring-inset ring-border">
           <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-gem-purple" style={DISPLAY}>
             Why executives take it seriously
           </div>
@@ -131,7 +131,7 @@ export function DiagnosticApproach() {
       {/* Defensibility grid */}
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {DEFENSIBILITY.map((d, i) => (
-          <div key={d.t} className="rounded-3xl bg-white/[0.04] p-6 ring-1 ring-inset ring-border">
+          <div key={d.t} className="rounded-3xl bg-card shadow-sm p-6 ring-1 ring-inset ring-border">
             <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground" style={DISPLAY}>
               {String(i + 1).padStart(2, "0")}
             </div>

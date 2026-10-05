@@ -145,7 +145,7 @@ function Page() {
             {LEVELS.map((l) => (
               <article
                 key={l.n}
-                className="rounded-3xl bg-white/[0.04] p-6 ring-1 ring-inset ring-border backdrop-blur-xl"
+                className="rounded-3xl bg-card shadow-sm p-6 ring-1 ring-inset ring-border backdrop-blur-xl"
               >
                 <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                   <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#05CFAB]" style={DISPLAY}>
@@ -210,7 +210,7 @@ function Page() {
               <Link
                 key={p.n}
                 to={p.to}
-                className="rounded-2xl bg-white/[0.04] p-5 ring-1 ring-inset ring-border transition-colors hover:bg-white/[0.07]"
+                className="rounded-2xl bg-card shadow-sm p-5 ring-1 ring-inset ring-border transition-colors hover:bg-secondary"
               >
                 <div className="text-base font-bold tracking-tight" style={DISPLAY}>
                   {p.n}

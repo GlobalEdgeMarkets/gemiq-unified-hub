@@ -43,7 +43,7 @@ export function ReportPreview({ product, color }: { product: IQProduct; color: s
   return (
     <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-secondary/70 to-background/60 ring-1 ring-inset ring-border">
       {/* Faux window chrome so it reads as a screenshot */}
-      <div className="flex items-center gap-2 border-b border-border bg-white/[0.03] px-5 py-3">
+      <div className="flex items-center gap-2 border-b border-border bg-card shadow-sm px-5 py-3">
         <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
         <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
         <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
@@ -76,7 +76,7 @@ export function ReportPreview({ product, color }: { product: IQProduct; color: s
                   <span className="truncate text-[12.5px] text-foreground/80">{d}</span>
                   <span className="text-[11px] font-semibold tabular-nums text-muted-foreground">{v}</span>
                 </div>
-                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-white/[0.07]">
+                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-card shadow-sm">
                   <div className="h-full rounded-full" style={{ width: `${v}%`, background: color }} />
                 </div>
               </div>
@@ -102,7 +102,7 @@ export function ReportPreview({ product, color }: { product: IQProduct; color: s
         </div>
       </div>
 
-      <div className="border-t border-border bg-white/[0.02] px-6 py-4 md:px-8">
+      <div className="border-t border-border bg-card shadow-sm px-6 py-4 md:px-8">
         <p className="text-[11px] text-muted-foreground">
           Illustrative sample. Live reports use your own responses and are delivered as a shareable link plus PDF.
         </p>

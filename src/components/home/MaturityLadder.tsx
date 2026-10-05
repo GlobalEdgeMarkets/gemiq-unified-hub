@@ -39,7 +39,7 @@ export function MaturityLadder() {
 
         <ol className="space-y-3">
           {LEVELS.map((l) => (
-            <li key={l.n} className="rounded-2xl bg-white/[0.04] p-4 ring-1 ring-inset ring-border">
+            <li key={l.n} className="rounded-2xl bg-card shadow-sm p-4 ring-1 ring-inset ring-border">
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <span
                   className="grid h-6 w-6 place-items-center rounded-full text-[11px] font-bold"
@@ -53,7 +53,7 @@ export function MaturityLadder() {
                 <span className="text-xs text-muted-foreground">{l.cmmi}</span>
                 <span className="ml-auto text-[11px] tabular-nums text-muted-foreground">{l.trl}</span>
               </div>
-              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/[0.07]">
+              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-card shadow-sm">
                 <div className="h-full rounded-full" style={{ width: `${l.pct}%`, background: l.color }} />
               </div>
             </li>

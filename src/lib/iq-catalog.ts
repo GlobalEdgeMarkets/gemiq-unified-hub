@@ -369,10 +369,10 @@ export const ACCENT: Record<
   Accent,
   { hex: string; text: string; ring: string; dot: string; glow: string; chip: string }
 > = {
-  mint:   { hex: "#4ade80", text: "text-[#4ade80]", ring: "hover:border-[#4ade80]/50", dot: "bg-[#4ade80]", glow: "shadow-[0_0_40px_-8px_rgba(74,222,128,0.6)]",  chip: "bg-[#4ade80]/10 text-[#4ade80]" },
-  violet: { hex: "#a78bfa", text: "text-[#a78bfa]", ring: "hover:border-[#a78bfa]/50", dot: "bg-[#a78bfa]", glow: "shadow-[0_0_40px_-8px_rgba(167,139,250,0.6)]", chip: "bg-[#a78bfa]/10 text-[#a78bfa]" },
-  cyan:   { hex: "#67e8f9", text: "text-[#67e8f9]", ring: "hover:border-[#67e8f9]/50", dot: "bg-[#67e8f9]", glow: "shadow-[0_0_40px_-8px_rgba(103,232,249,0.6)]", chip: "bg-[#67e8f9]/10 text-[#67e8f9]" },
-  amber:  { hex: "#fbbf24", text: "text-[#fbbf24]", ring: "hover:border-[#fbbf24]/50", dot: "bg-[#fbbf24]", glow: "shadow-[0_0_40px_-8px_rgba(251,191,36,0.5)]",  chip: "bg-[#fbbf24]/10 text-[#fbbf24]" },
-  blue:   { hex: "#60a5fa", text: "text-[#60a5fa]", ring: "hover:border-[#60a5fa]/50", dot: "bg-[#60a5fa]", glow: "shadow-[0_0_40px_-8px_rgba(96,165,250,0.6)]",  chip: "bg-[#60a5fa]/10 text-[#60a5fa]" },
-  rose:   { hex: "#fb7185", text: "text-[#fb7185]", ring: "hover:border-[#fb7185]/50", dot: "bg-[#fb7185]", glow: "shadow-[0_0_40px_-8px_rgba(251,113,133,0.6)]", chip: "bg-[#fb7185]/10 text-[#fb7185]" },
+  mint:   { hex: "#04A688", text: "text-[#04A688]", ring: "hover:border-[#04A688]/50", dot: "bg-[#04A688]", glow: "shadow-[0_0_40px_-8px_rgba(74,222,128,0.6)]",  chip: "bg-[#04A688]/10 text-[#04A688]" },
+  violet: { hex: "#5B3FD1", text: "text-[#5B3FD1]", ring: "hover:border-[#5B3FD1]/50", dot: "bg-[#5B3FD1]", glow: "shadow-[0_0_40px_-8px_rgba(167,139,250,0.6)]", chip: "bg-[#5B3FD1]/10 text-[#5B3FD1]" },
+  cyan:   { hex: "#0891B2", text: "text-[#0891B2]", ring: "hover:border-[#0891B2]/50", dot: "bg-[#0891B2]", glow: "shadow-[0_0_40px_-8px_rgba(103,232,249,0.6)]", chip: "bg-[#0891B2]/10 text-[#0891B2]" },
+  amber:  { hex: "#B45309", text: "text-[#B45309]", ring: "hover:border-[#B45309]/50", dot: "bg-[#B45309]", glow: "shadow-[0_0_40px_-8px_rgba(251,191,36,0.5)]",  chip: "bg-[#B45309]/10 text-[#B45309]" },
+  blue:   { hex: "#2563EB", text: "text-[#2563EB]", ring: "hover:border-[#2563EB]/50", dot: "bg-[#2563EB]", glow: "shadow-[0_0_40px_-8px_rgba(96,165,250,0.6)]",  chip: "bg-[#2563EB]/10 text-[#2563EB]" },
+  rose:   { hex: "#E11D48", text: "text-[#E11D48]", ring: "hover:border-[#E11D48]/50", dot: "bg-[#E11D48]", glow: "shadow-[0_0_40px_-8px_rgba(251,113,133,0.6)]", chip: "bg-[#E11D48]/10 text-[#E11D48]" },
 };

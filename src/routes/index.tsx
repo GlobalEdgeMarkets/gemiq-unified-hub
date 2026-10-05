@@ -371,7 +371,7 @@ function HeroTile() {
                 onClick={() => setI(idx)}
                 aria-label={`Show ${a.name}`}
                 className={`h-1.5 rounded-full transition-all ${
-                  idx === i ? "w-8 bg-white" : "w-4 bg-foreground/25 hover:bg-foreground/50"
+                  idx === i ? "w-8 bg-foreground" : "w-4 bg-foreground/25 hover:bg-foreground/50"
                 }`}
               />
             ))}
@@ -563,7 +563,7 @@ function IntelligenceStrip() {
                     onClick={() => setImgIdx(idx)}
                     aria-label={`Show ${a.name}`}
                     className={`h-1.5 rounded-full transition-all ${
-                      idx === imgIdx ? "w-10 bg-white" : "w-4 bg-foreground/30 hover:bg-foreground/60"
+                      idx === imgIdx ? "w-10 bg-foreground" : "w-4 bg-foreground/30 hover:bg-foreground/60"
                     }`}
                   />
                 ))}
@@ -574,7 +574,7 @@ function IntelligenceStrip() {
 
         {/* Stats + rotating globe */}
         <div className="lg:col-span-2 grid gap-6">
-          <div className="relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl ring-1 ring-inset ring-border p-6 md:p-8">
+          <div className="relative overflow-hidden rounded-3xl bg-card shadow-sm backdrop-blur-xl ring-1 ring-inset ring-border p-6 md:p-8">
             <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#05CFAB]/15 blur-3xl" />
             <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground" style={{ fontFamily: "'League Spartan', sans-serif" }}>
               GEM.IQ · By the numbers
@@ -633,10 +633,10 @@ function StatCounter({
 
 function SpecialistPanel() {
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-dashed border-border bg-white/[0.03] p-6 flex flex-col justify-between">
+    <div className="relative overflow-hidden rounded-3xl border border-dashed border-border bg-card shadow-sm p-6 flex flex-col justify-between">
       <div aria-hidden className="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-[#05CFAB] opacity-10 blur-3xl" />
       <div className="relative z-10">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground/80" style={{ fontFamily: "'League Spartan', sans-serif" }}>
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-card shadow-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground/80" style={{ fontFamily: "'League Spartan', sans-serif" }}>
           <span className="h-1.5 w-1.5 rounded-full bg-[#05CFAB]" />
           Who this is for
         </div>
@@ -662,7 +662,7 @@ function AssessmentTile({ a }: { a: Assessment }) {
   return (
     <Wrapper
       {...wrapperProps}
-      className={`md:col-span-1 group relative rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-border p-6 flex flex-col justify-between overflow-hidden transition-all ${c.ring} ${
+      className={`md:col-span-1 group relative rounded-3xl bg-card shadow-sm backdrop-blur-xl ring-1 ring-inset ring-border p-6 flex flex-col justify-between overflow-hidden transition-all ${c.ring} ${
         a.live ? "cursor-pointer hover:-translate-y-0.5" : "opacity-90"
       }`}
     >
@@ -735,7 +735,7 @@ function MethodologyTile() {
 
 function BenchmarkTile() {
   return (
-    <div className="md:col-span-1 md:row-span-1 rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-border p-8 relative overflow-hidden">
+    <div className="md:col-span-1 md:row-span-1 rounded-3xl bg-card shadow-sm backdrop-blur-xl ring-1 ring-inset ring-border p-8 relative overflow-hidden">
       <div aria-hidden className="absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-[#2D1594]/15 blur-3xl" />
       <div className="relative z-10 flex items-start justify-between gap-6">
         <div>
@@ -929,7 +929,7 @@ function Pricing() {
 
       {/* Guarantee trust line under both */}
       {GUARANTEE_LABEL && (
-        <div className="mx-auto mt-6 flex max-w-4xl items-center justify-center gap-3 rounded-2xl border border-border bg-white/[0.03] px-5 py-4 text-center">
+        <div className="mx-auto mt-6 flex max-w-4xl items-center justify-center gap-3 rounded-2xl border border-border bg-card shadow-sm px-5 py-4 text-center">
           <svg className="h-5 w-5 shrink-0 text-gem-teal" viewBox="0 0 20 20" fill="currentColor">
             <path d="M10 1.5l6.5 2.6v5.2c0 4-2.8 7.6-6.5 8.7-3.7-1.1-6.5-4.7-6.5-8.7V4.1L10 1.5zm3.7 6.8a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z" />
           </svg>

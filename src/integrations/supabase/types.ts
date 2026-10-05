@@ -74,6 +74,30 @@ export type Database = {
         }
         Relationships: []
       }
+      hub_composite_settings: {
+        Row: {
+          id: boolean
+          methodology: Json
+          settings: Json
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: boolean
+          methodology?: Json
+          settings?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: boolean
+          methodology?: Json
+          settings?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       hub_e2e_runs: {
         Row: {
           assessment_key: string

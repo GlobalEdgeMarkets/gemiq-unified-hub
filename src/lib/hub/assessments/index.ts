@@ -76,6 +76,8 @@ export function buildContactProperties(args: {
   contact?: { first_name?: string; last_name?: string; company?: string; phone?: string };
   /** Extra fields HubSpot workflows use for follow-up emails (set on live submits). */
   workflow?: { submission_id: string; report_url: string; report_locked: boolean; entitlement: string };
+  /** Combined GEM.IQ score (computed by the caller with the admin weights). */
+  composite?: { score: number | null; tier: string | null; next: string | null };
 }): HubSpotPropertyValues {
   const props: HubSpotPropertyValues = {
     email: args.email,
@@ -132,6 +134,11 @@ export function buildContactProperties(args: {
   props.gem_assessments_count = distinctKeys.length;
   // HubSpot multi-checkbox wants semicolon-delimited option values
   props.gem_assessments_taken = distinctKeys.sort().join(";");
+  if (args.composite) {
+    if (args.composite.score != null) props.gem_composite_score = args.composite.score;
+    props.gem_composite_tier = args.composite.tier ?? "";
+    props.gem_next_assessment = args.composite.next ? (REGISTRY_BY_KEY[args.composite.next]?.displayName ?? args.composite.next) : "";
+  }
   if (scores.length) {
     props.gem_high_score = highScore;
     props.gem_low_score = lowScore;

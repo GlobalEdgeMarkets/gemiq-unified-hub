@@ -537,3 +537,40 @@ export const adminPersonLookup = createServerFn({ method: "POST" })
 
     return { email, profile: prof ?? null, subscriptions: subs ?? [], reports: items, hubspot };
   });
+
+// ---- Combined GEM.IQ score + methodology ----
+const compositeTier = z.object({ key: z.string().min(1).max(64), label: z.string().min(1).max(80), min: z.number().min(0).max(100) });
+const methodologyInput = z.object({
+  overview: z.string().max(4000), scoring: z.string().max(4000), maturity_model: z.string().max(4000),
+  data_sources: z.string().max(4000), how_to_read: z.string().max(4000),
+});
+
+export const adminGetComposite = createServerFn({ method: "GET" })
+  .middleware([requireHubAdmin])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { getCompositeConfig } = await import("@/lib/hub/composite.server");
+    const { LIVE_REGISTRY } = await import("@/lib/hub/assessments");
+    const cfg = await getCompositeConfig();
+    return { ...cfg, apps: LIVE_REGISTRY.map((s) => ({ key: s.key, name: s.displayName })) };
+  });
+
+export const adminSaveComposite = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.object({
+      settings: z.object({
+        weights: z.record(appKey, z.number().min(0).max(100)),
+        tiers: z.array(compositeTier).min(1).max(10),
+        min_for_tier: z.number().int().min(1).max(20),
+      }).optional(),
+      methodology: methodologyInput.optional(),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const { saveCompositeConfig } = await import("@/lib/hub/composite.server");
+    return await saveCompositeConfig(data, by);
+  });

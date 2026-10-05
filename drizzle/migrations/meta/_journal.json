@@ -36,6 +36,13 @@
       "when": 1791162683094,
       "tag": "0004_hub_e2e_tests",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791167903197,
+      "tag": "0005_hub_composite_settings",
+      "breakpoints": true
     }
   ]
 }

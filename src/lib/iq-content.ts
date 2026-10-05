@@ -12,6 +12,8 @@ export const QuestionSchema = z.object({
   key: z.string().min(1).max(64),
   text: z.string().min(1).max(600),
   help: z.string().max(600).optional(),
+  /** "Why we ask this" — shown next to the question. */
+  rationale: z.string().max(1200).optional(),
   weight: z.number().min(0).max(100).default(1),
   options: z.array(OptionSchema).min(2).max(10),
 });
@@ -19,6 +21,8 @@ export const SectionSchema = z.object({
   key: z.string().min(1).max(64),
   title: z.string().min(1).max(200),
   description: z.string().max(800).optional(),
+  /** "Why this matters" — the research or reasoning behind the section. */
+  rationale: z.string().max(2000).optional(),
   weight: z.number().min(0).max(100).default(1),
   questions: z.array(QuestionSchema).min(1).max(60),
 });
@@ -27,7 +31,18 @@ export const ContentTierSchema = z.object({
   label: z.string().min(1).max(80),
   min: z.number().min(0).max(100),
 });
+export const AssessmentMethodologySchema = z.object({
+  summary: z.string().max(4000).optional(),
+  /** Frameworks and research this assessment draws on. */
+  frameworks: z.array(z.string().max(300)).max(20).optional(),
+  /** How this approach compares with other frameworks. */
+  comparison: z.string().max(4000).optional(),
+  references: z.array(z.object({ title: z.string().min(1).max(300), url: z.string().url().max(500).optional() })).max(30).optional(),
+});
+export type AssessmentMethodology = z.infer<typeof AssessmentMethodologySchema>;
+
 export const ContentBodySchema = z.object({
+  methodology: AssessmentMethodologySchema.optional(),
   intro: z.string().max(1500).optional(),
   sections: z.array(SectionSchema).min(1).max(20),
   tiers: z.array(ContentTierSchema).min(1).max(10),

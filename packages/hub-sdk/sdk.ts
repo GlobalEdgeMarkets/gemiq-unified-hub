@@ -168,6 +168,10 @@ export interface HubManifest {
     content_endpoint?: { method: string; path: string; response: string };
     content_export?: { method: string; path: string; auth_header: string; response: string };
     scoring_rule?: string;
+    /** Combined GEM.IQ score rule (additive, 2026-10-05). */
+    composite_rule?: string;
+    /** Optional methodology / "why we ask this" content fields (additive, 2026-10-05). */
+    methodology?: string;
   };
   /** Published Hub content version per IQ (null = none), added in 1.9.0. */
   content?: Record<AssessmentKey, number | null> | null;

@@ -18,6 +18,7 @@ import { Route as DocsRouteImport } from './routes/docs'
 import { Route as GtmiqRouteImport } from './routes/gtmiq'
 import { Route as MarketEntryRouteImport } from './routes/market-entry'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as MethodologyRouteImport } from './routes/methodology'
 import { Route as OnboardRouteImport } from './routes/onboard'
 import { Route as ProductiqRouteImport } from './routes/productiq'
 import { Route as ReadinessiqRouteImport } from './routes/readinessiq'
@@ -95,6 +96,11 @@ const MarketEntryRoute = MarketEntryRouteImport.update({
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MethodologyRoute = MethodologyRouteImport.update({
+  id: '/methodology',
+  path: '/methodology',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardRoute = OnboardRouteImport.update({
@@ -289,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/gtmiq': typeof GtmiqRoute
   '/market-entry': typeof MarketEntryRouteWithChildren
   '/mcp': typeof McpRoute
+  '/methodology': typeof MethodologyRoute
   '/onboard': typeof OnboardRoute
   '/productiq': typeof ProductiqRoute
   '/readinessiq': typeof ReadinessiqRouteWithChildren
@@ -333,6 +340,7 @@ export interface FileRoutesByTo {
   '/gtmiq': typeof GtmiqRoute
   '/market-entry': typeof MarketEntryRouteWithChildren
   '/mcp': typeof McpRoute
+  '/methodology': typeof MethodologyRoute
   '/onboard': typeof OnboardRoute
   '/productiq': typeof ProductiqRoute
   '/readinessiq': typeof ReadinessiqRouteWithChildren
@@ -378,6 +386,7 @@ export interface FileRoutesById {
   '/gtmiq': typeof GtmiqRoute
   '/market-entry': typeof MarketEntryRouteWithChildren
   '/mcp': typeof McpRoute
+  '/methodology': typeof MethodologyRoute
   '/onboard': typeof OnboardRoute
   '/productiq': typeof ProductiqRoute
   '/readinessiq': typeof ReadinessiqRouteWithChildren
@@ -424,6 +433,7 @@ export interface FileRouteTypes {
     | '/gtmiq'
     | '/market-entry'
     | '/mcp'
+    | '/methodology'
     | '/onboard'
     | '/productiq'
     | '/readinessiq'
@@ -468,6 +478,7 @@ export interface FileRouteTypes {
     | '/gtmiq'
     | '/market-entry'
     | '/mcp'
+    | '/methodology'
     | '/onboard'
     | '/productiq'
     | '/readinessiq'
@@ -512,6 +523,7 @@ export interface FileRouteTypes {
     | '/gtmiq'
     | '/market-entry'
     | '/mcp'
+    | '/methodology'
     | '/onboard'
     | '/productiq'
     | '/readinessiq'
@@ -557,6 +569,7 @@ export interface RootRouteChildren {
   GtmiqRoute: typeof GtmiqRoute
   MarketEntryRoute: typeof MarketEntryRouteWithChildren
   McpRoute: typeof McpRoute
+  MethodologyRoute: typeof MethodologyRoute
   OnboardRoute: typeof OnboardRoute
   ProductiqRoute: typeof ProductiqRoute
   ReadinessiqRoute: typeof ReadinessiqRouteWithChildren
@@ -653,6 +666,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/methodology': {
+      id: '/methodology'
+      path: '/methodology'
+      fullPath: '/methodology'
+      preLoaderRoute: typeof MethodologyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboard': {
@@ -923,6 +943,7 @@ const rootRouteChildren: RootRouteChildren = {
   GtmiqRoute: GtmiqRoute,
   MarketEntryRoute: MarketEntryRouteWithChildren,
   McpRoute: McpRoute,
+  MethodologyRoute: MethodologyRoute,
   OnboardRoute: OnboardRoute,
   ProductiqRoute: ProductiqRoute,
   ReadinessiqRoute: ReadinessiqRouteWithChildren,

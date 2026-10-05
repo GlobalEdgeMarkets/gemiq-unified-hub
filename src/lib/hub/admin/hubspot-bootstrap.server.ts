@@ -32,6 +32,12 @@ const PROPS: PropDef[] = [
   // Assessments taken (multi-checkbox) — auto-derived from registry
   { name: "gem_assessments_taken", label: "GEM Assessments Taken", groupName: GROUP, type: "enumeration", fieldType: "checkbox",
     options: REGISTRY.map(s => ({ label: s.displayName, value: s.key })) },
+  { name: "gem_composite_score", label: "GEM Combined Score", groupName: GROUP, type: "number", fieldType: "number",
+    description: "Weighted combined GEM.IQ score across every assessment taken." },
+  { name: "gem_composite_tier", label: "GEM Combined Stage", groupName: GROUP, type: "string", fieldType: "text",
+    description: "Overall maturity stage; empty until enough assessments are done." },
+  { name: "gem_next_assessment", label: "GEM Next Suggested Assessment", groupName: GROUP, type: "string", fieldType: "text",
+    description: "The assessment that adds most to the combined score. Empty when all are done." },
   { name: "gem_assessments_count", label: "GEM Assessments Count", groupName: GROUP, type: "number", fieldType: "number" },
   { name: "gem_high_score", label: "GEM Highest Score", groupName: GROUP, type: "number", fieldType: "number" },
   { name: "gem_low_score", label: "GEM Lowest Score", groupName: GROUP, type: "number", fieldType: "number" },

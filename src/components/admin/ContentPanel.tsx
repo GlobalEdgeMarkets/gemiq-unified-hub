@@ -146,6 +146,22 @@ function Editor({ body, edit }: { body: ContentBody; edit: (fn: (b: ContentBody)
         <Textarea rows={2} value={body.intro ?? ""} onChange={(e) => edit((b) => { b.intro = e.target.value; })} />
       </div>
 
+      <div className="rounded-2xl border border-border bg-card/60 p-6">
+        <h3 className="font-heading text-base text-foreground">Methodology for this assessment</h3>
+        <p className="mt-1 text-xs text-muted-foreground">Shown on the assessment, its reports and the public Methodology page. The general GEM.IQ methodology is edited under Combined score.</p>
+        <div className="mt-3 grid gap-3">
+          <div><Label className="text-xs">How this assessment works</Label>
+            <Textarea rows={3} value={body.methodology?.summary ?? ""} onChange={(e) => edit((b) => { b.methodology = { ...b.methodology, summary: e.target.value }; })} /></div>
+          <div><Label className="text-xs">Frameworks and research it draws on (one per line)</Label>
+            <Textarea rows={3} value={(body.methodology?.frameworks ?? []).join("\n")} onChange={(e) => edit((b) => { b.methodology = { ...b.methodology, frameworks: e.target.value.split("\n").filter((l) => l.trim()) }; })} /></div>
+          <div><Label className="text-xs">How it compares with other approaches</Label>
+            <Textarea rows={3} value={body.methodology?.comparison ?? ""} onChange={(e) => edit((b) => { b.methodology = { ...b.methodology, comparison: e.target.value }; })} /></div>
+          <div><Label className="text-xs">Sources (one per line: title | link, link optional)</Label>
+            <Textarea rows={3} value={(body.methodology?.references ?? []).map((r) => r.url ? `${r.title} | ${r.url}` : r.title).join("\n")}
+              onChange={(e) => edit((b) => { b.methodology = { ...b.methodology, references: e.target.value.split("\n").filter((l) => l.trim()).map((l) => { const [t, u] = l.split("|").map((x) => x.trim()); return u && /^https?:\/\//.test(u) ? { title: t || u, url: u } : { title: t || l.trim() }; }) }; })} /></div>
+        </div>
+      </div>
+
       {body.sections.map((s, si) => (
         <SectionEditor key={si} s={s} si={si} edit={edit} total={body.sections.length} />
       ))}
@@ -190,6 +206,7 @@ function SectionEditor({ s, si, edit, total }: { s: ContentSection; si: number; 
       {open && (
         <div className="mt-4 grid gap-4">
           <Textarea rows={2} placeholder="Section description (optional)" value={s.description ?? ""} onChange={(e) => edit((b) => { b.sections[si].description = e.target.value; })} />
+          <Textarea rows={2} placeholder="Why this section matters — research or reasoning behind it (optional)" value={s.rationale ?? ""} onChange={(e) => edit((b) => { b.sections[si].rationale = e.target.value; })} />
           {s.questions.map((q, qi) => <QuestionEditor key={qi} q={q} si={si} qi={qi} edit={edit} count={s.questions.length} />)}
           <Button size="sm" variant="outline" className="w-fit" onClick={() => edit((b) => {
             const qs = b.sections[si].questions; const n = qs.length + 1;
@@ -211,6 +228,7 @@ function QuestionEditor({ q, si, qi, edit, count }: { q: ContentQuestion; si: nu
         <Button size="sm" variant="ghost" disabled={count <= 1} onClick={() => edit((b) => { b.sections[si].questions.splice(qi, 1); })}>Remove</Button>
       </div>
       <Input className="mt-2" placeholder="Help text (optional)" value={q.help ?? ""} onChange={(e) => edit((b) => { at(b).help = e.target.value; })} />
+      <Input className="mt-2" placeholder="Why we ask this (optional)" value={q.rationale ?? ""} onChange={(e) => edit((b) => { at(b).rationale = e.target.value; })} />
       <div className="mt-3 grid gap-2">
         {q.options.map((o, oi) => (
           <div key={oi} className="flex items-center gap-2">
@@ -243,6 +261,7 @@ function Preview({ body }: { body: ContentBody }) {
               <fieldset key={q.key} className="mt-4">
                 <legend className="text-sm text-foreground">{q.text}</legend>
                 {q.help && <p className="text-xs text-muted-foreground">{q.help}</p>}
+                {q.rationale && <p className="text-xs italic text-muted-foreground">Why we ask this: {q.rationale}</p>}
                 <div className="mt-2 flex flex-wrap gap-2">
                   {q.options.map((o) => (
                     <Button key={o.key} size="sm" variant={answers[q.key] === o.key ? "default" : "outline"}

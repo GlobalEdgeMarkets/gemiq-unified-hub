@@ -25,9 +25,13 @@ import {
   adminResetFinish,
   adminContentVersions,
   adminContentAction,
+  adminE2eOverview,
+  adminE2eAction,
+  adminE2eSaveSettings,
 } from "@/lib/admin.functions";
 import { ContentPanel } from "@/components/admin/ContentPanel";
 import { ReportsPanel } from "@/components/admin/ReportsPanel";
+import { TestsPanel } from "@/components/admin/TestsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,6 +121,9 @@ function AdminConsole() {
   const resetFinish = useServerFn(adminResetFinish);
   const contentVersions = useServerFn(adminContentVersions);
   const contentAction = useServerFn(adminContentAction);
+  const e2eOverview = useServerFn(adminE2eOverview);
+  const e2eAction = useServerFn(adminE2eAction);
+  const e2eSave = useServerFn(adminE2eSaveSettings);
   const control = useMemo(
     () => ({ listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding }),
     [listApps, updateApp, updateGlobal, checkHealth, registerApp, verifyOnboarding],
@@ -176,6 +183,7 @@ function AdminConsole() {
           <TabsTrigger value="control">Control</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
+          <TabsTrigger value="tests">Tests</TabsTrigger>
           <TabsTrigger value="tracking">Tracking</TabsTrigger>
           <TabsTrigger value="users">Users & data</TabsTrigger>
         </TabsList>
@@ -188,6 +196,13 @@ function AdminConsole() {
         <TabsContent value="reports" className="grid gap-6">
           <ReportsPanel getSettings={getReportSettings} saveSettings={saveReportSettings} listReports={listReports} reportAction={reportAction}
             resetPreview={resetPreview} resetBatch={resetBatch} resetFinish={resetFinish} />
+        </TabsContent>
+        <TabsContent value="tests">
+          <TestsPanel
+            overview={e2eOverview as unknown as React.ComponentProps<typeof TestsPanel>["overview"]}
+            action={e2eAction as unknown as React.ComponentProps<typeof TestsPanel>["action"]}
+            saveSettings={e2eSave as unknown as React.ComponentProps<typeof TestsPanel>["saveSettings"]}
+          />
         </TabsContent>
         <TabsContent value="tracking" className="grid gap-6">
           <PostHogAuditCard run={phAudit} />

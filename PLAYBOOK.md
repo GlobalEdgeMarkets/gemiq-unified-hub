@@ -124,7 +124,7 @@ focus) and applies brand tokens/logos. `/onboard` exposes a **Sync now** button 
 a live next-sync countdown.
 
 Automated testing: Admin → Tests runs a quick test per IQ (result → Hub → HubSpot
-fields, marketing status, workflows). Test contacts use `<inbox>+checkly-…` addresses
+fields, marketing status, workflows). Test contacts use `<inbox>+gemtest-…` addresses
 only and are deleted everywhere after the configured keep period.
 
 ## 5. Pricing (v1.5)

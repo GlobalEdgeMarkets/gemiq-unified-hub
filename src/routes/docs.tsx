@@ -159,7 +159,7 @@ if (!status.authenticated) {
 
 if (!status.active) {
   // Not subscribed and not trialing — send them to checkout.
-  await hub.subscription.startCheckout("gemiq_professional_monthly", {
+  await hub.subscription.startCheckout("gemiq_complete_monthly", {
     successUrl: window.location.origin + "/resume?sid={CHECKOUT_SESSION_ID}",
     cancelUrl:  window.location.href,
   });
@@ -178,7 +178,7 @@ if (!status.active) {
             Add a <strong>Start {TRIAL_PHRASE}</strong> button next to your existing subscribe
             CTA. Pass <code>trial: true</code>:
           </p>
-          <Code>{`await hub.subscription.startCheckout("gemiq_professional_monthly", {
+          <Code>{`await hub.subscription.startCheckout("gemiq_complete_monthly", {
   successUrl: window.location.origin + "/resume?sid={CHECKOUT_SESSION_ID}",
   cancelUrl:  window.location.href,
   trial: true,
@@ -259,7 +259,7 @@ if (status.active) {
 } catch (e: any) {
   if (e.status === 402 && e.body?.error === "trial_limit_reached") {
     // Trial exhausted — upgrade to full subscription (no trial flag).
-    await hub.subscription.startCheckout("gemiq_professional_monthly", {
+    await hub.subscription.startCheckout("gemiq_complete_monthly", {
       successUrl: window.location.origin + "/resume?sid={CHECKOUT_SESSION_ID}",
       cancelUrl:  window.location.href,
     });
@@ -426,7 +426,7 @@ const stop = hub.manifest.watch(
           <h3 className="mt-6 font-display text-lg font-semibold text-white">Stripe lookup keys</h3>
           <ul className="list-disc space-y-1 pl-5">
             {MONTHLY_PRICE && (
-              <li><code>gemiq_professional_monthly</code> — {MONTHLY_PRICE}/mo</li>
+              <li><code>gemiq_complete_monthly</code> — {MONTHLY_PRICE}/mo</li>
             )}
             {QUARTERLY_PRICE && (
               <li><code>gemiq_professional_quarterly</code> — {QUARTERLY_PRICE} / 3 months (default)</li>

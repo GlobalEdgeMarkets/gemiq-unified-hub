@@ -41,13 +41,13 @@ export function ReportPreview({ product, color }: { product: IQProduct; color: s
     .sort((a, b) => b.v - a.v);
 
   return (
-    <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#16213e]/70 to-[#0a0a16]/60 ring-1 ring-inset ring-white/[0.08]">
+    <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-secondary/70 to-background/60 ring-1 ring-inset ring-border">
       {/* Faux window chrome so it reads as a screenshot */}
-      <div className="flex items-center gap-2 border-b border-white/[0.07] bg-white/[0.03] px-5 py-3">
-        <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
-        <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
-        <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
-        <span className="ml-3 truncate text-[11px] text-white/40">
+      <div className="flex items-center gap-2 border-b border-border bg-white/[0.03] px-5 py-3">
+        <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
+        <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
+        <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
+        <span className="ml-3 truncate text-[11px] text-muted-foreground">
           {product.name.toLowerCase()} · report / sample-0472
         </span>
       </div>
@@ -57,13 +57,13 @@ export function ReportPreview({ product, color }: { product: IQProduct; color: s
           <div className="flex items-center gap-5">
             <ScoreRing score={product.sampleScore} color={color} />
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40" style={DISPLAY}>
+              <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground" style={DISPLAY}>
                 Composite maturity
               </div>
               <div className="mt-1 text-2xl font-bold capitalize tracking-tight" style={{ ...DISPLAY, color }}>
                 {tier}
               </div>
-              <p className="mt-1 text-xs text-white/50">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Peer benchmark {product.benchmark} · {product.dimensions.length} dimensions scored
               </p>
             </div>
@@ -73,8 +73,8 @@ export function ReportPreview({ product, color }: { product: IQProduct; color: s
             {ranked.map(({ d, v }) => (
               <div key={d}>
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="truncate text-[12.5px] text-white/70">{d}</span>
-                  <span className="text-[11px] font-semibold tabular-nums text-white/45">{v}</span>
+                  <span className="truncate text-[12.5px] text-foreground/80">{d}</span>
+                  <span className="text-[11px] font-semibold tabular-nums text-muted-foreground">{v}</span>
                 </div>
                 <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-white/[0.07]">
                   <div className="h-full rounded-full" style={{ width: `${v}%`, background: color }} />
@@ -85,25 +85,25 @@ export function ReportPreview({ product, color }: { product: IQProduct; color: s
         </div>
 
         <div className="flex flex-col">
-          <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40" style={DISPLAY}>
+          <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground" style={DISPLAY}>
             Dimension profile vs. peers
           </div>
           <div className="mt-2">
             <RadarChart labels={product.dimensions} values={product.sample} benchmark={benchmark} color={color} />
           </div>
-          <div className="mt-2 flex items-center gap-5 text-[11px] text-white/45">
+          <div className="mt-2 flex items-center gap-5 text-[11px] text-muted-foreground">
             <span className="flex items-center gap-2">
               <span className="h-2 w-4 rounded-full" style={{ background: color }} /> Your score
             </span>
             <span className="flex items-center gap-2">
-              <span className="h-0 w-4 border-t border-dashed border-white/45" /> Peer median
+              <span className="h-0 w-4 border-t border-dashed border-border" /> Peer median
             </span>
           </div>
         </div>
       </div>
 
-      <div className="border-t border-white/[0.07] bg-white/[0.02] px-6 py-4 md:px-8">
-        <p className="text-[11px] text-white/40">
+      <div className="border-t border-border bg-white/[0.02] px-6 py-4 md:px-8">
+        <p className="text-[11px] text-muted-foreground">
           Illustrative sample. Live reports use your own responses and are delivered as a shareable link plus PDF.
         </p>
       </div>

@@ -8,15 +8,15 @@ export type RoadmapLite = { horizon: "30" | "60" | "90"; action: string; priorit
 
 export function ReportCover(props: { kicker: string; title: string; company: string | null; date: string; refId: string; score: number | null; tier: TierLite | null }) {
   return (
-    <section className="report-cover relative overflow-hidden rounded-3xl bg-sidebar p-8 text-sidebar-foreground md:p-12">
+    <section className="report-cover relative overflow-hidden rounded-3xl bg-report-cover p-8 text-report-cover-foreground md:p-12">
       <img src="/brand/gem-logo-light-white-mint.png" alt="GEM — Global Edge Markets" className="h-10 w-auto" />
-      <p className="mt-12 text-xs uppercase tracking-[0.25em] text-sidebar-foreground/60">{props.kicker}</p>
+      <p className="mt-12 text-xs uppercase tracking-[0.25em] text-report-cover-foreground/60">{props.kicker}</p>
       <h1 className="mt-3 max-w-2xl font-heading text-3xl leading-tight md:text-5xl">{props.title}</h1>
-      {props.company && <p className="mt-3 text-lg text-sidebar-foreground/80">Prepared for {props.company}</p>}
+      {props.company && <p className="mt-3 text-lg text-report-cover-foreground/80">Prepared for {props.company}</p>}
       <div className="mt-10 flex flex-wrap items-end gap-8">
         <div>
           <div className="font-heading text-6xl md:text-7xl">{props.score ?? "—"}</div>
-          <div className="text-xs uppercase tracking-wider text-sidebar-foreground/60">Score out of 100</div>
+          <div className="text-xs uppercase tracking-wider text-report-cover-foreground/60">Score out of 100</div>
         </div>
         {props.tier && (
           <span className="rounded-full px-4 py-1.5 text-sm font-semibold text-primary-foreground" style={{ backgroundColor: props.tier.color }}>
@@ -24,7 +24,7 @@ export function ReportCover(props: { kicker: string; title: string; company: str
           </span>
         )}
       </div>
-      <div className="mt-10 flex flex-wrap gap-x-8 gap-y-1 border-t border-sidebar-foreground/15 pt-4 text-xs text-sidebar-foreground/60">
+      <div className="mt-10 flex flex-wrap gap-x-8 gap-y-1 border-t border-report-cover-foreground/15 pt-4 text-xs text-report-cover-foreground/60">
         <span>{props.date}</span>
         <span>Report {props.refId}</span>
         <span>Confidential</span>

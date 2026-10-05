@@ -1,6 +1,6 @@
 # GEM.IQ Playbook — v1.6
 
-**Status:** current as of 2026-10-05 (manifest v1.10.0: three-tier pricing Starter/Growth/Complete; v1.9.0: Hub-controlled questions/weights/tiers (/api/public/content/<key>, content export, scoring rule); follow-up emails moved to HubSpot workflows (Hub writes trigger fields only); v1.8.0: live report settings (sections, trial access, wording, tiers, app/hub mode), Hub-built reports at /report/<id>; v1.7.0 live control — notices, pause switch, editable wording, status-link contract). Supersedes v1.4 (6 undifferentiated
+**Status:** current as of 2026-10-05 (manifest v1.10.0: three-tier pricing Starter/Growth/Complete; v1.9.0: Hub-controlled questions/weights/tiers (/api/public/content/<key>, content export, scoring rule); follow-up emails moved to HubSpot workflows (Hub writes trigger fields only); reports: consulting-grade layout — cover, executive summary, maturity ladder, peer benchmark (reference values until enough real results), heat map, 30/60/90 roadmap, methodology, branded PDF, combined report at /report/combined; v1.8.0: live report settings (sections, trial access, wording, tiers, app/hub mode), Hub-built reports at /report/<id>; v1.7.0 live control — notices, pause switch, editable wording, status-link contract). Supersedes v1.4 (6 undifferentiated
 "capability" IQs, manifest v1.4.0). If a doc, prompt, or GitHub knowledge file
 disagrees with this file, this file wins.
 

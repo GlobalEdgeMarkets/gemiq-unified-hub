@@ -1,3 +1,4 @@
+import { SECTION_KEYS } from "@/lib/report-settings";
 // Thin server-function wrappers for the admin console.
 // Module scope holds imports and server-fn declarations only (tss-serverfn-split).
 // JOB_SECRET is never involved here: these call the shared handler bodies
@@ -244,7 +245,7 @@ export const adminVerifyOnboarding = createServerFn({ method: "POST" })
   });
 
 // ---- Report control ----
-const sectionKey = z.enum(["summary", "score_tier", "dimensions", "strengths", "gaps", "recommendations", "next_steps", "talk_to_gem"]);
+const sectionKey = z.enum(SECTION_KEYS);
 const reportOverride = z.object({
   sections: z.array(z.object({ key: sectionKey, enabled: z.boolean() })).max(20).optional(),
   trial_access: z.enum(["score", "score_tier", "score_tier_dimensions"]).optional(),

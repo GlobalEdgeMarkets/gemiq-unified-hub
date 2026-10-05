@@ -46,6 +46,12 @@ export type DashboardComposite = {
   coverage: { completed: number; total: number };
   strengths: CompositeDimension[];
   gaps: CompositeDimension[];
+  tier_label: string | null;
+  /** More completed assessments needed before the overall stage shows. */
+  needed_for_tier: number;
+  /** Live assessments not yet taken (for "complete your picture" tiles). */
+  missing: Array<{ assessment_key: string; display_name: string; url: string }>;
+  next: { assessment_key: string; display_name: string; url: string } | null;
   /** Per-IQ contribution to the composite, ordered strongest first. */
   contributions: Array<{ assessment_key: string; display_name: string; score: number | null; tier: string | null }>;
 };
@@ -265,7 +271,12 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
     .slice(0, 4);
 
   const scores = results.map((r) => r.score).filter((n): n is number => typeof n === "number");
-  const compositeScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+  const { computeComposite, DEFAULT_COMPOSITE } = await import("@/lib/composite");
+  const { getCompositeConfig } = await import("@/lib/hub/composite.server");
+  const compCfg = await getCompositeConfig().then((c) => c.settings).catch(() => DEFAULT_COMPOSITE);
+  const liveKeys = LIVE_REGISTRY.map((s) => s.key);
+  const comp = computeComposite(results, liveKeys, compCfg);
+  const nameOf = (k: string) => REGISTRY_BY_KEY[k]?.displayName ?? prettify(k);
 
   // Roll every IQ's dimensions up into one cross-discipline capability profile.
   const rollup = new Map<string, { label: string; total: number; count: number; sources: Set<string> }>();
@@ -289,12 +300,13 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
     .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label));
 
   const composite: DashboardComposite = {
-    score: compositeScore,
-    tier: tierFromScore(compositeScore),
-    coverage: {
-      completed: results.filter((r) => !RETIRED_KEYS.has(r.assessment_key)).length,
-      total: LIVE_REGISTRY.length,
-    },
+    score: comp.score,
+    tier: comp.tier,
+    tier_label: comp.tierLabel,
+    needed_for_tier: comp.needed_for_tier,
+    missing: comp.missing.map((k) => ({ assessment_key: k, display_name: nameOf(k), url: iqUrl(k) })),
+    next: comp.next ? { assessment_key: comp.next, display_name: nameOf(comp.next), url: iqUrl(comp.next) } : null,
+    coverage: { completed: comp.completed, total: comp.total },
     strengths: compositeDims.slice(0, 5),
     gaps: [...compositeDims].reverse().slice(0, 5),
     contributions: results

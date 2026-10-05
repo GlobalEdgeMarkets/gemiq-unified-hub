@@ -74,6 +74,84 @@ export type Database = {
         }
         Relationships: []
       }
+      hub_e2e_runs: {
+        Row: {
+          assessment_key: string
+          checks: Json
+          cleaned_at: string | null
+          email: string
+          finished_at: string | null
+          id: string
+          source: string
+          started_at: string
+          status: string
+          submission_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          assessment_key: string
+          checks?: Json
+          cleaned_at?: string | null
+          email: string
+          finished_at?: string | null
+          id?: string
+          source?: string
+          started_at?: string
+          status?: string
+          submission_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          assessment_key?: string
+          checks?: Json
+          cleaned_at?: string | null
+          email?: string
+          finished_at?: string | null
+          id?: string
+          source?: string
+          started_at?: string
+          status?: string
+          submission_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      hub_e2e_settings: {
+        Row: {
+          assessments: string[]
+          base_email: string
+          enabled: boolean
+          id: string
+          keep_days: number
+          last_cleanup_at: string | null
+          updated_at: string
+          updated_by: string | null
+          workflows: Json
+        }
+        Insert: {
+          assessments?: string[]
+          base_email?: string
+          enabled?: boolean
+          id?: string
+          keep_days?: number
+          last_cleanup_at?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          workflows?: Json
+        }
+        Update: {
+          assessments?: string[]
+          base_email?: string
+          enabled?: boolean
+          id?: string
+          keep_days?: number
+          last_cleanup_at?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          workflows?: Json
+        }
+        Relationships: []
+      }
       hub_followup_queue: {
         Row: {
           assessment_key: string

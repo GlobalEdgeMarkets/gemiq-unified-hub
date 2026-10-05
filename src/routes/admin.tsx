@@ -259,31 +259,40 @@ function BootstrapCard({ run }: { run: () => Promise<unknown> }) {
   const a = useAction(run as never);
   return (
     <Card
-      title="Bootstrap HubSpot schema"
-      description="Creates or updates every GEM.IQ contact and lead property. Idempotent — safe to re-run."
+      title="Set up HubSpot fields"
+      description="Makes sure every GEM.IQ field exists in HubSpot. Safe to run any time."
     >
       <Button onClick={() => a.run()} disabled={a.loading}>
         {a.loading ? "Running…" : "Run bootstrap"}
       </Button>
       <BootstrapSummary result={a.result} />
-      <Panel data={a.result} />
     </Card>
   );
 }
 
 function BootstrapSummary({ result }: { result: unknown }) {
-  const summary = useMemo(() => {
-    const r = result as { results?: { status: string }[] } | undefined;
+  const s = useMemo(() => {
+    const r = result as { results?: { name: string; status: string }[] } | undefined;
     if (!r?.results) return null;
-    const counts: Record<string, number> = {};
-    for (const x of r.results) counts[x.status] = (counts[x.status] ?? 0) + 1;
-    return counts;
+    const failed = r.results.filter((x) => x.status.includes("error"));
+    const created = r.results.filter((x) => x.status === "created").length;
+    const updated = r.results.filter((x) => x.status === "updated").length;
+    return { total: r.results.length, created, updated, failed };
   }, [result]);
-  if (!summary) return null;
+  if (result === undefined) return null;
+  if (!s) return <Panel data={result} />;
   return (
-    <p className="mt-3 text-sm text-muted-foreground">
-      {Object.entries(summary).map(([k, v]) => `${v} ${k}`).join(" · ")}
-    </p>
+    <div className="mt-4 rounded-lg bg-muted/60 p-3 text-sm">
+      <p className={`font-medium ${s.failed.length ? "text-destructive" : "text-primary"}`}>
+        {s.failed.length ? `${s.failed.length} HubSpot field(s) couldn't be set up` : `All ${s.total} HubSpot fields are in place`}
+      </p>
+      <ul className="mt-2 grid gap-1 text-foreground/80">
+        <li>✓ {s.created} new field(s) added</li>
+        <li>✓ {s.updated} field(s) refreshed</li>
+        <li>✓ {s.total - s.created - s.updated - s.failed.length} already up to date</li>
+        {s.failed.map((f) => <li key={f.name} className="text-destructive">✗ {f.name}</li>)}
+      </ul>
+    </div>
   );
 }
 

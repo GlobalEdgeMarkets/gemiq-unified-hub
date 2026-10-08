@@ -3,6 +3,7 @@ import getProfileTool from "./tools/get-profile";
 import listSubmissionsTool from "./tools/list-submissions";
 import getSubscriptionTool from "./tools/get-subscription";
 import { LIVE_IQ_NAMES } from "./live-iqs";
+import { withAnalytics } from "./analytics";
 
 // The OAuth issuer MUST be the direct Supabase host — the `.lovable.cloud`
 // proxy fails RFC 8414 issuer verification. VITE_SUPABASE_PROJECT_ID is
@@ -18,5 +19,5 @@ export default defineMcp({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
   }),
-  tools: [getProfileTool, listSubmissionsTool, getSubscriptionTool],
+  tools: [withAnalytics(getProfileTool), withAnalytics(listSubmissionsTool), withAnalytics(getSubscriptionTool)],
 });

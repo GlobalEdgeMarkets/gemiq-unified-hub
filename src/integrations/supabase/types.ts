@@ -494,6 +494,7 @@ export type Database = {
           admin_actions: Json
           answers: Json | null
           assessment_key: string
+          attempt_id: string | null
           content_version: number | null
           created_at: string
           dimensions: Json
@@ -518,6 +519,7 @@ export type Database = {
           admin_actions?: Json
           answers?: Json | null
           assessment_key: string
+          attempt_id?: string | null
           content_version?: number | null
           created_at?: string
           dimensions?: Json
@@ -542,6 +544,7 @@ export type Database = {
           admin_actions?: Json
           answers?: Json | null
           assessment_key?: string
+          attempt_id?: string | null
           content_version?: number | null
           created_at?: string
           dimensions?: Json

@@ -1,0 +1,2 @@
+ALTER TABLE public.submissions ADD COLUMN IF NOT EXISTS attempt_id text;
+CREATE UNIQUE INDEX IF NOT EXISTS submissions_attempt_uniq ON public.submissions (email, assessment_key, attempt_id) WHERE attempt_id IS NOT NULL;

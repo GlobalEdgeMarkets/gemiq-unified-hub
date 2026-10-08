@@ -52,6 +52,8 @@ export interface SubmissionPayload {
   /** Optional report text written by the IQ (1.8.0); used by Hub-built reports. */
   recommendations?: string[] | { summary?: string; strengths?: string[]; gaps?: string[]; recommendations?: string[]; next_steps?: string[] };
   submitted_at?: string;
+  /** Unique id per finished attempt (1.11.0). A repeat submit with the same id returns the original result and is not counted again. */
+  attempt_id?: string;
 }
 export interface CheckStatus {
   authenticated: boolean;
@@ -371,6 +373,9 @@ export function createHubClient(opts: HubClientOptions) {
     results: {
       submit: (payload: SubmissionPayload) =>
         req("/api/public/submissions/submit", { method: "POST", body: JSON.stringify(payload) }),
+      /** Lock status of one submission (1.11.0) — the only reliable unlock signal after checkout. */
+      status: (id: string): Promise<{ id: string; report_locked: boolean; entitlement: string | null }> =>
+        req(`/api/public/submissions/status?id=${encodeURIComponent(id)}`, { method: "GET" }),
       /** Signed-in user's submission history. */
       history: async () => {
         const r = await req("/api/public/submissions/history", { method: "GET" }).catch(() => ({ submissions: [] }));

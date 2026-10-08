@@ -49,6 +49,7 @@ import { Route as ApiPublicBillingPaymentsWebhookRouteImport } from './routes/ap
 import { Route as ApiPublicContentKeyRouteImport } from './routes/api/public/content.$key'
 import { Route as ApiPublicJobsRetryHubspotRouteImport } from './routes/api/public/jobs/retry-hubspot'
 import { Route as ApiPublicSubmissionsHistoryRouteImport } from './routes/api/public/submissions/history'
+import { Route as ApiPublicSubmissionsStatusRouteImport } from './routes/api/public/submissions/status'
 import { Route as ApiPublicSubmissionsSubmitRouteImport } from './routes/api/public/submissions/submit'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -268,6 +269,12 @@ const ApiPublicSubmissionsHistoryRoute =
     path: '/api/public/submissions/history',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicSubmissionsStatusRoute =
+  ApiPublicSubmissionsStatusRouteImport.update({
+    id: '/api/public/submissions/status',
+    path: '/api/public/submissions/status',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicSubmissionsSubmitRoute =
   ApiPublicSubmissionsSubmitRouteImport.update({
     id: '/api/public/submissions/submit',
@@ -332,6 +339,7 @@ export interface FileRoutesByFullPath {
   '/api/public/content/$key': typeof ApiPublicContentKeyRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
+  '/api/public/submissions/status': typeof ApiPublicSubmissionsStatusRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -378,6 +386,7 @@ export interface FileRoutesByTo {
   '/api/public/content/$key': typeof ApiPublicContentKeyRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
+  '/api/public/submissions/status': typeof ApiPublicSubmissionsStatusRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -425,6 +434,7 @@ export interface FileRoutesById {
   '/api/public/content/$key': typeof ApiPublicContentKeyRoute
   '/api/public/jobs/retry-hubspot': typeof ApiPublicJobsRetryHubspotRoute
   '/api/public/submissions/history': typeof ApiPublicSubmissionsHistoryRoute
+  '/api/public/submissions/status': typeof ApiPublicSubmissionsStatusRoute
   '/api/public/submissions/submit': typeof ApiPublicSubmissionsSubmitRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -473,6 +483,7 @@ export interface FileRouteTypes {
     | '/api/public/content/$key'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
+    | '/api/public/submissions/status'
     | '/api/public/submissions/submit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -519,6 +530,7 @@ export interface FileRouteTypes {
     | '/api/public/content/$key'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
+    | '/api/public/submissions/status'
     | '/api/public/submissions/submit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -565,6 +577,7 @@ export interface FileRouteTypes {
     | '/api/public/content/$key'
     | '/api/public/jobs/retry-hubspot'
     | '/api/public/submissions/history'
+    | '/api/public/submissions/status'
     | '/api/public/submissions/submit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -610,6 +623,7 @@ export interface RootRouteChildren {
   ApiPublicContentKeyRoute: typeof ApiPublicContentKeyRoute
   ApiPublicJobsRetryHubspotRoute: typeof ApiPublicJobsRetryHubspotRoute
   ApiPublicSubmissionsHistoryRoute: typeof ApiPublicSubmissionsHistoryRoute
+  ApiPublicSubmissionsStatusRoute: typeof ApiPublicSubmissionsStatusRoute
   ApiPublicSubmissionsSubmitRoute: typeof ApiPublicSubmissionsSubmitRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -898,6 +912,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSubmissionsHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/submissions/status': {
+      id: '/api/public/submissions/status'
+      path: '/api/public/submissions/status'
+      fullPath: '/api/public/submissions/status'
+      preLoaderRoute: typeof ApiPublicSubmissionsStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/submissions/submit': {
       id: '/api/public/submissions/submit'
       path: '/api/public/submissions/submit'
@@ -998,6 +1019,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicContentKeyRoute: ApiPublicContentKeyRoute,
   ApiPublicJobsRetryHubspotRoute: ApiPublicJobsRetryHubspotRoute,
   ApiPublicSubmissionsHistoryRoute: ApiPublicSubmissionsHistoryRoute,
+  ApiPublicSubmissionsStatusRoute: ApiPublicSubmissionsStatusRoute,
   ApiPublicSubmissionsSubmitRoute: ApiPublicSubmissionsSubmitRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,

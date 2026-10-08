@@ -155,7 +155,7 @@ export function isReportLocked(row: { report_unlocked_override: boolean | null; 
   if (row.report_unlocked_override === true) return false;
   if (row.report_unlocked_override === false) return true;
   const ent = row.metadata && typeof row.metadata === "object" ? (row.metadata as { entitlement?: unknown }).entitlement : null;
-  return !planActive && ent === "trial";
+  return !planActive && (ent === "trial" || ent === "unpaid");
 }
 
 export function reportTitle(pattern: string, vars: { assessment: string; company?: string | null; name?: string | null }): string {

@@ -75,6 +75,33 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
         const svc = createHubServiceClient();
         const email = payload.email.toLowerCase();
 
+        // Idempotency: a repeat of the same attempt returns the original result
+        // and never counts toward trial use, credits or HubSpot again.
+        const findAttempt = async () => {
+          if (!payload.attempt_id) return null;
+          const { data } = await svc.from("submissions")
+            .select("id,user_id,hubspot_contact_id,report_unlocked_override,metadata")
+            .eq("email", email).eq("assessment_key", payload.assessment_key)
+            .eq("attempt_id", payload.attempt_id).maybeSingle();
+          return data;
+        };
+        const attemptReply = async (row: NonNullable<Awaited<ReturnType<typeof findAttempt>>>) => {
+          let planActive = false;
+          if (row.user_id) {
+            const { data: s } = await selectCurrentSubscription<{ status: string }>(svc, row.user_id, "status");
+            planActive = s?.status === "active";
+          }
+          return json({
+            id: row.id, deduped: true, hubspot_contact_id: row.hubspot_contact_id,
+            report_locked: isReportLocked(row, planActive),
+            report_url: `https://gemiq.globaledgemarkets.com/report/${row.id}`,
+          }, undefined, request);
+        };
+        {
+          const prior = await findAttempt();
+          if (prior) return attemptReply(prior);
+        }
+
         // Entitlement: an unconsumed one-time assessment credit ($179 purchase)
         // covers exactly one submission, whether or not a trial is in play.
         // Only the signed-in owner can spend a credit: match their user id, or
@@ -179,10 +206,12 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
-        if (dupe) return json({ id: dupe.id, deduped: true, hubspot_contact_id: dupe.hubspot_contact_id }, undefined, request);
+        if (dupe && !payload.attempt_id) return json({ id: dupe.id, deduped: true, hubspot_contact_id: dupe.hubspot_contact_id }, undefined, request);
 
         // Persist. `detail` is folded into metadata alongside anything the IQ sent.
-        const entitlement = hasPaidSub ? "subscription" : trialSubId ? "trial" : creditId ? "single_credit" : "none";
+        // Signed-in with nothing covering the run → "unpaid" (report locked).
+        // Anonymous submissions keep "none" so other IQs' behavior is unchanged.
+        const entitlement = hasPaidSub ? "subscription" : trialSubId ? "trial" : creditId ? "single_credit" : user?.id ? "unpaid" : "none";
         const mergedMetadata = { ...(payload.metadata ?? {}), detail: payload.detail ?? {}, entitlement, ...(payload.recommendations ? { recommendations: payload.recommendations } : {}) };
         const { data: inserted, error: insErr } = await svc
           .from("submissions")
@@ -197,9 +226,14 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
             metadata: mergedMetadata,
             submitted_at: payload.submitted_at ?? new Date().toISOString(),
             content_version: payload.content_version ?? null,
+            attempt_id: payload.attempt_id ?? null,
           })
           .select("id,submitted_at")
           .single();
+        if (insErr?.code === "23505" && payload.attempt_id) {
+          const prior = await findAttempt();
+          if (prior) return attemptReply(prior);
+        }
         if (insErr || !inserted) return json({ error: "db_insert_failed", detail: insErr?.message }, { status: 500 }, request);
 
         // Increment trial usage after a successful insert. Best-effort; a rare race
@@ -364,7 +398,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           skipped_properties: skippedProps,
           queued_for_retry: queuedForRetry,
           // Trial runs show score + tier; the full report unlocks when the plan starts.
-          report_locked: entitlement === "trial",
+          report_locked: isReportLocked({ report_unlocked_override: null, metadata: mergedMetadata }, hasPaidSub),
           // Hub-built report page (always available; IQs in "hub" report mode link here).
           report_url: `https://gemiq.globaledgemarkets.com/report/${inserted.id}`,
         }, queuedForRetry ? { status: 202 } : undefined, request);

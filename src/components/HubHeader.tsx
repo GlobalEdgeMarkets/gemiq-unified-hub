@@ -1,4 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { getSessionStatus } from "@/lib/session-status.functions";
 import gemLogo from "@/assets/gem-logo-standard.png.asset.json";
 
 type Props = {
@@ -15,6 +18,41 @@ type Props = {
  * the landing page and is easier to click.
  */
 export function HubHeader({ variant = "landing", right }: Props) {
+  const check = useServerFn(getSessionStatus);
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    check().then((s) => alive && setSignedIn(!!s?.signedIn)).catch(() => {});
+    return () => { alive = false; };
+  }, [check]);
+
+  async function signOut() {
+    await fetch("/api/public/auth/session", {
+      method: "POST", credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "signout" }),
+    }).catch(() => {});
+    window.location.href = "/";
+  }
+
+  const accountLinks = (
+    <>
+      <button
+        type="button"
+        onClick={signOut}
+        className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gem-navy hover:bg-gem-navy/5"
+      >
+        Sign out
+      </button>
+      <Link
+        to="/dashboard"
+        className="inline-flex items-center gap-2 rounded-md bg-gem-navy px-3 py-2 text-sm font-semibold text-white hover:brightness-110"
+      >
+        My dashboard
+      </Link>
+    </>
+  );
+
   return (
     <header className="sticky top-0 z-30 border-b border-gem-navy/10 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -55,6 +93,7 @@ export function HubHeader({ variant = "landing", right }: Props) {
               >
                 Pricing
               </a>
+              {signedIn ? accountLinks : (<>
               <Link
                 to="/auth"
                 search={{ mode: "signin" }}
@@ -69,6 +108,7 @@ export function HubHeader({ variant = "landing", right }: Props) {
               >
                 Create account
               </Link>
+              </>)}
             </>
           ) : (
             <>
@@ -78,6 +118,7 @@ export function HubHeader({ variant = "landing", right }: Props) {
               >
                 ← Back to home
               </Link>
+              {signedIn ? accountLinks : (<>
               <Link
                 to="/auth"
                 search={{ mode: "signin" }}
@@ -92,6 +133,7 @@ export function HubHeader({ variant = "landing", right }: Props) {
               >
                 Create account
               </Link>
+              </>)}
             </>
           )}
         </nav>

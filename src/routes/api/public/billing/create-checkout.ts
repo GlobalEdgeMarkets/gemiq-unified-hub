@@ -41,6 +41,30 @@ export const Route = createFileRoute("/api/public/billing/create-checkout")({
         const customerId = existing.data[0]?.id
           ?? (await s.customers.create({ email: user.email, metadata: { supabase_user_id: user.id } })).id;
 
+        // Already on a trial and paying now ("Unlock now"): convert the existing
+        // subscription instead of opening a second one — end the trial today
+        // and charge the card collected at trial start.
+        if (!oneTime && !parsed.data.trial) {
+          const trialing = (await s.subscriptions.list({ customer: customerId, status: "trialing", limit: 1 })).data[0];
+          if (trialing) {
+            try {
+              await s.subscriptions.update(trialing.id, {
+                trial_end: "now",
+                proration_behavior: "none",
+                items: [{ id: trialing.items.data[0].id, price: price.id }],
+                metadata: { ...trialing.metadata, lookup_key: parsed.data.lookup_key, trial: "false" },
+              });
+              const { reconcileSubscriptionForUser } = await import("@/lib/hub/subscription-sync.server");
+              await reconcileSubscriptionForUser(user.id, user.email).catch((e) => console.error("[checkout] reconcile", e));
+              const { captureServer } = await import("@/lib/analytics.server");
+              await captureServer("trial_converted_on_unlock", user.id, { lookup_key: parsed.data.lookup_key });
+              return json({ url: parsed.data.success_url.replace("{CHECKOUT_SESSION_ID}", ""), id: null, converted: true }, undefined, request);
+            } catch (e) {
+              console.error("[checkout] trial conversion failed, falling back to checkout", e);
+            }
+          }
+        }
+
         const metadata: Record<string, string> = {
           source: "gemiq_hub",
           supabase_user_id: user.id,

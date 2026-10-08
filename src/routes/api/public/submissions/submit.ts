@@ -206,7 +206,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
-        if (dupe) return json({ id: dupe.id, deduped: true, hubspot_contact_id: dupe.hubspot_contact_id }, undefined, request);
+        if (dupe && !payload.attempt_id) return json({ id: dupe.id, deduped: true, hubspot_contact_id: dupe.hubspot_contact_id }, undefined, request);
 
         // Persist. `detail` is folded into metadata alongside anything the IQ sent.
         // Signed-in with nothing covering the run → "unpaid" (report locked).

@@ -151,7 +151,7 @@ function AuthPage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               lookup_key: { growth: "gemiq_growth_monthly", complete: "gemiq_complete_monthly", complete_annual: "gemiq_complete_annual" }[search.plan ?? "complete"],
-              success_url: `${window.location.origin}/?welcome=1`,
+              success_url: `${window.location.origin}/dashboard?welcome=1`,
               cancel_url: window.location.href,
               trial: search.trial === "1",
             }),
@@ -160,7 +160,7 @@ function AuthPage() {
           if (co.ok && cob.url) { window.location.href = cob.url; return; }
         } catch (e) { /* fall through to home */ }
       }
-      window.location.href = safeReturn ?? "/";
+      window.location.href = safeReturn ?? "/dashboard";
     } catch (e: any) {
       setErr(e.message);
     } finally { setBusy(false); }

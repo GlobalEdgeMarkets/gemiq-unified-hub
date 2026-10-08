@@ -35,5 +35,7 @@ export const SubmissionPayloadSchema = z.object({
   submitted_at: z.string().datetime().optional(),
   /** Hub content version (questions/weights/tiers) the IQ used for this run. */
   content_version: z.number().int().positive().nullable().optional(),
+  /** Unique id per finished attempt; repeats with the same id return the original result. */
+  attempt_id: z.string().min(1).max(100).optional(),
 });
 export type SubmissionPayload = z.infer<typeof SubmissionPayloadSchema>;

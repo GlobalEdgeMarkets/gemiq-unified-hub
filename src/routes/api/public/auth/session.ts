@@ -23,7 +23,13 @@ export const Route = createFileRoute("/api/public/auth/session")({
         const { action, email, password, metadata } = parsed.data;
 
         if (action === "signout") {
-          await supabase.auth.signOut();
+          await supabase.auth.signOut().catch(() => null);
+          // Always expire every auth cookie, even if signOut failed (e.g. expired token).
+          const { parseCookieHeader, serializeCookie } = await import("@/lib/hub/supabase-server");
+          const host = request.headers.get("host");
+          for (const c of parseCookieHeader(request.headers.get("cookie"))) {
+            if (c.name.startsWith("sb-")) setCookies.push(serializeCookie({ name: c.name, value: "", options: { maxAge: 0 } }, host));
+          }
         } else if (action === "signin") {
           if (!email || !password) return json({ error: "missing_credentials" }, { status: 400 }, request);
           const { error } = await supabase.auth.signInWithPassword({ email, password });

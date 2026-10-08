@@ -94,7 +94,7 @@ export async function selectCurrentSubscription<Row extends { status?: string | 
     .limit(10);
   if (error) return { data: null, error };
   const rows = (data ?? []) as Row[];
-  const live = rows.find((r) => r.status === "active" || r.status === "trialing");
+  const live = rows.find((r) => r.status === "active") ?? rows.find((r) => r.status === "trialing");
   return { data: live ?? rows[0] ?? null, error: null };
 }
 

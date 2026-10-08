@@ -47,11 +47,7 @@ export function withAnalytics<T>(toolIn: T): T {
             parameters: input,
             durationMs: Date.now() - start,
             isError: thrown !== undefined || result?.isError === true,
-            error: thrown !== undefined
-              ? { message: thrown instanceof Error ? thrown.message : String(thrown) }
-              : result?.isError
-                ? { message: result?.content?.[0]?.text ?? "Tool returned an error" }
-                : undefined,
+            error: thrown ?? (result?.isError ? { message: "tool returned isError" } : undefined),
             properties: { $mcp_server_name: "gemiq-hub-mcp", app: "gemiq_hub" },
           });
           await ph.flush();

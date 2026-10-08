@@ -22,7 +22,8 @@ type AnyTool = {
   handler: (input: any, ctx: any) => Promise<any>;
 };
 
-export function withAnalytics<T extends AnyTool>(tool: T): T {
+export function withAnalytics<T>(toolIn: T): T {
+  const tool = toolIn as unknown as AnyTool;
   const inner = tool.handler;
   const handler = async (input: any, ctx: any) => {
     const start = Date.now();
@@ -57,5 +58,5 @@ export function withAnalytics<T extends AnyTool>(tool: T): T {
       }
     }
   };
-  return { ...tool, handler } as T;
+  return { ...tool, handler } as unknown as T;
 }

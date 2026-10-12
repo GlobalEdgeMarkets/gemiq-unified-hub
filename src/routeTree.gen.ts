@@ -36,6 +36,7 @@ import { Route as ReportCombinedRouteImport } from './routes/report.combined'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as ApiPublicMessagingRouteImport } from './routes/api/public/messaging'
 import { Route as ApiPublicProfileRouteImport } from './routes/api/public/profile'
 import { Route as ApiPublicAdminBootstrapHubspotSchemaRouteImport } from './routes/api/public/admin/bootstrap-hubspot-schema'
 import { Route as ApiPublicAdminImportLegacySubmissionsRouteImport } from './routes/api/public/admin/import-legacy-submissions'
@@ -194,6 +195,11 @@ const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
   path: '/api/public/manifest',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMessagingRoute = ApiPublicMessagingRouteImport.update({
+  id: '/api/public/messaging',
+  path: '/api/public/messaging',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicProfileRoute = ApiPublicProfileRouteImport.update({
   id: '/api/public/profile',
   path: '/api/public/profile',
@@ -326,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/public/messaging': typeof ApiPublicMessagingRoute
   '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
@@ -373,6 +380,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/public/messaging': typeof ApiPublicMessagingRoute
   '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
@@ -421,6 +429,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/public/messaging': typeof ApiPublicMessagingRoute
   '/api/public/profile': typeof ApiPublicProfileRoute
   '/api/public/admin/bootstrap-hubspot-schema': typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   '/api/public/admin/import-legacy-submissions': typeof ApiPublicAdminImportLegacySubmissionsRoute
@@ -470,6 +479,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
+    | '/api/public/messaging'
     | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
@@ -517,6 +527,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
+    | '/api/public/messaging'
     | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
@@ -564,6 +575,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/manifest'
+    | '/api/public/messaging'
     | '/api/public/profile'
     | '/api/public/admin/bootstrap-hubspot-schema'
     | '/api/public/admin/import-legacy-submissions'
@@ -610,6 +622,7 @@ export interface RootRouteChildren {
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
+  ApiPublicMessagingRoute: typeof ApiPublicMessagingRoute
   ApiPublicProfileRoute: typeof ApiPublicProfileRoute
   ApiPublicAdminBootstrapHubspotSchemaRoute: typeof ApiPublicAdminBootstrapHubspotSchemaRoute
   ApiPublicAdminImportLegacySubmissionsRoute: typeof ApiPublicAdminImportLegacySubmissionsRoute
@@ -821,6 +834,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicManifestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/messaging': {
+      id: '/api/public/messaging'
+      path: '/api/public/messaging'
+      fullPath: '/api/public/messaging'
+      preLoaderRoute: typeof ApiPublicMessagingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/profile': {
       id: '/api/public/profile'
       path: '/api/public/profile'
@@ -1002,6 +1022,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,
+  ApiPublicMessagingRoute: ApiPublicMessagingRoute,
   ApiPublicProfileRoute: ApiPublicProfileRoute,
   ApiPublicAdminBootstrapHubspotSchemaRoute:
     ApiPublicAdminBootstrapHubspotSchemaRoute,

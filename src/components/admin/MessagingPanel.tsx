@@ -158,7 +158,7 @@ export function MessagingPanel() {
                   </div>
                   <textarea className={`${input} mt-2 min-h-[60px]`} value={item.value} disabled={inherited} onChange={(e) => update((b) => { b.items[idx].value = e.target.value; })} />
                   {warnings.map((w, n) => (
-                    <p key={n} className="mt-1 text-xs text-warning-foreground"><span className="rounded bg-warning/20 px-1">⚠ "{w.term}"</span> — use {w.rule.use} instead. {w.rule.why}</p>
+                    <p key={n} className="mt-1 text-xs text-foreground"><span className="rounded bg-warning/20 px-1">⚠ "{w.term}"</span> — use {w.rule.use} instead. {w.rule.why}</p>
                   ))}
                   {!inherited && (
                     <div className="mt-2 flex flex-wrap gap-2">

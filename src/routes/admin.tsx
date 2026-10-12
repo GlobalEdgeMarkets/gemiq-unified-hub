@@ -34,6 +34,7 @@ import {
 } from "@/lib/admin.functions";
 import { CompositePanel } from "@/components/admin/CompositePanel";
 import { ContentPanel } from "@/components/admin/ContentPanel";
+import { MessagingPanel } from "@/components/admin/MessagingPanel";
 import { ReportsPanel } from "@/components/admin/ReportsPanel";
 import { TestsPanel } from "@/components/admin/TestsPanel";
 import { z } from "zod";
@@ -205,6 +206,7 @@ function AdminConsole() {
   const page = (() => {
     switch (section) {
       case "health": return <><PageIntro title="Health & settings" text="Is every assessment up and on the latest settings? Change banners and shared wording for all of them here." /><div className="grid gap-6"><ControlPanels {...ctrl} show="settings" /></div></>;
+      case "messaging": return <><PageIntro title="Messaging" text="One place for brand wording on globaledgemarkets.com, GEM.IQ and GlobalEdgeTalk. Save a draft, preview it, then publish." /><MessagingPanel /></>;
       case "content": return <><PageIntro title="Questions & scoring" text="Edit each assessment's questions, points and tiers. Save a draft, preview it, then publish." /><ContentPanel versions={contentVersions} action={contentAction} /></>;
       case "composite": return <><PageIntro title="Combined score" text="How the overall GEM.IQ score is built from every assessment, and the methodology shown to customers." /><CompositePanel load={getComposite as never} save={saveComposite as never} /></>;
       case "onboard": return <><PageIntro title="Add an assessment" text="Connect a new assessment to the Hub step by step." /><div className="grid gap-6"><ControlPanels {...ctrl} show="onboarding" /></div></>;
@@ -260,6 +262,7 @@ function AdminConsole() {
 const NAV: { group: string; items: { key: string; label: string }[] }[] = [
   { group: "", items: [{ key: "overview", label: "Overview" }] },
   { group: "Assessments", items: [{ key: "health", label: "Health & settings" }, { key: "content", label: "Questions & scoring" }, { key: "composite", label: "Combined score" }, { key: "onboard", label: "Add an assessment" }] },
+  { group: "Brand", items: [{ key: "messaging", label: "Messaging" }] },
   { group: "Results", items: [{ key: "reports", label: "Reports" }] },
   { group: "Customers", items: [{ key: "people", label: "Find a person" }] },
   { group: "Quality", items: [{ key: "tests", label: "Tests" }, { key: "tracking", label: "Tracking" }] },

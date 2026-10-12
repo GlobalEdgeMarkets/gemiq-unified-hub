@@ -373,6 +373,63 @@ export type Database = {
         }
         Relationships: []
       }
+      hub_messaging_settings: {
+        Row: {
+          id: boolean
+          last_hook_results: Json | null
+          publish_hooks: Json
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: boolean
+          last_hook_results?: Json | null
+          publish_hooks?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: boolean
+          last_hook_results?: Json | null
+          publish_hooks?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      hub_messaging_versions: {
+        Row: {
+          body: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          published_at: string | null
+          status: string
+          version: number
+        }
+        Insert: {
+          body: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          published_at?: string | null
+          status?: string
+          version: number
+        }
+        Update: {
+          body?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          published_at?: string | null
+          status?: string
+          version?: number
+        }
+        Relationships: []
+      }
       hub_report_settings: {
         Row: {
           scope: string

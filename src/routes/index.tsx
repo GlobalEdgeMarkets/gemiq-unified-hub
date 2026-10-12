@@ -502,6 +502,8 @@ function useCountUp(target: number, durationMs = 1600, start = false) {
 }
 
 function IntelligenceStrip() {
+  const ASSESSMENTS = useIqs(IQ_PRODUCTS);
+  const tx = useT();
   const [visible, setVisible] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
   const ref = useRef<HTMLDivElement | null>(null);

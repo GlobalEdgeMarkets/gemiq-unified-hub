@@ -60,3 +60,21 @@ describe("prices and assessment pages", () => {
     expect(applyIqCopy(p, null).intro).toBe("I");
   });
 });
+
+import { addIqSiteCopy } from "@/lib/messaging";
+import siteCopy from "@/lib/hub/iq-site-copy.json";
+describe("assessment site wording import", () => {
+  it("adds each catalog entry once and keeps edited values", () => {
+    const b: MessagingBody = { items: [item("brand.name", "shared", "x", "approved", 10)], vocabulary: [] };
+    const total = Object.values(siteCopy).flat().length;
+    expect(addIqSiteCopy(b, siteCopy)).toEqual({ added: total, existing: 0 });
+    const head = b.items.find((i) => i.key === "iq.gtmiq.hero.headline")!;
+    head.value = "Edited";
+    expect(addIqSiteCopy(b, siteCopy)).toEqual({ added: 0, existing: total });
+    expect(b.items.filter((i) => i.key === "iq.gtmiq.hero.headline")).toHaveLength(1);
+    expect(head.value).toBe("Edited");
+    expect(b.items.find((i) => i.key === "iq.gtmiq.steps.heading")?.value).toBe("How {name} works");
+    expect(head.related).toBe("gtmiq");
+    expect(head.status).toBe("draft");
+  });
+});

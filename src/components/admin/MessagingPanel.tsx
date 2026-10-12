@@ -121,7 +121,7 @@ export function MessagingPanel() {
       </AdminCard>
 
       {view === "items" && (
-        <AdminCard title="Items" description="A site's set is the Shared items plus its own; its own item wins on the same key. Only Approved items appear on the public link. Type prices as {price.single}, {price.growth_monthly}, {price.complete_monthly}, {price.complete_annual} or {price.guarantee_days} — they fill in from the plan list.">
+        <AdminCard title="Items" description="A site's set is the Shared items plus its own; its own item wins on the same key. Only Approved items appear on the public link. Type prices as {price.single}, {price.growth_monthly}, {price.complete_monthly}, {price.complete_annual} or {price.guarantee_days} — they fill in from the plan list. Assessment site keys (iq.&lt;key&gt;.hero.*, steps.*, report.* …) come from &apos;Pull assessment page wording&apos;; the sites show their built-in text for anything not Approved.">
           <div className="flex flex-wrap gap-2 border-b border-border/60 pb-3">
             {SCOPES.map((s) => (
               <button key={s} onClick={() => setTab(s)} className={`rounded-lg px-3 py-1.5 text-sm ${tab === s ? "bg-primary/15 font-medium text-foreground" : "text-muted-foreground hover:bg-muted"}`}>{PROPERTY_LABEL[s]}</button>

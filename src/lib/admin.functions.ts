@@ -580,3 +580,38 @@ export const adminSaveComposite = createServerFn({ method: "POST" })
     const { saveCompositeConfig } = await import("@/lib/hub/composite.server");
     return await saveCompositeConfig(data, by);
   });
+
+// ---- Brand messaging ----
+export const adminMessagingOverview = createServerFn({ method: "GET" })
+  .middleware([requireHubAdmin])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const m = await import("@/lib/hub/messaging.server");
+    const [versions, settings] = await Promise.all([m.listVersions(), m.getSettings()]);
+    return JSON.parse(JSON.stringify({ versions, settings }));
+  });
+
+export const adminMessagingAction = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .inputValidator((input: unknown) =>
+    z.discriminatedUnion("action", [
+      z.object({ action: z.literal("save"), body: z.unknown(), note: z.string().max(300).optional() }),
+      z.object({ action: z.literal("discard") }),
+      z.object({ action: z.literal("publish") }),
+      z.object({ action: z.literal("rollback"), version: z.number().int().min(1) }),
+      z.object({ action: z.literal("hooks"), hooks: z.array(z.object({ url: z.string().url().max(500), enabled: z.boolean(), label: z.string().max(100).optional() })).max(10) }),
+    ]).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    const by = assertAdmin({ email: context.hubAdmin.email });
+    const m = await import("@/lib/hub/messaging.server");
+    switch (data.action) {
+      case "save": return await m.saveDraft(data.body, by, data.note);
+      case "discard": return await m.discardDraft();
+      case "publish": return await m.publishDraft(by);
+      case "rollback": return await m.rollbackTo(data.version, by);
+      case "hooks": return await m.saveHooks(data.hooks, by);
+    }
+  });

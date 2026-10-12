@@ -104,6 +104,10 @@ const ALLOWED_EXACT = new Set([
   "id-preview--d4b3f62b-5101-4b21-a476-4e0635e07df6.lovable.app",
   "project--d4b3f62b-5101-4b21-a476-4e0635e07df6.lovable.app",
   "project--d4b3f62b-5101-4b21-a476-4e0635e07df6-dev.lovable.app",
+  // GlobalEdgeTalk (Lovable project d420b9a2-…)
+  "id-preview--d420b9a2-86d5-435c-8c40-2cdcf3cf9221.lovable.app",
+  "project--d420b9a2-86d5-435c-8c40-2cdcf3cf9221.lovable.app",
+  "project--d420b9a2-86d5-435c-8c40-2cdcf3cf9221-dev.lovable.app",
 ]);
 
 /** CORS allowlist for the public messaging feed. */

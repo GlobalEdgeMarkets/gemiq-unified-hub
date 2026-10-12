@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { getGemiqMessaging } from "@/lib/messaging.functions";
+import { applyIqCopy, fillPlaceholders } from "@/lib/messaging";
+import { makeCopy } from "@/lib/hub-page-copy";
 import gemLogo from "@/assets/gem-logo-light-white-mint.png.asset.json";
 import heroVideo from "@/assets/hero-ai-network.mp4.asset.json";
 import themeTariff from "@/assets/theme-tariff.jpg";
@@ -96,16 +99,24 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
+  loader: () => getGemiqMessaging(),
   component: Index,
 });
 
 type Assessment = IQProduct;
 
-const ASSESSMENTS: Assessment[] = IQ_PRODUCTS;
+const CopyCtx = createContext<{ t: (k: string) => string; byKey: Record<string, string> | null }>({ t: makeCopy(null), byKey: null });
+const useT = () => useContext(CopyCtx).t;
+/** Assessment wording with Approved iq.<key>.* messaging applied. */
+function useIq<T extends IQProduct>(p: T): T { return applyIqCopy(p, useContext(CopyCtx).byKey); }
+function useIqs<T extends IQProduct>(list: T[]): T[] { const b = useContext(CopyCtx).byKey; return list.map((p) => applyIqCopy(p, b)); }
+const lines = (v: string) => v.split("\n").map((x) => x.trim()).filter(Boolean);
 
 
 function Index() {
+  const byKey = Route.useLoaderData() ?? null;
   return (
+    <CopyCtx.Provider value={{ t: makeCopy(byKey, (v) => fillPlaceholders(v)), byKey }}>
     <div className="min-h-screen w-full bg-[#0a0a16] font-sans text-white antialiased relative overflow-hidden">
       {/* Global aurora background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
@@ -147,6 +158,7 @@ function Index() {
         .animate-hero-kenburns { animation: hero-kenburns 7s ease-out forwards; }
       `}</style>
     </div>
+    </CopyCtx.Provider>
   );
 }
 
@@ -296,9 +308,11 @@ function HeroBento() {
 function HeroTile() {
   const [i, setI] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setI((p) => (p + 1) % ASSESSMENTS.length), 3200);
+    const t = setInterval(() => setI((p) => (p + 1) % IQ_PRODUCTS.length), 3200);
     return () => clearInterval(t);
   }, []);
+  const ASSESSMENTS = useIqs(IQ_PRODUCTS);
+  const tx = useT();
   const current = ASSESSMENTS[i];
   const accent = ACCENT[current.accent];
 
@@ -383,17 +397,13 @@ function HeroTile() {
             className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight"
             style={{ fontFamily: "'League Spartan', sans-serif" }}
           >
-            Make-or-break calls deserve more than{" "}
+            {tx("home.hero.title")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">
-              a gut feel.
+              {tx("home.hero.title_accent")}
             </span>
           </h1>
           <p className="mt-5 text-base md:text-lg text-white/60 max-w-xl leading-relaxed">
-            Market entry, tariff exposure, go-to-market, delivery capacity, AI spend — these are risk-based
-            bets that decide whether a company compounds or stalls. GEM.IQ, the diagnostic suite from
-            GlobalEdgeMarkets, scores each one across weighted,
-            independent dimensions and returns a gap map, not a vanity number. One identity, one subscription,
-            one benchmarked view of where you actually stand.
+            {tx("home.hero.body")}
           </p>
 
 
@@ -405,7 +415,7 @@ function HeroTile() {
             </div>
             <div className="min-w-0">
               <div className="text-xs uppercase tracking-[0.2em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-                Now featuring
+                {tx("home.hero.featuring")}
               </div>
               <div className="mt-0.5 flex items-baseline gap-2 flex-wrap">
                 <span className={`font-display text-xl font-bold ${accent.text}`} style={{ fontFamily: "'League Spartan', sans-serif" }}>
@@ -421,7 +431,7 @@ function HeroTile() {
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#4ade80] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-[#0a0a16]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
                 <span className="h-1.5 w-1.5 rounded-full bg-[#0a0a16] animate-pulse" />
-                Limited launch offer
+                {tx("home.offer.badge")}
               </span>
             </div>
             <div className="mt-3 font-display text-2xl md:text-3xl font-bold leading-tight tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
@@ -438,7 +448,7 @@ function HeroTile() {
             </div>
 
             <p className="mt-1.5 text-sm text-white/70">
-              Buy a single IQ when you need one answer — {IQ_NAME_LIST}. Or pick three with Growth, or take all {IQ_PRODUCTS.length} with Complete — both include the combined GEM.IQ report.
+              {tx("home.offer.body")}
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Link
@@ -456,7 +466,7 @@ function HeroTile() {
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
                 style={{ fontFamily: "'League Spartan', sans-serif" }}
               >
-                Buy one assessment
+                {tx("home.offer.buy_button")}
               </Link>
               <span className="text-[11px] text-white/50">
                 {GUARANTEE_LABEL ? `${GUARANTEE_LABEL} · Cancel anytime` : "Cancel anytime"}
@@ -492,6 +502,8 @@ function useCountUp(target: number, durationMs = 1600, start = false) {
 }
 
 function IntelligenceStrip() {
+  const ASSESSMENTS = useIqs(IQ_PRODUCTS);
+  const tx = useT();
   const [visible, setVisible] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -507,7 +519,7 @@ function IntelligenceStrip() {
   }, []);
 
   useEffect(() => {
-    const t = setInterval(() => setImgIdx((p) => (p + 1) % ASSESSMENTS.length), 3800);
+    const t = setInterval(() => setImgIdx((p) => (p + 1) % IQ_PRODUCTS.length), 3800);
     return () => clearInterval(t);
   }, []);
 
@@ -543,7 +555,7 @@ function IntelligenceStrip() {
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/80" style={{ fontFamily: "'League Spartan', sans-serif" }}>
                 <span className="h-1.5 w-1.5 rounded-full bg-[#4ade80] animate-pulse" />
-                Live intelligence
+                {tx("home.intel.badge")}
               </span>
             </div>
             <div>
@@ -577,7 +589,7 @@ function IntelligenceStrip() {
           <div className="relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-6 md:p-8">
             <div aria-hidden className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#4ade80]/15 blur-3xl" />
             <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              GEM.IQ · By the numbers
+              {tx("home.numbers.label")}
             </div>
             <div className="mt-5 grid grid-cols-2 gap-5">
               {stats.map((s) => (
@@ -588,13 +600,13 @@ function IntelligenceStrip() {
 
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0a0a16] to-[#16213e]/60 ring-1 ring-inset ring-white/[0.06] p-6 md:p-8 min-h-[180px]">
             <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#4ade80]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              One planet, one platform
+              {tx("home.globe.label")}
             </div>
             <h4 className="mt-1 font-display text-xl md:text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-              Benchmark against global peers.
+              {tx("home.globe.title")}
             </h4>
             <p className="mt-2 text-sm text-white/60">
-              Country, industry, and stage-weighted percentiles — updated continuously.
+              {tx("home.globe.body")}
             </p>
           </div>
 
@@ -632,30 +644,28 @@ function StatCounter({
 
 
 function SpecialistPanel() {
+  const tx = useT();
   return (
     <div className="relative overflow-hidden rounded-3xl border border-dashed border-white/15 bg-white/[0.03] p-6 flex flex-col justify-between">
       <div aria-hidden className="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-[#67e8f9] opacity-10 blur-3xl" />
       <div className="relative z-10">
         <div className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white/60" style={{ fontFamily: "'League Spartan', sans-serif" }}>
           <span className="h-1.5 w-1.5 rounded-full bg-[#67e8f9]" />
-          Who this is for
+          {tx("home.specialist.label")}
         </div>
         <p className="mt-4 text-[15px] leading-relaxed text-white/65">
-          A specialist diagnostic only applies if you carry that exposure. If you
-          import, manufacture abroad, or pay duty, TariffIQ is scored the same way
-          as the capability IQs — but the output is a recoverable dollar figure.
-          No exposure, no need to run it.
+          {tx("home.specialist.body")}
         </p>
       </div>
       <p className="relative z-10 mt-5 text-xs text-white/40">
-        Included in the suite plan alongside every capability diagnostic. More
-        specialist diagnostics are in development.
+        {tx("home.specialist.note")}
       </p>
     </div>
   );
 }
 
-function AssessmentTile({ a }: { a: Assessment }) {
+function AssessmentTile({ a: a0 }: { a: Assessment }) {
+  const a = useIq(a0);
   const c = ACCENT[a.accent];
   const Wrapper: any = a.live ? Link : "div";
   const wrapperProps = a.live ? { to: a.path } : {};
@@ -711,6 +721,7 @@ function AssessmentGlyph({ accent }: { accent: Accent }) {
 }
 
 function MethodologyTile() {
+  const tx = useT();
   return (
     <div className="md:col-span-2 md:row-span-1 rounded-3xl bg-gradient-to-br from-[#16213e]/60 to-[#0a0a16]/40 backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
       <div className="shrink-0 h-14 w-14 rounded-2xl border border-white/10 bg-white/5 flex items-center justify-center">
@@ -720,13 +731,13 @@ function MethodologyTile() {
       </div>
       <div>
         <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-          Executive-grade methodologies
+          {tx("home.methodology.label")}
         </div>
         <h3 className="mt-1 font-display text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-          CMMI · TRL/MRL · WCAG · Tariff engineering doctrine
+          {tx("home.methodology.title")}
         </h3>
         <p className="mt-2 text-sm text-white/55 leading-relaxed max-w-2xl">
-          Every IQ is built on a peer-reviewed framework — so scores map to language your board already speaks.
+          {tx("home.methodology.body")}
         </p>
       </div>
     </div>
@@ -734,19 +745,20 @@ function MethodologyTile() {
 }
 
 function BenchmarkTile() {
+  const tx = useT();
   return (
     <div className="md:col-span-1 md:row-span-1 rounded-3xl bg-white/[0.04] backdrop-blur-xl ring-1 ring-inset ring-white/[0.06] p-8 relative overflow-hidden">
       <div aria-hidden className="absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-[#a78bfa]/15 blur-3xl" />
       <div className="relative z-10 flex items-start justify-between gap-6">
         <div>
           <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#a78bfa]" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            Unified benchmarking
+            {tx("home.benchmark.label")}
           </div>
           <h3 className="mt-1 font-display text-2xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            One dashboard. Every dimension.
+            {tx("home.benchmark.title")}
           </h3>
           <p className="mt-2 text-sm text-white/55 leading-relaxed max-w-md">
-            Compare your organization across assessments, retakes, and industry peers — all from one view.
+            {tx("home.benchmark.body")}
           </p>
         </div>
         {/* Mini spark bars */}
@@ -828,6 +840,7 @@ function Pricing() {
   const saving = savingsLabel("complete", "year");
   const cardTitle = "font-display text-xl font-bold";
   const font = { fontFamily: "'League Spartan', sans-serif" };
+  const tx = useT();
   return (
     <section id="pricing" className="mt-20 md:mt-28">
       <div className="text-center max-w-2xl mx-auto">
@@ -836,10 +849,10 @@ function Pricing() {
           Pricing
         </div>
         <h2 className="mt-6 font-display text-4xl md:text-5xl font-bold tracking-tight" style={font}>
-          One answer, or <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">the whole picture.</span>
+          {tx("home.pricing.title")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">{tx("home.pricing.title_accent")}</span>
         </h2>
         <p className="mt-4 text-white/55">
-          Start with one assessment, build a picture with three, or see your whole business with all {IQ_PRODUCTS.length} and the combined GEM.IQ score.
+          {tx("home.pricing.body")}
         </p>
       </div>
 
@@ -847,34 +860,24 @@ function Pricing() {
         {/* Starter */}
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl flex flex-col">
           <div className={cardTitle} style={font}>Starter</div>
-          <p className="mt-1 text-sm text-white/50">One IQ, one report, no subscription.</p>
+          <p className="mt-1 text-sm text-white/50">{tx("home.pricing.starter.sub")}</p>
           <PriceLine price={ONE_TIME_PRICE} unit="one-time" />
-          <Features lines={[
-            "Any one IQ of your choice",
-            "Full dimension-level scoring and tier",
-            "Executive-ready PDF report",
-            "Methodology and “why we ask this” for every question",
-          ]} />
+          <Features lines={lines(tx("home.pricing.starter.features"))} />
           <div className="mt-auto pt-8">
             <Link to="/auth" search={{ mode: "signup", buy: "single" }}
               className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-white/20" style={font}>
-              Buy one assessment <ArrowIcon className="h-4 w-4" />
+              {tx("home.offer.buy_button")} <ArrowIcon className="h-4 w-4" />
             </Link>
-            <p className="mt-4 text-xs text-white/40">No recurring charge.</p>
+            <p className="mt-4 text-xs text-white/40">{tx("home.pricing.starter.note")}</p>
           </div>
         </div>
 
         {/* Growth */}
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl flex flex-col">
           <div className={cardTitle} style={font}>Growth</div>
-          <p className="mt-1 text-sm text-white/50">Any {GROWTH_PICKS} IQs plus the combined report.</p>
+          <p className="mt-1 text-sm text-white/50">{tx("home.pricing.growth.sub")}</p>
           <PriceLine price={GROWTH_PRICE} unit="/ month" />
-          <Features lines={[
-            `${GROWTH_PICKS} assessments you choose — the first ${GROWTH_PICKS} you take are yours`,
-            "Retake your assessments any time",
-            "Combined GEM.IQ score across your three",
-            "Upgrade to Complete whenever you want more",
-          ]} />
+          <Features lines={lines(tx("home.pricing.growth.features"))} />
           <div className="mt-auto pt-8">
             <Link to="/auth" search={{ mode: "signup", trial: "1", plan: "growth" }}
               className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#4ade80]/50 bg-[#4ade80]/10 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-[#4ade80]/20" style={font}>
@@ -890,9 +893,9 @@ function Pricing() {
           <div className="relative z-10 flex items-center justify-between gap-3">
             <div>
               <div className={cardTitle} style={font}>Complete</div>
-              <p className="mt-1 text-sm text-white/50">All {IQ_PRODUCTS.length} IQs, the full picture.</p>
+              <p className="mt-1 text-sm text-white/50">{tx("home.pricing.complete.sub")}</p>
             </div>
-            <span className="shrink-0 rounded-full bg-[#4ade80] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a0a16]" style={font}>Best value</span>
+            <span className="shrink-0 rounded-full bg-[#4ade80] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a0a16]" style={font}>{tx("home.pricing.complete.badge")}</span>
           </div>
           {hasAnnual && (
             <div className="relative z-10 mt-5 inline-flex flex-wrap self-start rounded-full border border-white/10 bg-white/5 p-1 text-xs font-bold" style={font}>
@@ -910,12 +913,7 @@ function Pricing() {
               unit={annual ? "/ year" : "/ month"}
               extra={annual ? effectiveMonthly("complete", "year") : undefined}
             />
-            <Features lines={[
-              `All ${IQ_PRODUCTS.length} GEM.IQ assessments — capability and specialist`,
-              "Combined GEM.IQ Business Health score and report",
-              "Quarterly retakes with progress tracking",
-              "Dimension-level detail and executive PDFs",
-            ]} />
+            <Features lines={lines(tx("home.pricing.complete.features"))} />
           </div>
           <div className="relative z-10 mt-auto pt-8">
             <Link to="/auth" search={{ mode: "signup", trial: "1", plan: annual ? "complete_annual" : "complete" }}
@@ -934,7 +932,7 @@ function Pricing() {
             <path d="M10 1.5l6.5 2.6v5.2c0 4-2.8 7.6-6.5 8.7-3.7-1.1-6.5-4.7-6.5-8.7V4.1L10 1.5zm3.7 6.8a1 1 0 00-1.4-1.4L9 10.2 7.7 8.9a1 1 0 10-1.4 1.4l2 2a1 1 0 001.4 0l4-4z" />
           </svg>
           <p className="text-sm text-white/70">
-            <span className="font-bold text-white">{GUARANTEE_LABEL}</span> on both options — no questions asked.
+            <span className="font-bold text-white">{GUARANTEE_LABEL}</span> {tx("home.pricing.guarantee")}
           </p>
         </div>
       )}
@@ -945,6 +943,7 @@ function Pricing() {
 
 
 function FinalCTA() {
+  const tx = useT();
   return (
     <section className="mt-20 md:mt-28">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#16213e]/80 via-[#0a0a16] to-[#16213e]/80 ring-1 ring-inset ring-white/[0.06] p-10 md:p-16 text-center">
@@ -952,10 +951,10 @@ function FinalCTA() {
         <div aria-hidden className="absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-[#a78bfa]/20 blur-3xl" />
         <div className="relative z-10 max-w-2xl mx-auto">
           <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight" style={{ fontFamily: "'League Spartan', sans-serif" }}>
-            Ready to quantify your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">global readiness?</span>
+            {tx("home.cta.title")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ade80] to-[#a78bfa]">{tx("home.cta.title_accent")}</span>
           </h2>
           <p className="mt-4 text-white/60">
-            Sign up once. Take any assessment in under 10 minutes. Get executive-ready benchmarks in your inbox.
+            {tx("home.cta.body")}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
@@ -964,7 +963,7 @@ function FinalCTA() {
               className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#a78bfa] px-7 py-3.5 text-sm font-bold text-[#0a0a16] shadow-[0_0_30px_-6px_rgba(167,139,250,0.6)]"
               style={{ fontFamily: "'League Spartan', sans-serif" }}
             >
-              Create your account
+              {tx("home.cta.primary")}
               <ArrowIcon className="h-4 w-4" />
             </Link>
             <Link
@@ -973,7 +972,7 @@ function FinalCTA() {
               className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur px-7 py-3.5 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
               style={{ fontFamily: "'League Spartan', sans-serif" }}
             >
-              I already have an account
+              {tx("home.cta.secondary")}
             </Link>
           </div>
 

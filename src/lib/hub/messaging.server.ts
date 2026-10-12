@@ -145,6 +145,15 @@ export async function importIqCopy(by: string) {
   const { addIqSiteCopy } = await import("@/lib/messaging");
   const siteCopy = (await import("@/lib/hub/iq-site-copy.json")).default;
   const site = addIqSiteCopy(body, siteCopy);
+  // Hub home page wording (home.*), Draft, after everything else.
+  const { HOME_COPY } = await import("@/lib/hub-page-copy");
+  let homeAdded = 0;
+  let homeOrder = Math.max(0, ...body.items.filter((i) => i.scope === "gemiq").map((i) => i.order));
+  for (const e of HOME_COPY) {
+    if (body.items.some((i) => i.scope === "gemiq" && i.key === e.key)) continue;
+    homeOrder += 10; homeAdded++;
+    body.items.push({ key: e.key, scope: "gemiq", label: e.label, value: e.value, notes: "Imported from the Hub home page", status: "draft", order: homeOrder });
+  }
   await saveDraft(body, by, "Added assessment page wording");
-  return { added, priced, site_added: site.added, site_existing: site.existing };
+  return { added: added + homeAdded, priced, site_added: site.added, site_existing: site.existing };
 }

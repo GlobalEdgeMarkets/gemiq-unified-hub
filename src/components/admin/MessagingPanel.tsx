@@ -50,9 +50,10 @@ export function MessagingPanel() {
   async function run(label: string, fn: () => Promise<unknown>, reload = true) {
     setBusy(true); setResult(null);
     try {
-      const r = (await fn()) as { version?: number; changed?: string[]; hooks?: { ok: boolean; text: string }[]; added?: number; priced?: number } | undefined;
+      const r = (await fn()) as { version?: number; changed?: string[]; hooks?: { ok: boolean; text: string }[]; added?: number; priced?: number; site_added?: number; site_existing?: number } | undefined;
       const items: { ok: boolean; text: string }[] = [];
       if (r?.added != null) items.push({ ok: true, text: `${r.added} assessment page items added as Draft` }, { ok: true, text: `${r.priced ?? 0} prices switched to live price fill-ins` });
+      if (r?.site_added != null) items.push({ ok: true, text: `${r.site_added} assessment site items added as Draft (${r.site_existing ?? 0} already there)` });
       if (r?.changed) items.push({ ok: true, text: r.changed.length ? `Changed for: ${r.changed.map((p) => PROPERTY_LABEL[p as Property]).join(", ")}` : "No visible change for any site" });
       for (const h of r?.hooks ?? []) items.push(h);
       setResult({ heading: r?.version ? `${label} — version ${r.version} is live` : label, ok: true, items });

@@ -142,6 +142,9 @@ export async function importIqCopy(by: string) {
     const r = prices[i.key];
     if (r && r[0].test(i.value)) { i.value = i.value.replace(r[0], r[1]); priced++; }
   }
+  const { addIqSiteCopy } = await import("@/lib/messaging");
+  const siteCopy = (await import("@/lib/hub/iq-site-copy.json")).default;
+  const site = addIqSiteCopy(body, siteCopy);
   await saveDraft(body, by, "Added assessment page wording");
-  return { added, priced };
+  return { added, priced, site_added: site.added, site_existing: site.existing };
 }

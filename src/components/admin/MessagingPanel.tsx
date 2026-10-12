@@ -50,8 +50,9 @@ export function MessagingPanel() {
   async function run(label: string, fn: () => Promise<unknown>, reload = true) {
     setBusy(true); setResult(null);
     try {
-      const r = (await fn()) as { version?: number; changed?: string[]; hooks?: { ok: boolean; text: string }[] } | undefined;
+      const r = (await fn()) as { version?: number; changed?: string[]; hooks?: { ok: boolean; text: string }[]; added?: number; priced?: number } | undefined;
       const items: { ok: boolean; text: string }[] = [];
+      if (r?.added != null) items.push({ ok: true, text: `${r.added} assessment page items added as Draft` }, { ok: true, text: `${r.priced ?? 0} prices switched to live price fill-ins` });
       if (r?.changed) items.push({ ok: true, text: r.changed.length ? `Changed for: ${r.changed.map((p) => PROPERTY_LABEL[p as Property]).join(", ")}` : "No visible change for any site" });
       for (const h of r?.hooks ?? []) items.push(h);
       setResult({ heading: r?.version ? `${label} — version ${r.version} is live` : label, ok: true, items });
@@ -119,7 +120,7 @@ export function MessagingPanel() {
       </AdminCard>
 
       {view === "items" && (
-        <AdminCard title="Items" description="A site's set is the Shared items plus its own; its own item wins on the same key. Only Approved items appear on the public link.">
+        <AdminCard title="Items" description="A site's set is the Shared items plus its own; its own item wins on the same key. Only Approved items appear on the public link. Type prices as {price.single}, {price.growth_monthly}, {price.complete_monthly}, {price.complete_annual} or {price.guarantee_days} — they fill in from the plan list.">
           <div className="flex flex-wrap gap-2 border-b border-border/60 pb-3">
             {SCOPES.map((s) => (
               <button key={s} onClick={() => setTab(s)} className={`rounded-lg px-3 py-1.5 text-sm ${tab === s ? "bg-primary/15 font-medium text-foreground" : "text-muted-foreground hover:bg-muted"}`}>{PROPERTY_LABEL[s]}</button>
@@ -132,6 +133,7 @@ export function MessagingPanel() {
             </select>
             <input className={`${input} max-w-xs`} placeholder="Search" value={q} onChange={(e) => setQ(e.target.value)} />
             <button className={btn} onClick={addItem}>Add item</button>
+            <button className={btn} disabled={busy || dirty} title={dirty ? "Save the draft first" : undefined} onClick={() => run("Assessment page wording pulled into the draft", () => act({ data: { action: "import_iq" } }))}>Pull assessment page wording</button>
           </div>
           <div className="mt-4 grid gap-3">
             {rows.length === 0 ? <p className="text-sm text-muted-foreground">No items here.</p> : null}

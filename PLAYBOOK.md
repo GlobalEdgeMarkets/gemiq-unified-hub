@@ -185,3 +185,7 @@ shown, full report locked until the plan starts. 14-day money-back guarantee.
 - [`IQ_ONBOARDING_PROMPT.md`](./IQ_ONBOARDING_PROMPT.md) — paste-into-IQ prompt
 - [`README.md`](./README.md) — repo map, contract vs. internal
 - `/onboard` and `/docs` on the live Hub — always current
+
+## Brand messaging
+
+Admin → Brand → Messaging is the single source of brand wording for globaledgemarkets.com, GEM.IQ and GlobalEdgeTalk. A property's set is Shared items plus its own (own wins on the same key). Editors save a draft, preview, publish; history allows making an older version live again. Sites read `GET /api/public/messaging?property=globaledgemarkets.com|gemiq|globaledgetalk` (Approved items only, 5-minute cache). Optional publish hooks receive `{ event: "messaging.published", version, properties_changed }` with header `x-hub-messaging-secret`.

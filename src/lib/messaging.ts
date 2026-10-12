@@ -1,6 +1,7 @@
 // Brand messaging: client-safe schemas, merge rule, ordering and vocabulary checks.
 // Server storage/versioning lives in src/lib/hub/messaging.server.ts.
 import { z } from "zod";
+import manifest from "@/lib/hub/manifest.json";
 
 export const PROPERTIES = ["globaledgemarkets.com", "gemiq", "globaledgetalk"] as const;
 export type Property = (typeof PROPERTIES)[number];
@@ -65,7 +66,7 @@ export function effectiveSet(body: MessagingBody, property: Property, opts: { ap
 /** The public JSON for one property (Approved only). */
 export function publicPayload(body: MessagingBody, property: Property, version: number, publishedAt: string | null) {
   const items = effectiveSet(body, property, { approvedOnly: true }).map((i) => ({
-    key: i.key, label: i.label, value: i.value, source: i.source, order: i.order, ...(i.related ? { related: i.related } : {}),
+    key: i.key, label: i.label, value: fillPlaceholders(i.value), source: i.source, order: i.order, ...(i.related ? { related: i.related } : {}),
   }));
   return {
     property, version, published_at: publishedAt,
@@ -115,4 +116,42 @@ export function isMessagingOriginAllowed(origin: string, extraHosts: string[] = 
   } catch {
     return false;
   }
+}
+
+// ---- Price placeholders: prices are decided by the manifest plan list, never typed into copy ----
+
+const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+export function priceTokens(): Record<string, string> {
+  const p = manifest.pricing;
+  const t: Record<string, string> = { "price.single": usd(p.one_time.amount), "price.guarantee_days": String(p.guarantee.days) };
+  for (const plan of p.plans) {
+    const name = plan.id.replace(/^gemiq_/, "");
+    t[`price.${name}`] = usd(plan.amount);
+  }
+  return t;
+}
+export const PRICE_TOKEN_KEYS = Object.keys(priceTokens());
+
+/** Replace {price.x} tokens with live prices; unknown tokens are left as typed. */
+export function fillPlaceholders(value: string, tokens = priceTokens()): string {
+  return value.replace(/\{(price\.[a-z0-9_]+)\}/g, (m, k: string) => tokens[k] ?? m);
+}
+
+/** Overlay approved iq.<key>.* items onto an assessment page's built-in wording. */
+export function applyIqCopy<T extends { key: string; tagline: string; domain: string; body: string; intro: string; overview: string[]; audience: string[]; outcomes: string[] }>(
+  product: T, byKey: Record<string, string> | null | undefined,
+): T {
+  if (!byKey) return product;
+  const g = (f: string) => byKey[`iq.${product.key}.${f}`];
+  const list = (f: string, base: string[]) => base.map((v, i) => g(`${f}.${i + 1}`) ?? v);
+  return {
+    ...product,
+    tagline: g("tagline") ?? product.tagline,
+    domain: g("domain") ?? product.domain,
+    body: g("body") ?? product.body,
+    intro: g("intro") ?? product.intro,
+    overview: list("overview", product.overview),
+    audience: list("audience", product.audience),
+    outcomes: list("outcome", product.outcomes),
+  };
 }

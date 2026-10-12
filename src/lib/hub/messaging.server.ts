@@ -103,3 +103,45 @@ export async function rollbackTo(version: number, by: string) {
   await saveDraft(old.body, by, `Made version ${version} live again`);
   return await publishDraft(by);
 }
+
+/**
+ * Pull the Hub's built-in assessment page wording into the draft as GEM.IQ items
+ * (status Draft, so pages keep their built-in text until approved), and switch
+ * typed prices to live {price.*} placeholders. Existing keys are never overwritten.
+ */
+export async function importIqCopy(by: string) {
+  const { IQ_PRODUCTS } = await import("@/lib/iq-catalog");
+  const { data: draft } = await db().from("hub_messaging_versions").select("body").eq("status", "draft").maybeSingle();
+  const base = (draft?.body ?? (await publishedVersion())?.body ?? { items: [], vocabulary: [] }) as MessagingBody;
+  const body: MessagingBody = structuredClone(base);
+  const have = new Set(body.items.map((i) => `${i.scope}|${i.key}`));
+  let order = Math.max(1000, ...body.items.map((i) => i.order));
+  let added = 0;
+  const add = (related: string, key: string, label: string, value: string) => {
+    if (have.has(`gemiq|${key}`)) return;
+    order += 10; added++;
+    body.items.push({ key, scope: "gemiq", label, value, notes: "Imported from the assessment page", status: "draft", order, related: related as MessagingBody["items"][number]["related"] });
+  };
+  for (const p of IQ_PRODUCTS) {
+    const k = p.key;
+    add(k, `iq.${k}.tagline`, `${p.name} — tagline`, p.tagline);
+    add(k, `iq.${k}.domain`, `${p.name} — domain`, p.domain);
+    add(k, `iq.${k}.body`, `${p.name} — card text`, p.body);
+    add(k, `iq.${k}.intro`, `${p.name} — intro`, p.intro);
+    p.overview.forEach((v, i) => add(k, `iq.${k}.overview.${i + 1}`, `${p.name} — overview paragraph ${i + 1}`, v));
+    p.audience.forEach((v, i) => add(k, `iq.${k}.audience.${i + 1}`, `${p.name} — who it's for ${i + 1}`, v));
+    p.outcomes.forEach((v, i) => add(k, `iq.${k}.outcome.${i + 1}`, `${p.name} — outcome ${i + 1}`, v));
+  }
+  const prices: Record<string, [RegExp, string]> = {
+    "plan.subscription": [/\$249\/month/, "{price.complete_monthly}/month"],
+    "plan.single": [/\$179/, "{price.single}"],
+    "plan.guarantee": [/^14-day/, "{price.guarantee_days}-day"],
+  };
+  let priced = 0;
+  for (const i of body.items) {
+    const r = prices[i.key];
+    if (r && r[0].test(i.value)) { i.value = i.value.replace(r[0], r[1]); priced++; }
+  }
+  await saveDraft(body, by, "Added assessment page wording");
+  return { added, priced };
+}

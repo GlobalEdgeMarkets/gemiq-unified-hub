@@ -598,6 +598,7 @@ export const adminMessagingAction = createServerFn({ method: "POST" })
     z.discriminatedUnion("action", [
       z.object({ action: z.literal("save"), body: z.unknown(), note: z.string().max(300).optional() }),
       z.object({ action: z.literal("discard") }),
+      z.object({ action: z.literal("import_iq") }),
       z.object({ action: z.literal("publish") }),
       z.object({ action: z.literal("rollback"), version: z.number().int().min(1) }),
       z.object({ action: z.literal("hooks"), hooks: z.array(z.object({ url: z.string().url().max(500), enabled: z.boolean(), label: z.string().max(100).optional() })).max(10) }),
@@ -610,6 +611,7 @@ export const adminMessagingAction = createServerFn({ method: "POST" })
     switch (data.action) {
       case "save": return await m.saveDraft(data.body, by, data.note);
       case "discard": return await m.discardDraft();
+      case "import_iq": return await m.importIqCopy(by);
       case "publish": return await m.publishDraft(by);
       case "rollback": return await m.rollbackTo(data.version, by);
       case "hooks": return await m.saveHooks(data.hooks, by);

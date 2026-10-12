@@ -45,3 +45,18 @@ describe("messaging rules", () => {
     expect(isMessagingOriginAllowed("https://evil.example.com")).toBe(false);
   });
 });
+
+import { applyIqCopy, fillPlaceholders } from "@/lib/messaging";
+describe("prices and assessment pages", () => {
+  it("fills prices from the plan list", () => {
+    expect(fillPlaceholders("{price.complete_monthly}/month, {price.single} once, {price.growth_monthly}, {price.complete_annual}")).toBe("$249/month, $179 once, $149, $2,490");
+    expect(fillPlaceholders("{price.unknown}")).toBe("{price.unknown}");
+  });
+  it("assessment page uses approved wording and keeps built-in text otherwise", () => {
+    const p = { key: "uxiq", tagline: "Old", domain: "D", body: "B", intro: "I", overview: ["o1", "o2"], audience: ["a"], outcomes: ["x"] };
+    const r = applyIqCopy(p, { "iq.uxiq.tagline": "New", "iq.uxiq.overview.2": "O2" });
+    expect(r.tagline).toBe("New");
+    expect(r.overview).toEqual(["o1", "O2"]);
+    expect(applyIqCopy(p, null).intro).toBe("I");
+  });
+});

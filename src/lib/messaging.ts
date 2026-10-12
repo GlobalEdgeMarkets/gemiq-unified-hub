@@ -159,3 +159,25 @@ export function applyIqCopy<T extends { key: string; tagline: string; domain: st
     outcomes: list("outcome", product.outcomes),
   };
 }
+
+/** Assessment-site wording catalog: { iqKey: [{ key, label, value, notes? }] }. */
+export type IqSiteCopy = Record<string, { key: string; label: string; value: string; notes?: string }[]>;
+
+/**
+ * Add assessment-site wording to a messaging body as GEM.IQ Draft items, grouped by IQ
+ * in catalog order after existing gemiq items. Never overwrites an existing scope+key,
+ * and leaves {name}/{questions} tokens untouched (the sites fill them). Mutates body.
+ */
+export function addIqSiteCopy(body: MessagingBody, catalog: IqSiteCopy) {
+  const have = new Set(body.items.map((i) => `${i.scope}|${i.key}`));
+  let order = Math.max(0, ...body.items.filter((i) => i.scope === "gemiq").map((i) => i.order));
+  let added = 0, existing = 0;
+  for (const [iq, entries] of Object.entries(catalog)) {
+    for (const e of entries) {
+      if (have.has(`gemiq|${e.key}`)) { existing++; continue; }
+      order += 10; added++; have.add(`gemiq|${e.key}`);
+      body.items.push({ key: e.key, scope: "gemiq", label: e.label, value: e.value, notes: e.notes ?? "", status: "draft", order, related: iq as MessagingItem["related"] });
+    }
+  }
+  return { added, existing };
+}

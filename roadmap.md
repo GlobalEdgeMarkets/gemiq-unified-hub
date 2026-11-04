@@ -13,6 +13,6 @@
 - [x] Deliver test kit; registration and payment performed by the tester
 
 ## Standalone IQ PostHog coverage
-- [ ] Verify ProductIQ, AITransformIQ and UXIQ tracking on their live domains
-- [ ] Enable missing tracking where editable; identify any standalone-project blocker
-- [ ] Confirm received pageviews without fabricating domain activity
+- [x] Verify ProductIQ, AITransformIQ and UXIQ tracking on their live domains: no customer PostHog ingestion observed
+- [ ] Enable missing tracking in the three standalone projects — blocked: their checkouts are read-only from the Hub chat
+- [ ] Confirm received pageviews — blocked until tracking is enabled and published in the standalone projects

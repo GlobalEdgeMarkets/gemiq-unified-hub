@@ -11,3 +11,8 @@
 - [x] Prepare fresh-account preflight, manual purchase journey and evidence checklist
 - [x] Create and validate safe recording/checkpoint scripts without changing app behavior
 - [x] Deliver test kit; registration and payment performed by the tester
+
+## Standalone IQ PostHog coverage
+- [x] Verify ProductIQ, AITransformIQ and UXIQ tracking on their live domains: no customer PostHog ingestion observed
+- [ ] Enable missing tracking in the three standalone projects — blocked: their checkouts are read-only from the Hub chat
+- [ ] Confirm received pageviews — blocked until tracking is enabled and published in the standalone projects

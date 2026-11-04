@@ -8,6 +8,6 @@
 - [x] Pricing Option B (Starter $179 / Growth $149 mo / Complete $249 mo or $2,490 yr) in billing + site
 
 ## TariffIQ fresh-user journey test
-- [ ] Prepare fresh-account preflight, manual purchase journey and evidence checklist
-- [ ] Create and validate safe recording/checkpoint scripts without changing app behavior
-- [ ] Deliver test kit; registration and payment performed by the tester
+- [x] Prepare fresh-account preflight, manual purchase journey and evidence checklist
+- [x] Create and validate safe recording/checkpoint scripts without changing app behavior
+- [x] Deliver test kit; registration and payment performed by the tester

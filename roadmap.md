@@ -11,3 +11,8 @@
 - [x] Prepare fresh-account preflight, manual purchase journey and evidence checklist
 - [x] Create and validate safe recording/checkpoint scripts without changing app behavior
 - [x] Deliver test kit; registration and payment performed by the tester
+
+## Standalone IQ PostHog coverage
+- [ ] Verify ProductIQ, AITransformIQ and UXIQ tracking on their live domains
+- [ ] Enable missing tracking where editable; identify any standalone-project blocker
+- [ ] Confirm received pageviews without fabricating domain activity

@@ -31,4 +31,4 @@
 
 ## Trial report unlock checkout
 - [x] Reproduce signed-in trial unlock and single-purchase redirects without charging a card
-- [ ] Restrict duplicate-checkout skipping to trial requests and verify paid intents; no publishing or payments
+- [x] Restrict duplicate-checkout skipping to trial requests; 9 regression tests and signed-in browser routing passed with checkout intercepted (no payments or publishing)

@@ -24,3 +24,7 @@
 ## Alejandro dashboard assessment visibility
 - [x] Reproduce why the new-user dashboard shows only four assessments
 - [x] Show every uncompleted live assessment, including ProductIQ and AITransformIQ, and verify as Alejandro
+
+## UXIQ exact preview access
+- [ ] Allow only the named UXIQ preview hostname while preserving credentials and access checks
+- [ ] Verify subscription, profile and result requests; do not publish

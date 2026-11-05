@@ -196,44 +196,7 @@ function AuthPage() {
       track(mode === "signup" ? "signup_completed" : "signin_completed", {
         intent, source_iq: source, plan: search.trial === "1" ? (search.plan ?? "complete") : undefined,
       });
-      // One-time purchase intent from landing: $179 single assessment.
-      if (search.buy === "single" && !safeReturn) {
-        try {
-          const co = await fetch("/api/public/billing/create-checkout", {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              lookup_key: "gemiq_single_assessment",
-              success_url: `${window.location.origin}/dashboard?purchase=1`,
-              cancel_url: window.location.href,
-            }),
-          });
-          const cob = await co.json();
-          if (co.ok && cob.url) { window.location.href = cob.url; return; }
-        } catch (e) { /* fall through */ }
-      }
-      // Trial intent from landing: start Stripe checkout with a 7-day trial.
-      // Only when there's no IQ redirect — an IQ handles its own checkout.
-      // A plan without trial=1 (e.g. "Unlock the full report") starts a paid checkout.
-      if ((search.trial === "1" || search.plan) && !safeReturn) {
-        try {
-          const co = await fetch("/api/public/billing/create-checkout", {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              lookup_key: { growth: "gemiq_growth_monthly", complete: "gemiq_complete_monthly", complete_annual: "gemiq_complete_annual" }[search.plan ?? "complete"],
-              success_url: `${window.location.origin}/dashboard?welcome=1`,
-              cancel_url: window.location.href,
-              trial: search.trial === "1",
-            }),
-          });
-          const cob = await co.json();
-          if (co.ok && cob.url) { window.location.href = cob.url; return; }
-        } catch (e) { /* fall through to home */ }
-      }
-      window.location.href = safeReturn ?? "/dashboard";
+      await continueSignedIn({ skipCheckoutIfActive: true });
     } catch (e: any) {
       setErr(e.message);
     } finally { setBusy(false); }
@@ -311,7 +274,15 @@ function AuthPage() {
           </p>
         </aside>
 
-        {/* Auth form */}
+        {/* Auth form — replaced by a short notice while a signed-in visitor is sent on */}
+        {resuming ? (
+          <div className="w-full rounded-xl border border-gem-navy/10 bg-white p-7 text-center shadow-sm">
+            <p className="font-display text-lg font-bold text-gem-navy">You're already signed in</p>
+            <p className="mt-2 text-sm text-gem-navy/70">
+              {safeReturn && iq ? `Taking you to ${iq.name}…` : search.buy || search.trial || search.plan ? "Taking you to checkout…" : "Taking you to your dashboard…"}
+            </p>
+          </div>
+        ) : (
         <form
           onSubmit={submit}
           className="w-full space-y-4 rounded-xl border border-gem-navy/10 bg-white p-7 shadow-sm"
@@ -414,6 +385,7 @@ function AuthPage() {
             </p>
           )}
         </form>
+        )}
       </div>
     </div>
   );

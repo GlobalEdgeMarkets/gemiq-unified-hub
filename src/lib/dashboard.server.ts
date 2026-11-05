@@ -267,8 +267,7 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
       }
       return { assessment_key: s.key, display_name: s.displayName, url: iqUrl(s.key), reason };
     })
-    .sort((a, b) => Number(suggested.has(b.assessment_key)) - Number(suggested.has(a.assessment_key)))
-    .slice(0, 4);
+    .sort((a, b) => Number(suggested.has(b.assessment_key)) - Number(suggested.has(a.assessment_key)));
 
   const scores = results.map((r) => r.score).filter((n): n is number => typeof n === "number");
   const { computeComposite, DEFAULT_COMPOSITE } = await import("@/lib/composite");

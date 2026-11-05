@@ -20,3 +20,7 @@
 ## UXIQ launch address
 - [x] Correct the Hub catalog, manifest, registry, and analytics audit to use the live UXIQ domain
 - [x] Verify UXIQ links and sign-in context; leave publishing to the user
+
+## Alejandro dashboard assessment visibility
+- [x] Reproduce why the new-user dashboard shows only four assessments
+- [x] Show every uncompleted live assessment, including ProductIQ and AITransformIQ, and verify as Alejandro

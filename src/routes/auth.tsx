@@ -1,5 +1,7 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { getSessionStatus } from "@/lib/session-status.functions";
 import { z } from "zod";
 import { iqContextFromReturnUrl } from "@/lib/hub/iq-context";
 import { HubHeader } from "@/components/HubHeader";
@@ -21,10 +23,12 @@ function isAllowedReturnUrl(raw: string | undefined): string | null {
 }
 
 const searchSchema = z.object({
-  redirect: z.string().optional(),
-  mode: z.enum(["signin", "signup"]).optional(),
+  // External links (IQ sites, WordPress) send plain `?trial=1`, which the router
+  // parses as a number — coerce every field and never throw, so a bad link can't 500 the page.
+  redirect: z.preprocess((v) => (v == null ? v : String(v)), z.string().optional()).catch(undefined),
+  mode: z.enum(["signin", "signup"]).optional().catch(undefined),
   /** "1" when arriving from the "Start 7-day trial" CTA. Kicks off trial checkout after signup. */
-  trial: z.string().optional(),
+  trial: z.preprocess((v) => (v == null ? v : String(v)), z.string().optional()).catch(undefined),
   /** Which plan the trial should convert to. Defaults to Complete monthly. */
   /** Legacy names (monthly/quarterly/annual) from older links map to the current plans; unknown values are ignored. */
   plan: z.preprocess(
@@ -32,7 +36,7 @@ const searchSchema = z.object({
     z.enum(["growth", "complete", "complete_annual"]).optional().catch(undefined),
   ),
   /** "single" when arriving from the one-time $179 CTA. Starts payment checkout. */
-  buy: z.enum(["single"]).optional(),
+  buy: z.enum(["single"]).optional().catch(undefined),
 });
 
 /** Canonical DISPLAY_ORDER, derived — never hand-listed. */
@@ -74,6 +78,17 @@ function AuthPage() {
   const [company, setCompany] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const checkSession = useServerFn(getSessionStatus);
+
+  // Already signed in and heading to an IQ? Skip the form and go straight there.
+  useEffect(() => {
+    if (!safeReturn) return;
+    let alive = true;
+    checkSession()
+      .then((s) => { if (alive && s?.signedIn) window.location.replace(safeReturn); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [checkSession, safeReturn]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();

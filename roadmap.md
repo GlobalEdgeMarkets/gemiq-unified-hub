@@ -22,5 +22,5 @@
 - [x] Verify UXIQ links and sign-in context; leave publishing to the user
 
 ## Alejandro dashboard assessment visibility
-- [ ] Reproduce why the new-user dashboard shows only four assessments
-- [ ] Show every uncompleted live assessment, including ProductIQ and AITransformIQ, and verify as Alejandro
+- [x] Reproduce why the new-user dashboard shows only four assessments
+- [x] Show every uncompleted live assessment, including ProductIQ and AITransformIQ, and verify as Alejandro

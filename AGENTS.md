@@ -40,6 +40,8 @@ at call sites. Keep the spec in `REGISTRY` so historical submissions still map.
 
 ### Known duplicate
 
+- Hub credentialed CORS permits preview hosts only by exact allowlist in `src/lib/hub/http.ts`; never use preview-domain suffix matching, to prevent unrelated previews from reading authenticated responses.
+
 `src/routes/sitemap[.]xml.ts` hardcodes product paths instead of deriving them from `IQ_PRODUCTS`.
 Report, reset and e2e rules: see `src/lib/hub/AGENTS.md`.
 - HubSpot calls go through `src/lib/hub/hubspot-transport.ts` (direct with HUBSPOT_SERVICE_KEY, else connector gateway) — one place decides auth/base URL.

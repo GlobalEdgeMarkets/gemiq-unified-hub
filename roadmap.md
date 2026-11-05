@@ -24,3 +24,7 @@
 ## Alejandro dashboard assessment visibility
 - [x] Reproduce why the new-user dashboard shows only four assessments
 - [x] Show every uncompleted live assessment, including ProductIQ and AITransformIQ, and verify as Alejandro
+
+## UXIQ exact preview access
+- [x] Allow only the named UXIQ preview hostname while preserving credentials and access checks
+- [x] Verify subscription, profile and existing result reads (HTTP 200), signed-out profile denial (401), and regression tests; no publishing. Local preview intercepts OPTIONS, so preflight headers are covered by helper tests, not a live browser preflight.

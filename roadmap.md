@@ -16,3 +16,7 @@
 - [x] Verify ProductIQ, AITransformIQ and UXIQ tracking on their live domains: no customer PostHog ingestion observed
 - [ ] Enable missing tracking in the three standalone projects — blocked: their checkouts are read-only from the Hub chat
 - [ ] Confirm received pageviews — blocked until tracking is enabled and published in the standalone projects
+
+## UXIQ launch address
+- [ ] Correct the Hub catalog, manifest, registry, and analytics audit to use the live UXIQ domain
+- [ ] Verify UXIQ links and sign-in context; leave publishing to the user

@@ -80,15 +80,73 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const checkSession = useServerFn(getSessionStatus);
 
-  // Already signed in and heading to an IQ? Skip the form and go straight there.
+  const [resuming, setResuming] = useState(false);
+
+  /** Where to go once a session exists: purchase/trial checkout, back to the IQ, or the dashboard. */
+  async function continueSignedIn(opts: { skipCheckoutIfActive: boolean }) {
+    const wantsCheckout = !safeReturn && (search.buy === "single" || search.trial === "1" || !!search.plan);
+    if (wantsCheckout && opts.skipCheckoutIfActive) {
+      // Already subscribed or trialing? Don't open a second checkout.
+      try {
+        const r = await fetch("/api/public/billing/check-subscription", { credentials: "include" });
+        const sub = await r.json();
+        if (sub?.active) { window.location.href = "/dashboard"; return; }
+      } catch { /* fall through to checkout */ }
+    }
+    // One-time purchase intent from landing: $179 single assessment.
+    if (search.buy === "single" && !safeReturn) {
+      try {
+        const co = await fetch("/api/public/billing/create-checkout", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lookup_key: "gemiq_single_assessment",
+            success_url: `${window.location.origin}/dashboard?purchase=1`,
+            cancel_url: `${window.location.origin}/dashboard`,
+          }),
+        });
+        const cob = await co.json();
+        if (co.ok && cob.url) { window.location.href = cob.url; return; }
+      } catch (e) { /* fall through */ }
+    }
+    // Trial intent: start Stripe checkout with a 7-day trial.
+    // Only when there's no IQ redirect — an IQ handles its own checkout.
+    // A plan without trial=1 (e.g. "Unlock the full report") starts a paid checkout.
+    if ((search.trial === "1" || search.plan) && !safeReturn) {
+      try {
+        const co = await fetch("/api/public/billing/create-checkout", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lookup_key: { growth: "gemiq_growth_monthly", complete: "gemiq_complete_monthly", complete_annual: "gemiq_complete_annual" }[search.plan ?? "complete"],
+            success_url: `${window.location.origin}/dashboard?welcome=1`,
+            cancel_url: `${window.location.origin}/dashboard`,
+            trial: search.trial === "1",
+          }),
+        });
+        const cob = await co.json();
+        if (co.ok && cob.url) { window.location.href = cob.url; return; }
+      } catch (e) { /* fall through to dashboard */ }
+    }
+    window.location.href = safeReturn ?? "/dashboard";
+  }
+
+  // Already signed in? Never show the account form again — carry on with
+  // whatever the link asked for (back to the IQ, trial/purchase checkout, or dashboard).
   useEffect(() => {
-    if (!safeReturn) return;
     let alive = true;
     checkSession()
-      .then((s) => { if (alive && s?.signedIn) window.location.replace(safeReturn); })
+      .then((s) => {
+        if (!alive || !s?.signedIn) return;
+        setResuming(true);
+        continueSignedIn({ skipCheckoutIfActive: true }).catch(() => setResuming(false));
+      })
       .catch(() => {});
     return () => { alive = false; };
-  }, [checkSession, safeReturn]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkSession]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();

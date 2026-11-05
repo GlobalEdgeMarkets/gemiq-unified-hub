@@ -8,6 +8,7 @@ import { HubHeader } from "@/components/HubHeader";
 import { ACCENT, IQ_PRODUCTS } from "@/lib/iq-catalog";
 import { buildHead } from "@/lib/seo";
 import { identifyUser, track } from "@/lib/analytics";
+import { shouldCheckExistingTrial } from "@/lib/auth-checkout";
 
 /** Only allow return-to URLs on the GEM.IQ Hub itself or *.globaledgemarkets.com. */
 function isAllowedReturnUrl(raw: string | undefined): string | null {
@@ -84,9 +85,9 @@ function AuthPage() {
 
   /** Where to go once a session exists: purchase/trial checkout, back to the IQ, or the dashboard. */
   async function continueSignedIn(opts: { skipCheckoutIfActive: boolean }) {
-    const wantsCheckout = !safeReturn && (search.buy === "single" || search.trial === "1" || !!search.plan);
-    if (wantsCheckout && opts.skipCheckoutIfActive) {
-      // Already subscribed or trialing? Don't open a second checkout.
+    if (shouldCheckExistingTrial(search, safeReturn) && opts.skipCheckoutIfActive) {
+      // Avoid duplicate trials only. Explicit paid upgrades and single purchases
+      // must reach checkout even when the user already has trial/plan access.
       try {
         const r = await fetch("/api/public/billing/check-subscription", { credentials: "include" });
         const sub = await r.json();

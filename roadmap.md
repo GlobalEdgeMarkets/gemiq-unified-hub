@@ -28,3 +28,7 @@
 ## UXIQ exact preview access
 - [x] Allow only the named UXIQ preview hostname while preserving credentials and access checks
 - [x] Verify subscription, profile and existing result reads (HTTP 200), signed-out profile denial (401), and regression tests; no publishing. Local preview intercepts OPTIONS, so preflight headers are covered by helper tests, not a live browser preflight.
+
+## Trial report unlock checkout
+- [x] Reproduce signed-in trial unlock and single-purchase redirects without charging a card
+- [ ] Restrict duplicate-checkout skipping to trial requests and verify paid intents; no publishing or payments

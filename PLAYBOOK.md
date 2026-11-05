@@ -1,4 +1,6 @@
-# GEM.IQ Playbook — v1.6
+# GEM.IQ Playbook — v1.6.1
+
+**Address correction (2026-11-05, manifest v1.11.1):** UXIQ's canonical site is https://uxiq.globaledgemarkets.com; the former uxreadiness host is no longer a launch destination.
 
 **Status:** current as of 2026-10-05 (manifest v1.10.0: three-tier pricing Starter/Growth/Complete; v1.9.0: Hub-controlled questions/weights/tiers (/api/public/content/<key>, content export, scoring rule); follow-up emails moved to HubSpot workflows (Hub writes trigger fields only); reports: consulting-grade layout — cover, executive summary, maturity ladder, peer benchmark (reference values until enough real results), heat map, 30/60/90 roadmap, methodology, branded PDF, combined report at /report/combined; v1.8.0: live report settings (sections, trial access, wording, tiers, app/hub mode), Hub-built reports at /report/<id>; v1.7.0 live control — notices, pause switch, editable wording, status-link contract). Supersedes v1.4 (6 undifferentiated
 "capability" IQs, manifest v1.4.0). If a doc, prompt, or GitHub knowledge file
@@ -46,11 +48,11 @@ every surface (home grid, sample-report tabs, onboarding list, sitemap, llms.txt
 | 2 | SalesIQ | `salesiq` | capability | salesiq.globaledgemarkets.com | 9 | Is the commercial engine ready to carry the number? |
 | 3 | ProductIQ | `productiq` | capability | productiq.globaledgemarkets.com | 9 | Is the product packaged, documented, and scalable enough to sell repeatedly? |
 | 4 | AITransformIQ | `aitransformiq` | capability | aitransformiq.globaledgemarkets.com | 9 | Are strategy, data, talent, and governance ready for AI to matter? |
-| 5 | UXIQ | `uxiq` | capability | uxreadiness.globaledgemarkets.com | 8 | Does the experience convert, retain, and include? |
+| 5 | UXIQ | `uxiq` | capability | uxiq.globaledgemarkets.com | 8 | Does the experience convert, retain, and include? |
 | 6 | TariffIQ | `tariffiq` | specialist | tariffiq.globaledgemarkets.com | 8 | What is duty actually costing us and what is recoverable? |
 
-Note: UXIQ's `assessment_key` is `uxiq` but its host is **uxreadiness**. The catalog,
-the manifest, and the `/auth` context map all key off `uxreadiness`.
+Note: UXIQ's `assessment_key` is `uxiq` and its host is **uxiq**. The catalog,
+the manifest, and the derived `/auth` context map all use this canonical host.
 
 Retired / non-marketed keys are one exported set — `RETIRED_KEYS` in
 `src/lib/hub/assessments/index.ts` (`readinessiq`, 33 migrated legacy submissions;

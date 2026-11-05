@@ -262,7 +262,7 @@ const IQ_PRODUCTS_UNORDERED: IQProduct[] = [
     key: "uxiq",
     path: "/uxiq",
     name: "UXIQ",
-    url: "https://uxreadiness.globaledgemarkets.com",
+    url: "https://uxiq.globaledgemarkets.com",
     tagline: "Digital & AI experience",
     body:
       "Benchmark research, design system, accessibility, and conversion craft against best-in-class peers — dimension-level tiering with prioritized recommendations.",

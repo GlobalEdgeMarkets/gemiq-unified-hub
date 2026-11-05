@@ -9,7 +9,7 @@ export const AUDIT_SITES = {
   salesiq: "salesiq.globaledgemarkets.com",
   productiq: "productiq.globaledgemarkets.com",
   aitransformiq: "aitransformiq.globaledgemarkets.com",
-  uxiq: "uxreadiness.globaledgemarkets.com",
+  uxiq: "uxiq.globaledgemarkets.com",
 } as const;
 export type AuditSite = keyof typeof AUDIT_SITES;
 

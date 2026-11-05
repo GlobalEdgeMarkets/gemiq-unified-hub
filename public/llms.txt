@@ -25,7 +25,7 @@ GEM.IQ is a family of self-service executive assessments covering go-to-market, 
 - [SalesIQ](/salesiq) — [salesiq.globaledgemarkets.com](https://salesiq.globaledgemarkets.com): Enterprise sales readiness. Capability diagnostic.
 - [ProductIQ](/productiq) — [productiq.globaledgemarkets.com](https://productiq.globaledgemarkets.com): Productization & scale readiness. Capability diagnostic.
 - [AITransformIQ](/aitransformiq) — [aitransformiq.globaledgemarkets.com](https://aitransformiq.globaledgemarkets.com): AI transformation readiness. Capability diagnostic.
-- [UXIQ](/uxiq) — [uxreadiness.globaledgemarkets.com](https://uxreadiness.globaledgemarkets.com): Digital & AI experience. Capability diagnostic.
+- [UXIQ](/uxiq) — [uxiq.globaledgemarkets.com](https://uxiq.globaledgemarkets.com): Digital & AI experience. Capability diagnostic.
 - [TariffIQ](/tariffiq) — [tariffiq.globaledgemarkets.com](https://tariffiq.globaledgemarkets.com): Duty exposure & savings. Specialist diagnostic.
 
 ## Maturity scale

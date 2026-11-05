@@ -18,5 +18,5 @@
 - [ ] Confirm received pageviews — blocked until tracking is enabled and published in the standalone projects
 
 ## UXIQ launch address
-- [ ] Correct the Hub catalog, manifest, registry, and analytics audit to use the live UXIQ domain
-- [ ] Verify UXIQ links and sign-in context; leave publishing to the user
+- [x] Correct the Hub catalog, manifest, registry, and analytics audit to use the live UXIQ domain
+- [x] Verify UXIQ links and sign-in context; leave publishing to the user

@@ -8,6 +8,7 @@ const ALLOWED_HOSTS = new Set([
   "tariffiq.globaledgemarkets.com",
   "readinessiq.globaledgemarkets.com",
   "uxiq.globaledgemarkets.com",
+  "aa6c70af-9a1d-44df-be2a-a062cada8763.lovableproject.com",
   "techservicesiq.globaledgemarkets.com",
   "gtmiq.globaledgemarkets.com",
   "salesiq.globaledgemarkets.com",
@@ -23,8 +24,8 @@ function isAllowedOrigin(origin: string): boolean {
     if (u.protocol !== "https:" && u.protocol !== "http:") return false;
     if (u.hostname === "localhost" || u.hostname === "127.0.0.1") return true;
     if (ALLOWED_HOSTS.has(u.hostname)) return true;
-    // Allow Lovable preview/published subdomains for this project.
-    if (u.hostname.endsWith(".lovable.app")) return true;
+    // Only explicitly listed Hub preview/published hosts, never wildcard previews.
+    if (HUB_LOVABLE_HOSTS.has(u.hostname)) return true;
     return false;
   } catch {
     return false;

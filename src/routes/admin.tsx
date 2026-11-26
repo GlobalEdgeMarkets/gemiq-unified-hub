@@ -459,6 +459,7 @@ function RegistryCard({ run }: { run: () => Promise<unknown> }) {
   const data = a.result as {
     manifest_version?: string;
     manifest_updated_at?: string | null;
+    hubspot_retries?: { pending: number | null; dead: number | null; text: string };
     registry?: { key: string; display_name: string; contact_properties: number }[];
   } | undefined;
   return (
@@ -475,6 +476,11 @@ function RegistryCard({ run }: { run: () => Promise<unknown> }) {
             Manifest version <span className="text-foreground">{data.manifest_version}</span>
             {data.manifest_updated_at ? ` · updated ${data.manifest_updated_at}` : null}
           </p>
+          {data.hubspot_retries ? (
+            <p className={`mt-1 text-sm ${data.hubspot_retries.dead ? "text-destructive" : "text-muted-foreground"}`}>
+              {data.hubspot_retries.text}
+            </p>
+          ) : null}
           <table className="mt-3 w-full text-left text-sm">
             <thead className="text-muted-foreground">
               <tr><th className="py-1">Key</th><th>Name</th><th className="text-right">Properties</th></tr>

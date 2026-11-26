@@ -10,8 +10,29 @@ export const EXPECTED_MIGRATION_KEYS = ["gtmiq", "salesiq", "productiq", "aitran
 /** Placeholder-spec detection: a real spec declares more than three properties. */
 const PLACEHOLDER_PROPERTY_COUNT = 3;
 
-export function getRegistryStatus() {
+/** Text for the status card: "HubSpot retries: N pending, N failed permanently". */
+export function formatHubspotRetries(c: { pending: number | null; dead: number | null }): string {
+  const n = (v: number | null) => (v == null ? "?" : String(v));
+  return `HubSpot retries: ${n(c.pending)} pending, ${n(c.dead)} failed permanently`;
+}
+
+/** Read-only counts of hubspot_upsert jobs in the existing retry queue. */
+async function countHubspotRetries(): Promise<{ pending: number | null; dead: number | null }> {
+  const svc = createHubServiceClient();
+  const count = async (status: string) => {
+    const { count: c, error } = await svc.from("retry_queue")
+      .select("id", { count: "exact", head: true })
+      .eq("job_type", "hubspot_upsert").eq("status", status);
+    return error ? null : (c ?? 0);
+  };
+  const [pending, dead] = await Promise.all([count("pending"), count("dead")]);
+  return { pending, dead };
+}
+
+export async function getRegistryStatus() {
+  const retries = await countHubspotRetries();
   return {
+    hubspot_retries: { ...retries, text: formatHubspotRetries(retries) },
     manifest_version: (manifest as { version?: string }).version ?? "unknown",
     manifest_updated_at: (manifest as { updated_at?: string }).updated_at ?? null,
     registry: REGISTRY.map(s => ({

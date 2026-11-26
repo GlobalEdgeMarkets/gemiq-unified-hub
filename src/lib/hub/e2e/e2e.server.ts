@@ -3,6 +3,7 @@
 import { createHubServiceClient } from "@/lib/hub/supabase-server";
 import { REGISTRY_BY_KEY, LIVE_REGISTRY } from "@/lib/hub/assessments";
 import { isReportLocked } from "@/lib/report-settings";
+import { buildTestDimensions, registryKeys } from "@/lib/hub/dimensions";
 import type { E2eCheck, E2eRun, E2eSettings, E2eStatus } from "@/lib/e2e";
 
 const HUB = "https://gemiq.globaledgemarkets.com";
@@ -76,7 +77,7 @@ export async function startQuick(key: string, origin: string) {
     method: "POST",
     headers: { "Content-Type": "application/json", Origin: origin },
     body: JSON.stringify({
-      email, assessment_key: key, score: 58, dimensions: {},
+      email, assessment_key: key, score: 58, dimensions: buildTestDimensions(key),
       metadata: { first_name: "GEM", last_name: "Test", company: "GEM E2E test", e2e_run_id: run.id },
     }),
   });
@@ -133,7 +134,7 @@ export async function checkRun(runId: string): Promise<E2eRun> {
   const add = (key: string, label: string, v: Pick<E2eCheck, "status" | "detail">) => checks.push({ key, label, ...v });
 
   const { data: sub } = await svc.from("submissions")
-    .select("id,score,tier,content_version,metadata,report_unlocked_override,submitted_at,hubspot_contact_id,hubspot_sync_error")
+    .select("id,score,tier,content_version,metadata,report_unlocked_override,submitted_at,hubspot_contact_id,hubspot_sync_error,score_check")
     .ilike("email", r.email).order("submitted_at", { ascending: false }).limit(1).maybeSingle();
 
   if (!sub) {
@@ -149,6 +150,12 @@ export async function checkRun(runId: string): Promise<E2eRun> {
     add("entitlement", "Covered by", wantTrial
       ? (ent === "trial" ? { status: "pass", detail: "Free trial" } : { status: "fail", detail: `Expected the free trial, got "${ent}"` })
       : { status: "pass", detail: ent });
+    const dc = (sub.score_check as { dimensions?: { dimension_keys_ok?: boolean; missing?: string[]; unknown?: string[] } } | null)?.dimensions;
+    add("dimension_keys", "Dimension keys match the registry", !registryKeys(r.assessment_key)
+      ? { status: "skip", detail: "Not applicable (no registry yet)" }
+      : !dc ? late("No dimension check recorded yet")
+      : dc.dimension_keys_ok ? { status: "pass", detail: "All registry keys present" }
+      : { status: "fail", detail: [dc.missing?.length ? `missing: ${dc.missing.join(", ")}` : "", dc.unknown?.length ? `unknown: ${dc.unknown.join(", ")}` : ""].filter(Boolean).join("; ") || "empty" });
     add("report_link", "Report link and lock", wantTrial && !locked
       ? { status: "fail", detail: "Trial report should be locked but isn't" }
       : { status: "pass", detail: `${HUB}/report/${sub.id} (${locked ? "locked" : "unlocked"})` });

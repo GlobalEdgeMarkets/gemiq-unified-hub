@@ -167,12 +167,15 @@ export const adminListApps = createServerFn({ method: "GET" })
     const { listApps, getGlobal } = await import("@/lib/hub/app-control.server");
     const manifest = (await import("@/lib/hub/manifest.json")).default;
     const [apps, global] = await Promise.all([listApps(), getGlobal()]);
-    const { checkDimensionKeys } = await import("@/lib/hub/dimensions");
+    const { checkDimensionKeys, pickLatestReal } = await import("@/lib/hub/dimensions");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const e2e = await import("@/lib/hub/e2e/e2e.server");
+    const base = (await e2e.getSettings()).base_email;
     const dimension_keys: Record<string, ReturnType<typeof checkDimensionKeys> | null> = {};
     await Promise.all(apps.map(async (a: { key: string }) => {
-      const { data: row } = await supabaseAdmin.from("submissions").select("dimensions")
-        .eq("assessment_key", a.key).order("submitted_at", { ascending: false }).limit(1).maybeSingle();
+      const { data: rows } = await supabaseAdmin.from("submissions").select("email,dimensions")
+        .eq("assessment_key", a.key).order("submitted_at", { ascending: false }).limit(25);
+      const row = pickLatestReal(rows ?? [], (em) => e2e.matchesTestPattern(em, base));
       dimension_keys[a.key] = row ? checkDimensionKeys(a.key, row.dimensions) : null;
     }));
     return { apps, global, manifest_version: manifest.version, dimension_keys };

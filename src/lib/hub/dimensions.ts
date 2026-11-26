@@ -56,3 +56,14 @@ export function rollupDimensions(results: { assessment_key: string; display_name
     .map(([key, e]) => ({ key, label: e.label, score: Math.round(e.total / e.count), sources: [...e.sources] }))
     .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label));
 }
+
+/** Realistic test dimensions: every registry key with a fixed 0–100 value; {} when the assessment has no registry. */
+export function buildTestDimensions(assessmentKey: string): Record<string, number> {
+  const reg = registryKeys(assessmentKey) ?? [];
+  return Object.fromEntries(reg.map((k, i) => [k, Math.min(100, 40 + 5 * i)]));
+}
+
+/** Health line: first (newest-first) row whose email isn't a test address; null when only test rows exist. */
+export function pickLatestReal<T extends { email: string | null }>(rowsNewestFirst: T[], isTest: (email: string) => boolean): T | null {
+  return rowsNewestFirst.find((r) => !isTest(r.email ?? "")) ?? null;
+}

@@ -197,9 +197,18 @@ function AdminConsole() {
     return (
       <Shell>
         <p className="text-muted-foreground">
-          {gate.email ?? "This account"} is not on the admin allowlist. Add the address to{" "}
-          <code className="rounded bg-muted px-1">ADMIN_EMAILS</code> to grant access.
+          This account doesn't have admin access.
+          {gate.email ? <> Signed in as {gate.email}.</> : null}
         </p>
+        <Button className="mt-4" onClick={async () => {
+          const back = window.location.href;
+          await fetch("/api/public/auth/session", {
+            method: "POST", credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "signout" }),
+          }).catch(() => {});
+          window.location.href = `/auth?redirect=${encodeURIComponent(back)}`;
+        }}>Sign out and switch account</Button>
       </Shell>
     );
   }

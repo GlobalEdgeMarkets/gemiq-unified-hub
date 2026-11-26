@@ -32,3 +32,24 @@ describe("dimension registry", () => {
     expect(out.filter((d) => d.label === "Market")).toHaveLength(2);
   });
 });
+
+import { buildTestDimensions, pickLatestReal } from "../src/lib/hub/dimensions";
+describe("test dimensions + health pick", () => {
+  for (const k of ["gtmiq", "salesiq", "productiq", "aitransformiq", "tariffiq"]) {
+    it(`${k} test map covers registry`, () => {
+      const d = buildTestDimensions(k);
+      expect(Object.keys(d).sort()).toEqual([...(manifest.dimensions.by_assessment as Record<string, string[]>)[k]!].sort());
+      expect(Object.values(d).every((v) => v >= 0 && v <= 100)).toBe(true);
+      expect(checkDimensionKeys(k, d).dimension_keys_ok).toBe(true);
+    });
+  }
+  it("uxiq stays empty", () => { expect(buildTestDimensions("uxiq")).toEqual({}); });
+  const isTest = (e: string) => e.includes("+gemtest-");
+  it("skips newest test row", () => {
+    expect(pickLatestReal([{ email: "a+gemtest-x@b.com" }, { email: "real@b.com" }], isTest)?.email).toBe("real@b.com");
+  });
+  it("only test rows -> no submissions yet", () => {
+    expect(pickLatestReal([{ email: "a+gemtest-x@b.com" }], isTest)).toBeNull();
+    expect(describeDimensionCheck(null)).toBe("no submissions yet");
+  });
+});

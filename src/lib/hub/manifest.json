@@ -1,7 +1,7 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.11.1",
-  "updated_at": "2026-11-05",
+  "version": "1.12.0",
+  "updated_at": "2026-11-26",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
     "docs_url": "https://gemiq.globaledgemarkets.com/docs",
@@ -211,6 +211,74 @@
     },
     "composite_rule": "weight = admin weight per live assessment (default 1, 0 excludes); combined score = weighted average of each completed live assessment's latest score, rounded; stage = highest combined tier with min <= score, shown only once completed >= min_for_tier; next = highest-weighted live assessment not yet completed",
     "methodology": "Optional content fields: methodology { summary, frameworks[], comparison, references[{ title, url? }] }, sections[].rationale and questions[].rationale (\"Why we ask this\"). Show them when present. Hub-wide methodology: /methodology.",
-    "scoring_rule": "question = chosen option points (0-100); section = weighted average of answered questions (question.weight); overall = weighted average of answered sections (section.weight), rounded; tier = highest tier with min <= overall"
+    "scoring_rule": "question = chosen option points (0-100); section = weighted average of answered questions (question.weight); overall = weighted average of answered sections (section.weight), rounded; tier = highest tier with min <= overall",
+    "crm_rule": "Only the Hub writes to HubSpot. Assessments send results to the Hub and never call HubSpot directly."
+  },
+  "dimensions": {
+    "spine": [
+      "technology",
+      "commercial",
+      "investment",
+      "operational",
+      "regulatory"
+    ],
+    "by_assessment": {
+      "gtmiq": [
+        "technology",
+        "market",
+        "commercial",
+        "operational",
+        "investment",
+        "integration",
+        "cultural",
+        "newmarket",
+        "regulatory"
+      ],
+      "salesiq": [
+        "technology",
+        "sales-process",
+        "procurement",
+        "commercial",
+        "investment",
+        "customer-success",
+        "regulatory",
+        "operational",
+        "integration-ecosystem"
+      ],
+      "productiq": [
+        "technology",
+        "packaging",
+        "documentation",
+        "scalability",
+        "commercial",
+        "investment",
+        "operational",
+        "regulatory",
+        "ux-selfservice"
+      ],
+      "aitransformiq": [
+        "ai-strategy",
+        "data-infrastructure",
+        "technology",
+        "ai-talent",
+        "ai-governance",
+        "commercial",
+        "investment",
+        "operational",
+        "regulatory"
+      ],
+      "tariffiq": [
+        "hts",
+        "fta",
+        "coo",
+        "drawback",
+        "valuation",
+        "supplyChain",
+        "governance",
+        "intelligence"
+      ],
+      "uxiq": []
+    },
+    "rules": "Keys are permanent machine IDs. Never join on display titles."
   }
 }

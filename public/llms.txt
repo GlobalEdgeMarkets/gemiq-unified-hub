@@ -54,3 +54,6 @@ Every GEM.IQ assessment scores each dimension on the same five tiers: reactive, 
 ## Assessment content (manifest 1.9.0)
 - Published questions, weights, tiers and tier recommendations per IQ: https://gemiq.globaledgemarkets.com/api/public/content/<key> (404 when the IQ still uses its built-in questions). Manifest `content[<key>]` gives the live version number.
 - Scoring rule: option points 0–100; section = weighted average of answered questions; overall = weighted average of sections, rounded; tier = highest tier whose min ≤ overall.
+
+## Dimension IDs (manifest v1.12.0)
+The Hub manifest `dimensions` block lists the permanent dimension keys per assessment and the cross-assessment `spine` (technology, commercial, investment, operational, regulatory). Keys are machine IDs; never join on display titles. Only the Hub writes to HubSpot; assessments send results to the Hub.

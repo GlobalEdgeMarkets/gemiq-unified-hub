@@ -100,6 +100,19 @@ export async function importFromApp(key: string, by: string) {
   return { sections: parsed.data.sections.length, questions: parsed.data.sections.reduce((n, s) => n + s.questions.length, 0) };
 }
 
+/** On submit (report-only): record dimension-key check nested under score_check.dimensions, merged with any existing value. */
+export async function checkDimensions(id: string, key: string, dimensions: unknown) {
+  try {
+    const { checkDimensionKeys } = await import("./dimensions");
+    const result = checkDimensionKeys(key, dimensions);
+    const { data: row } = await db().from("submissions").select("score_check").eq("id", id).maybeSingle();
+    const prev = (row?.score_check && typeof row.score_check === "object" && !Array.isArray(row.score_check)) ? row.score_check as Record<string, unknown> : {};
+    await db().from("submissions").update({ score_check: { ...prev, dimensions: result } as never }).eq("id", id);
+  } catch (e) {
+    console.error("[content] dimension check failed", e);
+  }
+}
+
 /** On submit: recompute the score from the content version the app used and record any mismatch. */
 export async function checkScore(id: string, key: string, version: number | null, reported: number | null, answers: unknown) {
   try {

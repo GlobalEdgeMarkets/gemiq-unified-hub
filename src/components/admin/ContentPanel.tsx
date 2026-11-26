@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { registryKeys } from "@/lib/hub/dimensions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -103,7 +104,7 @@ export function ContentPanel({ versions: getVersions, action }: { versions: Fn; 
       </div>
 
       {preview && body && <Preview body={body} />}
-      {body && !preview && <Editor body={body} edit={edit} />}
+      {body && !preview && <Editor body={body} edit={edit} assessmentKey={key} />}
 
       {mismatches.length > 0 && (
         <div className="rounded-2xl border border-destructive/40 bg-card/60 p-6">
@@ -138,7 +139,7 @@ export function ContentPanel({ versions: getVersions, action }: { versions: Fn; 
   );
 }
 
-function Editor({ body, edit }: { body: ContentBody; edit: (fn: (b: ContentBody) => void) => void }) {
+function Editor({ body, edit, assessmentKey: key }: { body: ContentBody; edit: (fn: (b: ContentBody) => void) => void; assessmentKey: string }) {
   return (
     <div className="grid gap-4">
       <div className="rounded-2xl border border-border bg-card/60 p-6">
@@ -163,7 +164,7 @@ function Editor({ body, edit }: { body: ContentBody; edit: (fn: (b: ContentBody)
       </div>
 
       {body.sections.map((s, si) => (
-        <SectionEditor key={si} s={s} si={si} edit={edit} total={body.sections.length} />
+        <SectionEditor key={si} s={s} si={si} edit={edit} total={body.sections.length} assessmentKey={key} />
       ))}
       <Button variant="outline" onClick={() => edit((b) => {
         const n = b.sections.length + 1;
@@ -191,8 +192,10 @@ function Editor({ body, edit }: { body: ContentBody; edit: (fn: (b: ContentBody)
   );
 }
 
-function SectionEditor({ s, si, edit, total }: { s: ContentSection; si: number; edit: (fn: (b: ContentBody) => void) => void; total: number }) {
+function SectionEditor({ s, si, edit, total, assessmentKey }: { s: ContentSection; si: number; edit: (fn: (b: ContentBody) => void) => void; total: number; assessmentKey: string }) {
   const [open, setOpen] = useState(si === 0);
+  const reg = registryKeys(assessmentKey);
+  const keyWarning = reg && !reg.includes(s.key) ? `Section key "${s.key}" is not in the dimension list for this assessment. Reports and benchmarks match on this key, so check it before publishing.` : null;
   return (
     <div className="rounded-2xl border border-border bg-card/60 p-6">
       <div className="flex flex-wrap items-end gap-3">
@@ -203,6 +206,7 @@ function SectionEditor({ s, si, edit, total }: { s: ContentSection; si: number; 
         <Button size="sm" variant="ghost" disabled={si === 0} onClick={() => edit((b) => { [b.sections[si - 1], b.sections[si]] = [b.sections[si], b.sections[si - 1]]; })}>Move up</Button>
         <Button size="sm" variant="ghost" disabled={total <= 1} onClick={() => edit((b) => { b.sections.splice(si, 1); })}>Remove</Button>
       </div>
+      {keyWarning && <p className="mt-2 text-xs text-destructive">{keyWarning}</p>}
       {open && (
         <div className="mt-4 grid gap-4">
           <Textarea rows={2} placeholder="Section description (optional)" value={s.description ?? ""} onChange={(e) => edit((b) => { b.sections[si].description = e.target.value; })} />

@@ -178,6 +178,14 @@ export interface HubManifest {
     composite_rule?: string;
     /** Optional methodology / "why we ask this" content fields (additive, 2026-10-05). */
     methodology?: string;
+    /** Only the Hub writes to the CRM (documentation, added in 1.12.0). */
+    crm_rule?: string;
+  };
+  /** Dimension ID registry, added in 1.12.0. Keys are permanent machine IDs; never join on titles. */
+  dimensions?: {
+    spine: string[];
+    by_assessment: Partial<Record<AssessmentKey, string[]>>;
+    rules: string;
   };
   /** Published Hub content version per IQ (null = none), added in 1.9.0. */
   content?: Record<AssessmentKey, number | null> | null;

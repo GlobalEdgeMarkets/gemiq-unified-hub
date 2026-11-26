@@ -1,4 +1,6 @@
-# GEM.IQ Playbook — v1.6.1
+# GEM.IQ Playbook — v1.7.0
+
+**Dimension IDs + CRM rule (2026-11-26, manifest v1.12.0):** manifest `dimensions` is the single source of dimension keys (`spine` = cross-IQ comparable keys; `by_assessment` = exact keys each IQ sends; UXIQ pending redesign). Keys are permanent machine IDs — never join on display titles. Submissions are checked report-only (`score_check.dimensions`). `contracts.crm_rule`: only the Hub writes to HubSpot; assessments send results to the Hub and never call HubSpot directly.
 
 **Address correction (2026-11-05, manifest v1.11.1):** UXIQ's canonical site is https://uxiq.globaledgemarkets.com; the former uxreadiness host is no longer a launch destination.
 

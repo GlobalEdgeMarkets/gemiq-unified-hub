@@ -157,7 +157,15 @@ export const adminListApps = createServerFn({ method: "GET" })
     const { listApps, getGlobal } = await import("@/lib/hub/app-control.server");
     const manifest = (await import("@/lib/hub/manifest.json")).default;
     const [apps, global] = await Promise.all([listApps(), getGlobal()]);
-    return { apps, global, manifest_version: manifest.version };
+    const { checkDimensionKeys } = await import("@/lib/hub/dimensions");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const dimension_keys: Record<string, ReturnType<typeof checkDimensionKeys> | null> = {};
+    await Promise.all(apps.map(async (a: { key: string }) => {
+      const { data: row } = await supabaseAdmin.from("submissions").select("dimensions")
+        .eq("assessment_key", a.key).order("submitted_at", { ascending: false }).limit(1).maybeSingle();
+      dimension_keys[a.key] = row ? checkDimensionKeys(a.key, row.dimensions) : null;
+    }));
+    return { apps, global, manifest_version: manifest.version, dimension_keys };
   });
 
 export const adminUpdateApp = createServerFn({ method: "POST" })

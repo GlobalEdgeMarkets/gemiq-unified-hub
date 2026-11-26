@@ -247,6 +247,8 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
         {
           const { checkScore } = await import("@/lib/hub/content.server");
           await checkScore(inserted.id, payload.assessment_key, payload.content_version ?? null, payload.score ?? null, payload.answers ?? null);
+          const { checkDimensions } = await import("@/lib/hub/content.server");
+          await checkDimensions(inserted.id, payload.assessment_key, payload.dimensions ?? null);
         }
 
         // Consume a one-time credit only when nothing else covered this run

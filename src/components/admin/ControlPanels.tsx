@@ -1,3 +1,4 @@
+import { describeDimensionCheck, type DimensionKeyCheck } from "@/lib/hub/dimensions";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,7 +63,7 @@ export function ControlPanels(props: {
   show?: "settings" | "onboarding";
 }) {
   const show = props.show ?? "settings";
-  const [data, setData] = useState<{ apps: App[]; global: Global | null; manifest_version: string } | null>(null);
+  const [data, setData] = useState<{ apps: App[]; global: Global | null; manifest_version: string; dimension_keys?: Record<string, DimensionKeyCheck | null> } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const reload = useCallback(async () => {
     try { setData((await props.listApps()) as never); setError(null); }
@@ -155,7 +156,7 @@ function AppControlRow({ app, updateApp, reload }: { app: App; updateApp: Fn; re
 }
 
 function HealthPanel({ data, checkHealth, reload }: {
-  data: { apps: App[]; manifest_version: string }; checkHealth: Fn; reload: () => Promise<void>;
+  data: { apps: App[]; manifest_version: string; dimension_keys?: Record<string, DimensionKeyCheck | null> }; checkHealth: Fn; reload: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
@@ -190,6 +191,7 @@ function HealthPanel({ data, checkHealth, reload }: {
                   {open === `c:${a.key}` ? "Hide content prompt" : "Content prompt"}
                 </Button>
               </div>
+              <p className="mt-1 pl-8 text-xs text-muted-foreground">Dimension keys: {describeDimensionCheck(data.dimension_keys?.[a.key] ?? null)}</p>
               {open === `c:${a.key}` && (
                 <div className="mt-3">
                   <p className="mb-2 text-sm text-muted-foreground">Paste this into {a.name} so its questions, weights and tiers come from the Content tab, then publish it.</p>

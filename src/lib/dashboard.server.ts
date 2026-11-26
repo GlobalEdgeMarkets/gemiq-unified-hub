@@ -277,26 +277,9 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
   const comp = computeComposite(results, liveKeys, compCfg);
   const nameOf = (k: string) => REGISTRY_BY_KEY[k]?.displayName ?? prettify(k);
 
-  // Roll every IQ's dimensions up into one cross-discipline capability profile.
-  const rollup = new Map<string, { label: string; total: number; count: number; sources: Set<string> }>();
-  for (const r of results) {
-    for (const d of r.dimensions) {
-      const key = d.label.toLowerCase();
-      const entry = rollup.get(key) ?? { label: d.label, total: 0, count: 0, sources: new Set<string>() };
-      entry.total += d.score;
-      entry.count += 1;
-      entry.sources.add(r.display_name);
-      rollup.set(key, entry);
-    }
-  }
-  const compositeDims: CompositeDimension[] = [...rollup.entries()]
-    .map(([key, e]) => ({
-      key,
-      label: e.label,
-      score: Math.round(e.total / e.count),
-      sources: [...e.sources],
-    }))
-    .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label));
+  // Roll dimensions up by key; only manifest spine keys merge across IQs (never by title).
+  const { rollupDimensions } = await import("@/lib/hub/dimensions");
+  const compositeDims: CompositeDimension[] = rollupDimensions(results);
 
   const composite: DashboardComposite = {
     score: comp.score,

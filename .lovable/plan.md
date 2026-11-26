@@ -1,75 +1,46 @@
-# TariffIQ in HubSpot: one field set (gem_tariff_*), written by the Hub
+# Fix the HubSpot retry job
 
-Only the existing `gem_tariff_*` fields are used. No `tariffiq_*` fields, no second mapping, no field names changed.
+## What I found (evidence)
 
-## 1. Skip-empty rule (all assessments)
+- **Schedule exists and is on.** A database scheduled job `gemiq_hubspot_retry_worker` runs every 5 minutes (active = true). It posts to the stable published address `project--d4b3f62b-…lovable.app/api/public/jobs/retry-hubspot`. 288 runs in the last 24 h, last at 17:55 UTC today, all marked "succeeded".
+- **Every call is rejected.** The last 5 recorded responses from the app are all `403 forbidden`. "Succeeded" only means the request was sent, not that the app accepted it.
+- **Root cause:** the job reads the password header from the database's own secret store (`JOB_SECRET` in the vault), but **that vault entry does not exist** (count = 0). The header goes out empty, the app's check `secret === process.env.JOB_SECRET` fails, and it returns 403 before touching the queue. That is why attempts stay at 0, last_error stays null and next_attempt_at never moves. The app-side `JOB_SECRET` is set, so only the database copy is missing.
+- **Admin "Retry now":** nothing exists today. The admin server functions cover bootstrap/import/reset, not retries.
 
-**What happens today:** the HubSpot update sends `null` as a real value, so HubSpot clears the field. Missing values are only dropped when they are `undefined`.
-- **TariffIQ:** every detail field, PDF link and dimension is `null` when missing. Score can be `null` too. An empty dimension map clears all 8 dimension fields.
-- **GTMIQ, SalesIQ, ProductIQ, AITransformIQ (shared builder):** same risk. Segment, industry, top priorities, status, resume token, PDF link and every dimension are `null` when missing.
-- **UXIQ (and the retired TechServicesIQ):** dimensions already skip empty values, but score and tier can still be `null`.
+## Plan
 
-**Fix:** one shared `dropEmpty()` step runs on each assessment's output inside `buildContactProperties`. It removes values that are `null`, `undefined`, `""`, empty arrays, or a number that isn't valid. It's applied once in one place, so every current and future assessment is covered. Field names and the values that do get sent are unchanged.
+1. **Smallest fix (manual step, see below):** put the same `JOB_SECRET` value into the database vault so the existing schedule's header matches. No schedule or migration change. Alternative if Alex can't recover the value: generate a new one and set it in both places.
+2. **Share the retry logic.** Move the handler body into `runHubspotRetry()` in a new server module so both the scheduled job and the Admin button call the same code. The public route keeps its secret check unchanged.
+3. **Rebuild properties from the submission.** For each job with a `submission_id`, rebuild the HubSpot properties from the stored submission with the current mapping (`buildContactProperties` → `dropEmpty` + trial/locked link gate), the way submit does now. To do that, pull the "build properties for a submission" steps out of `submit.ts` (history, composite, entitlement, report lock) into one shared function used by both, so they can't drift apart. Fallback: if the submission is missing or the rebuild fails, send the stored payload after `dropEmpty` and the link gate (locked → no report link). Also pass `{ label: "GEM.IQ", detail }` and record skipped fields, matching submit.
+4. **Admin "Retry now" button** next to "HubSpot retries: N pending, N failed permanently" on the Control status card. An admin-only server function (`requireHubAdmin`) runs `runHubspotRetry()` in-process, with no JOB_SECRET in the browser. It shows a plain-language result ("2 sent, 0 re-queued, 0 failed permanently") and refreshes the counts. Retry timing and limits stay the same.
+5. **Other jobs on the same trigger (list only, not fixed):**
+   - Daily cleanup of old end-to-end test contacts (`maybeDailyCleanup`) runs inside this same handler, so it has also been blocked by the 403. It starts working again once step 1 is done.
+   - No other scheduled jobs exist in the database (only job 1). The admin endpoints that use `JOB_SECRET` (migrate-readinessiq, import-legacy-users/submissions, bootstrap-hubspot-schema) are run by hand, not on a schedule.
+6. **Tests** (`tests/hubspot-retry.test.ts`, with HubSpot and the database mocked):
+   - Rebuild path: properties come from the current mapping, empty values are dropped, trial/locked hides the report link.
+   - Fallback path: a stored payload with empty strings and an ungated link gets cleaned before sending.
+   - Success marks the job done and updates the submission. A failure increments attempts with the same backoff, and the job goes dead at max_attempts.
+   - Secret check: the route returns 403 without the secret or with the wrong one.
 
-Out of scope: the shared `gem_*` summary fields, as you instructed. Note that `gem_composite_tier` and `gem_next_assessment` can deliberately send `""` today, which clears them. They're left exactly as they are.
+No retry is run against HubSpot during planning or while testing. The first real run happens after Alex's step or when he clicks "Retry now".
 
-## 2. Trial gate for links
+## Files I would touch
 
-The TariffIQ link fields `gem_tariff_pdf_report`, `gem_tariff_pdf_recommendations` and `gem_tariff_pdf_answers` are left out when:
-- the result's entitlement is `trial` (already stored on each submission as `metadata.entitlement`), or
-- the report is locked for the submission being sent (the same `report_locked` value already sent as `gem_report_locked`).
+- `src/routes/api/public/jobs/retry-hubspot.ts`: becomes a thin wrapper (secret check + `runHubspotRetry`)
+- `src/lib/hub/hubspot-retry.server.ts` (new): shared retry runner
+- `src/lib/hub/submission-properties.server.ts` (new): shared property builder pulled out of submit
+- `src/routes/api/public/submissions/submit.ts`: uses the shared builder (same output)
+- `src/lib/admin.functions.ts`: `adminRetryHubspotNow`
+- The Control status card component next to the retry line (the one that reads `status.server.ts`): "Retry now" button
+- `tests/hubspot-retry.test.ts` (new)
+- `AGENTS.md`: one rule saying retries rebuild from the submission through the shared builder
+- `roadmap.md`
 
-Scores, tier, detail and dimensions still go. Because the fields are left out rather than blanked, a link from an earlier paid result stays in HubSpot. The same gate applies to the shared builder's `gem_<iq>_pdf_report` for consistency. That's a one-line rule in the same place, with no name changes.
+Note: this touches `src/lib/hub/**` and `src/routes/api/**`, which are scope-fenced. Approving this plan counts as explicit permission for these files only.
 
-## 3. Which links the link fields read
+## Manual step for Alex
 
-Recommended: **prefer the new `metadata` links and fall back to `detail.pdfUrls`**, so older results keep working:
-- `gem_tariff_pdf_report` comes from `metadata.report_url`, else `detail.pdfUrls.report`.
-- `gem_tariff_pdf_recommendations` comes from `metadata.recommendation_report_url`, else `detail.pdfUrls.recommendations`.
-- `gem_tariff_pdf_answers` comes from `metadata.answers_document_url`, else `detail.pdfUrls.answers`.
+- **Add `JOB_SECRET` to the database vault with the same value the app uses.** Saved secrets can't be read back, so the practical path is: open Project Settings → Secrets, generate a new `JOB_SECRET` value and copy it before saving. Then let me store that same value in the vault. I'll do that through a one-off database statement after approval, with Alex pasting the value into a secure form, never into chat. After that, the next 5-minute run should return 200, and I'll confirm it from the response log.
+- Publishing is not needed for step 1. The button and the rebuild logic need a Hub publish to reach the live site.
 
-**Results link:** no existing `gem_tariff_*` field covers `metadata.results_url`. `gem_report_url` is the Hub's own report page, which is a different link that workflows already use, so I won't reuse it. **Not sent** unless you approve a new property.
-- Listed for approval only: `gem_tariff_results_url` (text, "GEM TariffIQ Results Link"). It would be created through the existing Admin "set up HubSpot fields" button, not by me directly. If you say no, the results link simply isn't sent.
-
-To make this work, each submission's stored `metadata` (and entitlement) is passed into the mapping step. Today the mapping only sees detail and dimensions.
-
-## 4. Tests (`tests/hubspot-tariffiq-mapping.test.ts`)
-
-- **Full paid payload:** exact `gem_tariff_*` values, with links taken from `metadata`, and no `null` or `""` anywhere.
-- **Empty dimensions `{}`:** none of the 8 `gem_tariff_*` dimension fields are present, and the other fields are still present.
-- **Trial:** no `gem_tariff_pdf_*` fields, and score, tier, detail and dimensions are present. Locked-report case: same result.
-- **Missing detail:** no detail-derived fields, and no nulls.
-- **Older result with only `detail.pdfUrls`:** links fall back correctly.
-- **One shared-builder case (e.g. GTMIQ) with missing detail:** no nulls.
-- **Unchanged parts:** `gem_*` fields are unchanged and there are no `hs_analytics_source*` fields.
-
-## 5. Optional: retry counts on the admin status card
-
-Admin → Control status card adds "HubSpot retries: N pending, N failed permanently", read from the existing retry queue. Retries already happen automatically, and each failure is already shown on the submission. This only adds the totals.
-
-## Files touched
-
-- `src/lib/hub/assessments/index.ts`: `dropEmpty()` on each assessment's output, plus the trial or locked link gate.
-- `src/lib/hub/assessments/types.ts`: optional `metadata` and `entitlement` on the mapping input.
-- `src/lib/hub/assessments/tariffiq.ts`: the 3 PDF fields prefer `metadata` links, and the `_results_url` field is added only if approved.
-- `src/lib/hub/assessments/readiness-family.ts`: nothing, unless approved (the gate lives in `index.ts`).
-- `src/routes/api/public/submissions/submit.ts`: pass `metadata` and `entitlement` for history and current, and pass `report_locked` into the gate.
-- `src/lib/hub/admin/legacy-submissions.server.ts`: pass the same values when re-syncing older results.
-- `src/lib/hub/admin/status.server.ts` and its admin card: retry counts (optional, item 5).
-- `tests/hubspot-tariffiq-mapping.test.ts` (new).
-- `src/lib/hub/AGENTS.md`: a one-line rule that HubSpot mapping never sends empty values and that trial or locked results never send links.
-- `PLAYBOOK.md`: note that TariffIQ's HubSpot fields are owned by the Hub.
-
-These are inside the protected Hub paths. This request explicitly targets that area.
-
-## Field-map refactor
-
-Not done. Replacing the per-assessment mapping code would touch every assessment for no behaviour gain. The current structure stays.
-
-## Conflicts and open points
-
-1. **HubSpot field check not done.** Both the linked HubSpot connection ("refresh token expired") and my read-only tools failed to authenticate, so I haven't confirmed the `gem_tariff_*` fields exist or what type they are. Unknown fields are already dropped automatically and recorded on the submission, so nothing breaks. The first build step is a read-only check from the running Hub, and I'll report the result.
-2. **Dropdown values.** `gem_tariff_role` and `gem_tariff_import_spend` are dropdowns. If TariffIQ sends a value outside their options, HubSpot rejects the whole update, and it's retried until it fails permanently. This already happens today and isn't changed here. I'll flag it if the check shows a mismatch.
-3. **Separator.** `gem_tariff_top_priorities` keeps its current "; " separator, and field contents aren't changed.
-
-Not touched: HubSpot fields (except the optional one listed above), workflows, emails, migrations, Stripe, IQ projects and the manifest.
+No migrations, no HubSpot property, workflow or email changes, no Stripe or IQ changes.

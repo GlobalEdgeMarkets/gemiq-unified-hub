@@ -111,7 +111,10 @@ export function buildContactProperties(args: {
   for (const [key, sub] of latestByKey) {
     const spec = REGISTRY_BY_KEY[key];
     if (!spec) continue; // unknown assessment key; skip mapping
-    Object.assign(props, spec.toContactProperties(sub));
+    const locked = sub === args.current || (sub.assessment_key === args.current.assessment_key && sub.submitted_at === args.current.submitted_at)
+      ? !!args.workflow?.report_locked
+      : false;
+    Object.assign(props, gateLinks(dropEmpty(spec.toContactProperties(sub)), sub, locked));
   }
 
   // Rollup
@@ -146,4 +149,31 @@ export function buildContactProperties(args: {
   }
 
   return props;
+}
+
+/**
+ * Never send an empty value to HubSpot: null/""/empty arrays/NaN would blank
+ * whatever the contact already has. Missing data is simply left out.
+ */
+export function dropEmpty(p: HubSpotPropertyValues): HubSpotPropertyValues {
+  const out: HubSpotPropertyValues = {};
+  for (const [k, v] of Object.entries(p)) {
+    if (v == null) continue;
+    if (typeof v === "string" && v.trim() === "") continue;
+    if (typeof v === "number" && !Number.isFinite(v)) continue;
+    out[k] = v;
+  }
+  return out;
+}
+
+/** Report/PDF link fields (per-IQ `*_pdf_*`). */
+const LINK_FIELD = /_pdf_/;
+
+/** Trial or locked results never send report links; scores and detail still go. */
+export function gateLinks(p: HubSpotPropertyValues, sub: SubmissionForMapping, locked: boolean): HubSpotPropertyValues {
+  const trial = (sub.metadata as { entitlement?: unknown } | null | undefined)?.entitlement === "trial";
+  if (!trial && !locked) return p;
+  const out: HubSpotPropertyValues = {};
+  for (const [k, v] of Object.entries(p)) if (!LINK_FIELD.test(k)) out[k] = v;
+  return out;
 }

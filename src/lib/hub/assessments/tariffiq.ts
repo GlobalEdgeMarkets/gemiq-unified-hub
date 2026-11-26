@@ -85,6 +85,8 @@ export const tariffiq: AssessmentSpec = {
     const d = (s.detail ?? {}) as Record<string, unknown>;
     const dims = (s.dimensions ?? {}) as Record<string, unknown>;
     const pdfs = (d.pdfUrls ?? {}) as Record<string, unknown>;
+    // Paid links in metadata (newer TariffIQ) win; detail.pdfUrls is the fallback.
+    const m = (s.metadata ?? {}) as Record<string, unknown>;
 
     const out: Record<string, string | number | null | undefined> = {
       [`${prefix}_score`]:        s.score,
@@ -102,9 +104,9 @@ export const tariffiq: AssessmentSpec = {
       [`${prefix}_assessment_status`]: asString(d.assessmentStatus),
       [`${prefix}_resume_token`]:      asString(d.resumeToken),
 
-      [`${prefix}_pdf_report`]:          asString(pdfs.report),
-      [`${prefix}_pdf_recommendations`]: asString(pdfs.recommendations),
-      [`${prefix}_pdf_answers`]:         asString(pdfs.answers),
+      [`${prefix}_pdf_report`]:          asString(m.report_url) ?? asString(pdfs.report),
+      [`${prefix}_pdf_recommendations`]: asString(m.recommendation_report_url) ?? asString(pdfs.recommendations),
+      [`${prefix}_pdf_answers`]:         asString(m.answers_document_url) ?? asString(pdfs.answers),
     };
 
     for (const k of DIMENSION_KEYS) {
@@ -129,7 +131,7 @@ function labelForDimension(k: string): string {
 }
 
 function asString(v: unknown): string | null {
-  if (v == null) return null;
+  if (v == null || v === "") return null;
   return typeof v === "string" ? v : String(v);
 }
 

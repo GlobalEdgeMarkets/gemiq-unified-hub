@@ -280,6 +280,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           tier: r.tier ?? null,
           dimensions: (r.dimensions as Record<string, unknown> | null) ?? null,
           detail: ((r.metadata as any)?.detail as Record<string, unknown> | null) ?? null,
+          metadata: (r.metadata as Record<string, unknown> | null) ?? null,
           submitted_at: r.submitted_at,
         }));
 
@@ -291,6 +292,7 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           dimensions: payload.dimensions ?? null,
           detail: payload.detail ?? null,
           submitted_at: inserted.submitted_at,
+          metadata: mergedMetadata as Record<string, unknown>,
         };
 
         let composite: { score: number | null; tier: string | null; next: string | null } | undefined;

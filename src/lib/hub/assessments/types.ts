@@ -39,6 +39,8 @@ export interface SubmissionForMapping {
   dimensions: Record<string, unknown> | null;
   detail: Record<string, unknown> | null;
   submitted_at: string; // ISO
+  /** Stored submission metadata (paid report links, entitlement). Optional. */
+  metadata?: Record<string, unknown> | null;
 }
 
 export type HubSpotPropertyValues = Record<

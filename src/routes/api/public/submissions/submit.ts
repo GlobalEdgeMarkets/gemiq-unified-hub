@@ -3,7 +3,7 @@ import { createHubSupabaseSSR, createHubServiceClient, selectCurrentSubscription
 import { SubmissionPayloadSchema } from "@/lib/hub/schemas";
 import { upsertContactByEmail, createLeadForContact, classifyLead } from "@/lib/hub/hubspot";
 import { isReportLocked } from "@/lib/report-settings";
-import { buildContactProperties, REGISTRY_BY_KEY } from "@/lib/hub/assessments";
+import { REGISTRY_BY_KEY } from "@/lib/hub/assessments";
 import type { SubmissionForMapping } from "@/lib/hub/assessments/types";
 import { json, corsHeaders } from "@/lib/hub/http";
 import { captureServer, sourceFromRequest } from "@/lib/analytics.server";
@@ -266,24 +266,6 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
         }
 
 
-        // Load full history for this email so HubSpot props reflect the whole profile.
-        const { data: historyRows } = await svc
-          .from("submissions")
-          .select("assessment_key,score,tier,dimensions,metadata,submitted_at")
-          .eq("email", email)
-          .order("submitted_at", { ascending: false });
-
-        const history: SubmissionForMapping[] = (historyRows ?? []).map(r => ({
-          email,
-          assessment_key: r.assessment_key,
-          score: (r.score as number | null) ?? null,
-          tier: r.tier ?? null,
-          dimensions: (r.dimensions as Record<string, unknown> | null) ?? null,
-          detail: ((r.metadata as any)?.detail as Record<string, unknown> | null) ?? null,
-          metadata: (r.metadata as Record<string, unknown> | null) ?? null,
-          submitted_at: r.submitted_at,
-        }));
-
         const current: SubmissionForMapping = {
           email,
           assessment_key: payload.assessment_key,
@@ -295,21 +277,9 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           metadata: mergedMetadata as Record<string, unknown>,
         };
 
-        let composite: { score: number | null; tier: string | null; next: string | null } | undefined;
-        try {
-          const { computeComposite } = await import("@/lib/composite");
-          const { getCompositeConfig } = await import("@/lib/hub/composite.server");
-          const { LIVE_REGISTRY } = await import("@/lib/hub/assessments");
-          const seen = new Set<string>();
-          const latest = history.filter((h) => !seen.has(h.assessment_key) && seen.add(h.assessment_key));
-          const c = computeComposite(latest, LIVE_REGISTRY.map((x) => x.key), (await getCompositeConfig()).settings);
-          composite = { score: c.score, tier: c.tier, next: c.next };
-        } catch (e) { console.error("[submit] composite failed", e); }
-
-        const props = buildContactProperties({
-          composite,
+        const { buildSubmissionProperties } = await import("@/lib/hub/submission-properties.server");
+        const props = await buildSubmissionProperties(svc, {
           email,
-          history,
           current,
           contact: {
             first_name: (payload.metadata?.first_name as string | undefined),

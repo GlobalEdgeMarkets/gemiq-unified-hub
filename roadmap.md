@@ -35,3 +35,7 @@
 
 ## Dimension ID registry (manifest 1.12.0)
 - [x] Manifest dimensions + crm_rule, report-only submit check, Admin health line, editor warning, key/spine roll-up, tests, docs
+
+## HubSpot retry job
+- [x] Shared retry runner, rebuild from submission, Admin "Retry now", tests
+- [ ] Store JOB_SECRET in the database vault so the 5-minute schedule stops getting 403 (blocked: needs Alex to re-enter the secret value)

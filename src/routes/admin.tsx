@@ -8,6 +8,7 @@ import {
   adminImportLegacyUser,
   adminDeleteUser,
   adminRegistryStatus,
+  adminRetryHubspotNow,
   adminPostHogAudit,
   adminListApps,
   adminUpdateApp,
@@ -122,6 +123,7 @@ function AdminConsole() {
   const importUser = useServerFn(adminImportLegacyUser);
   const deleteUser = useServerFn(adminDeleteUser);
   const registryStatus = useServerFn(adminRegistryStatus);
+  const retryHubspot = useServerFn(adminRetryHubspotNow);
   const overview = useServerFn(adminOverview);
   const personLookup = useServerFn(adminPersonLookup);
   const search = Route.useSearch();
@@ -218,7 +220,7 @@ function AdminConsole() {
             saveSettings={e2eSave as unknown as React.ComponentProps<typeof TestsPanel>["saveSettings"]}
           /></>;
       case "tracking": return <><PageIntro title="Tracking" text="Check that every site sends its key events to PostHog." /><PostHogAuditCard run={phAudit} /></>;
-      case "system": return <><PageIntro title="HubSpot & system" text="One-off setup and checks. Safe to run any time." /><div className="grid gap-6"><BootstrapCard run={bootstrap} /><RegistryCard run={registryStatus} /><ImportUsersCard run={importUser} /></div></>;
+      case "system": return <><PageIntro title="HubSpot & system" text="One-off setup and checks. Safe to run any time." /><div className="grid gap-6"><BootstrapCard run={bootstrap} /><RegistryCard run={registryStatus} retry={retryHubspot} /><ImportUsersCard run={importUser} /></div></>;
       case "danger": return <><PageIntro title="Danger zone" text="Permanent actions. Each one asks you to confirm first." /><div className="grid gap-6 rounded-2xl border border-destructive/40 p-4"><DeleteUserCard key={deleteEmail} run={deleteUser} initial={deleteEmail} /><ResetCard preview={resetPreview} batch={resetBatch} finish={resetFinish} /></div></>;
       default: return <><PageIntro title="Overview" text="Is anything wrong today? Start here." /><AdminOverview load={overview} checkHealth={checkHealth as never} quickTest={e2eAction as never} go={go} /></>;
     }
@@ -453,8 +455,10 @@ function ImportUsersCard({ run }: { run: (a: { data: unknown }) => Promise<unkno
 }
 
 
-function RegistryCard({ run }: { run: () => Promise<unknown> }) {
+function RegistryCard({ run, retry }: { run: () => Promise<unknown>; retry: () => Promise<unknown> }) {
   const a = useAction(run as never);
+  const r = useAction((async () => { const out = await retry(); a.run(); return out; }) as never);
+  const retryText = (r.result as { text?: string } | undefined)?.text;
   useEffect(() => { a.run(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
   const data = a.result as {
     manifest_version?: string;
@@ -477,9 +481,15 @@ function RegistryCard({ run }: { run: () => Promise<unknown> }) {
             {data.manifest_updated_at ? ` · updated ${data.manifest_updated_at}` : null}
           </p>
           {data.hubspot_retries ? (
-            <p className={`mt-1 text-sm ${data.hubspot_retries.dead ? "text-destructive" : "text-muted-foreground"}`}>
-              {data.hubspot_retries.text}
-            </p>
+            <div className="mt-1 flex flex-wrap items-center gap-3">
+              <p className={`text-sm ${data.hubspot_retries.dead ? "text-destructive" : "text-muted-foreground"}`}>
+                {data.hubspot_retries.text}
+              </p>
+              <Button size="sm" variant="outline" onClick={() => r.run()} disabled={r.loading}>
+                {r.loading ? "Retrying…" : "Retry now"}
+              </Button>
+              {retryText ? <span className="text-sm text-muted-foreground">{retryText}</span> : null}
+            </div>
           ) : null}
           <table className="mt-3 w-full text-left text-sm">
             <thead className="text-muted-foreground">

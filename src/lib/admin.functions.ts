@@ -65,6 +65,16 @@ export const adminRegistryStatus = createServerFn({ method: "GET" })
     return getRegistryStatus();
   });
 
+export const adminRetryHubspotNow = createServerFn({ method: "POST" })
+  .middleware([requireHubAdmin])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("@/lib/hub/admin/guard.server");
+    assertAdmin({ email: context.hubAdmin.email });
+    const { runHubspotRetry, formatRetryResult } = await import("@/lib/hub/hubspot-retry.server");
+    const r = await runHubspotRetry();
+    return { ...r, text: formatRetryResult(r) };
+  });
+
 export const adminPreflight = createServerFn({ method: "POST" })
   .middleware([requireHubAdmin])
   .handler(async ({ context }) => {

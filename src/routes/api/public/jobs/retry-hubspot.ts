@@ -1,76 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createHubServiceClient } from "@/lib/hub/supabase-server";
-import { upsertContactByEmail, createLeadForContact, classifyLead } from "@/lib/hub/hubspot";
-import { REGISTRY_BY_KEY } from "@/lib/hub/assessments";
 import { json } from "@/lib/hub/http";
 
-function authorized(req: Request) {
-  const secret = req.headers.get("x-job-secret") ?? new URL(req.url).searchParams.get("secret");
-  return !!secret && secret === process.env.JOB_SECRET;
+export function authorizedJob(req: Request, secret = process.env.JOB_SECRET): boolean {
+  const given = req.headers.get("x-job-secret") ?? new URL(req.url).searchParams.get("secret");
+  return !!secret && !!given && given === secret;
 }
 
 export const Route = createFileRoute("/api/public/jobs/retry-hubspot")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!authorized(request)) return new Response("forbidden", { status: 403 });
-        const svc = createHubServiceClient();
-        const nowIso = new Date().toISOString();
-        const { data: jobs } = await svc
-          .from("retry_queue")
-          .select("*")
-          .eq("status", "pending")
-          .eq("job_type", "hubspot_upsert")
-          .lte("next_attempt_at", nowIso)
-          .order("next_attempt_at", { ascending: true })
-          .limit(25);
+        if (!authorizedJob(request)) return new Response("forbidden", { status: 403 });
         // Once a day: remove old end-to-end test contacts (test addresses only).
         await import("@/lib/hub/e2e/e2e.server")
           .then((m) => m.maybeDailyCleanup())
           .catch((e) => console.error("[retry] e2e cleanup failed", e));
-        if (!jobs?.length) return json({ processed: 0 }, undefined, request);
-
-        let ok = 0, dead = 0, requeued = 0;
-        for (const j of jobs) {
-          const payload = j.payload as { email: string; properties: Record<string, any> };
-          try {
-            const { id: hsId } = await upsertContactByEmail(payload.email, payload.properties);
-            await svc.from("retry_queue").update({ status: "done", attempts: j.attempts + 1 }).eq("id", j.id);
-            if (j.submission_id) {
-              await svc.from("submissions").update({
-                hubspot_contact_id: hsId,
-                hubspot_synced_at: new Date().toISOString(),
-                hubspot_sync_error: null,
-              }).eq("id", j.submission_id);
-            }
-            // Best-effort lead creation on retry success too.
-            const p = payload.properties;
-            const assessmentKey = (p.gem_last_assessment as string) ?? (p.gem_assessment_tool as string) ?? "";
-            const score = typeof p.gem_last_score === "number" ? p.gem_last_score : (typeof p.gem_assessment_score === "number" ? p.gem_assessment_score : null);
-            const contactName = `${p.firstname ?? ""} ${p.lastname ?? ""}`.trim() || payload.email;
-            const assessmentLabel = REGISTRY_BY_KEY[assessmentKey]?.displayName ?? assessmentKey ?? "GEM.IQ";
-            await createLeadForContact({
-              contactId: hsId, contactName, assessmentLabel, score,
-              temperature: classifyLead(score),
-            }).catch(e => console.error("[retry] createLead error", e));
-            ok++;
-          } catch (e: any) {
-            const attempts = j.attempts + 1;
-            if (attempts >= j.max_attempts) {
-              await svc.from("retry_queue").update({ status: "dead", attempts, last_error: e.message }).eq("id", j.id);
-              dead++;
-            } else {
-              const backoffMin = Math.min(60 * 24, Math.pow(2, attempts)); // cap 1 day
-              await svc.from("retry_queue").update({
-                attempts,
-                last_error: e.message,
-                next_attempt_at: new Date(Date.now() + backoffMin * 60_000).toISOString(),
-              }).eq("id", j.id);
-              requeued++;
-            }
-          }
-        }
-        return json({ processed: jobs.length, ok, dead, requeued }, undefined, request);
+        const { runHubspotRetry } = await import("@/lib/hub/hubspot-retry.server");
+        return json(await runHubspotRetry(), undefined, request);
       },
     },
   },

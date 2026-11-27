@@ -1,141 +1,88 @@
-# Hub fixes from Alex's ProductIQ test (corpcross@gmail.com)
+# Plan: customer report links in HubSpot and the "report ready" email
 
-Five separate pieces of work. Each can be approved and built on its own. Nothing has been changed yet.
+Goal: the report link a customer gets from HubSpot emails and from Admin's Resend is the same report their dashboard opens. That link comes from the shared rule in `src/lib/customer-report.ts`. No new HubSpot fields, no renames, same gating.
 
-## What I found (checked in the code today)
+Note: this touches parts of the Hub we normally leave alone (`src/lib/hub/**`, `src/routes/api/**`). Approving this plan counts as the go-ahead for the files listed below and nothing else.
 
-- The manifest publishes `deep_links.portal = /account`. The Hub has no `/account` page, so that link gives a 404.
-- The Hub already has a Stripe "manage billing" action, but it's a button action, not a page you can link to.
-- The trial links the manifest publishes use `plan=monthly`, `plan=quarterly` and `plan=annual`. The sign-in page only knows `growth`, `complete` and `complete_annual`. So those plan names can't pick a price.
-- For a signed-in person who is already on a trial, a `trial=1` link is treated as "asking for a second trial", so it sends them to the dashboard.
-- Sign-in and sign-up both carry the return address in `?redirect=`. But when a return address is there, the sign-in page skips checkout entirely ("the IQ handles its own checkout").
-- Sign-up sends no return address in the confirmation email, so confirming lands on the Hub's default page. And after "check your email", the return address is dropped from the screen.
-- The return-address check currently accepts any `*.globaledgemarkets.com` address and any `*.lovable.app` address. That's wider than "registered IQ sites only".
-- The profile feed (`/api/public/profile`) already returns first name, last name, full name, email, company, title, role and industry. IQs can update it too. Sign-up only collects first name, last name and company.
-- The dashboard "Start <IQ>" buttons use each IQ's `url` from the manifest. That's the IQ's home page. The app registry (`hub_iq_apps`) has a `site_url` but no "start assessment" address.
+## a. Every place gem_report_url is set, and what changes
 
-## 1. "Open Hub dashboard" 404 — do first
+| Place | Today | Change |
+|---|---|---|
+| First submit (`submit.ts`, the HubSpot write) | Hub `/report/<id>` | Use the customer-report rule (report mode for that assessment plus the result's stored link) |
+| Retry queue, rebuilt from the stored result (`submission-properties.server.ts`, `rebuildForSubmission`) | Hub `/report/<id>` | Same rule, so retries send the new link |
+| Retry queue, old stored-payload fallback (`cleanStoredProperties`) | Replays whatever link was stored | No change. It's only used when the result can't be rebuilt. Gating stays. |
+| Upgrade / unlock (Stripe conversion, Admin Unlock) | **Doesn't write HubSpot at all** | No change in this item. Flagged below. |
+| Older-results import (`legacy-submissions.server.ts`) | Doesn't set gem_report_url | No change |
+| Bootstrap (`hubspot-bootstrap.server.ts`) | Only defines the field | No change |
+| Reset (`reset-reports.server.ts`) | Clears the field | No change |
+| Submit reply to the IQ (`report_url` in the response, history list) | Hub `/report/<id>` | **No change.** IQs in "hub" mode depend on it, and it isn't a customer email. |
+| e2e test check "HubSpot: report link" (`e2e.server.ts`) | Expects the link to contain the Hub result id | Expect the link to equal the customer-report rule's answer for that result. The "Report link and lock" detail line shows the same link. |
 
-- **Answer:** "portal" was meant as the person's Hub home (dashboard), not Stripe. The sign-in page and docs treat it as a Hub page, and the Stripe portal can't be linked to directly because it needs a session created on the spot.
-- **Fix:**
-  - Add an `/account` page that forwards to `/dashboard`, keeping any `?query`.
-  - The manifest then publishes `portal` and a new `dashboard` link, both pointing to `/dashboard`.
-  - Add `manage_billing` pointing to `/dashboard?billing=1`. The dashboard opens the Stripe portal when it sees that.
-- **Files:**
-  - new `src/routes/account.tsx`
-  - `src/lib/hub/manifest.json`
-  - `src/lib/hub/sdk.ts` plus a re-run of the SDK copy script
-  - `public/llms.txt`
-  - `src/routes/docs.tsx`
-  - `PLAYBOOK.md`
-  - `src/routes/dashboard.tsx` (only for `billing=1`)
-  - test file
-- **Manifest:** goes to 1.13.0 (new links added; nothing removed).
-- **Republish IQs?** No. The forwarding works for old copies of the manifest too.
-- **How to test:** open `/account` signed out (you land on sign-in, then the dashboard) and signed in as a trial user (you land on the dashboard). Plus a test that `/account?x=1` keeps its query.
+Gating stays exactly as it is. The link is removed whenever the result is locked **or** the entitlement is "trial". That second part means a trial result an admin has unlocked still gets no link in HubSpot. That's today's behaviour, and this plan keeps it.
 
-## 3. After registering, return to the IQ — second
+## b. Existing HubSpot contacts
 
-- **Where it gets lost:**
-  - (a) The email confirmation link has no return address.
-  - (b) The "check your email, then sign in" step clears the return address from the screen.
-  - (c) The return-address check is too wide.
-  - (d) If the IQ's link has no `redirect=`, there's nothing to return to. I'll confirm ProductIQ's link in step 1 of the build, without changing ProductIQ.
-- **Fix:**
-  - One shared check that only allows https addresses whose host is a `site_url` in the app registry (plus the Hub itself).
-  - Sign-up passes a confirmation address of `https://gemiq…/auth?redirect=<checked address>`, so confirming continues the journey.
-  - Keep `redirect=` in place when switching to sign-in.
-- **Files:**
-  - `src/routes/auth.tsx`
-  - `src/routes/api/public/auth/session.ts`
-  - new client-safe `src/lib/return-url.ts` (the allowed list is served from the registry)
-  - tests
-- **Manifest:** no change.
-- **Republish IQs?** Not if the IQ already sends `redirect=`. If ProductIQ doesn't, it needs a one-line change. I'll report that, not make it.
-- **How to test:**
-  - New user from ProductIQ, with and without email confirmation: you end up back on ProductIQ.
-  - Signed-in user: you're sent straight back.
-  - Addresses like `evil.com` and a random `*.lovable.app` are rejected and you land on the dashboard.
+This count comes from the Hub's own records only. HubSpot wasn't called.
+- 10 contacts have a HubSpot record. For each person I looked at their latest result:
+  - **1 real contact** (GTMIQ, paid subscription, unlocked) will be holding a Hub `/report/<id>` link. The rule would replace it with that result's GTMIQ report link.
+  - **6 test addresses** (`+gemtest-`) are unlocked and not trial, so they also hold a Hub link.
+  - **3 trial contacts** shouldn't hold any link from their latest result.
+- Caveat: an older paid result can leave a Hub link behind, because a later trial result never blanks the field. Only HubSpot itself can confirm that. I can't count it from the Hub side.
 
-## 2. One "unlock" link straight to payment — third
+**Recommendation:** fix the 1 real contact through the existing retry/rebuild path by queueing one job for that result. That's 1 HubSpot write. Leave the 6 test addresses alone: the next quick-test run overwrites them. Nothing is written until Alex approves that one job separately after publishing.
 
-- **What happens today** (signed in, on a trial, one locked result) when you click a `signup_trial_*` link:
-  - The trial check sees you as already subscribed and sends you to the Hub dashboard.
-  - You never see a sign-up form, pricing or checkout.
-  - If the IQ adds `redirect=`, you're sent back to the IQ with no checkout.
-  - Either way you can't pay.
-- **Fix:** publish `deep_links.unlock = /auth?intent=unlock&redirect=<result address>`. On the Hub:
-  - **Signed out:** sign in or sign up first, then continue.
-  - **Signed in:** you see a short "choose your plan" step (Growth / Complete / Complete annual, plus "just this assessment" at the price set in the manifest), then Stripe checkout. When payment works, Stripe sends you back to the checked result address. If you cancel, you go back there too.
-  - **No result address:** you go back to `/report/<submission>` when a submission id is given, otherwise to the dashboard.
-  - The single-assessment purchase is the "just this assessment" option. It goes through the same checkout with the same price and is tied to that assessment key.
-- **Also fixed:**
-  - Map `monthly`/`quarterly`/`annual` to the existing price names, so old links can choose a price.
-  - Stop "has a return address" from skipping checkout when the link asks for payment.
-- **Not touched:** prices, products, Stripe settings and webhooks.
-- **Files:**
-  - `src/routes/auth.tsx`
-  - `src/lib/auth-checkout.ts` plus tests
-  - possibly a small plan-choice component
-  - manifest, SDK, `llms.txt`, docs, `PLAYBOOK.md`
-- **Manifest:** goes to 1.13.x. Old links keep working.
-- **Republish IQs?** Their current "Start a plan" links already improve once old plan names map to real prices. To show the picker and come back to the result, each IQ swaps to `unlock` and republishes.
-- **How to test:** checkout is intercepted, so nobody pays.
-  - Trial user with a locked result: picker, then checkout with the right price and a return address that points back to the result.
-  - New user: sign up, then picker.
-  - Active subscriber buying one extra assessment: reaches checkout.
-  - Addresses not on the registered list fall back to the dashboard.
+## c. What a customer sees when clicking the link in a fresh browser
 
-## 5. Dashboard "Start <IQ>" goes to the home page — fourth
+- **ProductIQ:** the link opens ProductIQ's own report page for that result. It asks the Hub's status check with no sign-in. Because links are only ever written for unlocked, non-trial results, the status check should say unlocked and the full report shows. If an admin re-locks the result later, the old link in HubSpot stays (see "upgrade / unlock" above), and ProductIQ should then show its locked box.
+- **GTMIQ:** stored links look like `gtmiq.../report/<its own id>`. From the Hub side I can't tell whether that page needs a sign-in or checks the Hub's status. **Unknown, please check.**
+- **SalesIQ, AITransformIQ, UXIQ:** none of their results store a report link, so the rule falls back to the Hub report page. Customers see the same page as today.
+- **TariffIQ:** see item e.
 
-- **Where the addresses come from:** manifest `assessments[].url`, read in `src/lib/dashboard.server.ts`.
-- **Fix:**
-  - Add an optional `start_url` per IQ, editable in Admin → Control.
-  - It's stored in the app registry's existing record for each IQ, inside a field that already holds extra details, so no table change if one fits. If not, add one column, with no drops or renames.
-  - Also publish it as `assessments[].start_url` in the manifest.
-  - The dashboard uses `start_url`, falling back to `url`.
-- **Files:**
-  - `src/lib/hub/app-control.server.ts`
-  - `src/lib/dashboard.server.ts`
-  - the admin control component
-  - manifest and SDK
-  - `PLAYBOOK.md`, `llms.txt`
-  - tests
-- **Manifest:** 1.13.x.
-- **Republish IQs?** No. Alex fills in each IQ's start address in Admin.
-- **How to test:** after setting ProductIQ's start address, "Start ProductIQ" opens it directly. An IQ with no start address still opens its home page.
+## d. Other emails the Hub sends that contain a report link
 
-## 4. Account first, then a pre-filled start form — last
+| Email | Who gets it | Link used |
+|---|---|---|
+| "Report ready" (Admin → Reports → Resend) | Customer | Hub `/report/<id>`. **Will change** to the customer report. |
+| "New submission" notification (`submission-notification`) | GEM staff only | The link the IQ sent with the result (often a PDF), plus HubSpot record links. No change. |
+| Sign-in emails (signup, magic link, recovery, invite, email change, reauthentication) | Customer | No report links |
+| Retry worker | — | Sends no email. Only writes HubSpot. |
 
-- **Already available:** `GET /api/public/profile`, signed in with cookies, works from the registered IQ sites. It returns first and last name, email, company, title, role and industry. There's also `PATCH` to fill in gaps.
-- **What's missing:** sign-up doesn't ask for role or job title, so new users have those blank.
-- **Smallest Hub change:**
-  - Add an optional "Job title" field to sign-up and save it.
-  - Document the pre-fill contract in the manifest (`contracts.profile_prefill`: which fields, "ask only for what's missing, then PATCH it back").
-- **What each IQ does:** on the start page, call the profile feed. If you're signed out, send you to `unlock`/`login` with `redirect=`. Then pre-fill the form and ask only for missing fields.
-- **Files:** `src/routes/auth.tsx`, the manifest's contracts section, SDK, docs and `PLAYBOOK.md`.
-- **Manifest:** 1.13.x.
-- **Republish IQs?** Yes, each IQ, for the pre-filling to show up.
-- **How to test:**
-  - New user: profile has the title.
-  - Existing trial user: the feed returns stored fields.
-  - Signed out: 401.
+The follow-up emails themselves come from HubSpot workflows, which read gem_report_url (item a).
 
-## Recommended order
+## e. TariffIQ
 
-1, then 3, then 2, then 5, then 4. That matches your guess. Item 2 depends on the safe return check built in item 3, which is why 3 comes before it.
+TariffIQ stores its **PDF** report link in the same place where other IQs store their report page link. Report mode is "app" for every assessment, so the rule returns:
+- a paid TariffIQ result with metadata: the **PDF link**
+- a trial result, or an older one without metadata: the Hub report page
 
-## Rules kept throughout
+The dashboard already does this today. A PDF is a fixed file with no lock check, but links are only written for unlocked paid results, so nothing locked leaks.
+**Recommendation:** accept this until TariffIQ sends a report page link. The alternative is to ignore `.pdf` links in the rule and fall back to the Hub page. That would also change what the dashboard shows, so it needs Alex's call.
 
-- Only the Hub writes to HubSpot.
-- No new HubSpot fields.
-- No secrets in chat.
-- Returns only go to addresses in the app registry.
-- No migrations that drop or rename anything.
-- No Stripe price or webhook changes.
-- No edits to IQ projects.
+## f. Files, tests, manifest, how to check
 
-## Conflicts with the current code
+Files:
+- `src/routes/api/public/submissions/submit.ts`: the workflow link on the HubSpot write only
+- `src/lib/hub/submission-properties.server.ts`: the link in `rebuildForSubmission`
+- `src/lib/hub/report-control.server.ts`: Resend uses the customer report
+- `src/lib/hub/e2e/e2e.server.ts`: the report-link check
+- a small helper so all of the above read report mode the same way: `getAllSettings` plus `mergeSettings`, then `customerReportUrl`
+- `src/lib/hub/AGENTS.md`: one line
 
-- Today's return-address rule allows all of `*.globaledgemarkets.com` and `*.lovable.app`. Tightening it may break preview testing unless preview hosts are registered.
-- "An IQ handles its own checkout" is current behaviour. Item 2 replaces it for payment links.
+Tests (new `tests/customer-report-links.test.ts`):
+- app mode with a stored link gives the IQ link in gem_report_url
+- app mode with no stored link gives the Hub link
+- hub mode gives the Hub link
+- trial gets no gem_report_url, even when an admin has unlocked it
+- locked gets no gem_report_url
+- the retry rebuild gives the same link as submit
+
+Manifest: **no version change.** The field and the submit reply stay the same.
+
+Not done in this item: writing to HubSpot when an admin unlocks or re-locks a result, or when a trial converts. Today gem_report_url and gem_report_locked don't update when that happens. Worth a separate item.
+
+**How Alex checks it after publishing (one test contact):**
+1. With a paid test account, complete ProductIQ.
+2. In HubSpot, open that contact. "GEM Report Link" should start with `https://productiq.globaledgemarkets.com/report/` and match the dashboard's "View report" link.
+3. Open the link in a private window. ProductIQ's report should show.
+4. In Admin → Reports, press Resend for that result. The email link should be the same.
+5. Run Admin's quick tests. "HubSpot: report link" should pass.

@@ -177,7 +177,8 @@ export async function checkRun(runId: string): Promise<E2eRun> {
   if (sub && contact) {
     const p = contact.properties;
     const ent = (sub.metadata as { entitlement?: string } | null)?.entitlement ?? "none";
-    const expectReport = await customerReportUrlFor({ ...sub, assessment_key: r.assessment_key });
+    const hubPage = isReportLocked(sub, false) || ent === "trial";
+    const expectReport = hubPage ? `${HUB}/report/${sub.id}` : await customerReportUrlFor({ ...sub, assessment_key: r.assessment_key });
     const expectLabel = REGISTRY_BY_KEY[r.assessment_key]?.displayName ?? r.assessment_key;
     const fieldChecks: [string, string, boolean, string][] = [
       ["hs_name", "HubSpot: assessment name", p.gem_assessment_label === expectLabel, p.gem_assessment_label ?? "empty"],

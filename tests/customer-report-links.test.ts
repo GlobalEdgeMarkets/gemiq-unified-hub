@@ -28,11 +28,12 @@ describe("gem_report_url carries the customer report", () => {
   it("hub mode sends the Hub link", () => {
     expect(props({ entitlement: "subscription", report_url: APP }, "hub", false).gem_report_url).toBe(HUB);
   });
-  it("trial sends no link, even when an admin unlocked it", () => {
-    expect(props({ entitlement: "trial", report_url: APP }, "app", false).gem_report_url).toBeUndefined();
+  it("trial sends the Hub page, never the IQ link, even when an admin unlocked it", () => {
+    expect(props({ entitlement: "trial", report_url: APP }, "app", false).gem_report_url).toBe(HUB);
+    expect(props({ entitlement: "trial", report_url: APP }, "app", true).gem_report_url).toBe(HUB);
   });
-  it("locked sends no link", () => {
-    expect(props({ entitlement: "unpaid", report_url: APP }, "app", true).gem_report_url).toBeUndefined();
+  it("locked sends the Hub page, never the IQ link", () => {
+    expect(props({ entitlement: "unpaid", report_url: APP }, "app", true).gem_report_url).toBe(HUB);
   });
   it("retry fallback still drops the link for locked results", () => {
     expect(cleanStoredProperties({ gem_report_url: APP, gem_report_locked: true } as never).gem_report_url).toBeUndefined();

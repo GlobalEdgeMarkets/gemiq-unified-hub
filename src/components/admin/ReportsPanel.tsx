@@ -272,7 +272,7 @@ function ReportSettingsCard({ getSettings, saveSettings }: { getSettings: Fn; sa
 type Item = {
   id: string; email: string; assessment_key: string; assessment_name: string; score: number | null; tier: string | null;
   submitted_at: string; entitlement: string | null; plan: string; locked: boolean; override: boolean | null; hidden: boolean;
-  generated: boolean; last_action: { action: string; by: string; at: string } | null;
+  generated: boolean; last_action: { action: string; by: string; at: string } | null; customer_report_url?: string;
 };
 type Stats = { total: number; this_week: number; avg_by_iq: Record<string, number | null>; tiers: Record<string, number>; trial_reports: number; trial_converted: number };
 
@@ -380,7 +380,10 @@ function ReportsTable({ listReports, reportAction }: { listReports: Fn; reportAc
                 </td>
                 <td className="py-1">
                   <div className="flex flex-wrap gap-1">
-                    <Button size="sm" variant="outline" asChild><a href={`/report/${i.id}`} target="_blank" rel="noreferrer">Open</a></Button>
+                    {(() => { const hub = `/report/${i.id}`; const cust = i.customer_report_url; const isHub = !cust || cust.endsWith(`/report/${i.id}`); return (<>
+                      <Button size="sm" variant="outline" asChild><a href={isHub ? hub : cust} target="_blank" rel="noreferrer">View customer report</a></Button>
+                      {!isHub && <Button size="sm" variant="link" className="px-1 text-xs" asChild><a href={hub} target="_blank" rel="noreferrer">Hub version</a></Button>}
+                    </>); })()}
                     {i.locked
                       ? <Button size="sm" variant="ghost" disabled={!!busy} onClick={() => act(i.id, "unlock", "Unlocked")}>Unlock</Button>
                       : <Button size="sm" variant="ghost" disabled={!!busy} onClick={() => act(i.id, "relock", "Locked")}>Lock</Button>}

@@ -65,6 +65,8 @@ type SubRow = {
   admin_actions: { action: string; by: string; at: string }[];
 };
 
+import { customerReportUrl } from "@/lib/customer-report";
+
 const SUB_COLS =
   "id,user_id,email,assessment_key,score,tier,dimensions,metadata,submitted_at,report_unlocked_override,report_hidden,report_content,report_generated_at,admin_actions";
 
@@ -692,6 +694,8 @@ export async function listReports(f: ReportListFilter) {
       hidden: r.report_hidden,
       generated: !!r.report_generated_at,
       last_action: r.admin_actions?.[r.admin_actions.length - 1] ?? null,
+      // Same report the customer dashboard opens; admins see it regardless of lock.
+      customer_report_url: customerReportUrl(r, s.mode),
     };
   });
   if (f.tier) items = items.filter((i) => i.tier === f.tier);

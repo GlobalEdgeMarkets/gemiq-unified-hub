@@ -8,7 +8,7 @@ type Person = {
   email: string;
   profile: { full_name: string | null; company: string | null; title: string | null; created_at: string } | null;
   subscriptions: { status: string; lookup_key: string | null; trial_ends_at: string | null; trial_assessments_used: number; trial_assessment_limit: number; current_period_end: string | null; cancel_at_period_end: boolean | null }[];
-  reports: { id: string; assessment_name: string; score: number | null; tier: string | null; submitted_at: string; locked: boolean; hidden: boolean; entitlement: string | null }[];
+  reports: { id: string; assessment_name: string; score: number | null; tier: string | null; submitted_at: string; locked: boolean; hidden: boolean; entitlement: string | null; customer_report_url?: string }[];
   hubspot: { found: boolean; marketing?: boolean; tier?: string | null; assessment?: string | null; entitlement?: string | null; locked?: string | null; error?: string };
 };
 const date = (s?: string | null) => (s ? new Date(s).toLocaleDateString() : "—");
@@ -86,7 +86,10 @@ export function PersonLookup({ lookup, reportAction, onDelete }: {
                       {r.hidden ? <span className="ml-2"><StatusChip state="idle">Hidden</StatusChip></span> : null}
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" asChild><a href={`/report/${r.id}`} target="_blank" rel="noreferrer">Open</a></Button>
+                      {(() => { const hub = `/report/${r.id}`; const cust = r.customer_report_url; const isHub = !cust || cust.endsWith(`/report/${r.id}`); return (<>
+                      <Button size="sm" variant="outline" asChild><a href={isHub ? hub : cust} target="_blank" rel="noreferrer">View customer report</a></Button>
+                      {!isHub && <Button size="sm" variant="link" className="px-1 text-xs" asChild><a href={hub} target="_blank" rel="noreferrer">Hub version</a></Button>}
+                    </>); })()}
                       {r.locked
                         ? <Button size="sm" variant="outline" onClick={() => act(r.id, "unlock", "Report unlocked")}>Unlock</Button>
                         : <Button size="sm" variant="ghost" onClick={() => act(r.id, "relock", "Report locked")}>Lock</Button>}

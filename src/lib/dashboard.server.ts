@@ -100,17 +100,6 @@ function toDimensions(raw: unknown): DashboardDimension[] {
   return out;
 }
 
-function pickReportUrl(row: { metadata: unknown; detail?: unknown }): string | null {
-  for (const bag of [row.metadata, (row as { detail?: unknown }).detail]) {
-    if (bag && typeof bag === "object") {
-      const rec = bag as Record<string, unknown>;
-      const v = rec.report_url ?? rec.reportUrl ?? rec.result_url;
-      if (typeof v === "string" && /^https?:\/\//.test(v)) return v;
-    }
-  }
-  return null;
-}
-
 /**
  * Auth guard. Returns `null` ONLY when there is genuinely no signed-in user —
  * any other failure throws, so the route can render an actionable error state
@@ -201,7 +190,7 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
   const { getAllSettings } = await import("@/lib/hub/report-control.server");
   const reportCfg = await getAllSettings().catch(() => null);
   const modeFor = (k: string) => (reportCfg ? mergeSettings(reportCfg.global, reportCfg.overrides[k]).mode : "app");
-  const hubReport = (id: string) => `https://gemiq.globaledgemarkets.com/report/${id}`;
+  const { customerReportUrl } = await import("@/lib/customer-report");
 
   const byKey = new Map<string, typeof all>();
   for (const r of all) {
@@ -220,9 +209,7 @@ async function loadDashboardForSession(): Promise<DashboardData | null> {
       url: iqUrl(key),
       report_url: isReportLocked(latest, planActive)
         ? null
-        : modeFor(key) === "hub"
-          ? hubReport(latest.id)
-          : pickReportUrl(latest) ?? hubReport(latest.id),
+        : customerReportUrl(latest, modeFor(key)),
       report_locked: isReportLocked(latest, planActive),
       score: typeof latest.score === "number" ? Math.round(latest.score) : null,
       tier: normalizeTier(latest.tier) ?? tierFromScore(latest.score),

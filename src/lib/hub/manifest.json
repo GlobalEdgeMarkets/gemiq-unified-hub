@@ -1,6 +1,6 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.14.0",
+  "version": "1.14.1",
   "updated_at": "2026-11-27",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
@@ -80,7 +80,8 @@
         "amount": 149,
         "interval": "month",
         "assessments_included": 3,
-        "lookup_key": "gemiq_growth_monthly"
+        "lookup_key": "gemiq_growth_monthly",
+        "includes": ["Three assessments you choose", "The combined report"]
       },
       {
         "id": "gemiq_complete_monthly",
@@ -89,7 +90,8 @@
         "amount": 249,
         "interval": "month",
         "assessments_included": null,
-        "lookup_key": "gemiq_complete_monthly"
+        "lookup_key": "gemiq_complete_monthly",
+        "includes": ["All assessments", "Combined report", "Quarterly retakes"]
       },
       {
         "id": "gemiq_complete_annual",
@@ -98,7 +100,8 @@
         "amount": 2490,
         "interval": "year",
         "assessments_included": null,
-        "lookup_key": "gemiq_complete_annual"
+        "lookup_key": "gemiq_complete_annual",
+        "includes": ["All assessments", "Combined report", "Quarterly retakes"]
       }
     ]
   },

@@ -79,3 +79,51 @@ describe("plan picker renders whatever the manifest lists", () => {
     expect(html).toContain("Pay $10 today and unlock");
   });
 });
+
+import { formatMoney, annualSaving, backLink } from "@/lib/plan-display";
+import manifest from "@/lib/hub/manifest.json";
+
+describe("unlock page improvements (1.14.1)", () => {
+  const plans = manifest.pricing.plans as any[];
+  const render = (p: any[], extra: Record<string, unknown> = {}) =>
+    renderToStaticMarkup(h(PlanPicker, { plans: p, trialing: false, busy: null, onPick: () => {}, currency: "USD", ...extra }));
+  it("money has thousands separators and no decimals for whole amounts", () => {
+    expect(formatMoney(2490, "USD")).toBe("$2,490");
+    expect(formatMoney(249, "USD")).toBe("$249");
+    expect(formatMoney(1234.5, "USD")).toBe("$1,234.50");
+  });
+  it("includes lines come from the manifest", () => {
+    const html = render(plans);
+    expect(html).toContain("Three assessments you choose");
+    expect(html).toContain("Quarterly retakes");
+  });
+  it("no includes → no list", () => {
+    expect(render([{ lookup_key: "a", name: "A", amount: 10, interval: "month" }])).not.toContain("plan-includes");
+  });
+  it("annual saving computed from today's manifest: $498, two months free", () => {
+    const annual = plans.find((p) => p.interval === "year");
+    expect(annualSaving(annual, plans)).toEqual({ amount: 498, monthsFree: 2 });
+    expect(render(plans)).toContain("Save $498 — 2 months free");
+  });
+  it("saving hidden without a monthly match", () => {
+    const only = plans.filter((p) => p.interval === "year");
+    expect(annualSaving(only[0], only)).toBeNull();
+    expect(render(only)).not.toContain("annual-saving");
+  });
+  it("'Your trial plan' marks the subscription's plan only", () => {
+    const html = render(plans, { trialing: true, trialLookupKey: "gemiq_complete_monthly" });
+    expect(html.match(/Your trial plan/g)?.length).toBe(1);
+    expect(html.indexOf("Your trial plan")).toBeLessThan(html.indexOf("Complete — Monthly"));
+    expect(html.indexOf("Your trial plan")).toBeGreaterThan(html.indexOf("Growth — Monthly"));
+    expect(html).toContain("Pay $2,490 today and unlock");
+  });
+  it("Recommended label: zero flagged → none; one flagged → one", () => {
+    expect(render(plans)).not.toContain("Recommended");
+    const one = plans.map((p, i) => (i === 1 ? { ...p, recommended: true } : p));
+    expect(render(one).match(/>Recommended</g)?.length).toBe(1);
+  });
+  it("back link uses the checked return address, else the dashboard", () => {
+    expect(backLink("https://productiq.globaledgemarkets.com/results/1")).toEqual({ href: "https://productiq.globaledgemarkets.com/results/1", label: "Back to my report" });
+    expect(backLink(null)).toEqual({ href: "/dashboard", label: "Back" });
+  });
+});

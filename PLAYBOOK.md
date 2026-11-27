@@ -1,4 +1,6 @@
-# GEM.IQ Playbook — v1.7.2
+# GEM.IQ Playbook — v1.7.3
+
+**Plan fields (2026-11-27, manifest v1.14.1):** optional `pricing.plans[].includes` (short bullets) and `pricing.plans[].recommended` (label); show nothing when absent. The /unlock page derives annual savings from manifest amounts.
 
 **Checkout (2026-11-27, manifest v1.14.0):** IQs should use the Hub's trial/purchase links (direct SDK checkout calls from registered IQ sites are still accepted until all IQs move); those links always go through Hub checkout, then a finishing step, then the checked `redirect` (registry IQ hosts only) or the dashboard. `deep_links.unlock` (`/unlock?redirect={return_url}`) shows the manifest plans; trial users convert on the card on file, paid subscribers go straight back. Off switch: `CHECKOUT_RETURN_FLOW=off`.
 

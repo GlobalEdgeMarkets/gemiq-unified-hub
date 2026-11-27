@@ -8,6 +8,7 @@ import { nextStep, planStateOf } from "@/lib/auth-checkout";
 import { startCheckout } from "@/lib/checkout-client";
 import { PRICING } from "@/lib/pricing";
 import { buildHead } from "@/lib/seo";
+import { backLink } from "@/lib/plan-display";
 
 export const Route = createFileRoute("/unlock")({
   validateSearch: z.object({ redirect: z.preprocess((v) => (v == null ? v : String(v)), z.string().optional()).catch(undefined) }),
@@ -27,8 +28,10 @@ function UnlockPage() {
   const { url: safeReturn, flowOn } = Route.useLoaderData();
   const [state, setState] = useState<"loading" | "pick" | "error">("loading");
   const [trialing, setTrialing] = useState(false);
+  const [trialKey, setTrialKey] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const plans = PRICING.plans as PickerPlan[];
+  const back = backLink(safeReturn);
 
   useEffect(() => {
     (async () => {
@@ -40,6 +43,7 @@ function UnlockPage() {
       const step = nextStep("unlock", planStateOf(sub), !!safeReturn, flowOn);
       if (step.kind === "return") { window.location.href = safeReturn ?? "/dashboard"; return; }
       setTrialing(!!sub.trialing);
+      setTrialKey(sub.subscription?.lookup_key ?? null);
       setState("pick");
     })();
   }, [safeReturn, flowOn]);
@@ -63,11 +67,12 @@ function UnlockPage() {
               {trialing ? "Your trial ends today and the card on file is charged the amount shown." : "You'll go to secure checkout."}
               {PRICING.guarantee?.days ? ` ${PRICING.copy?.guarantee_line ?? ""}` : ""}
             </p>
-            <div className="mt-6"><PlanPicker plans={plans} trialing={trialing} busy={busy} onPick={pick} /></div>
+            <div className="mt-6"><PlanPicker plans={plans} trialing={trialing} busy={busy} onPick={pick} currency={PRICING.currency} trialLookupKey={trialKey} /></div>
             {state === "error" && <p className="mt-4 text-sm text-destructive">We couldn't start checkout. Please try again.</p>}
             {search.redirect && safeReturn && <p className="mt-6 text-sm text-gem-navy/60">You'll return to {new URL(safeReturn).host} afterwards.</p>}
           </>
         )}
+        <a href={back.href} data-gem-test="unlock-back" className="mt-8 inline-block text-sm font-semibold text-gem-navy underline underline-offset-4">← {back.label}</a>
       </main>
     </div>
   );

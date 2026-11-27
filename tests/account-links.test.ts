@@ -11,7 +11,7 @@ describe("Hub dashboard links", () => {
   });
   it("manifest publishes portal, dashboard and manage_billing", () => {
     const l = manifest.deep_links as Record<string, string>;
-    expect(manifest.version).toBe("1.14.0");
+    expect(manifest.version).toBe("1.14.1");
     expect(l["portal"]).toBe("https://gemiq.globaledgemarkets.com/dashboard");
     expect(l["dashboard"]).toBe("https://gemiq.globaledgemarkets.com/dashboard");
     expect(l["manage_billing"]).toBe("https://gemiq.globaledgemarkets.com/dashboard?billing=1");

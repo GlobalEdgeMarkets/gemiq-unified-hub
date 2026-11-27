@@ -3,8 +3,8 @@ import manifest from "../src/lib/hub/manifest.json";
 import { checkDimensionKeys, rollupDimensions, describeDimensionCheck } from "../src/lib/hub/dimensions";
 
 describe("dimension registry", () => {
-  it("manifest is 1.14.0 with crm_rule and spine", () => {
-    expect(manifest.version).toBe("1.14.0");
+  it("manifest is 1.14.1 with crm_rule and spine", () => {
+    expect(manifest.version).toBe("1.14.1");
     expect((manifest.contracts as Record<string, string>)["crm_rule"]).toContain("Only the Hub writes to HubSpot");
     expect(manifest.dimensions.spine).toEqual(["technology", "commercial", "investment", "operational", "regulatory"]);
   });

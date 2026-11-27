@@ -55,12 +55,14 @@ Every GEM.IQ assessment scores each dimension on the same five tiers: reactive, 
 - Published questions, weights, tiers and tier recommendations per IQ: https://gemiq.globaledgemarkets.com/api/public/content/<key> (404 when the IQ still uses its built-in questions). Manifest `content[<key>]` gives the live version number.
 - Scoring rule: option points 0–100; section = weighted average of answered questions; overall = weighted average of sections, rounded; tier = highest tier whose min ≤ overall.
 
-## Hub links (manifest v1.14.0)
+## Hub links (manifest v1.14.1)
 - Hub dashboard: https://gemiq.globaledgemarkets.com/dashboard (manifest deep_links.portal and deep_links.dashboard)
 - Manage billing: https://gemiq.globaledgemarkets.com/dashboard?billing=1 (deep_links.manage_billing)
 - The old /account address forwards to /dashboard.
 - Unlock a locked result: https://gemiq.globaledgemarkets.com/unlock?redirect={return_url} (deep_links.unlock) — plan choice, Hub checkout, then back to the result.
 - Use the Hub's trial/purchase/unlock links with &redirect=<IQ page URL>; the Hub runs checkout and returns there. Direct checkout calls from registered IQ sites are still accepted until every IQ has moved (manifest contracts.checkout_rule).
+
+- Plan fields (1.14.1, optional): pricing.plans[].includes (short bullet lines) and pricing.plans[].recommended (boolean label). Hide when absent.
 
 ## Dimension IDs (manifest v1.12.0)
 The Hub manifest `dimensions` block lists the permanent dimension keys per assessment and the cross-assessment `spine` (technology, commercial, investment, operational, regulatory). Keys are machine IDs; never join on display titles. Only the Hub writes to HubSpot; assessments send results to the Hub.

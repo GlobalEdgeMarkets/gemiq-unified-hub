@@ -146,6 +146,10 @@ export interface HubManifest {
       tier?: "growth" | "complete";
       /** How many different assessments the plan covers; null = all. Added in 1.10.0. */
       assessments_included?: number | null;
+      /** Short "what's included" bullet lines shown on plan cards; omit to show none. Added in 1.14.1. */
+      includes?: string[];
+      /** Data-driven "Recommended" label; zero, one or several plans may set it. Added in 1.14.1. */
+      recommended?: boolean;
     }>;
   };
   /** Track metadata, added in manifest 1.5.0. Optional for older manifests. */

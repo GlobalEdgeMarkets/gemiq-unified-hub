@@ -23,3 +23,9 @@ export function checkReturnUrl(raw: unknown, allowedHosts: string[]): string | n
     return allowedHosts.includes(u.hostname.toLowerCase()) ? u.toString() : null;
   } catch { return null; }
 }
+
+/** Checkout success/cancel addresses: registered IQ sites + Hub hosts (same rule), plus local dev. */
+export function isCheckoutAddressAllowed(raw: unknown, allowedHosts: string[]): boolean {
+  if (checkReturnUrl(raw, allowedHosts)) return true;
+  try { const h = new URL(String(raw)).hostname; return h === "localhost" || h === "127.0.0.1"; } catch { return false; }
+}

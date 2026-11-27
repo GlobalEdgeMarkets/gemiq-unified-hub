@@ -19,3 +19,24 @@ describe("return address check", () => {
   it("rejects http", () => expect(checkReturnUrl("http://productiq.globaledgemarkets.com/", hosts)).toBeNull());
   it("rejected → caller lands on dashboard", () => expect(checkReturnUrl("https://evil.com/", hosts) ?? "/dashboard").toBe("/dashboard"));
 });
+
+import { isCheckoutAddressAllowed } from "@/lib/return-url";
+describe("checkout success/cancel addresses", () => {
+  const h = allowedReturnHosts([
+    { site_url: "https://tariffiq.globaledgemarkets.com", lifecycle: "live" },
+    { site_url: "https://oldiq.globaledgemarkets.com", lifecycle: "retired" },
+  ]);
+  for (const ok of [
+    "https://tariffiq.globaledgemarkets.com/resume?sid=abc",       // trial start + single purchase success
+    "https://tariffiq.globaledgemarkets.com/intake",               // cancel
+    "https://tariffiq.globaledgemarkets.com/results/123",          // unlock success/cancel
+    "https://gemiq.globaledgemarkets.com/checkout/return?to=x",    // Hub's own flow
+  ]) it(`accepts ${ok}`, () => expect(isCheckoutAddressAllowed(ok, h)).toBe(true));
+  for (const bad of [
+    "https://evil.com/",
+    "https://random-app.lovable.app/",
+    "https://other.globaledgemarkets.com/",
+    "https://oldiq.globaledgemarkets.com/",
+    "http://tariffiq.globaledgemarkets.com/resume",
+  ]) it(`refuses ${bad}`, () => expect(isCheckoutAddressAllowed(bad, h)).toBe(false));
+});

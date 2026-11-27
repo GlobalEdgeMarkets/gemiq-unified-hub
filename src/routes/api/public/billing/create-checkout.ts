@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createHubSupabaseSSR } from "@/lib/hub/supabase-server";
 import { stripe, priceByLookupKey, ensureSingleAssessmentPrice, ensurePlanPrice, PLAN_LOOKUP_KEYS, SINGLE_ASSESSMENT_LOOKUP_KEY } from "@/lib/hub/stripe";
 import { json, corsHeaders } from "@/lib/hub/http";
-import { HUB_HOSTS } from "@/lib/return-url";
 import { z } from "zod";
 
 const Body = z.object({
@@ -27,15 +26,12 @@ export const Route = createFileRoute("/api/public/billing/create-checkout")({
 
         const parsed = Body.safeParse(await request.json().catch(() => ({})));
         if (!parsed.success) return json({ error: "invalid_body", issues: parsed.error.issues }, { status: 400 }, request);
-        // Stripe only ever gets Hub addresses (IQ return addresses travel as ?to= and are re-checked on return).
-        const hubOnly = (raw: string) => {
-          try {
-            const u = new URL(raw); const host = u.hostname.toLowerCase();
-            if (host === "localhost" || host === "127.0.0.1") return true;
-            return u.protocol === "https:" && (HUB_HOSTS.includes(host) || host === new URL(request.url).hostname.toLowerCase());
-          } catch { return false; }
-        };
-        if (!hubOnly(parsed.data.success_url) || !hubOnly(parsed.data.cancel_url)) return json({ error: "redirect_not_allowed" }, { status: 400 }, request);
+        // Success/cancel must be a registered IQ site or a Hub address (src/lib/return-url.ts).
+        // The Hub's own flow sends Hub addresses; direct IQ callers (e.g. TariffIQ via the SDK) send their own site.
+        const { currentAllowedHosts } = await import("@/lib/return-url.server");
+        const { isCheckoutAddressAllowed } = await import("@/lib/return-url");
+        const hosts = await currentAllowedHosts();
+        if (!isCheckoutAddressAllowed(parsed.data.success_url, hosts) || !isCheckoutAddressAllowed(parsed.data.cancel_url, hosts)) return json({ error: "redirect_not_allowed" }, { status: 400 }, request);
 
         // One-time single-assessment purchase vs. recurring suite subscription.
         const oneTime = parsed.data.lookup_key === SINGLE_ASSESSMENT_LOOKUP_KEY;

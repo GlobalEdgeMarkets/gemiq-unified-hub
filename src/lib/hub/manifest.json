@@ -216,7 +216,7 @@
     "methodology": "Optional content fields: methodology { summary, frameworks[], comparison, references[{ title, url? }] }, sections[].rationale and questions[].rationale (\"Why we ask this\"). Show them when present. Hub-wide methodology: /methodology.",
     "scoring_rule": "question = chosen option points (0-100); section = weighted average of answered questions (question.weight); overall = weighted average of answered sections (section.weight), rounded; tier = highest tier with min <= overall",
     "crm_rule": "Only the Hub writes to HubSpot. Assessments send results to the Hub and never call HubSpot directly.",
-    "checkout_rule": "Trial and purchase links (signup_trial_*, buy_single_assessment, unlock) always go through Hub checkout; IQs never run checkout. Append &redirect=<IQ page URL> (URL-encoded; ?redirect= for unlock) and the Hub returns there after checkout or cancel. Only registered IQ hosts are honoured."
+    "checkout_rule": "IQs should send trial, purchase and unlock buttons to the Hub's deep_links (signup_trial_*, buy_single_assessment, unlock), adding &redirect=<IQ page URL> (URL-encoded; ?redirect= for unlock); the Hub runs checkout and returns there after checkout or cancel. Direct checkout calls (SDK createCheckout/startCheckout/buySingleAssessment) are still accepted from registered IQ sites until every IQ has moved. Only registered IQ hosts are honoured."
   },
   "dimensions": {
     "spine": [

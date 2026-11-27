@@ -1,6 +1,6 @@
 # GEM.IQ Playbook — v1.7.2
 
-**Checkout (2026-11-27, manifest v1.14.0):** trial and purchase links always go through Hub checkout, then a finishing step, then the checked `redirect` (registry IQ hosts only) or the dashboard. `deep_links.unlock` (`/unlock?redirect={return_url}`) shows the manifest plans; trial users convert on the card on file, paid subscribers go straight back. Off switch: `CHECKOUT_RETURN_FLOW=off`.
+**Checkout (2026-11-27, manifest v1.14.0):** IQs should use the Hub's trial/purchase links (direct SDK checkout calls from registered IQ sites are still accepted until all IQs move); those links always go through Hub checkout, then a finishing step, then the checked `redirect` (registry IQ hosts only) or the dashboard. `deep_links.unlock` (`/unlock?redirect={return_url}`) shows the manifest plans; trial users convert on the card on file, paid subscribers go straight back. Off switch: `CHECKOUT_RETURN_FLOW=off`.
 
 **Hub links (2026-11-27, manifest v1.13.0):** `deep_links.portal` and `deep_links.dashboard` both point to `/dashboard`; `deep_links.manage_billing` is `/dashboard?billing=1`, which opens the Stripe billing portal for a signed-in person with a Stripe customer (otherwise just the dashboard). The old `/account` address forwards to `/dashboard`, keeping its query string.
 

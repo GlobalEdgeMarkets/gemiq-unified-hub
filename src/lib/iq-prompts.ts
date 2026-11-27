@@ -31,7 +31,7 @@ IQ key: "${app.key}". Site: ${app.site_url}. Track: ${app.track}.${app.descripti
 Read GEM Hub Central's integration guide at ${HUB}/docs and the live manifest at ${HUB}/api/public/manifest (version ${manifestVersion} or newer). Use the Hub SDK from the manifest's hub.sdk_source.
 
 1. Sign-in: use GEM Hub Central for accounts — no separate sign-up. Send users to the manifest's deep_links.login and read the session with the Hub SDK.
-2. Pricing and checkout: never run your own Stripe checkout. Show prices, trial and guarantee from the manifest (pricing.*), and send buy and trial buttons to the manifest's deep_links, adding &redirect=<the current page URL, URL-encoded> so the Hub brings people back after its checkout. Hide a whole sentence when a value is missing.
+2. Pricing and checkout: never run your own Stripe checkout; prefer the Hub's links over direct SDK checkout calls (still accepted from registered IQ sites for now). Show prices, trial and guarantee from the manifest (pricing.*), and send buy and trial buttons to the manifest's deep_links, adding &redirect=<the current page URL, URL-encoded> so the Hub brings people back after its checkout. Hide a whole sentence when a value is missing.
 3. Report locking: when a submit or past-result response has report_locked = true, show only the score and tier, plus an "Unlock the full report" button that goes to the manifest's deep_links.unlock with {return_url} replaced by the URL-encoded result page. Otherwise show the full report.
 4. Results: submit finished assessments to the Hub with the SDK's submit call using assessment key "${app.key}".
 5. Branding: use the manifest's brand fonts, colours, logos (navy+mint on light, white+mint on dark, never altered) and footer links.

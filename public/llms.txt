@@ -60,7 +60,7 @@ Every GEM.IQ assessment scores each dimension on the same five tiers: reactive, 
 - Manage billing: https://gemiq.globaledgemarkets.com/dashboard?billing=1 (deep_links.manage_billing)
 - The old /account address forwards to /dashboard.
 - Unlock a locked result: https://gemiq.globaledgemarkets.com/unlock?redirect={return_url} (deep_links.unlock) — plan choice, Hub checkout, then back to the result.
-- Trial and purchase links always go through Hub checkout; add &redirect=<IQ page URL> to return there afterwards (manifest contracts.checkout_rule).
+- Use the Hub's trial/purchase/unlock links with &redirect=<IQ page URL>; the Hub runs checkout and returns there. Direct checkout calls from registered IQ sites are still accepted until every IQ has moved (manifest contracts.checkout_rule).
 
 ## Dimension IDs (manifest v1.12.0)
 The Hub manifest `dimensions` block lists the permanent dimension keys per assessment and the cross-assessment `spine` (technology, commercial, investment, operational, regulatory). Keys are machine IDs; never join on display titles. Only the Hub writes to HubSpot; assessments send results to the Hub.

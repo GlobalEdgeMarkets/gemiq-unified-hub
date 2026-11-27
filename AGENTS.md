@@ -60,5 +60,5 @@ Report, reset and e2e rules: see `src/lib/hub/AGENTS.md`.
 - Dimension keys come only from manifest `dimensions` (read via client-safe `src/lib/hub/dimensions.ts`); roll-ups and benchmarks group by key and merge across IQs only for `spine` keys — never join on titles, so renamed labels can't split or merge scores.
 - HubSpot retries (scheduled job and Admin "Retry now") run through `runHubspotRetry` in `src/lib/hub/hubspot-retry.server.ts` and rebuild properties from the stored submission via `src/lib/hub/submission-properties.server.ts` (shared with submit), so retries never replay outdated mappings.
 - Customer report choice lives once in `src/lib/customer-report.ts` (dashboard + Admin share it).
-- Auth return addresses: only `src/lib/return-url.ts` (registry hosts + Hub hosts), never suffix matching.
-- Post-sign-in routing is `nextStep` in `src/lib/auth-checkout.ts`; old plan names live only in `src/lib/plan-aliases.ts`; Stripe gets Hub URLs only (`/checkout/return?to=`).
+- Return addresses: only `src/lib/return-url.ts`, no suffix matching.
+- Sign-in routing: `nextStep` (auth-checkout.ts); plan aliases: plan-aliases.ts.

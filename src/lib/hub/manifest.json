@@ -1,7 +1,7 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.12.0",
-  "updated_at": "2026-11-26",
+  "version": "1.13.0",
+  "updated_at": "2026-11-27",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
     "docs_url": "https://gemiq.globaledgemarkets.com/docs",
@@ -156,7 +156,9 @@
     "signup_trial_annual": "https://gemiq.globaledgemarkets.com/auth?mode=signup&trial=1&plan=annual",
     "buy_single_assessment": "https://gemiq.globaledgemarkets.com/auth?mode=signup&buy=single",
     "login": "https://gemiq.globaledgemarkets.com/auth",
-    "portal": "https://gemiq.globaledgemarkets.com/account"
+    "portal": "https://gemiq.globaledgemarkets.com/dashboard",
+    "dashboard": "https://gemiq.globaledgemarkets.com/dashboard",
+    "manage_billing": "https://gemiq.globaledgemarkets.com/dashboard?billing=1"
   },
   "contracts": {
     "status_endpoint": {

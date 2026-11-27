@@ -7,6 +7,7 @@ import { HubHeader } from "@/components/HubHeader";
 import { Button } from "@/components/ui/button";
 import { TRIAL_LABEL } from "@/lib/pricing";
 import { buildHead } from "@/lib/seo";
+import { wantsBillingPortal } from "@/lib/account-redirect";
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -165,6 +166,21 @@ function DashboardPage() {
         }
         setData(d);
         setState("ready");
+        // manifest deep_links.manage_billing → open the Stripe billing portal.
+        // No Stripe customer (or any failure) → just stay on the dashboard.
+        if (wantsBillingPortal(window.location.search)) {
+          window.history.replaceState(null, "", "/dashboard");
+          try {
+            const r = await fetch("/api/public/billing/create-portal-session", {
+              method: "POST",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ return_url: `${window.location.origin}/dashboard` }),
+            });
+            const b = await r.json().catch(() => null);
+            if (alive && r.ok && b?.url) window.location.href = b.url;
+          } catch { /* stay on dashboard */ }
+        }
       } catch (e) {
         if (!alive) return;
         const msg = e instanceof Error ? e.message : String(e);

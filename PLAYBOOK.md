@@ -1,4 +1,6 @@
-# GEM.IQ Playbook — v1.7.0
+# GEM.IQ Playbook — v1.7.1
+
+**Hub links (2026-11-27, manifest v1.13.0):** `deep_links.portal` and `deep_links.dashboard` both point to `/dashboard`; `deep_links.manage_billing` is `/dashboard?billing=1`, which opens the Stripe billing portal for a signed-in person with a Stripe customer (otherwise just the dashboard). The old `/account` address forwards to `/dashboard`, keeping its query string.
 
 **Dimension IDs + CRM rule (2026-11-26, manifest v1.12.0):** manifest `dimensions` is the single source of dimension keys (`spine` = cross-IQ comparable keys; `by_assessment` = exact keys each IQ sends; UXIQ pending redesign). Keys are permanent machine IDs — never join on display titles. Submissions are checked report-only (`score_check.dimensions`). `contracts.crm_rule`: only the Hub writes to HubSpot; assessments send results to the Hub and never call HubSpot directly.
 

@@ -378,7 +378,9 @@ const stop = hub.manifest.watch(
   assessments: [{ key, name, url, track }],   // track: "capability" | "specialist"
   deep_links: {
     signup_trial_monthly, signup_trial_quarterly, signup_trial_annual,
-    buy_single_assessment, login, portal
+    buy_single_assessment, login,
+    portal, dashboard,   // both open the Hub dashboard
+    manage_billing       // dashboard?billing=1 opens the Stripe billing portal
   }
 }`}</Code>
 

@@ -749,7 +749,7 @@ export async function reportAction(id: string, action: ReportAction, by: string)
     const r = await sendTemplateEmail("report-ready", row.email, {
       templateData: {
         assessmentName: displayName(row.assessment_key),
-        reportUrl: `${HUB}/report/${row.id}`,
+        reportUrl: await customerReportUrlFor(row),
         firstName: typeof row.metadata?.first_name === "string" ? row.metadata.first_name : undefined,
       },
       idempotencyKey: `report-resend-${row.id}-${log.length}`,
@@ -759,6 +759,12 @@ export async function reportAction(id: string, action: ReportAction, by: string)
   const { error: upErr } = await db().from("submissions").update(patch).eq("id", id);
   if (upErr) throw new Error(`Could not save: ${upErr.message}`);
   return { ok: true };
+}
+
+/** The report a customer gets for one stored result (same rule as the dashboard). Lock gating is the caller's job. */
+export async function customerReportUrlFor(row: { id: string; assessment_key: string; metadata?: unknown; detail?: unknown }): Promise<string> {
+  const mode = await effectiveSettings(row.assessment_key).then((s) => s.mode).catch(() => "app");
+  return customerReportUrl(row, mode);
 }
 
 export function reportUrlFor(id: string) {

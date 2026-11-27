@@ -289,7 +289,8 @@ export const Route = createFileRoute("/api/public/submissions/submit")({
           },
           workflow: {
             submission_id: inserted.id,
-            report_url: `https://gemiq.globaledgemarkets.com/report/${inserted.id}`,
+            // Customer report (same rule as the dashboard); gating drops it when locked/trial.
+            report_url: await (await import("@/lib/hub/report-control.server")).customerReportUrlFor({ id: inserted.id, assessment_key: payload.assessment_key, metadata: mergedMetadata }),
             report_locked: isReportLocked({ report_unlocked_override: null, metadata: mergedMetadata }, hasPaidSub),
             entitlement,
           },

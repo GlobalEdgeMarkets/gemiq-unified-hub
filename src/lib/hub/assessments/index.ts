@@ -92,7 +92,8 @@ export function buildContactProperties(args: {
     props.gem_assessment_submitted_at = args.current.submitted_at;
     props.gem_assessment_label = REGISTRY_BY_KEY[args.current.assessment_key]?.displayName ?? args.current.assessment_key;
     props.gem_submission_id = args.workflow.submission_id;
-    props.gem_report_url = args.workflow.report_url;
+    // No report link for locked or trial results (same gate as the retry fallback).
+    if (!args.workflow.report_locked && args.workflow.entitlement !== "trial") props.gem_report_url = args.workflow.report_url;
     props.gem_report_locked = args.workflow.report_locked;
     props.gem_entitlement = args.workflow.entitlement;
   }

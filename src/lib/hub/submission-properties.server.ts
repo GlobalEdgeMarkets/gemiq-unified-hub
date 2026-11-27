@@ -78,7 +78,7 @@ export async function rebuildForSubmission(svc: Svc, submissionId: string): Prom
     contact: { first_name: meta.first_name, last_name: meta.last_name, company: meta.company, phone: meta.phone },
     workflow: {
       submission_id: row.id,
-      report_url: `https://gemiq.globaledgemarkets.com/report/${row.id}`,
+      report_url: await (await import("@/lib/hub/report-control.server")).customerReportUrlFor({ id: row.id, assessment_key: row.assessment_key, metadata: meta }),
       report_locked: isReportLocked({ report_unlocked_override: (row as any).report_unlocked_override ?? null, metadata: meta }, planActive),
       entitlement: String(meta.entitlement ?? "none"),
     },

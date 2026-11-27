@@ -1,3 +1,4 @@
+import { customerReportUrlFor } from "@/lib/hub/report-control.server";
 // End-to-end tests: test accounts, run records, post-submit checks (Hub + HubSpot)
 // and cleanup. Only addresses matching the test pattern are ever touched.
 import { createHubServiceClient } from "@/lib/hub/supabase-server";
@@ -158,7 +159,7 @@ export async function checkRun(runId: string): Promise<E2eRun> {
       : { status: "fail", detail: [dc.missing?.length ? `missing: ${dc.missing.join(", ")}` : "", dc.unknown?.length ? `unknown: ${dc.unknown.join(", ")}` : ""].filter(Boolean).join("; ") || "empty" });
     add("report_link", "Report link and lock", wantTrial && !locked
       ? { status: "fail", detail: "Trial report should be locked but isn't" }
-      : { status: "pass", detail: `${HUB}/report/${sub.id} (${locked ? "locked" : "unlocked"})` });
+      : { status: "pass", detail: `${await customerReportUrlFor({ ...sub, assessment_key: r.assessment_key })} (${locked ? "locked" : "unlocked"})` });
   }
 
   let contact: HsContact | null = null;
@@ -176,12 +177,13 @@ export async function checkRun(runId: string): Promise<E2eRun> {
   if (sub && contact) {
     const p = contact.properties;
     const ent = (sub.metadata as { entitlement?: string } | null)?.entitlement ?? "none";
+    const expectReport = await customerReportUrlFor({ ...sub, assessment_key: r.assessment_key });
     const expectLabel = REGISTRY_BY_KEY[r.assessment_key]?.displayName ?? r.assessment_key;
     const fieldChecks: [string, string, boolean, string][] = [
       ["hs_name", "HubSpot: assessment name", p.gem_assessment_label === expectLabel, p.gem_assessment_label ?? "empty"],
       ["hs_score", "HubSpot: score", p.gem_assessment_score != null && Number(p.gem_assessment_score) === sub.score, p.gem_assessment_score ?? "empty"],
       ["hs_tier", "HubSpot: tier", !!p.gem_score_tier, p.gem_score_tier ?? "empty"],
-      ["hs_report", "HubSpot: report link", !!p.gem_report_url?.includes(sub.id), p.gem_report_url ?? "empty"],
+      ["hs_report", "HubSpot: report link", !!p.gem_report_url && p.gem_report_url === expectReport, p.gem_report_url ?? "empty"],
       ["hs_submitted", "HubSpot: submitted at", !!p.gem_assessment_submitted_at, p.gem_assessment_submitted_at ?? "empty"],
       ["hs_entitlement", "HubSpot: entitlement", (p.gem_entitlement ?? "").toLowerCase() === ent, p.gem_entitlement ?? "empty"],
       ["hs_locked", "HubSpot: report locked", String(p.gem_report_locked ?? "false") === String(isReportLocked(sub, false)), p.gem_report_locked ?? "empty"],

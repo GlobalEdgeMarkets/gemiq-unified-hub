@@ -544,7 +544,7 @@ export async function loadReport(
     dimensions: settings.trial_access === "score" && locked ? [] : dims(row.dimensions),
     content: locked && !viewer.isAdmin ? {} : content,
     copy: settings.copy,
-    unlock_url: `${HUB}/auth?mode=signup&plan=complete`,
+    unlock_url: `${HUB}/unlock?redirect=${encodeURIComponent(`${HUB}/report/${row.id}`)}`,
     company: typeof meta.company === "string" ? meta.company : null,
     industry,
     report_ref: `GEM-${row.assessment_key.toUpperCase()}-${row.id.slice(0, 8).toUpperCase()}`,
@@ -646,7 +646,7 @@ export async function loadCombinedReport(): Promise<CombinedReportView | null> {
     insights: locked ? insights.slice(0, 1) : insights,
     roadmap: locked ? [] : roadmap,
     methodology: cfg.methodology,
-    unlock_url: `${HUB}/auth?mode=signup&plan=complete`,
+    unlock_url: `${HUB}/unlock?redirect=${encodeURIComponent(`${HUB}/report/combined`)}`,
   };
 }
 

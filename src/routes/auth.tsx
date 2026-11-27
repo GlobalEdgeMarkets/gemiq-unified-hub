@@ -8,8 +8,11 @@ import { HubHeader } from "@/components/HubHeader";
 import { ACCENT, IQ_PRODUCTS } from "@/lib/iq-catalog";
 import { buildHead } from "@/lib/seo";
 import { identifyUser, track } from "@/lib/analytics";
-import { shouldCheckExistingTrial } from "@/lib/auth-checkout";
-import { checkReturnUrlFn } from "@/lib/return-url.functions";
+import { intentOf, nextStep, planStateOf } from "@/lib/auth-checkout";
+import { getFlowContext } from "@/lib/checkout-flow.functions";
+import { resolvePlan, DEFAULT_TRIAL_PLAN } from "@/lib/plan-aliases";
+import { startCheckout } from "@/lib/checkout-client";
+import { PRICING } from "@/lib/pricing";
 
 const searchSchema = z.object({
   // External links (IQ sites, WordPress) send plain `?trial=1`, which the router
@@ -18,12 +21,8 @@ const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional().catch(undefined),
   /** "1" when arriving from the "Start 7-day trial" CTA. Kicks off trial checkout after signup. */
   trial: z.preprocess((v) => (v == null ? v : String(v)), z.string().optional()).catch(undefined),
-  /** Which plan the trial should convert to. Defaults to Complete monthly. */
-  /** Legacy names (monthly/quarterly/annual) from older links map to the current plans; unknown values are ignored. */
-  plan: z.preprocess(
-    (v) => ({ monthly: "complete", quarterly: "complete", annual: "complete_annual" } as Record<string, string>)[String(v)] ?? v,
-    z.enum(["growth", "complete", "complete_annual"]).optional().catch(undefined),
-  ),
+  /** Plan name or lookup key; old names are mapped in src/lib/plan-aliases.ts only. */
+  plan: z.preprocess((v) => (v == null ? v : String(v)), z.string().max(80).optional()).catch(undefined),
   /** "single" when arriving from the one-time $179 CTA. Starts payment checkout. */
   buy: z.enum(["single"]).optional().catch(undefined),
 });
@@ -38,7 +37,7 @@ export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ redirect: search.redirect }),
   // Return address is checked on the server against the app registry; unknown hosts → dashboard.
-  loader: async ({ deps }) => (deps.redirect ? (await checkReturnUrlFn({ data: { url: deps.redirect } })).url : null),
+  loader: async ({ deps }) => getFlowContext({ data: { url: deps.redirect } }),
   head: () =>
     buildHead({
       title: "Sign in — GEM.IQ Hub",
@@ -59,7 +58,7 @@ const IQ_LIST = IQ_PRODUCTS.map((p) => ({
 
 function AuthPage() {
   const search = useSearch({ from: "/auth" });
-  const safeReturn = Route.useLoaderData();
+  const { url: safeReturn, flowOn } = Route.useLoaderData();
   const iq = iqContextFromReturnUrl(safeReturn);
   const defaultMode = search.mode ?? (iq ? "signup" : "signin");
   const [mode, setMode] = useState<"signin" | "signup">(defaultMode);
@@ -74,55 +73,24 @@ function AuthPage() {
 
   const [resuming, setResuming] = useState(false);
 
-  /** Where to go once a session exists: purchase/trial checkout, back to the IQ, or the dashboard. */
-  async function continueSignedIn(opts: { skipCheckoutIfActive: boolean }) {
-    if (shouldCheckExistingTrial(search, safeReturn) && opts.skipCheckoutIfActive) {
-      // Avoid duplicate trials only. Explicit paid upgrades and single purchases
-      // must reach checkout even when the user already has trial/plan access.
-      try {
-        const r = await fetch("/api/public/billing/check-subscription", { credentials: "include" });
-        const sub = await r.json();
-        if (sub?.active) { window.location.href = "/dashboard"; return; }
-      } catch { /* fall through to checkout */ }
+  /** Where to go once a session exists — decided by nextStep (src/lib/auth-checkout.ts). */
+  async function continueSignedIn(_opts: { skipCheckoutIfActive: boolean }) {
+    const intent = intentOf(search);
+    let sub: { active?: boolean; trialing?: boolean } | null = null;
+    if (intent !== "signin") {
+      try { sub = await (await fetch("/api/public/billing/check-subscription", { credentials: "include" })).json(); } catch { /* treat as no plan */ }
     }
-    // One-time purchase intent from landing: $179 single assessment.
-    if (search.buy === "single" && !safeReturn) {
-      try {
-        const co = await fetch("/api/public/billing/create-checkout", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            lookup_key: "gemiq_single_assessment",
-            success_url: `${window.location.origin}/dashboard?purchase=1`,
-            cancel_url: `${window.location.origin}/dashboard`,
-          }),
-        });
-        const cob = await co.json();
-        if (co.ok && cob.url) { window.location.href = cob.url; return; }
-      } catch (e) { /* fall through */ }
+    const step = nextStep(intent, planStateOf(sub), !!safeReturn, flowOn);
+    if (step.kind === "picker") {
+      window.location.href = `/unlock?${new URLSearchParams(safeReturn ? { redirect: safeReturn } : {})}`;
+      return;
     }
-    // Trial intent: start Stripe checkout with a 7-day trial.
-    // Only when there's no IQ redirect — an IQ handles its own checkout.
-    // A plan without trial=1 (e.g. "Unlock the full report") starts a paid checkout.
-    if ((search.trial === "1" || search.plan) && !safeReturn) {
-      try {
-        const co = await fetch("/api/public/billing/create-checkout", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            lookup_key: { growth: "gemiq_growth_monthly", complete: "gemiq_complete_monthly", complete_annual: "gemiq_complete_annual" }[search.plan ?? "complete"],
-            success_url: `${window.location.origin}/dashboard?welcome=1`,
-            cancel_url: `${window.location.origin}/dashboard`,
-            trial: search.trial === "1",
-          }),
-        });
-        const cob = await co.json();
-        if (co.ok && cob.url) { window.location.href = cob.url; return; }
-      } catch (e) { /* fall through to dashboard */ }
+    if (step.kind === "checkout") {
+      const lookupKey = step.single ? PRICING.one_time.lookup_key : resolvePlan(search.plan) ?? DEFAULT_TRIAL_PLAN;
+      const url = await startCheckout({ lookupKey, trial: step.trial, single: step.single, returnTo: flowOn ? safeReturn : null }).catch(() => null);
+      if (url) { window.location.href = url; return; }
     }
-    window.location.href = safeReturn ?? "/dashboard";
+    window.location.href = step.kind === "dashboard" ? "/dashboard" : safeReturn ?? "/dashboard";
   }
 
   // Already signed in? Never show the account form again — carry on with

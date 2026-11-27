@@ -287,7 +287,9 @@ if (status.trial_exhausted) {
           <Code>{`${manifest.deep_links.signup_trial_monthly}
 ${manifest.deep_links.signup_trial_quarterly}   // quarterly is the default plan
 ${manifest.deep_links.signup_trial_annual}
-${manifest.deep_links.buy_single_assessment}`}</Code>
+${manifest.deep_links.buy_single_assessment}
+${manifest.deep_links.unlock}   // locked result → plan choice → checkout → back`}</Code>
+          <p>Add <code>&redirect=</code> with your URL-encoded page address to any trial or purchase link (for unlock, replace <code>{"{return_url}"}</code>). The Hub always runs checkout, then returns there; only registered IQ hosts are honoured.</p>
           {TRIAL_DAYS !== undefined && (
             <p>
               After signup, the Hub auto-initiates Stripe checkout with{" "}

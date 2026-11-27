@@ -1,6 +1,6 @@
 {
   "$schema": "https://gemiq.globaledgemarkets.com/manifest.schema.json",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "updated_at": "2026-11-27",
   "hub": {
     "origin": "https://gemiq.globaledgemarkets.com",
@@ -158,7 +158,8 @@
     "login": "https://gemiq.globaledgemarkets.com/auth",
     "portal": "https://gemiq.globaledgemarkets.com/dashboard",
     "dashboard": "https://gemiq.globaledgemarkets.com/dashboard",
-    "manage_billing": "https://gemiq.globaledgemarkets.com/dashboard?billing=1"
+    "manage_billing": "https://gemiq.globaledgemarkets.com/dashboard?billing=1",
+    "unlock": "https://gemiq.globaledgemarkets.com/unlock?redirect={return_url}"
   },
   "contracts": {
     "status_endpoint": {
@@ -214,7 +215,8 @@
     "composite_rule": "weight = admin weight per live assessment (default 1, 0 excludes); combined score = weighted average of each completed live assessment's latest score, rounded; stage = highest combined tier with min <= score, shown only once completed >= min_for_tier; next = highest-weighted live assessment not yet completed",
     "methodology": "Optional content fields: methodology { summary, frameworks[], comparison, references[{ title, url? }] }, sections[].rationale and questions[].rationale (\"Why we ask this\"). Show them when present. Hub-wide methodology: /methodology.",
     "scoring_rule": "question = chosen option points (0-100); section = weighted average of answered questions (question.weight); overall = weighted average of answered sections (section.weight), rounded; tier = highest tier with min <= overall",
-    "crm_rule": "Only the Hub writes to HubSpot. Assessments send results to the Hub and never call HubSpot directly."
+    "crm_rule": "Only the Hub writes to HubSpot. Assessments send results to the Hub and never call HubSpot directly.",
+    "checkout_rule": "Trial and purchase links (signup_trial_*, buy_single_assessment, unlock) always go through Hub checkout; IQs never run checkout. Append &redirect=<IQ page URL> (URL-encoded; ?redirect= for unlock) and the Hub returns there after checkout or cancel. Only registered IQ hosts are honoured."
   },
   "dimensions": {
     "spine": [

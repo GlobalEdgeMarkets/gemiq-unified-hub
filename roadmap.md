@@ -39,3 +39,4 @@
 ## HubSpot retry job
 - [x] Shared retry runner, rebuild from submission, Admin "Retry now", tests
 - [ ] Store JOB_SECRET in the database vault so the 5-minute schedule stops getting 403 (blocked: needs Alex to re-enter the secret value)
+- [x] Item 2: Hub checkout for trial/purchase links with return, /unlock picker, finishing step, manifest 1.14.0, off switch CHECKOUT_RETURN_FLOW; report Stripe mode

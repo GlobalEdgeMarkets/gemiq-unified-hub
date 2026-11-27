@@ -26,9 +26,11 @@ import { Route as ReadinessiqRouteImport } from './routes/readinessiq'
 import { Route as SalesiqRouteImport } from './routes/salesiq'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TariffiqRouteImport } from './routes/tariffiq'
+import { Route as UnlockRouteImport } from './routes/unlock'
 import { Route as UxiqRouteImport } from './routes/uxiq'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as DocsMarketEntryMaturityFrameworksRouteImport } from './routes/docs_.market-entry-maturity-frameworks'
 import { Route as MarketEntrySplatRouteImport } from './routes/market-entry.$'
 import { Route as ReadinessiqSplatRouteImport } from './routes/readinessiq.$'
@@ -142,6 +144,11 @@ const TariffiqRoute = TariffiqRouteImport.update({
   path: '/tariffiq',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UnlockRoute = UnlockRouteImport.update({
+  id: '/unlock',
+  path: '/unlock',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UxiqRoute = UxiqRouteImport.update({
   id: '/uxiq',
   path: '/uxiq',
@@ -159,6 +166,11 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
     path: '/.well-known/oauth-protected-resource',
     getParentRoute: () => rootRouteImport,
   } as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DocsMarketEntryMaturityFrameworksRoute =
   DocsMarketEntryMaturityFrameworksRouteImport.update({
     id: '/docs_/market-entry-maturity-frameworks',
@@ -328,9 +340,11 @@ export interface FileRoutesByFullPath {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
+  '/unlock': typeof UnlockRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/docs/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
   '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
@@ -377,9 +391,11 @@ export interface FileRoutesByTo {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
+  '/unlock': typeof UnlockRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/docs/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
   '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
@@ -427,9 +443,11 @@ export interface FileRoutesById {
   '/salesiq': typeof SalesiqRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tariffiq': typeof TariffiqRoute
+  '/unlock': typeof UnlockRoute
   '/uxiq': typeof UxiqRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/docs_/market-entry-maturity-frameworks': typeof DocsMarketEntryMaturityFrameworksRoute
   '/market-entry/$': typeof MarketEntrySplatRoute
   '/readinessiq/$': typeof ReadinessiqSplatRoute
@@ -478,9 +496,11 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
+    | '/unlock'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/checkout/return'
     | '/docs/market-entry-maturity-frameworks'
     | '/market-entry/$'
     | '/readinessiq/$'
@@ -527,9 +547,11 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
+    | '/unlock'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/checkout/return'
     | '/docs/market-entry-maturity-frameworks'
     | '/market-entry/$'
     | '/readinessiq/$'
@@ -576,9 +598,11 @@ export interface FileRouteTypes {
     | '/salesiq'
     | '/sitemap.xml'
     | '/tariffiq'
+    | '/unlock'
     | '/uxiq'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/checkout/return'
     | '/docs_/market-entry-maturity-frameworks'
     | '/market-entry/$'
     | '/readinessiq/$'
@@ -626,9 +650,11 @@ export interface RootRouteChildren {
   SalesiqRoute: typeof SalesiqRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TariffiqRoute: typeof TariffiqRoute
+  UnlockRoute: typeof UnlockRoute
   UxiqRoute: typeof UxiqRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  CheckoutReturnRoute: typeof CheckoutReturnRoute
   DocsMarketEntryMaturityFrameworksRoute: typeof DocsMarketEntryMaturityFrameworksRoute
   ReportIdRoute: typeof ReportIdRoute
   ReportCombinedRoute: typeof ReportCombinedRoute
@@ -777,6 +803,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TariffiqRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/unlock': {
+      id: '/unlock'
+      path: '/unlock'
+      fullPath: '/unlock'
+      preLoaderRoute: typeof UnlockRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/uxiq': {
       id: '/uxiq'
       path: '/uxiq'
@@ -796,6 +829,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/oauth-protected-resource'
       fullPath: '/.well-known/oauth-protected-resource'
       preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs_/market-entry-maturity-frameworks': {
@@ -1032,10 +1072,12 @@ const rootRouteChildren: RootRouteChildren = {
   SalesiqRoute: SalesiqRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TariffiqRoute: TariffiqRoute,
+  UnlockRoute: UnlockRoute,
   UxiqRoute: UxiqRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  CheckoutReturnRoute: CheckoutReturnRoute,
   DocsMarketEntryMaturityFrameworksRoute:
     DocsMarketEntryMaturityFrameworksRoute,
   ReportIdRoute: ReportIdRoute,

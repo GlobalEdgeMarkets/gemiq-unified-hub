@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHubSupabaseSSR } from "@/lib/hub/supabase-server";
 import { stripe, priceByLookupKey, ensureSingleAssessmentPrice, ensurePlanPrice, PLAN_LOOKUP_KEYS, SINGLE_ASSESSMENT_LOOKUP_KEY } from "@/lib/hub/stripe";
-import { json, corsHeaders, isAllowedRedirect } from "@/lib/hub/http";
+import { json, corsHeaders } from "@/lib/hub/http";
+import { HUB_HOSTS } from "@/lib/return-url";
 import { z } from "zod";
 
 const Body = z.object({
   lookup_key: z.string().min(1),
-  success_url: z.string().url().refine(isAllowedRedirect, "success_url not allowed"),
-  cancel_url: z.string().url().refine(isAllowedRedirect, "cancel_url not allowed"),
+  success_url: z.string().url().max(2000),
+  cancel_url: z.string().url().max(2000),
   /** Enable a 7-day trial with 1 free assessment across any IQ. Card is still required. */
   trial: z.boolean().optional(),
   /** Optional: which IQ the one-time purchase is intended for (recorded on the session). */
@@ -26,6 +27,15 @@ export const Route = createFileRoute("/api/public/billing/create-checkout")({
 
         const parsed = Body.safeParse(await request.json().catch(() => ({})));
         if (!parsed.success) return json({ error: "invalid_body", issues: parsed.error.issues }, { status: 400 }, request);
+        // Stripe only ever gets Hub addresses (IQ return addresses travel as ?to= and are re-checked on return).
+        const hubOnly = (raw: string) => {
+          try {
+            const u = new URL(raw); const host = u.hostname.toLowerCase();
+            if (host === "localhost" || host === "127.0.0.1") return true;
+            return u.protocol === "https:" && (HUB_HOSTS.includes(host) || host === new URL(request.url).hostname.toLowerCase());
+          } catch { return false; }
+        };
+        if (!hubOnly(parsed.data.success_url) || !hubOnly(parsed.data.cancel_url)) return json({ error: "redirect_not_allowed" }, { status: 400 }, request);
 
         // One-time single-assessment purchase vs. recurring suite subscription.
         const oneTime = parsed.data.lookup_key === SINGLE_ASSESSMENT_LOOKUP_KEY;

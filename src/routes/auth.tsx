@@ -9,19 +9,7 @@ import { ACCENT, IQ_PRODUCTS } from "@/lib/iq-catalog";
 import { buildHead } from "@/lib/seo";
 import { identifyUser, track } from "@/lib/analytics";
 import { shouldCheckExistingTrial } from "@/lib/auth-checkout";
-
-/** Only allow return-to URLs on the GEM.IQ Hub itself or *.globaledgemarkets.com. */
-function isAllowedReturnUrl(raw: string | undefined): string | null {
-  if (!raw) return null;
-  try {
-    const u = new URL(raw);
-    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
-    const host = u.hostname.toLowerCase();
-    if (host === "localhost" || host.endsWith(".lovable.app")) return u.toString();
-    if (host === "globaledgemarkets.com" || host.endsWith(".globaledgemarkets.com")) return u.toString();
-    return null;
-  } catch { return null; }
-}
+import { checkReturnUrlFn } from "@/lib/return-url.functions";
 
 const searchSchema = z.object({
   // External links (IQ sites, WordPress) send plain `?trial=1`, which the router
@@ -48,6 +36,9 @@ const IQ_NAMES = IQ_PRODUCTS.map((p) => p.name).reduce((acc, name, i, arr) =>
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
+  loaderDeps: ({ search }) => ({ redirect: search.redirect }),
+  // Return address is checked on the server against the app registry; unknown hosts → dashboard.
+  loader: async ({ deps }) => (deps.redirect ? (await checkReturnUrlFn({ data: { url: deps.redirect } })).url : null),
   head: () =>
     buildHead({
       title: "Sign in — GEM.IQ Hub",
@@ -68,7 +59,7 @@ const IQ_LIST = IQ_PRODUCTS.map((p) => ({
 
 function AuthPage() {
   const search = useSearch({ from: "/auth" });
-  const safeReturn = isAllowedReturnUrl(search.redirect);
+  const safeReturn = Route.useLoaderData();
   const iq = iqContextFromReturnUrl(safeReturn);
   const defaultMode = search.mode ?? (iq ? "signup" : "signin");
   const [mode, setMode] = useState<"signin" | "signup">(defaultMode);
@@ -160,6 +151,7 @@ function AuthPage() {
         body: JSON.stringify({
           action: mode,
           email, password,
+          redirect: safeReturn ?? undefined,
           metadata: mode === "signup" ? {
             first_name: firstName,
             last_name: lastName,

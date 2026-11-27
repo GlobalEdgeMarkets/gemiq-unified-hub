@@ -8,6 +8,7 @@ const Body = z.object({
   email: z.string().email().optional(),
   password: z.string().min(6).optional(),
   metadata: z.record(z.string(), z.any()).optional(),
+  redirect: z.string().max(2000).optional(),
 });
 
 export const Route = createFileRoute("/api/public/auth/session")({
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/api/public/auth/session")({
 
         const setCookies: string[] = [];
         const supabase = createHubSupabaseSSR(request, setCookies);
-        const { action, email, password, metadata } = parsed.data;
+        const { action, email, password, metadata, redirect } = parsed.data;
 
         if (action === "signout") {
           await supabase.auth.signOut().catch(() => null);
@@ -38,7 +39,13 @@ export const Route = createFileRoute("/api/public/auth/session")({
           if (!email || !password) return json({ error: "missing_credentials" }, { status: 400 }, request);
           const { error } = await supabase.auth.signUp({
             email, password,
-            options: { data: metadata ?? {} },
+            // If email confirmation is ever on, the link returns to /auth carrying the checked return address.
+            options: { data: metadata ?? {}, emailRedirectTo: await (async () => {
+              const origin = new URL(request.url).origin;
+              const { safeReturnUrl } = await import("@/lib/return-url.server");
+              const safe = await safeReturnUrl(redirect);
+              return `${origin}/auth?mode=signin${safe ? `&redirect=${encodeURIComponent(safe)}` : ""}`;
+            })() },
           });
           if (error) return json({ error: error.message }, { status: 400 }, request);
         }
